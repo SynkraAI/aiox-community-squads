@@ -149,57 +149,13 @@ cp -r aiox-squads/squads/copy ./squads/copy
 
 ## Squad Catalog
 
-Squads available in this repository. Community contributions are welcome.
-
-### Content & Marketing
+Squads published by the community in this repository.
 
 | Squad | Agents | What it does | Status |
 |-------|--------|-------------|--------|
-| [**copy**](../squads/copy/) | 24 | Elite copywriting — 24 legends (Halbert, Schwartz, Ogilvy, Hopkins...) organized in tiers | 🟢 OPERATIONAL |
-| [**storytelling**](../squads/storytelling/) | 13 | Narrative structure — Campbell, Snyder, Duarte, Harmon, Miller | 🟡 DEVELOPING |
-| [**traffic-masters**](../squads/traffic-masters/) | 16 | Paid media — Meta, Google, YouTube Ads with performance analysis | 🟡 DEVELOPING |
-| [**movement**](../squads/movement/) | 8 | Ideological marketing — 8 levels (N1–N8) of movement building | 🟡 DEVELOPING |
+| _No squads published yet_ | — | Be the first to contribute! | — |
 
-### Business & Strategy
-
-| Squad | Agents | What it does | Status |
-|-------|--------|-------------|--------|
-| [**advisory-board**](../squads/advisory-board/) | 11 | Advisory council — Dalio, Munger, Thiel, Sinek, Hoffman... | 🟡 DEVELOPING |
-| [**hormozi**](../squads/hormozi/) | 16 | Alex Hormozi methodology — offers, leads, pricing, scaling | 🟡 DEVELOPING |
-| [**c-level**](../squads/c-level/) | 6 | Executive C-Suite — CTO, CIO, CMO, COO, CAIO, Vision Chief | 🟡 DEVELOPING |
-| [**data**](../squads/data/) | 7 | Analytics & growth — CLV, health scores, community metrics, PMF | 🟢 OPERATIONAL |
-| [**franchise**](../squads/franchise/) | 6 | Franchising — feasibility, COF, franchisor-franchisee relations | 🟡 DEVELOPING |
-| [**spy**](../squads/spy/) | 3 | Competitive intelligence — player analysis, trends, benchmarks | 🟡 DEVELOPING |
-
-### Brand & Identity
-
-| Squad | Agents | What it does | Status |
-|-------|--------|-------------|--------|
-| [**brand**](../squads/brand/) | 15 | Brand strategy — Aaker, Keller, Ries, Sharp, StoryBrand, naming | 🟡 DEVELOPING |
-
-### Technical
-
-| Squad | Agents | What it does | Status |
-|-------|--------|-------------|--------|
-| [**cybersecurity**](../squads/cybersecurity/) | 15 | Offensive & defensive security — pentest, SOC, secure coding | 🟡 DEVELOPING |
-| [**design**](../squads/design/) | 8 | Design systems — tokens, components, Atomic Design, DesignOps | 🟡 DEVELOPING |
-| [**db-sage**](../squads/db-sage/) | 2 | PostgreSQL/Supabase specialist — schema, RLS, migrations | 🟢 OPERATIONAL |
-| [**etl-ops**](../squads/etl-ops/) | 3 | Data pipelines — extraction, transformation, loading | 🟡 DEVELOPING |
-| [**domain-decoder**](../squads/domain-decoder/) | 8 | Domain extraction — reverse-engineers business rules from brownfield code | 🟡 DEVELOPING |
-
-### Research & Knowledge
-
-| Squad | Agents | What it does | Status |
-|-------|--------|-------------|--------|
-| [**deep-research**](../squads/deep-research/) | 11 | Systematic research — PICO, systematic review, bias audit | 🔴 DRAFT |
-| [**claude-code-mastery**](../squads/claude-code-mastery/) | 8 | Claude Code expertise — hooks, MCP, subagents, config, skills | 🟡 DEVELOPING |
-| [**tribunal**](../squads/tribunal/) | 7 | Decision tribunal — 5 historical minds as cognitive advisors | 🟡 DEVELOPING |
-
-### Meta-Squads
-
-| Squad | Agents | What it does | Status |
-|-------|--------|-------------|--------|
-| [**squad-creator**](../squads/squad-creator/) | 1 | Creates new squads via templates and structural validation | 🟢 OPERATIONAL |
+> Have a squad ready? [Open a PR](#contributing) and share it with the community.
 
 <br/>
 
