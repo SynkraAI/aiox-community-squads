@@ -1,0 +1,350 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Squad: Deep Research
+# Domain: Evidence-Based Research Pipeline
+# Created: 2026-02-07
+# Version: 1.0.0
+# ═══════════════════════════════════════════════════════════════════════════════
+
+squad:
+  name: deep-research
+  display_name: "Deep Research Squad"
+  version: "1.0.0"
+  domain: "Evidence-Based Research Pipeline"
+  description: |
+    Squad de pesquisa profunda com pipeline 3-tier: Diagnostic (Tier 0),
+    Execution (Tier 1), e Quality Assurance. 11 agents especializados baseados
+    em elite minds reais — de Evidence-Based Medicine (Sackett) a Competitive
+    Intelligence (Gilad), com QA obrigatório (Ioannidis + Kahneman).
+
+  philosophy: |
+    "Every research question deserves a structured, evidence-based answer."
+    O pipeline garante que toda query passa por diagnóstico (formular a pergunta
+    certa), execução (reunir evidência), e QA (auditar vieses e qualidade).
+
+  keywords:
+    - deep-research
+    - evidence-based
+    - systematic-review
+    - competitive-intelligence
+    - osint
+    - decision-science
+    - bias-detection
+    - pico
+    - dora-metrics
+    - sensemaking
+
+  entry_agent: dr-orchestrator
+  created_by: "squad-creator-pro"
+  created_at: "2026-02-07"
+  tested: false
+
+workspace_integration:
+  level: none
+  rationale: >-
+    O deep-research squad e self-contained. Nao consome nem produz artefatos
+    no workspace/. Toda operacao acontece dentro do pipeline de pesquisa.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TIER ARCHITECTURE
+# ─────────────────────────────────────────────────────────────────────────────
+
+tiers:
+  tier_0:
+    name: "Diagnostic"
+    agents:
+      - sackett
+      - booth
+      - creswell
+    purpose: "Formulate the research question, select methodology, and design the research plan. Always runs first, sequentially."
+
+  tier_1:
+    name: "Execution"
+    agents:
+      - forsgren
+      - cochrane
+      - higgins
+      - klein
+      - gilad
+    purpose: "Deep specialist analysis. Runs in parallel — orchestrator selects relevant agents based on use case classification."
+
+  qa:
+    name: "Quality Assurance"
+    agents:
+      - ioannidis
+      - kahneman
+    purpose: "Mandatory QA gate. Ioannidis audits evidence reliability (PPV, bias). Kahneman audits decision quality (cognitive biases). Always runs last, sequentially."
+
+  orchestrator:
+    name: "Pipeline Coordinator"
+    agents:
+      - dr-orchestrator
+    purpose: "Classify queries, route through pipeline, enforce quality gates, synthesize final report."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# AGENT REGISTRY
+# ─────────────────────────────────────────────────────────────────────────────
+
+agents:
+  # Orchestrator
+  dr-orchestrator:
+    file: agents/dr-orchestrator.md
+    tier: orchestrator
+    based_on: "Original (Pipeline Coordinator)"
+    icon: "🔬"
+    focus: "Query classification, pipeline routing, quality gates, report synthesis"
+
+  # Tier 0 — Diagnostic
+  sackett:
+    file: agents/sackett.md
+    tier: 0
+    based_on: "David Sackett (EBM founder)"
+    icon: "🎯"
+    focus: "PICO question formulation, evidence levels, EBM 5-step workflow"
+
+  booth:
+    file: agents/booth.md
+    tier: 0
+    based_on: "Andrew Booth (SALSA framework)"
+    icon: "📐"
+    focus: "Review methodology selection (14 types), SALSA/STARLITE frameworks"
+
+  creswell:
+    file: agents/creswell.md
+    tier: 0
+    based_on: "John Creswell (mixed methods)"
+    icon: "🔀"
+    focus: "Qualitative/quantitative/mixed methods design, data integration strategy"
+
+  # Tier 1 — Execution
+  forsgren:
+    file: agents/forsgren.md
+    tier: 1
+    based_on: "Nicole Forsgren (DORA/SPACE)"
+    icon: "📊"
+    focus: "Technical performance measurement, DORA metrics, DevOps assessment, SPACE framework"
+
+  cochrane:
+    file: agents/cochrane.md
+    tier: 1
+    based_on: "Cochrane Collaboration (systematic reviews)"
+    icon: "📚"
+    focus: "Systematic literature reviews, evidence synthesis, PRISMA, GRADE evaluations"
+
+  higgins:
+    file: agents/higgins.md
+    tier: 1
+    based_on: "Eliot Higgins (Bellingcat/OSINT)"
+    icon: "🔍"
+    focus: "Open-source investigations, source verification, geolocation, digital forensics"
+
+  klein:
+    file: agents/klein.md
+    tier: 1
+    based_on: "Gary Klein (NDM/RPD)"
+    icon: "🧩"
+    focus: "Pattern recognition, sensemaking, decision analysis, pre-mortem"
+
+  gilad:
+    file: agents/gilad.md
+    tier: 1
+    based_on: "Ben Gilad (Competitive Intelligence)"
+    icon: "🏢"
+    focus: "Competitive intelligence, strategic early warning, blind spot detection"
+
+  # QA
+  ioannidis:
+    file: agents/ioannidis.md
+    tier: qa
+    based_on: "John Ioannidis (Meta-research)"
+    icon: "⚖️"
+    focus: "Evidence reliability audit, PPV calculation, bias detection, research quality"
+
+  kahneman:
+    file: agents/kahneman.md
+    tier: qa
+    based_on: "Daniel Kahneman (Behavioral Economics)"
+    icon: "🧠"
+    focus: "Cognitive bias audit, System 1/2, decision hygiene, pre-mortem analysis"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# HANDOFF MATRIX
+# ─────────────────────────────────────────────────────────────────────────────
+
+handoffs:
+  dr-orchestrator:
+    routes_to: [sackett, booth, creswell, forsgren, cochrane, higgins, klein, gilad, ioannidis, kahneman]
+
+  # Tier 0 — sequential chain
+  sackett:
+    hands_off_to: [booth]
+    escalates_to: [dr-orchestrator]
+
+  booth:
+    receives_from: [sackett]
+    hands_off_to: [creswell]
+    escalates_to: [dr-orchestrator]
+
+  creswell:
+    receives_from: [booth]
+    hands_off_to: [dr-orchestrator]
+    escalates_to: [dr-orchestrator]
+
+  # Tier 1 — parallel, return to orchestrator
+  forsgren:
+    collaborates_with: [cochrane]
+    returns_to: [dr-orchestrator]
+
+  cochrane:
+    collaborates_with: [forsgren, higgins]
+    returns_to: [dr-orchestrator]
+
+  higgins:
+    collaborates_with: [cochrane, gilad]
+    returns_to: [dr-orchestrator]
+
+  klein:
+    collaborates_with: [gilad, forsgren]
+    returns_to: [dr-orchestrator]
+
+  gilad:
+    collaborates_with: [higgins, klein]
+    returns_to: [dr-orchestrator]
+
+  # QA — sequential, final
+  ioannidis:
+    receives_from: [dr-orchestrator]
+    hands_off_to: [kahneman]
+
+  kahneman:
+    receives_from: [ioannidis]
+    hands_off_to: [dr-orchestrator]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PIPELINE FLOW
+# ─────────────────────────────────────────────────────────────────────────────
+
+pipeline:
+  description: |
+    Every research query follows this pipeline:
+    1. dr-orchestrator classifies query into use cases (UC-001~004)
+    2. Tier 0 runs sequentially: Sackett → Booth → Creswell
+    3. Tier 1 runs in parallel: selected agents based on use case
+    4. QA runs sequentially: Ioannidis → Kahneman
+    5. dr-orchestrator synthesizes final report
+
+  use_cases:
+    UC-001:
+      label: "Technical Deep Dive"
+      primary_agents: [forsgren, cochrane]
+      secondary_agents: [klein, higgins]
+
+    UC-002:
+      label: "Strategic Decision Support"
+      primary_agents: [klein, gilad]
+      secondary_agents: [forsgren, cochrane]
+
+    UC-003:
+      label: "Competitive Intelligence"
+      primary_agents: [gilad, higgins]
+      secondary_agents: [klein]
+
+    UC-004:
+      label: "Evidence Synthesis"
+      primary_agents: [cochrane, forsgren]
+      secondary_agents: [higgins]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# QUALITY GATES
+# ─────────────────────────────────────────────────────────────────────────────
+
+quality_gates:
+  QG-001:
+    name: "Question Quality"
+    agent: sackett
+    placement: "After Tier 0"
+    criteria: "PICO question is well-formed with all 4 components"
+
+  QG-002:
+    name: "Methodology Fit"
+    agent: booth
+    placement: "After Tier 0"
+    criteria: "Review type matches question type and available evidence"
+
+  QG-003:
+    name: "Evidence Reliability"
+    agent: ioannidis
+    placement: "After Tier 1"
+    criteria: "PPV > threshold, bias patterns flagged, unreliable evidence identified"
+
+  QG-004:
+    name: "Decision Quality"
+    agent: kahneman
+    placement: "Final"
+    criteria: "12-Question Checklist passed, cognitive biases audited, pre-mortem completed"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TOOL INTEGRATION
+# ─────────────────────────────────────────────────────────────────────────────
+
+tools:
+  exa:
+    description: "Web search for current information and sources"
+    used_by: [higgins, cochrane, gilad, dr-orchestrator]
+
+  context7:
+    description: "Library documentation lookup"
+    used_by: [forsgren, cochrane]
+
+  web_search:
+    description: "General web search for research queries"
+    used_by: [higgins, gilad, cochrane]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CROSS-CUTTING CONCERNS
+# ─────────────────────────────────────────────────────────────────────────────
+
+cross_cutting:
+  evidence_standards:
+    description: "All agents follow evidence hierarchy and cite sources"
+    applies_to: "all"
+
+  structured_outputs:
+    description: "All agents produce structured outputs that feed downstream"
+    applies_to: "all"
+
+  qa_mandatory:
+    description: "Every pipeline run MUST pass through both QA agents"
+    applies_to: "all"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SETTINGS
+# ─────────────────────────────────────────────────────────────────────────────
+
+settings:
+  greeting:
+    level: archetypal
+    show_project_status: true
+    show_pipeline_status: true
+
+  activation:
+    prefix: "deep-research"
+    example: "@deep-research:dr-orchestrator"
+
+quality_standards:
+  min_score: 7.0
+  smoke_tests: 3
+  voice_dna_required: true
+  thinking_dna_required: true
+
+# ─────────────────────────────────────────────────────────────────────────────
+# STATISTICS
+# ─────────────────────────────────────────────────────────────────────────────
+
+stats:
+  total_agents: 11
+  tier_0_diagnostic: 3
+  tier_1_execution: 5
+  qa_agents: 2
+  orchestrator: 1
+  total_tasks: 17
+  total_workflows: 3

@@ -1,0 +1,368 @@
+# ============================================================
+# WF-003: Competitive Intelligence Pipeline
+# Duration: 15-30 minutes (single session)
+# Best for: Market analysis, competitor assessment, strategic early warning
+# ============================================================
+
+workflow:
+  id: wf-competitive-intel
+  name: "Competitive Intelligence Pipeline"
+  version: "1.0"
+  orchestrator: "dr-orchestrator"
+  description: "CI-focused pipeline: Classification -> Diagnostic -> CI Execution (Gilad+Higgins parallel) -> Pattern Analysis (Klein) -> QA -> Synthesis"
+  created: "2026-03-06"
+
+  metadata:
+    squad: "deep-research"
+    total_agents: 9  # Sackett, Booth, Creswell, Gilad, Higgins, Klein, Ioannidis, Kahneman, Orchestrator
+    tiers: 3
+    quality_gates: 4
+    estimated_duration: "15-30 min"
+    depth: "Maximum for market and competitive sources"
+    primary_use_cases: ["UC-002", "UC-004"]
+    focus: "Market intelligence, competitor analysis, strategic early warning, blind spot detection"
+
+  agent_emphasis:
+    primary_tier_1: [gilad, higgins]
+    secondary_tier_1: [klein]
+    rationale: |
+      Gilad drives competitive intelligence strategy (early warning, blind spots, war games).
+      Higgins gathers and verifies OSINT evidence with confidence grading.
+      Klein interprets ambiguous patterns and contradictions across Gilad+Higgins outputs.
+      Cochrane and Forsgren are NOT activated -- this is market/strategy, not technical evidence.
+
+# ============================================================
+# AGENT ROSTER
+# ============================================================
+
+agents_by_phase:
+
+  tier_0_diagnostic:
+    label: "Diagnostic (Question Architecture)"
+    execution_mode: SEQUENTIAL
+    agents:
+      - id: sackett
+        name: "David Sackett"
+        role: "Research Question Architect"
+        focus: "PICO formulation adapted for competitive questions (P=market, I=strategy, C=competitor, O=outcome)"
+      - id: booth
+        name: "Andrew Booth"
+        role: "Research Methodology Selector"
+        focus: "CI-appropriate review type (typically rapid or scoping), STARLITE for market sources"
+      - id: creswell
+        name: "John W. Creswell"
+        role: "Research Design Architect"
+        focus: "Typically convergent mixed methods (QUAL interviews + QUAN market data)"
+
+  tier_1_ci_execution:
+    label: "CI Execution (Intelligence Gathering)"
+    execution_mode: PARALLEL
+    description: "Gilad and Higgins work in parallel: Gilad frames the competitive landscape, Higgins verifies claims"
+    agents:
+      - id: gilad
+        name: "Benjamin Gilad"
+        role: "Competitive Intelligence Strategist"
+        focus: "Competitive Early Warning, blind spot detection, Key Intelligence Topics, war game design"
+      - id: higgins
+        name: "Eliot Higgins"
+        role: "OSINT Investigator & Source Verifier"
+        focus: "Market claim verification, competitor presence investigation, source credibility assessment"
+
+  tier_1_pattern_analysis:
+    label: "Pattern Analysis (Sensemaking)"
+    execution_mode: SEQUENTIAL
+    description: "Klein interprets patterns, contradictions, and anomalies from Gilad+Higgins outputs"
+    agents:
+      - id: klein
+        name: "Gary Klein"
+        role: "Expert Pattern Analyst & Sensemaking Specialist"
+        focus: "Cross-agent pattern recognition, competitor behavior sensemaking, premortem on strategic decisions"
+
+  tier_qa:
+    label: "Quality Assurance"
+    execution_mode: SEQUENTIAL
+    agents:
+      - id: ioannidis
+        name: "John Ioannidis"
+        role: "Research Quality Auditor"
+        focus: "Source reliability audit, CI claim PPV estimation, bias detection in market data"
+      - id: kahneman
+        name: "Daniel Kahneman"
+        role: "Decision Quality Auditor"
+        focus: "Strategic recommendation bias check, competitor dismissal bias, anchoring on market narratives"
+
+# ============================================================
+# PHASES
+# ============================================================
+
+phases:
+
+  - id: PHASE-1
+    name: "Classification"
+    agent: dr-orchestrator
+    tier: 0
+    description: "Classify as competitive intelligence query, identify specific CI focus"
+    tasks:
+      - task_file: tasks/classify-research-query.md
+        agent: dr-orchestrator
+        mode: competitive-intel
+    checkpoint:
+      criteria:
+        - "Query classified as UC-002 (Strategic Decision Support) and/or UC-004 (Market Intelligence)"
+        - "Key Intelligence Topics identified"
+        - "Competitor set defined (who are we investigating?)"
+      on_fail: "If not a CI question, redirect to wf-deep-research"
+    error_handling:
+      - condition: "Query is technical, not competitive"
+        action: "Redirect to wf-deep-research with UC-001 classification"
+      - condition: "No specific competitors named"
+        action: "Proceed with landscape mode (Gilad identifies competitor set)"
+
+  - id: PHASE-2
+    name: "Diagnostic"
+    tier: 0
+    execution_mode: SEQUENTIAL
+    description: "Sequential: Sackett -> Booth -> Creswell (CI-adapted)"
+    tasks:
+      - task_file: tasks/formulate-pico-question.md
+        agent: sackett
+        mode: competitive-intel
+        output: |
+          CI-adapted PICO:
+          P = Market/industry segment (not patient population)
+          I = Strategic initiative or competitive action under evaluation
+          C = Competitor's likely response or alternative strategy
+          O = Market outcome (share, revenue, positioning, timing)
+      - task_file: tasks/select-review-methodology.md
+        agent: booth
+        input_from: sackett
+        output: "Rapid review or scoping review + STARLITE for market sources (industry reports, filings, news)"
+      - task_file: tasks/design-research-plan.md
+        agent: creswell
+        input_from: [sackett, booth]
+        output: "Typically convergent QUAL+QUAN (interviews/OSINT + market data/metrics)"
+    checkpoint:
+      criteria:
+        - "PICO adapted for competitive context"
+        - "Review type selected (rapid or scoping for CI)"
+        - "Research design specified"
+      on_fail: "Re-run failing agent with CI-specific guidance"
+    error_handling:
+      - condition: "Creswell not needed (pure market data question)"
+        action: "Skip Creswell, default to quantitative market analysis"
+
+  - id: PHASE-3
+    name: "CI Execution"
+    tier: 1
+    execution_mode: PARALLEL
+    description: "Gilad + Higgins work in parallel. Gilad frames competitive landscape. Higgins verifies claims."
+    synergy: "Higgins gathers OSINT; Gilad interprets competitively. Their outputs cross-pollinate."
+    tasks:
+      - task_file: tasks/analyze-competitive-intelligence.md
+        agent: gilad
+        output: |
+          Deliverables:
+          - Competitive landscape map with threat prioritization
+          - Competitive Early Warning assessment (risks, indicators, tripwires)
+          - Blind spot identification report (BIM analysis)
+          - Key Intelligence Topics aligned to user's strategic question
+          - War game recommendation (if high-stakes decision)
+      - task_file: tasks/investigate-osint.md
+        agent: higgins
+        output: |
+          Deliverables:
+          - Competitor claim verification report (confidence-graded)
+          - Market presence investigation (verified vs unsubstantiated)
+          - Source credibility assessment for all market data
+          - Digital evidence archive with provenance
+    checkpoint:
+      criteria:
+        - "Gilad produced competitive landscape + early warning assessment"
+        - "Higgins produced confidence-graded verification report"
+        - "Minimum 5 unique sources across both agents"
+      on_fail: "Retry failed agent once, then proceed with available output"
+    error_handling:
+      - condition: "Higgins cannot verify Gilad's claims"
+        action: "Mark claims as 'unverified' in final report"
+      - condition: "Contradictions between Gilad and Higgins"
+        action: "Klein will resolve in PHASE-4 sensemaking"
+
+  - id: PHASE-4
+    name: "Pattern Analysis"
+    tier: 1
+    execution_mode: SEQUENTIAL
+    description: "Klein interprets patterns across Gilad+Higgins outputs"
+    tasks:
+      - task_file: tasks/analyze-decision-patterns.md
+        agent: klein
+        input_from: [gilad, higgins]
+        output: |
+          Deliverables:
+          - Cross-agent sensemaking (Data/Frame analysis of Gilad+Higgins outputs)
+          - Competitive behavior pattern recognition (what are competitors likely to do?)
+          - Anomaly detection (what signals don't fit the expected pattern?)
+          - Premortem on proposed strategic response
+          - "Dog that didn't bark" analysis (what expected evidence is missing?)
+    checkpoint:
+      criteria:
+        - "Multiple frames identified for competitive situation"
+        - "Discriminating data identified between frames"
+        - "Premortem conducted on strategic options"
+      on_fail: "Proceed with Gilad+Higgins output without Klein interpretation"
+    error_handling:
+      - condition: "No clear pattern emerges"
+        action: "Klein reports ambiguity honestly, recommends additional data collection"
+      - condition: "Klein contradicts Gilad"
+        action: "Present both interpretations with confidence levels (contradictions are features)"
+
+  - id: PHASE-5
+    name: "Quality Assurance"
+    tier: 2
+    execution_mode: SEQUENTIAL
+    description: "Sequential: Ioannidis -> Kahneman (CI-adapted QA)"
+    tasks:
+      - task_file: tasks/audit-evidence-reliability.md
+        agent: ioannidis
+        input_from: [gilad, higgins, klein]
+        mode: competitive-intel
+        output: |
+          CI-adapted audit:
+          - Source reliability assessment (market reports, news, filings)
+          - CI claim PPV estimation (are competitor assessments likely accurate?)
+          - Bias patterns in market data (survivorship bias, reporting bias)
+          - Flag: industry reports with funding conflicts
+      - task_file: tasks/audit-decision-quality.md
+        agent: kahneman
+        input_from: [ioannidis, gilad, higgins, klein]
+        mode: competitive-intel
+        output: |
+          CI-adapted bias check:
+          - Competitor dismissal bias (underestimating non-traditional competitors)
+          - Anchoring on current market narrative (is the market shifting?)
+          - Confirmation bias (seeking data that confirms existing strategy)
+          - Loss aversion (excessive caution in competitive response)
+          - Halo effect (overrating prestigious competitors)
+          - Premortem on recommended competitive response
+    checkpoint:
+      criteria:
+        - "Source reliability audited for all market data"
+        - "Strategic recommendations bias-checked"
+        - "Competitor dismissal bias specifically assessed"
+        - "Premortem conducted on competitive strategy"
+      human_review: true
+      on_fail: "Flag unresolved quality issues in final report"
+
+  - id: PHASE-6
+    name: "CI Synthesis"
+    tier: 0
+    description: "Consolidate into competitive intelligence report"
+    tasks:
+      - task_file: tasks/synthesize-final-report.md
+        agent: dr-orchestrator
+        mode: competitive-intel
+        input_from: "All phases"
+    checkpoint:
+      criteria:
+        - "CI report complete (all sections populated)"
+        - "Competitive landscape visualized"
+        - "Early warning indicators defined with tripwires"
+        - "Blind spots documented"
+        - "Actionable recommendations with confidence levels"
+
+# ============================================================
+# QUALITY GATES
+# ============================================================
+
+quality_gates:
+
+  - id: QG-001
+    name: "Input Validation"
+    phase: PHASE-1
+    type: non-blocking
+    checks:
+      - "Query is a competitive/market intelligence question"
+      - "Competitor set identifiable (or landscape mode)"
+      - "Strategic context provided (what decision is this informing?)"
+
+  - id: QG-002
+    name: "Diagnostic Completeness"
+    phase: PHASE-2
+    type: blocking
+    checks:
+      - "PICO adapted for competitive context"
+      - "Review type selected (rapid or scoping)"
+      - "Key Intelligence Topics defined"
+
+  - id: QG-003
+    name: "CI Execution Completeness"
+    phase: PHASE-3
+    type: soft-blocking
+    checks:
+      - "Gilad produced competitive landscape"
+      - "Higgins produced confidence-graded findings"
+      - ">= 5 unique sources cited"
+
+  - id: QG-004
+    name: "CI Output Quality"
+    phase: PHASE-5
+    type: blocking
+    checks:
+      - "No strategic recommendation based on single unverified claim"
+      - "Competitor dismissal bias assessed"
+      - "Early warning indicators have defined tripwires"
+      - "All market claims have source credibility ratings"
+
+# ============================================================
+# REPORT STRUCTURE
+# ============================================================
+
+report_structure:
+  sections:
+    1_executive_summary: "Competitive situation overview + top 3 strategic implications"
+    2_competitive_landscape: "Competitor map with threat prioritization (high/moderate/emerging)"
+    3_early_warning: "Risks, monitoring indicators, and tripwire thresholds"
+    4_blind_spots: "Organizational assumptions contradicted by evidence (BIM report)"
+    5_pattern_analysis: "Klein's sensemaking of competitive dynamics"
+    6_evidence_verification: "Higgins's confidence-graded findings"
+    7_quality_assessment: "Ioannidis + Kahneman audit results"
+    8_recommendations: "Actionable strategic recommendations with confidence levels"
+    9_war_game_brief: "War game design if recommended by Gilad"
+    10_monitoring_plan: "Ongoing intelligence monitoring plan with indicators and cadence"
+    11_sources: "Full source list with credibility ratings"
+
+  confidence_levels:
+    high: "Confirmed by 3+ independent sources, no critical biases, PPV > 0.7"
+    medium: "Likely (2 sources), minor bias flags, PPV 0.4-0.7"
+    low: "Weak (single source), significant bias flags, PPV < 0.4"
+
+# ============================================================
+# CI-SPECIFIC SYNERGIES
+# ============================================================
+
+agent_synergies:
+  - pair: [higgins, gilad]
+    synergy: "Higgins gathers and verifies OSINT evidence. Gilad interprets it through competitive strategy lens."
+    handoff: "Higgins delivers confidence-graded findings to Gilad for strategic interpretation."
+  - pair: [gilad, klein]
+    synergy: "Gilad identifies competitive dynamics. Klein applies sensemaking to spot patterns and anomalies."
+    handoff: "Gilad delivers landscape + blind spots. Klein runs Data/Frame analysis + premortem."
+  - pair: [klein, kahneman]
+    synergy: "Klein identifies patterns through expert intuition. Kahneman checks for cognitive biases in pattern recognition."
+    handoff: "Klein delivers interpretation. Kahneman audits for anchoring, confirmation, competitor dismissal."
+
+# ============================================================
+# CONSTRAINTS
+# ============================================================
+
+constraints:
+  max_parallel_agents: 2  # Gilad + Higgins in parallel
+  max_sources_per_agent: 20
+  max_sources_per_report: 40
+  max_retries_per_agent: 1
+  target_duration_minutes: 30
+
+# ============================================================
+# COMPLETION SIGNAL
+# ============================================================
+
+completion_signal: "<promise>COMPLETE:CI</promise>"

@@ -1,0 +1,331 @@
+# ============================================================
+# WF-001: Deep Research Pipeline
+# Duration: Variable (1-5 sessions)
+# Best for: Comprehensive research requiring full evidence pipeline
+# ============================================================
+
+workflow:
+  id: wf-deep-research
+  name: "Deep Research Pipeline"
+  version: "1.0"
+  orchestrator: "dr-orchestrator"
+  description: "Complete 3-tier research pipeline: Diagnostic -> Execution -> QA -> Synthesis"
+  created: "2026-03-06"
+
+  metadata:
+    squad: "deep-research"
+    total_agents: 11
+    tiers: 3
+    quality_gates: 4
+    estimated_duration: "15-45 min (single session) to 1-5 sessions (complex queries)"
+    depth: "Maximum -- all tiers, all agents, full QA"
+
+# ============================================================
+# AGENT ROSTER BY TIER
+# ============================================================
+
+agents_by_phase:
+
+  tier_0_diagnostic:
+    label: "Diagnostic (Question Architecture)"
+    execution_mode: SEQUENTIAL
+    description: "Transforms vague queries into precise, answerable, structured research plans"
+    agents:
+      - id: sackett
+        name: "David Sackett"
+        role: "Research Question Architect"
+        focus: "PICO formulation, question type classification, evidence level assignment"
+      - id: booth
+        name: "Andrew Booth"
+        role: "Research Methodology Selector"
+        focus: "14 review types selection, STARLITE search design, SALSA workflow"
+      - id: creswell
+        name: "John W. Creswell"
+        role: "Research Design Architect"
+        focus: "Qual/quant/mixed methods selection, integration strategy, joint displays"
+
+  tier_1_execution:
+    label: "Execution (Evidence Gathering & Analysis)"
+    execution_mode: PARALLEL_BY_USE_CASE
+    description: "Specialist agents gather and analyze evidence based on use case classification"
+    agents:
+      - id: forsgren
+        name: "Nicole Forsgren"
+        role: "Technical Performance Diagnostician"
+        focus: "DORA metrics, SPACE framework, capability gap analysis"
+        use_cases: ["UC-001", "UC-004"]
+      - id: cochrane
+        name: "Archie Cochrane"
+        role: "Evidence Synthesis Auditor"
+        focus: "Systematic review, meta-analysis, GRADE assessment, PRISMA reporting"
+        use_cases: ["UC-001", "UC-003", "UC-004"]
+      - id: higgins
+        name: "Eliot Higgins"
+        role: "OSINT Investigator & Source Verifier"
+        focus: "Open-source investigation, multi-source triangulation, confidence grading"
+        use_cases: ["UC-003", "UC-004"]
+      - id: klein
+        name: "Gary Klein"
+        role: "Expert Pattern Analyst & Sensemaking Specialist"
+        focus: "Pattern recognition, data/frame sensemaking, premortem, anomaly detection"
+        use_cases: ["UC-002", "UC-003"]
+      - id: gilad
+        name: "Benjamin Gilad"
+        role: "Competitive Intelligence Strategist"
+        focus: "Early warning, blind spot detection, war games, competitive landscape"
+        use_cases: ["UC-002", "UC-004"]
+
+  tier_qa:
+    label: "Quality Assurance (Evidence & Decision Audit)"
+    execution_mode: SEQUENTIAL
+    description: "Mandatory dual audit: evidence reliability then cognitive bias detection"
+    agents:
+      - id: ioannidis
+        name: "John Ioannidis"
+        role: "Research Quality Auditor"
+        focus: "PPV calculation, 235-bias taxonomy, meta-research 5 pillars, reliability grading"
+      - id: kahneman
+        name: "Daniel Kahneman"
+        role: "Decision Quality Auditor"
+        focus: "12-Question Bias Checklist, MAP protocol, premortem, decision hygiene"
+
+# ============================================================
+# PHASES
+# ============================================================
+
+phases:
+
+  - id: PHASE-1
+    name: "Classification"
+    agent: dr-orchestrator
+    tier: 0
+    description: "Classify research query into use cases UC-001~004"
+    tasks:
+      - task_file: tasks/classify-research-query.md
+        agent: dr-orchestrator
+    checkpoint:
+      criteria:
+        - "Use case identified (UC-001 through UC-004, multi-label allowed)"
+        - "Agent routing determined (primary + secondary agents selected)"
+        - "Workflow variant confirmed (deep research)"
+      on_fail: "Request clarification from user"
+    error_handling:
+      - condition: "Query too vague to classify"
+        action: "Return to user with structured clarification questions"
+      - condition: "Query outside squad scope"
+        action: "Reject with suggestion for appropriate squad"
+
+  - id: PHASE-2
+    name: "Diagnostic"
+    tier: 0
+    execution_mode: SEQUENTIAL
+    description: "Sequential: Sackett -> Booth -> Creswell"
+    tasks:
+      - task_file: tasks/formulate-pico-question.md
+        agent: sackett
+        output: "Structured PICO question + question type + evidence level"
+      - task_file: tasks/select-review-methodology.md
+        agent: booth
+        input_from: sackett
+        output: "Review type + STARLITE protocol + synthesis plan"
+      - task_file: tasks/design-research-plan.md
+        agent: creswell
+        input_from: [sackett, booth]
+        output: "Research design specification + phase plan + integration strategy"
+    checkpoint:
+      criteria:
+        - "PICO well-formed (all 4 components + measurable outcome + timeframe)"
+        - "Methodology selected (review type from 14 types with justification)"
+        - "Research plan complete (design type + integration points if mixed)"
+      human_review: true
+      on_fail: "Re-run failing agent with clarified input"
+    error_handling:
+      - condition: "Sackett cannot formulate PICO (query too abstract)"
+        action: "Return to PHASE-1 with request for user clarification"
+      - condition: "Booth cannot select review type"
+        action: "Default to scoping review with explicit trade-off documentation"
+      - condition: "Creswell not needed (pure quantitative question)"
+        action: "Skip Creswell, default to quantitative design, proceed to PHASE-3"
+
+  - id: PHASE-3
+    name: "Execution"
+    tier: 1
+    execution_mode: PARALLEL
+    description: "Parallel execution of selected Tier 1 specialists"
+    tasks:
+      - task_file: tasks/assess-technical-performance.md
+        agent: forsgren
+        condition: "UC-001 or UC-004"
+        output: "DORA assessment + SPACE analysis + capability gap report"
+      - task_file: tasks/conduct-systematic-review.md
+        agent: cochrane
+        condition: "UC-001 or UC-003 or UC-004"
+        output: "Systematic review + GRADE assessment + Summary of Findings table"
+      - task_file: tasks/investigate-osint.md
+        agent: higgins
+        condition: "UC-003 or UC-004"
+        output: "OSINT investigation report + confidence-graded findings"
+      - task_file: tasks/analyze-decision-patterns.md
+        agent: klein
+        condition: "UC-002 or UC-003"
+        output: "Sensemaking analysis + pattern identification + premortem"
+      - task_file: tasks/analyze-competitive-intelligence.md
+        agent: gilad
+        condition: "UC-002 or UC-004"
+        output: "Competitive landscape + early warning assessment + blind spot report"
+    checkpoint:
+      criteria:
+        - "All assigned agents produced output artifacts"
+        - "Evidence collected from minimum 5 unique sources"
+        - "Contradictions between agents flagged (not hidden)"
+      on_fail: "Re-run failed agents (max 1 retry), then graceful degradation with flag"
+    error_handling:
+      - condition: "Agent produces no output after retry"
+        action: "Proceed without that agent, flag gap in final report"
+      - condition: "Agents produce contradictory findings"
+        action: "If Klein not already active, activate Klein for sensemaking"
+      - condition: "Source count below minimum (< 5)"
+        action: "Run additional search with broader queries via Cochrane or Higgins"
+
+  - id: PHASE-4
+    name: "Quality Assurance"
+    tier: 2
+    execution_mode: SEQUENTIAL
+    description: "Sequential QA: Ioannidis -> Kahneman"
+    tasks:
+      - task_file: tasks/audit-evidence-reliability.md
+        agent: ioannidis
+        input_from: "All PHASE-3 agents"
+        output: "PPV calculations + bias patterns + reliability grades"
+      - task_file: tasks/audit-decision-quality.md
+        agent: kahneman
+        input_from: [ioannidis, "All PHASE-3 agents"]
+        output: "12-Question Bias Checklist + MAP evaluation + premortem + verdict"
+    checkpoint:
+      criteria:
+        - "PPV calculated for all key findings"
+        - "Bias audit complete (12-Question Checklist applied)"
+        - "Decision quality verified (MAP applied for complex decisions)"
+        - "Premortem conducted on major recommendations"
+      human_review: true
+      on_fail: "Report cannot be delivered until QA issues are documented"
+    error_handling:
+      - condition: "PPV too low for all findings (< 0.3)"
+        action: "Flag entire research as low-confidence, recommend additional data collection"
+      - condition: "Multiple critical biases detected"
+        action: "Mandate revision of recommendations before synthesis"
+
+  - id: PHASE-5
+    name: "Synthesis"
+    tier: 0
+    description: "Consolidate all outputs into final report"
+    tasks:
+      - task_file: tasks/synthesize-final-report.md
+        agent: dr-orchestrator
+        input_from: "All phases"
+    checkpoint:
+      criteria:
+        - "Report complete (all 8 sections populated)"
+        - "All sources cited with credibility ratings"
+        - "QA findings addressed (biases flagged, PPV stated, recommendations adjusted)"
+        - "Confidence levels assigned to all findings"
+        - "Limitations documented"
+    error_handling:
+      - condition: "Report incomplete (missing sections)"
+        action: "Identify missing agent output, request re-run or document gap"
+
+# ============================================================
+# QUALITY GATES
+# ============================================================
+
+quality_gates:
+
+  - id: QG-001
+    name: "Input Validation"
+    phase: PHASE-1
+    type: non-blocking
+    checks:
+      - "Query is specific enough to decompose into sub-questions"
+      - "Query is within squad's 4 use cases"
+      - "Query is answerable with available tools"
+
+  - id: QG-002
+    name: "Diagnostic Completeness"
+    phase: PHASE-2
+    type: blocking
+    checks:
+      - "Sackett produced a valid PICO structure"
+      - "Booth selected from 14 Types taxonomy"
+      - "Creswell produced a design specification"
+
+  - id: QG-003
+    name: "Execution Completeness"
+    phase: PHASE-3
+    type: soft-blocking
+    checks:
+      - "Each activated agent produced at least 1 output artifact"
+      - ">= 5 unique sources cited across all agents"
+      - "Contradictions flagged for Klein if present"
+
+  - id: QG-004
+    name: "Output Quality"
+    phase: PHASE-4
+    type: blocking
+    checks:
+      - "No finding with PPV < 0.3 presented as strong evidence"
+      - "No recommendation flagged with >= 2 cognitive biases"
+      - "All claims have traceable sources"
+
+# ============================================================
+# QUALITY CHECKLIST
+# ============================================================
+
+quality_checklist:
+  - "[ ] Query classified into use case(s)"
+  - "[ ] Tier 0 complete (PICO + methodology + design)"
+  - "[ ] Tier 1 agents activated based on classification"
+  - "[ ] QG-003 execution completeness checked"
+  - "[ ] Ioannidis reliability audit complete"
+  - "[ ] Kahneman bias audit complete"
+  - "[ ] Contradictions surfaced (not hidden)"
+  - "[ ] Final report structured and complete"
+  - "[ ] Confidence levels assigned to all findings"
+  - "[ ] Sources listed with credibility ratings"
+  - "[ ] Limitations and gaps documented"
+
+# ============================================================
+# REPORT STRUCTURE
+# ============================================================
+
+report_structure:
+  sections:
+    1_executive_summary: "Key findings and recommendations (3-5 bullets)"
+    2_research_design: "How this research was conducted (Tier 0 outputs)"
+    3_findings: "Detailed findings organized by use case (Tier 1 outputs)"
+    4_quality_assessment: "Evidence reliability and bias audit (QA outputs)"
+    5_recommendations: "Actionable recommendations with confidence levels"
+    6_limitations: "Known limitations, gaps, and caveats"
+    7_sources: "Full source list with credibility ratings"
+    8_methodology_notes: "PICO formulation, review type, research design"
+
+  confidence_levels:
+    high: "PPV > 0.7, no cognitive biases flagged, multiple corroborating sources"
+    medium: "PPV 0.4-0.7, minor bias flags, some corroboration"
+    low: "PPV < 0.4, significant bias flags, limited sources"
+
+# ============================================================
+# CONSTRAINTS
+# ============================================================
+
+constraints:
+  max_parallel_use_cases: 2
+  max_sources_per_search: 30
+  max_sources_per_report: 50
+  max_retries_per_agent: 1
+  max_qa_iterations: 2
+
+# ============================================================
+# COMPLETION SIGNAL
+# ============================================================
+
+completion_signal: "<promise>COMPLETE</promise>"
