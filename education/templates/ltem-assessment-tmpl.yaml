@@ -1,0 +1,146 @@
+# LTEM (Learning Transfer Evaluation Model) Assessment Template
+# Purpose: Evaluate transfer quality of assessments following Kirkpatrick-style framework
+# Output: LTEM tier classification and upgrade path for each assessment
+
+metadata:
+  assessment_id: "{ASSESSMENT_ID}"  # e.g., "ltem-001-module-email-seq"
+  module_id: "{MODULE_ID}"  # Parent module
+  evaluator: "{EVALUATOR}"
+  evaluation_date: "{EVALUATION_DATE}"
+  version: "{VERSION}"
+
+ltem_framework:
+  # The 5 tiers of learning transfer
+  tier_0:
+    name: "TIER_0 - No Transfer"
+    description: "Memorization without understanding. Cannot apply."
+    example: "Recite definition but can't use it."
+
+  tier_1:
+    name: "TIER_1 - Near Transfer"
+    description: "Apply in identical context with support."
+    example: "Follow template to create email sequence."
+
+  tier_2:
+    name: "TIER_2 - Intermediate Transfer"
+    description: "Apply in similar context with minimal support."
+    example: "Adapt email sequence template to different product."
+
+  tier_3:
+    name: "TIER_3 - Far Transfer"
+    description: "Apply in novel context without support."
+    example: "Design email funnel for industry not taught."
+
+  tier_4:
+    name: "TIER_4 - Expert Transfer"
+    description: "Innovate, create new methods, teach others."
+    example: "Invent new email funnel pattern, write guide."
+
+module_context:
+  # What module is being assessed
+  module_name: "{MODULE_NAME}"
+  competencies_targeted:
+    - "{COMPETENCY_1}"
+    - "{COMPETENCY_2}"
+  bloom_level: "{BLOOM_LEVEL}"  # Highest Bloom level in module
+
+assessments:
+  # Evaluate each assessment in the module
+  - assessment_name: "{ASSESSMENT_1}"
+    type: "{TYPE}"  # e.g., "Quiz", "Project", "Case study"
+    description: |
+      {DESCRIPTION}
+      # What learner must do
+
+    ltem_tier: "{TIER}"  # TIER_0, TIER_1, TIER_2, TIER_3, TIER_4
+
+    justification: |
+      {JUSTIFICATION}
+      # Why this tier (use framework definitions above)
+      # E.g., "TIER_1: Learner follows provided template in same context as taught"
+
+    context_similarity: "{IDENTICAL|SIMILAR|NOVEL}"  # To learning context
+    support_level: "{FULL|PARTIAL|NONE}"  # Scaffolding available
+
+    upgrade_path:
+      # How to raise this assessment to next tier
+      current_tier: "{CURRENT_TIER}"
+      next_tier: "{NEXT_TIER}"
+      changes_needed: |
+        {CHANGES}
+        # E.g., "To reach TIER_2: Remove template, provide only requirements checklist"
+
+    examples:
+      tier_0_example: "{EXAMPLE}"  # What TIER_0 looks like for this assessment
+      tier_1_example: "{EXAMPLE}"
+      tier_2_example: "{EXAMPLE}"
+      tier_3_example: "{EXAMPLE}"
+      tier_4_example: "{EXAMPLE}"
+
+  - assessment_name: "{ASSESSMENT_2}"
+    type: "{TYPE}"
+    description: |
+      {DESCRIPTION}
+    ltem_tier: "{TIER}"
+    justification: |
+      {JUSTIFICATION}
+    context_similarity: "{SIMILARITY}"
+    support_level: "{SUPPORT}"
+    upgrade_path:
+      current_tier: "{CURRENT_TIER}"
+      next_tier: "{NEXT_TIER}"
+      changes_needed: |
+        {CHANGES}
+
+overall_tier:
+  # Module's overall LTEM tier (lowest common denominator)
+  tier: "{TIER}"
+  rationale: |
+    {RATIONALE}
+    # E.g., "Module requires TIER_1 minimum (can apply with template)"
+
+  distribution:
+    tier_0_count: {COUNT}
+    tier_1_count: {COUNT}
+    tier_2_count: {COUNT}
+    tier_3_count: {COUNT}
+    tier_4_count: {COUNT}
+
+minimum_met:
+  # Does module meet minimum transfer requirement?
+  minimum_required: "{TIER}"  # From curriculum design
+  minimum_achieved: "{TIER}"
+  met: {BOOLEAN}  # true/false
+
+  verdict: "{VERDICT}"  # e.g., "Acceptable", "Needs upgrade", "Below standard"
+
+gaps:
+  # Where transfer is weak
+  - gap: "{GAP_1}"  # e.g., "No TIER_2+ assessments in module"
+    impact: "{IMPACT}"  # e.g., "Learners cannot adapt knowledge to new contexts"
+    recommendation: "{RECOMMENDATION}"  # e.g., "Add case study with novel scenario"
+
+upgrade_roadmap:
+  # Prioritized path to improve transfer
+  - priority: "High"
+    assessment: "{ASSESSMENT}"
+    current_tier: "{TIER}"
+    target_tier: "{TIER}"
+    action: "{ACTION}"
+    effort: "{EFFORT}"  # Low/Medium/High
+
+  - priority: "Medium"
+    assessment: "{ASSESSMENT}"
+    current_tier: "{TIER}"
+    target_tier: "{TIER}"
+    action: "{ACTION}"
+    effort: "{EFFORT}"
+
+validation:
+  # How to verify transfer improvement
+  method: "{METHOD}"  # e.g., "Pilot with learners, observe performance"
+  success_criteria: "{CRITERIA}"  # e.g., "80% complete TIER_2 assessment without help"
+
+notes: |
+  {ADDITIONAL_NOTES}
+  # Iteration history, learner performance data, calibration with other evaluators

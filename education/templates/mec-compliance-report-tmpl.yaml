@@ -1,0 +1,172 @@
+# MEC Compliance Report Template
+# Purpose: Validate curriculum compliance with Brazilian MEC regulations
+# Output: Compliance status, gaps, and action plan
+
+metadata:
+  report_id: "{REPORT_ID}"  # e.g., "mec-comp-001-marketing-course"
+  curriculum_id: "{CURRICULUM_ID}"
+  course_name: "{COURSE_NAME}"
+  institution: "{INSTITUTION}"  # If applicable
+  evaluator: "{EVALUATOR}"
+  evaluation_date: "{EVALUATION_DATE}"
+  version: "{VERSION}"
+
+course_type:
+  # MEC categorization
+  type: "{TYPE}"  # Livre, Técnico, Tecnólogo, Graduação, Pós-graduação
+
+  definitions:
+    livre:
+      description: "Cursos livres (não regulamentados pelo MEC)"
+      requirements: "Nenhuma exigência formal de carga horária ou estrutura"
+      applies_to_this_course: {BOOLEAN}
+
+    tecnico:
+      description: "Cursos técnicos de nível médio"
+      requirements: "Mínimo 800-1200h, projeto pedagógico, credenciamento MEC"
+      applies_to_this_course: {BOOLEAN}
+
+    tecnologo:
+      description: "Cursos superiores de tecnologia"
+      requirements: "Mínimo 1600-2400h, autorização MEC, ENADE"
+      applies_to_this_course: {BOOLEAN}
+
+    graduacao:
+      description: "Cursos de graduação (bacharelado, licenciatura)"
+      requirements: "Mínimo 2400-4800h, DCNs, ENADE, credenciamento"
+      applies_to_this_course: {BOOLEAN}
+
+    pos_graduacao:
+      description: "Especialização, mestrado, doutorado"
+      requirements: "Mínimo 360h (lato sensu), autorização CAPES"
+      applies_to_this_course: {BOOLEAN}
+
+  selected_type: "{SELECTED_TYPE}"
+  justification: |
+    {JUSTIFICATION}
+    # Why this categorization
+
+applicable_regulations:
+  # MEC regulations that apply
+  - regulation: "{REGULATION_1}"  # e.g., "Resolução CNE/CES nº 1/2007" (pós-graduação)
+    description: "{DESCRIPTION}"
+    requirement: "{REQUIREMENT}"  # E.g., "Mínimo 360 horas"
+    source: "{SOURCE}"  # URL or document reference
+
+  - regulation: "{REGULATION_2}"
+    description: "{DESCRIPTION}"
+    requirement: "{REQUIREMENT}"
+    source: "{SOURCE}"
+
+checklist_results:
+  # Compliance checklist (varies by course type)
+  # Example for Pós-graduação lato sensu (360h minimum)
+
+  carga_horaria:
+    item: "Carga horária mínima"
+    requirement: "{REQUIREMENT}"  # e.g., "360 horas"
+    designed: "{DESIGNED}"  # e.g., "380 horas"
+    status: "{COMPLIANT|NON_COMPLIANT|N/A}"
+    notes: "{NOTES}"
+
+  corpo_docente:
+    item: "Corpo docente qualificado"
+    requirement: "{REQUIREMENT}"  # e.g., "Mínimo 50% especialistas, 30% mestres/doutores"
+    designed: "{DESIGNED}"
+    status: "{STATUS}"
+    notes: "{NOTES}"
+
+  projeto_pedagogico:
+    item: "Projeto pedagógico documentado"
+    requirement: "{REQUIREMENT}"  # e.g., "Objetivos, metodologia, avaliação, bibliografia"
+    designed: "{DESIGNED}"
+    status: "{STATUS}"
+    notes: "{NOTES}"
+
+  avaliacao:
+    item: "Sistema de avaliação"
+    requirement: "{REQUIREMENT}"  # e.g., "Avaliação de aprendizagem + TCC ou equivalente"
+    designed: "{DESIGNED}"
+    status: "{STATUS}"
+    notes: "{NOTES}"
+
+  certificacao:
+    item: "Certificação"
+    requirement: "{REQUIREMENT}"  # e.g., "Certificado de especialização (instituição credenciada)"
+    designed: "{DESIGNED}"
+    status: "{STATUS}"
+    notes: "{NOTES}"
+
+  # Add more checklist items as needed for course type
+
+hours_comparison:
+  # Detailed hour breakdown
+  designed_hours:
+    total: {HOURS}
+    breakdown:
+      - component: "{COMPONENT_1}"  # e.g., "Aulas síncronas"
+        hours: {HOURS}
+
+      - component: "{COMPONENT_2}"  # e.g., "Estudo assíncrono"
+        hours: {HOURS}
+
+      - component: "{COMPONENT_3}"  # e.g., "Projeto final (TCC)"
+        hours: {HOURS}
+
+  minimum_required: {HOURS}
+  surplus_deficit: {HOURS}  # Positive = surplus, Negative = deficit
+
+warnings:
+  # Non-blocking issues
+  - warning: "{WARNING_1}"  # e.g., "Carga horária próxima do mínimo (pouca margem)"
+    severity: "{LOW|MEDIUM|HIGH}"
+    recommendation: "{RECOMMENDATION}"
+
+blocks:
+  # Blocking issues (prevent compliance)
+  - block: "{BLOCK_1}"  # e.g., "Carga horária 320h (abaixo do mínimo 360h)"
+    regulation: "{REGULATION}"  # Which regulation is violated
+    resolution: "{RESOLUTION}"  # How to fix
+    effort: "{EFFORT}"  # Low/Medium/High
+
+overall_status:
+  # Summary verdict
+  status: "{COMPLIANT|NON_COMPLIANT|N/A}"
+
+  compliant_items: {COUNT}
+  non_compliant_items: {COUNT}
+  na_items: {COUNT}
+
+  verdict: |
+    {VERDICT}
+    # E.g., "NON-COMPLIANT: Carga horária insuficiente (320h vs 360h mínimo)"
+
+  certification_eligibility: {BOOLEAN}  # Can this course issue MEC-recognized certificate?
+
+action_plan:
+  # If non-compliant, what needs to happen
+  priority: "{PRIORITY}"  # High/Medium/Low
+
+  actions:
+    - action: "{ACTION_1}"  # e.g., "Adicionar 40h de conteúdo (módulos ou TCC)"
+      owner: "{OWNER}"
+      deadline: "{DEADLINE}"
+      effort: "{EFFORT}"
+
+    - action: "{ACTION_2}"
+      owner: "{OWNER}"
+      deadline: "{DEADLINE}"
+      effort: "{EFFORT}"
+
+exemptions:
+  # If curso livre or other exemptions apply
+  applies: {BOOLEAN}
+  reason: |
+    {REASON}
+    # E.g., "Curso livre: não sujeito a regulamentação MEC"
+
+  alternative_certification: "{ALTERNATIVE}"  # If not MEC-recognized, what is offered
+
+notes: |
+  {ADDITIONAL_NOTES}
+  # Context, regulatory interpretation, legal review status

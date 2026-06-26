@@ -1,0 +1,53 @@
+schema_version: "1.0.0"
+service_catalog: data/mcp-integration-catalog.yaml
+service_ref_policy:
+  source_of_truth: "service_catalog"
+  required_reference_fields: [service_ref, endpoint, integration_type]
+
+topology:
+  claude_code_cli:
+    service_ref: service_catalog
+    endpoint: "local://claude-code-cli"
+    integration_type: runtime
+  anthropic_docs:
+    service_ref: service_catalog
+    endpoint: "https://code.claude.com/docs/en/overview"
+    integration_type: documentation
+  project_runtime:
+    service_ref: service_catalog
+    endpoint: ".claude/settings.json"
+    integration_type: workspace-config
+
+runtime_connections:
+  - id: cli-to-settings
+    source: claude-code-cli
+    target: project-runtime
+    service_ref: service_catalog
+    endpoint: ".claude/settings.json"
+    integration_type: config-read
+  - id: hooks-to-runtime
+    source: hooks-architect
+    target: claude-code-cli
+    service_ref: service_catalog
+    endpoint: ".claude/hooks/"
+    integration_type: automation
+  - id: mcp-to-runtime
+    source: mcp-integrator
+    target: project-runtime
+    service_ref: service_catalog
+    endpoint: ".claude/mcp.json"
+    integration_type: integration
+  - id: roadmap-to-docs
+    source: roadmap-sentinel
+    target: anthropic-docs
+    service_ref: service_catalog
+    endpoint: "https://claude.com/blog/"
+    integration_type: changelog
+
+service_catalog_refs:
+  - service_ref: claude-code-cli
+    owner: claude-mastery-chief
+  - service_ref: mcp-integration-catalog
+    owner: mcp-integrator
+  - service_ref: knowledge-update-report
+    owner: roadmap-sentinel

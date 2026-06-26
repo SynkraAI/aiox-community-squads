@@ -1,0 +1,134 @@
+# DMMM Template - Digital Marketing & Measurement Model
+# Clone: @avinash-kaushik (Tier 2)
+# Avinash Kaushik's signature framework for measurement strategy
+
+metadata:
+  template_id: dmmm-tmpl
+  version: "1.0"
+  clone: avinash-kaushik
+  tier: 2
+  created_date: "{{date}}"
+
+# Business Objectives (Start here - Avinash's rule)
+business_objectives:
+  - id: "BO1"
+    objective: "{{primary_business_objective}}"
+    owner: "{{executive}}"
+    timeframe: "{{quarter|year}}"
+
+  - id: "BO2"
+    objective: "{{secondary_objective}}"
+    owner: "{{executive}}"
+    timeframe: "{{quarter|year}}"
+
+# Goals (Specific, measurable targets per objective)
+goals:
+  - objective_id: "BO1"
+    goals:
+      - id: "G1.1"
+        goal: "{{specific_goal}}"
+        target: "{{number}}"
+        baseline: "{{current_number}}"
+
+      - id: "G1.2"
+        goal: "{{specific_goal}}"
+        target: "{{number}}"
+        baseline: "{{current_number}}"
+
+# KPIs (How we measure progress toward goals)
+kpis:
+  - goal_id: "G1.1"
+    kpis:
+      - id: "KPI1.1.1"
+        name: "{{kpi_name}}"
+        definition: "{{how_calculated}}"
+        target: "{{number}}"
+        current: "{{number}}"
+        status: "on_track"  # on_track|at_risk|off_track
+        data_source: "{{source}}"
+        frequency: "{{daily|weekly|monthly}}"
+
+# See-Think-Do-Care Framework (Avinash signature)
+# Customer journey stages with appropriate metrics
+stdc_framework:
+  see:
+    description: "Largest addressable qualified audience"
+    audience: "{{audience_definition}}"
+    kpis:
+      - "Brand awareness"
+      - "Reach"
+      - "Share of voice"
+    current_metrics:
+      reach: 0
+      awareness_pct: 0.0
+
+  think:
+    description: "Audience with some commercial intent"
+    audience: "{{audience_definition}}"
+    kpis:
+      - "Engagement rate"
+      - "Email signups"
+      - "Content consumption"
+    current_metrics:
+      engagement_rate: 0.0
+      leads: 0
+
+  do:
+    description: "Audience with strong commercial intent"
+    audience: "{{audience_definition}}"
+    kpis:
+      - "Conversion rate"
+      - "Revenue"
+      - "CAC"
+    current_metrics:
+      conversion_rate: 0.0
+      revenue: 0
+      cac: 0
+
+  care:
+    description: "Existing customers (2+ purchases)"
+    audience: "{{audience_definition}}"
+    kpis:
+      - "Retention rate"
+      - "CLV"
+      - "NPS"
+      - "Referrals"
+    current_metrics:
+      retention_rate: 0.0
+      avg_clv: 0
+      nps: 0
+
+# 10/90 Rule Assessment
+# Avinash: Spend 10% on tools, 90% on people who analyze
+investment_assessment:
+  tools_spend: 0
+  people_spend: 0
+  ratio: "{{X}}/{{Y}}"
+  recommendation: "{{action_if_imbalanced}}"
+
+# Segments (Required for any good analysis)
+segments:
+  - name: "{{segment_name}}"
+    definition: "{{criteria}}"
+    size: 0
+    value: 0
+    priority: "high"
+
+# Actions & Accountability
+actions:
+  - kpi_id: "KPI1.1.1"
+    status: "off_track"
+    root_cause: "{{analysis}}"
+    action: "{{specific_action}}"
+    owner: "{{person}}"
+    deadline: "{{date}}"
+    expected_impact: "{{quantified}}"
+
+# So What Summary (Executive view)
+so_what:
+  what_happened: "{{data_summary}}"
+  why_it_matters: "{{business_impact}}"
+  now_what:
+    - "{{action_1}}"
+    - "{{action_2}}"
+    - "{{action_3}}"

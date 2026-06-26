@@ -1,0 +1,112 @@
+# Error Decision Templates — Haiku follows these literally
+# Pattern: IF condition THEN action
+
+templates:
+  # Script failures
+  - condition: "exit_code == 1 AND output contains 'VETO'"
+    action:
+      type: "report_to_user"
+      message: "Veto triggered: {error_message}"
+      options:
+        - "Fix the issue and retry"
+        - "Skip this check and continue"
+        - "Abort dispatch"
+        - "Other"
+
+  - condition: "exit_code == 1 AND output contains 'MISSING'"
+    action:
+      type: "report_to_user"
+      message: "Required file missing: {error_message}"
+      options:
+        - "Create the missing file"
+        - "Provide alternative path"
+        - "Abort dispatch"
+        - "Other"
+
+  - condition: "exit_code == 2 AND output contains 'circuit_breaker'"
+    action:
+      type: "halt"
+      reason: "Circuit breaker triggered — {consecutive_failures} consecutive failures"
+      message: |
+        The dispatch has been halted due to systematic failures.
+        This usually means the prompt template needs fixing, not the model.
+
+        Options:
+        1. Inspect failed tasks and fix prompts
+        2. Resume with different model
+        3. Abort and start fresh
+        4. Other
+
+  # Subagent failures
+  - condition: "Task tool returns error"
+    action:
+      type: "call_script"
+      command: "python squads/dispatch/scripts/self-heal-failure.py --task-result '{result_json}' --run-id {run_id}"
+      parse_result: true
+      follow_next_action: true
+
+  # Wave completion
+  - condition: "wave_executor verify returns halt=true"
+    action:
+      type: "report_to_user"
+      message: "Wave {wave_number} halted. {halt_reason}"
+      options:
+        - "Retry failed tasks"
+        - "Skip failed tasks and continue"
+        - "Abort dispatch"
+        - "Other"
+
+  - condition: "wave_executor verify returns halt=false AND more_waves=true"
+    action:
+      type: "call_script"
+      command: "python squads/dispatch/scripts/wave-executor.py prepare --run-id {run_id} --wave {next_wave} --root ."
+      parse_result: true
+      follow_next_action: true
+
+  - condition: "wave_executor verify returns halt=false AND more_waves=false"
+    action:
+      type: "call_script"
+      command: "python squads/dispatch/scripts/generate-execution-report.py --run-id {run_id} --root ."
+      parse_result: true
+      follow_next_action: true
+
+  # Quality issues
+  - condition: "quality_score < 0.70"
+    action:
+      type: "call_script"
+      command: "python squads/dispatch/scripts/self-heal-failure.py --task-result '{result_json}' --run-id {run_id}"
+      parse_result: true
+      follow_next_action: true
+
+  - condition: "quality_score >= 0.70 AND quality_score < 0.85"
+    action:
+      type: "report_to_user"
+      message: "Quality score {quality_score} — below target but acceptable."
+      options:
+        - "Accept and continue"
+        - "Retry with higher model"
+        - "Inspect output"
+        - "Other"
+
+  # Timeout
+  - condition: "execution_time > timeout_ms"
+    action:
+      type: "call_script"
+      command: "python squads/dispatch/scripts/self-heal-failure.py --task-result '{result_json}' --run-id {run_id}"
+      parse_result: true
+      follow_next_action: true
+
+  # Unknown errors (catch-all)
+  - condition: "no template matches"
+    action:
+      type: "report_to_user"
+      message: |
+        Unexpected error encountered:
+        ```
+        {raw_error}
+        ```
+      options:
+        - "Retry the operation"
+        - "Skip and continue"
+        - "Abort dispatch"
+        - "Other"

@@ -1,0 +1,157 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# VETO CONDITIONS — Formal blocking conditions with IDs
+# Source: PRD Section 9.2 (Pedro Valério patterns)
+# Pattern: "Se o executor CONSEGUE fazer errado, VAI fazer errado"
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# V0.*: SUFFICIENCY VETOS (Phase 0 — Soft Block)
+# Agent: dispatch-chief
+# Behavior: Redirect with recommendation
+# ═══════════════════════════════════════════════════════════════════════════════
+
+sufficiency:
+  - id: V0.1
+    condition: "Story has no acceptance criteria"
+    check: "grep -c 'acceptance' {story_file} == 0"
+    action: "VETO — Redirect to /po for acceptance criteria"
+    severity: soft_block
+
+  - id: V0.2
+    condition: "Input < 10 words with no deliverables"
+    check: "word_count < 10 AND no quantities detected"
+    action: "VETO — Redirect to /pm or /copy:agents:copy-chief"
+    severity: soft_block
+
+  - id: V0.3
+    condition: "No specific deliverables mentioned"
+    check: "no file types, no quantities, no output paths"
+    action: "VETO — Ask for quantities and deliverables"
+    severity: soft_block
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# V1.*: PRE-EXECUTION VETOS (Phase 4.5 — Hard Block)
+# Agent: quality-gate
+# Behavior: BLOCK, return to planner for fix
+# ═══════════════════════════════════════════════════════════════════════════════
+
+pre_execution:
+  - id: V1.1
+    condition: "Task has no output path"
+    check: "task.output_path is None"
+    action: "VETO — Define output path before dispatch"
+    severity: hard_block
+
+  - id: V1.2
+    condition: "Acceptance criterion is subjective"
+    check: "regex match: (good|appropriate|adequate|well-written|nice|quality)"
+    action: "VETO — Rewrite with measurable criteria"
+    severity: hard_block
+    examples:
+      bad: ["good quality", "well-written", "appropriate tone"]
+      good: ["< 500 words", "contains CTA", "3+ sections", "file exists at path X"]
+
+  - id: V1.3
+    condition: "Prompt has placeholders"
+    check: "regex match: (\\[XXX\\]|\\{TODO\\}|TBD|\\[PLACEHOLDER\\])"
+    action: "VETO — Resolve all placeholders"
+    severity: hard_block
+
+  - id: V1.4
+    condition: "Circular dependency in DAG"
+    check: "wave-optimizer.py --check-cycles returns non-zero"
+    action: "VETO — Fix dependency graph"
+    severity: hard_block
+
+  - id: V1.5
+    condition: "Haiku prompt without template for output > 50 lines"
+    check: "task.expected_lines > 50 AND no template in prompt"
+    action: "VETO — Add output template (Haiku ALWAYS rule)"
+    severity: hard_block
+
+  - id: V1.6
+    condition: "Haiku prompt with code-switching (EN+PT mixed)"
+    check: "detect_language_mixing(prompt)"
+    action: "VETO — Instructions in EN, output language specified separately"
+    severity: hard_block
+
+  - id: V1.7
+    condition: "Task has multiple deliverables"
+    check: "count_deliverables(task) > 1"
+    action: "VETO — Split into 1 task = 1 deliverable"
+    severity: hard_block
+
+  - id: V1.8
+    condition: "Task has no timeout defined"
+    check: "task.timeout is None"
+    action: "VETO — Assign timeout from timeout-rules.yaml based on executor type"
+    severity: hard_block
+    source: "Pedro Valério PV002"
+
+  - id: V1.9
+    condition: "Vague verbs in task description"
+    check: "regex match: (improve|optimize|enhance|better|fix up) without specifics"
+    action: "VETO — Replace with specific actions"
+    severity: hard_block
+
+  - id: V1.10
+    condition: "No model assigned to task"
+    check: "task.model is None"
+    action: "VETO — Run task-router to assign model"
+    severity: hard_block
+
+  - id: V1.11
+    condition: "No agent/command assigned to task"
+    check: "task.agent is None AND task.executor_type != 'worker'"
+    action: "VETO — Run task-router to assign agent"
+    severity: hard_block
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# V2.*: POST-EXECUTION VETOS (Phase 5.5 — Hard Block)
+# Agent: quality-gate
+# Behavior: Mark task FAILED, retry or escalate
+# ═══════════════════════════════════════════════════════════════════════════════
+
+post_execution:
+  - id: V2.1
+    condition: "Output file does not exist"
+    check: "not os.path.exists(task.output_path)"
+    action: "VETO — Task failed, retry or escalate"
+    severity: hard_block
+
+  - id: V2.2
+    condition: "Output file is empty (0 bytes)"
+    check: "os.path.getsize(task.output_path) == 0"
+    action: "VETO — Task produced empty output"
+    severity: hard_block
+
+  - id: V2.3
+    condition: "Cost exceeded 3x estimate"
+    check: "actual_cost > 3 * estimated_cost"
+    action: "VETO — Investigate prompt efficiency"
+    severity: warning
+
+  - id: V2.4
+    condition: "Output contains placeholder text"
+    check: "regex match in output: (\\[XXX\\]|\\{TODO\\}|TBD|\\[INSERT\\])"
+    action: "VETO — Task did not fully execute"
+    severity: hard_block
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VALIDATION SCRIPT PATTERN (Pedro Valério)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+validation_script:
+  pattern: |
+    ERRORS=0
+    for each veto_condition:
+      if check_fails:
+        echo "❌ {id}: VETO - {condition}"
+        ERRORS=$((ERRORS+1))
+    if ERRORS == 0:
+      echo "=== ALL VETO CONDITIONS PASSED ==="
+      exit 0
+    else:
+      echo "=== DISPATCH BLOCKED: $ERRORS veto conditions triggered ==="
+      exit 1
+  script: "scripts/validate-dispatch-gate.sh"

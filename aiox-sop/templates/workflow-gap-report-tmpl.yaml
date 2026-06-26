@@ -1,0 +1,227 @@
+# =============================================================================
+# Workflow Gap Report Template
+# =============================================================================
+# Used by: sop-analyst (analyze-workflow task)
+# Consumed by: squad-chief (improve-workflow-from-report task)
+# Version: 1.0.0
+# Purpose: Structured handoff contract between aiox-sop and squad-creator
+#
+# This template defines the YAML structure for workflow quality analysis
+# reports. The report serves as the interface between the SOP Factory
+# (analysis) and the Squad Creator (implementation of improvements).
+# =============================================================================
+
+report:
+  id: "WGR-{workflow_id}-{date}"
+  workflow_analyzed: "{path_to_workflow_file}"
+  workflow_version: "{version_from_workflow}"
+  analyst: "sop-analyst"
+  date: "{ISO-8601}"
+  rubric_version: "1.0.0"
+  scoring_mode: "full|quick"
+
+  # ===========================================================================
+  # OVERALL ASSESSMENT
+  # ===========================================================================
+  overall:
+    score: 0          # 0-100 weighted composite
+    grade: "F"        # A+|A|B+|B|C+|C|D|F
+    pass: false       # true if score >= 70
+    certification: false  # true if score >= 90
+    risk_level: "high"    # high|medium|low
+    summary: ""       # 2-3 sentence executive summary
+
+  # ===========================================================================
+  # DIMENSIONAL SCORECARD
+  # ===========================================================================
+  # Each dimension scored 0-10, weight as decimal (sum = 1.00)
+  # weighted = score * weight
+  # Evidence citations are MANDATORY (VETO-ANL-005)
+  # ===========================================================================
+  scorecard:
+    - dimension: "clarity"
+      id: "WD-01"
+      weight: 0.10
+      score: 0          # 0-10
+      weighted: 0.0      # score * weight
+      assessment: ""     # Brief qualitative summary
+      evidence:
+        - marker: "[OBS|DOC|INF]"
+          citation: "file:section — 'observation or quoted text'"
+        # Minimum: 2 citations for full mode, 1 for quick mode
+
+    - dimension: "completeness"
+      id: "WD-02"
+      weight: 0.15
+      score: 0
+      weighted: 0.0
+      assessment: ""
+      evidence:
+        - marker: "[OBS|DOC|INF]"
+          citation: ""
+
+    - dimension: "executability"
+      id: "WD-03"
+      weight: 0.15
+      score: 0
+      weighted: 0.0
+      assessment: ""
+      evidence:
+        - marker: "[OBS|DOC|INF]"
+          citation: ""
+
+    - dimension: "measurability"
+      id: "WD-04"
+      weight: 0.10
+      score: 0
+      weighted: 0.0
+      assessment: ""
+      evidence:
+        - marker: "[OBS|DOC|INF]"
+          citation: ""
+
+    - dimension: "compliance"
+      id: "WD-05"
+      weight: 0.10
+      score: 0
+      weighted: 0.0
+      assessment: ""
+      evidence:
+        - marker: "[OBS|DOC|INF]"
+          citation: ""
+
+    - dimension: "maintainability"
+      id: "WD-06"
+      weight: 0.10
+      score: 0
+      weighted: 0.0
+      assessment: ""
+      evidence:
+        - marker: "[OBS|DOC|INF]"
+          citation: ""
+
+    - dimension: "accessibility"
+      id: "WD-07"
+      weight: 0.10
+      score: 0
+      weighted: 0.0
+      assessment: ""
+      evidence:
+        - marker: "[OBS|DOC|INF]"
+          citation: ""
+
+    - dimension: "error_handling"
+      id: "WD-08"
+      weight: 0.10
+      score: 0
+      weighted: 0.0
+      assessment: ""
+      evidence:
+        - marker: "[OBS|DOC|INF]"
+          citation: ""
+
+    - dimension: "visual_design"
+      id: "WD-09"
+      weight: 0.05
+      score: 0
+      weighted: 0.0
+      assessment: ""
+      evidence:
+        - marker: "[OBS|DOC|INF]"
+          citation: ""
+
+    - dimension: "ai_readiness"
+      id: "WD-10"
+      weight: 0.05
+      score: 0
+      weighted: 0.0
+      assessment: ""
+      evidence:
+        - marker: "[OBS|DOC|INF]"
+          citation: ""
+
+  # ===========================================================================
+  # TOP STRENGTHS & WEAKNESSES
+  # ===========================================================================
+  strengths:
+    - dimension: ""
+      description: ""
+    - dimension: ""
+      description: ""
+    - dimension: ""
+      description: ""
+
+  weaknesses:
+    - dimension: ""
+      description: ""
+    - dimension: ""
+      description: ""
+    - dimension: ""
+      description: ""
+
+  # ===========================================================================
+  # GAP INVENTORY
+  # ===========================================================================
+  # Categories: MISSING | AMBIGUOUS | INCOMPLETE | INCONSISTENT | DEAD_END | RISK
+  # Impact: high | medium | low
+  # Effort: XS (<1h) | S (1-4h) | M (4-8h) | L (1-3 days) | XL (>3 days)
+  # ===========================================================================
+  gaps:
+    - id: "GAP-001"
+      category: "MISSING|AMBIGUOUS|INCOMPLETE|INCONSISTENT|DEAD_END|RISK"
+      dimension: "clarity|completeness|executability|measurability|compliance|maintainability|accessibility|error_handling|visual_design|ai_readiness"
+      location: "phase_id or step_id or section_name"
+      description: "What is wrong or missing"
+      impact: "high|medium|low"
+      suggested_fix: "Specific fix description"
+      effort: "XS|S|M|L|XL"
+
+  # ===========================================================================
+  # REMEDIATION PLAN
+  # ===========================================================================
+  # Priority: P1 (must fix) | P2 (should fix) | P3 (nice to have)
+  # improvement_source is MANDATORY (VETO-ANL-007)
+  # Format: [SOURCE: file_path:section]
+  # ===========================================================================
+  remediation:
+    - priority: "P1|P2|P3"
+      gap_ref: "GAP-001"
+      action: "Specific action to take"
+      target_file: "path/to/workflow.yaml"
+      target_section: "phase or section to modify"
+      improvement_source: "[SOURCE: file_path:section]"
+      effort: "XS|S|M|L|XL"
+      example: |
+        # Optional: concrete example of the fix
+
+  # ===========================================================================
+  # EVIDENCE SUMMARY
+  # ===========================================================================
+  evidence_summary:
+    total_citations: 0
+    by_marker:
+      OBS: 0
+      DOC: 0
+      REP: 0
+      COR: 0
+      INF: 0
+      ASM: 0
+      UNK: 0
+    valid_for_scoring: 0
+    invalid_for_scoring: 0
+    evidence_quality_score: 0.0   # weighted average of marker scores
+    red_flags_found: 0            # must be 0 for report approval
+
+  # ===========================================================================
+  # METADATA
+  # ===========================================================================
+  metadata:
+    analysis_tool: "analyze-workflow.md"
+    rubric_used: "workflow-quality-rubric.yaml"
+    template_used: "workflow-gap-report-tmpl.yaml"
+    workflow_word_count: 0
+    workflow_phase_count: 0
+    workflow_task_count: 0
+    analysis_date: "{ISO-8601}"
+    analyst: "sop-analyst"
+    scoring_mode: "full|quick"

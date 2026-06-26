@@ -1,0 +1,216 @@
+# $100M Lifetime Value Playbook Swipefile
+# Source: Alex Hormozi - Acquisition.com
+# Extracted: 2026-02-23
+
+version: "1.0"
+source:
+  title: "$100M Lifetime Value Playbook"
+  author: "Alex Hormozi"
+  publisher: "Acquisition.com"
+  year: 2025
+
+core_concept:
+  definition: "Lifetime value (LTV) is the gross profit collected over lifespan of a customer"
+  aliases: ["LTGP (Lifetime Gross Profit)", "CLV (Customer Lifetime Value)"]
+  importance: "If advertising is the machine, LTV is the fuel"
+  competitive_advantage: "Business owner who makes customer more valuable wins - can outspend competition"
+
+frameworks:
+  ltv_calculation:
+    step_1_gross_profit:
+      definition: "What's leftover from purchase after delivering goods/service"
+      product_example: "$100 widget - $20 cost = $80 gross profit"
+      service_example: "10 clients x $3000/mo - $6000 rep cost = $24,000 GP (80%)"
+
+    step_2_transactions_or_churn:
+      product_method: "Export customer data, average transaction column"
+      recurring_method: "Calculate churn = people who left / original amount"
+      churn_note: "New signups don't affect churn calculation"
+
+    step_3_calculate:
+      product_formula: "Gross profit x average transactions = LTGP"
+      recurring_formula: "Gross profit / churn = LTGP"
+      product_example: "$80 x 4 = $320 LTGP"
+      recurring_example: "$2400 / 5% = $48,000 LTGP"
+
+  crazy_eight:
+    - id: 1
+      name: "Increase Prices"
+      type: "profit_lever"
+    - id: 2
+      name: "Decrease Costs"
+      type: "profit_lever"
+    - id: 3
+      name: "Increase # of Purchases"
+      type: "frequency"
+    - id: 4
+      name: "Cross-Sell Something Different"
+      type: "expansion"
+    - id: 5
+      name: "Sell More (Increase Quantity)"
+      type: "upsell"
+    - id: 6
+      name: "Sell Better (Increase Quality)"
+      type: "upsell"
+    - id: 7
+      name: "Downsell Fewer (Lower Quantity)"
+      type: "downsell"
+    - id: 8
+      name: "Downsell Lower Quality"
+      type: "downsell"
+
+strategies:
+  1_increase_prices:
+    impact: "Affects gross profit more than any other lever"
+    math: "10% profit business + 20% price increase = 3x profit"
+    testing: "Test prices every quarter"
+    process:
+      - "Set new price"
+      - "Calculate gross profit difference"
+      - "Find break-even conversion rate"
+      - "Track conversion with new price"
+      - "Test again until conversion x LTGP drops"
+    tip: "Start low, nudge 20% every 10 sales until dramatic drop"
+
+  2_decrease_costs:
+    tactics:
+      - name: "Increase employee to customer ratio"
+        example: "Rep handles 10 clients instead of 5"
+      - name: "Offshore talent"
+        benefit: "80%+ cost reduction possible"
+      - name: "Productize delivery"
+        method: "Templates and automation for similar customers"
+      - name: "Done for you to Done with you"
+        benefit: "Dramatically increase customer ratio"
+      - name: "Cap usage"
+        method: "Limit revisions, charge per use thereafter"
+      - name: "Lifetime to annual"
+        benefit: "Don't service indefinitely from one transaction"
+      - name: "In-person to remote"
+        benefit: "Fewer travel costs"
+      - name: "Cut meeting times"
+        method: "Delete all recurring meetings quarterly, add back only what's needed"
+      - name: "Buy in bulk and prepay"
+        benefit: "10-20% discounts"
+
+  3_increase_purchases:
+    add_recurring:
+      service: "Membership for ongoing needs"
+      physical: "Product of the month membership"
+      digital: "Accountability calls as monthly service"
+    decrease_churn:
+      service: "Customer appreciation events via handwritten letter"
+      physical: "Allow quantity/frequency changes via text"
+      digital: "Add community feature for engagement"
+    follow_up:
+      method: "Quarterly promotions + value content between"
+      examples:
+        - "Quarterly 'best lawn' competition"
+        - "Quarterly weight loss challenge"
+        - "Quarterly cohort launch"
+
+  4_cross_sell:
+    definition: "Sell another product that complements first product"
+    formula: "Old LTV + (conversion rate x gross profit of upsell) = New LTV"
+    examples:
+      service: "Lawn care + snow blowing in winter"
+      physical: "Burgers + fries and soda"
+      digital: "Course + community on top"
+
+  5_upsell_quantity:
+    bulk: "Prepay for a year (12x)"
+    more_often: "Monthly to every 3 weeks (1.33x)"
+    bigger: "1 hour to 3 hours each time (3x)"
+    tactic: "Offer this first, then downsell standard offer"
+
+  6_upsell_quality:
+    service_premiums:
+      - "Faster response times"
+      - "More time availability"
+      - "All days vs limited days"
+      - "24hrs vs 9-5"
+      - "Longer support calls"
+      - "All locations vs one location"
+      - "Free reschedules vs fees"
+      - "Priority/same day delivery"
+      - "One-on-one vs one-to-many"
+      - "Video call vs chat support"
+      - "Senior provider vs junior"
+      - "Live vs recorded"
+      - "In-person vs remote"
+      - "Done for you vs done with you"
+      - "Personalized vs generic"
+    physical_premiums:
+      - "Better ingredients"
+      - "Better materials (steel vs iron)"
+
+  7_downsell_quantity:
+    principle: "If it's this or nothing, this beats nothing"
+    math: "Lower price sale beats no sale for per-visitor revenue"
+    rule: "Only downsell people who don't qualify for main offer"
+    examples:
+      less_quantity: "3 months instead of 12"
+      less_often: "Every other month instead of monthly"
+      smaller: "30 min instead of 1 hour"
+
+  8_downsell_quality:
+    method: "Take quality upsell list and reverse it"
+    service_downgrades:
+      - "Slower response times"
+      - "Less availability"
+      - "Fewer locations"
+      - "Fewer days"
+      - "Limited hours"
+      - "Less flexibility"
+      - "Junior employees"
+      - "Higher customer to employee ratio"
+      - "Less convenient communication"
+      - "More recorded, less live"
+      - "More remote, less in person"
+      - "DFY to DWY to DIY"
+      - "Less personalization"
+      - "Worse or no guarantee"
+    physical_downgrades:
+      - "Lower quality ingredients"
+      - "Worse warranty"
+      - "Longer wait times"
+
+tactics:
+  favorite_upsell:
+    formula: "More of - or more help with - what they just bought"
+    enhancements:
+      - "Faster results"
+      - "Less risk"
+      - "Less effort"
+      - "Less hassle"
+    price: "For more money"
+
+  testing_cadence:
+    pricing: "Test every quarter"
+    correlation: "Company profitability correlates with pricing test frequency"
+
+checklist:
+  - "Calculate current LTV (gross profit x transactions OR gross profit / churn)"
+  - "Increase price: Set date for first price test"
+  - "Decrease cost: Pick 1-2 tactics to implement"
+  - "Cross-sell: Think of something to sell immediately after first purchase"
+  - "Increase purchases: Add recurring, decrease churn, or follow up"
+  - "Upsell quantity: Offer first, downsell current offer"
+  - "Upsell quality: Offer premium version first"
+  - "Downsell quantity: Offer to unqualified prospects only"
+  - "Downsell quality: Offer to unqualified prospects only"
+
+agent_usage:
+  pm:
+    - "Design product ladder using crazy eight"
+    - "Structure upsell/downsell sequences"
+  po:
+    - "Define premium vs standard feature sets"
+    - "Validate pricing tiers with customer research"
+  dev:
+    - "Build flexible pricing and packaging systems"
+    - "Implement upgrade/downgrade flows"
+  analyst:
+    - "Calculate LTV by segment"
+    - "Track conversion rates at each price point"
+    - "Measure churn and transaction frequency"

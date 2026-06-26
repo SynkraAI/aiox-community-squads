@@ -1,0 +1,786 @@
+# ============================================================
+# SOP-SLIDES-004: Multi-Output Slide Pipeline
+# Canonical JSON Schema + Pipeline Steps + Evaluation Framework
+# ============================================================
+
+sop:
+  id: "SOP-SLIDES-004"
+  version: "1.0.0"
+  title: "Multi-Output Slide Pipeline"
+  purpose: "Define pipeline from briefing to multi-format delivery using canonical JSON interchange schema with PPTEval + GAD evaluation"
+  consumer: "llm_agent, slide_chief_orchestrator"
+
+  classification:
+    domain: "slide-generation"
+    category: "multi-output-pipeline"
+    risk_level: "medium"
+    compliance_tags: ["WCAG-2.2-AA"]
+  status: "DRAFT"
+  effective_date: "2026-03-16"
+  review_date: "2026-09-16"
+
+  companions:
+    - id: "SOP-SLIDES-001"
+      role: "Human-readable process"
+    - id: "SOP-SLIDES-002"
+      role: "AIOX TSX code patterns"
+    - id: "SOP-SLIDES-003"
+      role: "Brand-agnostic TSX code patterns"
+
+  research_base: "docs/research/2026-03-16-slide-generator-squad/"
+
+  # ============================================================
+  # JSON INTERCHANGE SCHEMA
+  # ============================================================
+
+  json_schema:
+    description: "Canonical interchange format between content generation and rendering"
+
+    presentation:
+      required_fields: ["title", "mode", "format", "aspect_ratio", "slides"]
+      fields:
+        title: { type: "string", max_length: 120 }
+        subtitle: { type: "string", max_length: 200 }
+        author: { type: "string" }
+        date: { type: "string", format: "date" }
+        mode: { enum: ["palco", "live", "async"] }
+        format: { enum: ["ted_keynote", "pitch_deck", "sales_deck", "technical", "zoom_virtual", "carousel_stories"] }
+        aspect_ratio: { enum: ["16:9", "16:10", "9:16", "1:1"] }
+        brand: { ref: "brand_config" }
+        slides: { type: "array", min_items: 1, item_ref: "slide" }
+
+    slide:
+      required_fields: ["id", "type", "content"]
+      fields:
+        id: { type: "string", pattern: "^slide-\\d{3}$" }
+        type:
+          enum:
+            - "TITLE"
+            - "SECTION_BREAK"
+            - "STATEMENT"
+            - "QUOTE"
+            - "CONTENT"
+            - "COMPARISON"
+            - "METRIC"
+            - "DATA_VIZ"
+            - "IMAGE"
+            - "BUILD"
+            - "CODE"
+            - "CLOSING"
+        title: { type: "string", max_length: 80 }
+        content: { type: "object", description: "Type-specific — see type_content_schemas" }
+        layout:
+          enum: ["full_center", "left_aligned", "split_50_50", "split_60_40", "grid_1x2", "grid_1x3"]
+        decoratives:
+          type: "array"
+          allowed_values: ["CornerMarks", "MetaBar", "WatermarkNumber", "Watermark", "PageFooter", "SectionTag", "TechFrame"]
+        animation:
+          fields:
+            preset: { enum: ["fadeUp", "fadeIn", "scaleIn", "slideRight", "slideLeft", "growWidth", "growHeight"] }
+            stagger: { type: "object", fields: { base: { type: "number", default: 0.1 }, increment: { type: "number", default: 0.08 } }, description: "For lists/grids: delay = base + index * increment" }
+            delay: { type: "number", min: 0, max: 1.5 }
+        speaker_notes: { type: "string", max_length: 500 }
+        duration_s: { type: "integer", min: 3, max: 120 }
+
+    # --- Type-specific content schemas ---
+
+    type_content_schemas:
+      TITLE:
+        fields:
+          title: { type: "string", constraint: "max 5 words" }
+          subtitle: { type: "string" }
+          speaker: { type: "string" }
+          date: { type: "string" }
+          section_tag: { type: "string" }
+
+      SECTION_BREAK:
+        fields:
+          section_number: { type: "string", example: "02" }
+          section_label: { type: "string", example: "Parte 02" }
+          title: { type: "string", constraint: "max 3 words" }
+
+      STATEMENT:
+        fields:
+          lines: { type: "array", items: "string", constraint: "max 10 words total across all lines" }
+          highlight_indices: { type: "array", items: "integer", constraint: "max 2" }
+
+      QUOTE:
+        fields:
+          quote_text: { type: "string" }
+          highlight_portion: { type: "string", optional: true }
+          attribution_name: { type: "string" }
+          attribution_company: { type: "string", optional: true }
+
+      CONTENT:
+        fields:
+          section_tag: { type: "string" }
+          title: { type: "string" }
+          subtitle: { type: "string", optional: true }
+          items:
+            type: "array"
+            max_items_palco_live: 4
+            max_items_async: 6
+            item_fields:
+              marker: { type: "string", example: "I, II, 01" }
+              title: { type: "string", constraint: "keyword, not sentence" }
+              description: { type: "string", constraint: "short fragment" }
+
+      COMPARISON:
+        fields:
+          section_tag: { type: "string" }
+          title: { type: "string" }
+          left:
+            fields:
+              label: { type: "string", example: "BEFORE" }
+              style: { enum: ["negative", "neutral"] }
+              items: { type: "array", items: "string" }
+          right:
+            fields:
+              label: { type: "string", example: "AFTER" }
+              style: { enum: ["positive", "neutral"] }
+              items: { type: "array", items: "string" }
+
+      METRIC:
+        fields:
+          section_tag: { type: "string", optional: true, description: "Label for SectionTag decorative" }
+          metrics:
+            type: "array"
+            max_items: 3
+            item_fields:
+              value: { type: "string", example: "10x, 98%, $2.4M" }
+              label: { type: "string", description: "context above value" }
+              unit: { type: "string", description: "context below value" }
+
+      DATA_VIZ:
+        fields:
+          section_tag: { type: "string" }
+          conclusion_title: { type: "string", constraint: "title IS the conclusion, not description" }
+          chart_type: { enum: ["bar_vertical", "bar_horizontal", "line", "donut", "table"] }
+          data:
+            type: "array"
+            item_fields:
+              label: { type: "string" }
+              value: { type: "number" }
+              series: { type: "string", optional: true }
+          source: { type: "string" }
+        constraints:
+          forbidden_chart_types: ["scatter", "heatmap", "treemap", "sankey"]
+          max_series: 3
+          max_elements_per_chart_type:
+            bar_vertical: 6
+            bar_horizontal: 8
+            line: 12
+            donut: 4
+            table: "4x6"
+          note: "max_elements is a validation rule, NOT a field in the JSON output"
+
+      IMAGE:
+        fields:
+          section_tag: { type: "string", optional: true }
+          title: { type: "string", constraint: "max 8 words", optional: true }
+          image_url: { type: "string" }
+          image_alt: { type: "string", required: true, description: "accessibility" }
+          overlay: { enum: ["gradient_bottom", "gradient_left", "none"] }
+          caption: { type: "string", constraint: "max 8 words", optional: true }
+        constraints:
+          - "min 1920px wide"
+          - "WebP preferred, max 500KB"
+          - "no stock photos"
+
+      BUILD:
+        fields:
+          section_tag: { type: "string" }
+          title: { type: "string" }
+          orientation: { enum: ["horizontal", "vertical"] }
+          steps:
+            type: "array"
+            min_items: 2
+            max_items: 5
+            item_fields:
+              number: { type: "string", example: "01, 02" }
+              title: { type: "string" }
+              description: { type: "string" }
+              time_label: { type: "string", optional: true }
+        constraints:
+          - "future steps at 15% opacity in progressive mode"
+          - "all visible in async mode"
+
+      CODE:
+        fields:
+          section_tag: { type: "string", optional: true }
+          title: { type: "string" }
+          language: { type: "string", example: "typescript" }
+          code: { type: "string", constraint: "max 12 visible lines" }
+          highlight_lines: { type: "array", items: "integer" }
+        constraints:
+          - "min font = body size"
+          - "never screenshot code"
+
+      CLOSING:
+        fields:
+          title: { type: "string", constraint: "max 5 words" }
+          cta_text: { type: "string", example: "QUESTIONS?" }
+          contact_lines: { type: "array", items: "string" }
+
+    # --- Brand config schema (ref from SOP-003) ---
+
+    brand_config:
+      type: "oneOf"
+      options:
+        - type: "string"
+          description: "Reference to external brand config file path"
+        - type: "object"
+          required_fields: ["name", "color", "font"]
+          fields:
+            name: { type: "string" }
+            prefix: { type: "string" }
+            url: { type: "string" }
+            color:
+              required_fields: ["bg_primary", "bg_accent", "text_primary", "text_secondary", "accent"]
+              fields:
+                bg_primary: { type: "string", pattern: "^#[0-9A-Fa-f]{6}$" }
+                bg_accent: { type: "string", pattern: "^#[0-9A-Fa-f]{6}$" }
+                surface: { type: "string", pattern: "^#[0-9A-Fa-f]{6}$" }
+                text_primary: { type: "string", pattern: "^#[0-9A-Fa-f]{6}$" }
+                text_secondary: { type: "string", pattern: "^#[0-9A-Fa-f]{6}$" }
+                accent: { type: "string", pattern: "^#[0-9A-Fa-f]{6}$" }
+                border: { type: "string", pattern: "^#[0-9A-Fa-f]{6}$" }
+                warning: { type: "string", pattern: "^#[0-9A-Fa-f]{6}$" }
+            font:
+              required_fields: ["sans", "mono"]
+              fields:
+                sans: { type: "string" }
+                sans_fallback: { type: "string" }
+                mono: { type: "string" }
+                mono_fallback: { type: "string" }
+
+  # ============================================================
+  # PIPELINE STATE MACHINE
+  # ============================================================
+
+  pipeline:
+    initial_state: "format_selection"
+    max_revision_iterations: 3
+
+    states:
+      format_selection:
+        id: "step_1"
+        name: "Format Selection"
+        description: "Select presentation format from briefing context"
+        input: ["briefing.topic", "briefing.audience", "briefing.context", "briefing.duration"]
+        output: ["format", "mode_override", "slide_count_range", "dominant_types"]
+        transitions:
+          - to: "mode_ratio"
+            condition: "format selected"
+        decision_tree:
+          - condition: "audience = investors AND purpose = fundraise"
+            result: "pitch_deck"
+          - condition: "audience = customers AND purpose = sell"
+            result: "sales_deck"
+          - condition: "context = conference AND duration >= 15min"
+            result: "ted_keynote"
+          - condition: "topic = technical AND audience = developers"
+            result: "technical"
+          - condition: "context in [zoom, meet, teams]"
+            result: "zoom_virtual"
+          - condition: "channel in [instagram, linkedin, stories]"
+            result: "carousel_stories"
+          - condition: "else"
+            result: "pitch_deck"
+
+      mode_ratio:
+        id: "step_2"
+        name: "Mode + Aspect Ratio Selection"
+        description: "Determine presentation mode and aspect ratio"
+        input: ["format", "briefing.context", "briefing.channel"]
+        output: ["mode", "aspect_ratio"]
+        transitions:
+          - to: "content_generation"
+            condition: "mode and ratio determined"
+        mode_rules:
+          palco:
+            contexts: ["conference", "keynote", "workshop", "presencial"]
+            max_words: 15
+            min_font: "2.2vw"
+            whitespace_min: 50
+            animations: true
+            speaker_notes: "required"
+          live:
+            contexts: ["youtube", "twitch", "screenshare", "live_call"]
+            max_words: 15
+            min_font: "2.2vw"
+            whitespace_min: 45
+            animations: true
+            animation_delay_modifier: 0.7
+            safe_zone_right: "20%"
+            safe_zone_bottom: "15%"
+            speaker_notes: "required"
+          async:
+            contexts: ["post_event", "course", "onboarding", "pdf"]
+            max_words: 30
+            min_font: "1.6vw"
+            whitespace_min: 40
+            animations: false
+            speaker_notes: "not_needed"
+        ratio_rules:
+          - channels: ["projector", "monitor", "stream"]
+            ratio: "16:9"
+            resolution: "1920x1080"
+          - channels: ["macbook", "mac_projector"]
+            ratio: "16:10"
+            resolution: "1920x1200"
+          - channels: ["stories", "reels", "vertical"]
+            ratio: "9:16"
+            resolution: "1080x1920"
+          - channels: ["instagram", "carousel"]
+            ratio: "1:1"
+            resolution: "1080x1080"
+          - channels: ["default"]
+            ratio: "16:9"
+            resolution: "1920x1080"
+
+      content_generation:
+        id: "step_3"
+        name: "Content Generation -> JSON"
+        description: "LLM generates canonical JSON from briefing + format + mode + brand"
+        input: ["briefing", "format", "mode", "aspect_ratio", "brand_config"]
+        output: ["canonical_json"]
+        transitions:
+          - to: "rendering_fork"
+            condition: "JSON validates against schema"
+          - to: "content_generation"
+            condition: "JSON validation fails"
+            max_retries: 2
+        validation_assertions:
+          - "slides[0].type == TITLE"
+          - "slides[-1].type == CLOSING"
+          - "all slide.type in slide_type_taxonomy"
+          - "sum(duration_s) approximately matches target_duration"
+          - "no more than 3 consecutive same type"
+          - "word count per slide <= mode.max_words"
+          - "JSON validates against json_schema"
+        sequence_rules:
+          first_slide: "TITLE"
+          last_slide: "CLOSING"
+          max_consecutive_same_type: 3
+          max_duration_per_slide_s: 120
+          section_breaks: "between thematic blocks"
+          rhythm_patterns:
+            - sequence: ["STATEMENT", "CONTENT", "CONTENT"]
+              effect: "Impact -> detail -> detail"
+            - sequence: ["METRIC", "DATA_VIZ", "CONTENT"]
+              effect: "Number -> context -> explanation"
+            - sequence: ["IMAGE", "STATEMENT"]
+              effect: "Visual -> emotional"
+            - sequence: ["BUILD"]
+              effect: "Narrative progression (3 steps)"
+            - sequence: ["COMPARISON", "STATEMENT"]
+              effect: "Contrast -> conclusion"
+
+      rendering_fork:
+        id: "step_4"
+        name: "Rendering Fork"
+        description: "Canonical JSON consumed by one or more renderers in parallel"
+        input: ["canonical_json", "target_formats"]
+        output: ["rendered_outputs"]
+        transitions:
+          - to: "evaluation"
+            condition: "all target renderers complete"
+        renderers:
+          tsx_web:
+            description: "React/TSX/Framer Motion slides"
+            delegates_to:
+              - condition: "brand.name == 'AIOX'"
+                sop: "SOP-SLIDES-002"
+              - condition: "else"
+                sop: "SOP-SLIDES-003"
+            rules:
+              - "SlideLayout wrapper per slide"
+              - "style={FONT_SANS} or style={FONT_MONO} on every text element"
+              - "Strip animations if mode == async"
+              - "Reduce animation delays by 30% if mode == live"
+              - "prefers-reduced-motion media query required"
+            json_to_tsx_mapping:
+              "presentation.brand": "Brand config resolution (SOP-003 section 0)"
+              "slide.type": "Component selection (SOP-002/003 slide patterns)"
+              "slide.layout": "Layout class/structure"
+              "slide.decoratives[]": "<CornerMarks>, <MetaBar>, <WatermarkNumber>, etc."
+              "slide.animation": "{...fadeUp(delay)}, {...scaleIn(delay)}, etc."
+              "slide.content.*": "Props to type-specific component"
+              "slide.speaker_notes": "Exported as separate data (not rendered)"
+              "presentation.mode": "Controls animations, word limits, safe zones"
+
+          pptx:
+            description: "PowerPoint via Office-PowerPoint-MCP-Server (python-pptx)"
+            mcp_server: "Office-PowerPoint-MCP-Server"
+            mcp_tool_count: 32
+            json_to_mcp_mapping:
+              "presentation": "create_presentation (dimensions from aspect_ratio)"
+              "presentation.brand.font": "set_font on slide master"
+              "presentation.brand.color": "set_theme_colors"
+              "slide": "add_slide with layout"
+              "slide.content.title": "add_text_box or set_title"
+              "slide.content.items[]": "add_text_box per item"
+              "slide.content.metrics[]": "add_text_box with large font"
+              "slide.content.chart_type": "add_chart"
+              "slide.content.image_url": "add_image"
+              "slide.content.code": "add_text_box with mono font"
+              "slide.speaker_notes": "set_notes"
+              "slide.decoratives": "Manual positioning (lines, low-opacity text)"
+            animation_mapping:
+              fadeUp: "Fly In (from bottom) + Fade"
+              fadeIn: "Fade"
+              scaleIn: "Grow & Turn or Zoom"
+              slideRight: "Fly In (from left)"
+              slideLeft: "Fly In (from right)"
+              growWidth: "Wipe (left to right)"
+              growHeight: "Wipe (bottom to top)"
+              stagger: "Apply entrance effect delays sequentially (base + index * 0.08s)"
+            aspect_ratio_emu:
+              "16:9": { width: 12192000, height: 6858000, pixels: "1920x1080" }
+              "16:10": { width: 12192000, height: 7620000, pixels: "1920x1200" }
+              "9:16": { width: 6858000, height: 12192000, pixels: "1080x1920" }
+              "1:1": { width: 6858000, height: 6858000, pixels: "1080x1080" }
+            constraints:
+              - "Font embedding required for non-system fonts"
+              - "96 DPI minimum for screen, 300 DPI for print"
+              - "Dimensions in EMU (English Metric Units) — see aspect_ratio_emu"
+
+          markdown:
+            description: "Slidev (Vue) or Marp (pure Markdown)"
+            targets: ["slidev", "marp"]
+            json_to_md_mapping:
+              slide_separator: "---"
+              "TITLE": "layout: cover (Slidev) or _class: lead (Marp)"
+              "SECTION_BREAK": "layout: section (Slidev) or _class: invert (Marp)"
+              "STATEMENT": "layout: statement + # Bold text centered (Slidev) or _class: lead + # Bold text (Marp)"
+              "CONTENT": "## Title + - item list"
+              "QUOTE": "> quote + — attribution"
+              "COMPARISON": "::left:: / ::right:: (Slidev) or HTML grid (Marp)"
+              "METRIC": "Custom Vue component (Slidev) or styled heading (Marp)"
+              "DATA_VIZ": "Mermaid/Chart.js integration"
+              "IMAGE": "![alt](url)"
+              "BUILD": "v-clicks (Slidev) or numbered list (Marp)"
+              "CODE": "```lang fenced code block"
+              "CLOSING": "layout: end + # Thank You + contact (Slidev) or _class: lead + # Thank You (Marp)"
+              "speaker_notes": "<!-- speaker notes --> block"
+            slidev_features:
+              - "v-click for progressive reveal"
+              - "<style> blocks for brand colors"
+              - "Windi CSS / UnoCSS utility classes"
+            marp_features:
+              - "<!-- _class: --> directives"
+              - "<!-- _backgroundColor: --> for brand colors"
+              - "Export: marp --pdf, marp --pptx"
+
+      evaluation:
+        id: "step_5"
+        name: "Evaluation"
+        description: "Score rendered output on 4 dimensions"
+        input: ["canonical_json", "rendered_outputs", "briefing"]
+        output: ["scorecard", "verdict"]
+        transitions:
+          - to: "delivery"
+            condition: "composite_score >= 7.0"
+          - to: "content_generation"
+            condition: "composite_score >= 5.0 AND composite_score < 7.0 AND iteration < max_revision_iterations"
+            action: "Return with dimensional feedback"
+          - to: "format_selection"
+            condition: "composite_score < 5.0"
+            action: "Reassess format/approach"
+          - to: "halt"
+            condition: "iteration >= max_revision_iterations AND composite_score < 7.0"
+            action: "Escalate to human review"
+
+      delivery:
+        id: "step_6"
+        name: "Delivery"
+        description: "Package and deliver rendered outputs"
+        input: ["rendered_outputs", "scorecard", "canonical_json"]
+        output: ["delivery_package"]
+        transitions: []
+        artifacts:
+          - "Rendered file(s) (.tsx / .pptx / .md)"
+          - "Canonical JSON (for future re-rendering)"
+          - "Speaker notes export (if mode != async)"
+          - "Evaluation scorecard"
+        leave_behind_rule:
+          applies_to: ["pitch_deck", "sales_deck"]
+          action: "Generate 2 versions: palco (sparse) + async (self-explanatory) from same JSON with mode override"
+
+      halt:
+        id: "halt"
+        name: "Halt — Human Review Required"
+        description: "Max iterations reached without passing score"
+        input: ["all_scorecards", "canonical_json"]
+        output: ["escalation_report"]
+        transitions: []
+
+  # ============================================================
+  # EVALUATION FRAMEWORK
+  # ============================================================
+
+  evaluation:
+    composite_formula: "(content * 0.30) + (design * 0.30) + (coherence * 0.20) + (gad * 0.20)"
+    pass_threshold: 7.0
+    revise_threshold: 5.0
+
+    dimensions:
+      content:
+        weight: 0.30
+        source: "PPTEval (PPTAgent V2) — text_scorer"
+        criteria:
+          factual_accuracy: { range: "0-10", description: "Claims supported by source material" }
+          topic_relevance: { range: "0-10", description: "Every slide serves presentation goal" }
+          completeness: { range: "0-10", description: "Key messages covered, no gaps" }
+          word_economy: { range: "0-10", description: "Respects mode word limits, no filler" }
+        score: "mean(factual_accuracy, topic_relevance, completeness, word_economy)"
+
+      design:
+        weight: 0.30
+        source: "PPTEval (PPTAgent V2) — vision_scorer"
+        criteria:
+          visual_consistency: { range: "0-10", description: "Brand colors, fonts, spacing uniform" }
+          whitespace: { range: "0-10", description: "Meets mode minimum (50%/45%/40%)" }
+          typography_hierarchy: { range: "0-10", description: "Clear title > subtitle > body > caption" }
+          legibility: { range: "0-10", description: "Contrast >= WCAG AA, font >= minimum" }
+          decoration_restraint: { range: "0-10", description: "Max 2 CornerMarks/section, no clutter" }
+        score: "mean(visual_consistency, whitespace, typography_hierarchy, legibility, decoration_restraint)"
+
+      coherence:
+        weight: 0.20
+        source: "PPTEval (PPTAgent V2) — logic_scorer"
+        criteria:
+          narrative_flow: { range: "0-10", description: "Logical progression slide-to-slide" }
+          sequence_compliance: { range: "0-10", description: "TITLE first, CLOSING last, breaks between sections" }
+          rhythm_variety: { range: "0-10", description: "No more than 3 consecutive same type" }
+          duration_balance: { range: "0-10", description: "No slide > 120s, total matches target" }
+        score: "mean(narrative_flow, sequence_compliance, rhythm_variety, duration_balance)"
+
+      gad:
+        weight: 0.20
+        source: "SlideGen — Geometry-Aware Density"
+        adaptation_note: "Original GAD is algorithmic (computed from bounding boxes). This adaptation uses LLM-judged criteria. Future: compute programmatically from DOM/PPTX element positions."
+        criteria:
+          element_distribution: { range: "0-10", description: "Elements use space, not clustered" }
+          alignment_consistency: { range: "0-10", description: "Elements follow grid" }
+          density_balance: { range: "0-10", description: "Neither sparse nor cluttered" }
+          margin_compliance: { range: "0-10", description: "Content within safe margins per mode" }
+        score: "mean(element_distribution, alignment_consistency, density_balance, margin_compliance)"
+
+    rendered_output_capture:
+      tsx_web: "Screenshot each slide via Playwright/Puppeteer (1920x1080 viewport)"
+      pptx: "Convert each slide to PNG via python-pptx thumbnail or LibreOffice export"
+      markdown: "Render via 'slidev export --format png' or 'marp --images png'"
+
+    verdicts:
+      - range: ">= 7.0"
+        verdict: "PASS"
+        action: "Proceed to delivery"
+      - range: "5.0 - 6.9"
+        verdict: "REVISE"
+        action: "Return to content generation with dimensional feedback"
+      - range: "< 5.0"
+        verdict: "FAIL"
+        action: "Return to format selection, reassess approach"
+
+  # ============================================================
+  # FORMAT CONSTRAINTS
+  # ============================================================
+
+  format_constraints:
+    ted_keynote:
+      slides: "40-90"
+      text_density: "minimal"
+      bullets: "never"
+      self_explanatory: "never"
+      slides_per_min: "2-3"
+      dominant_types: ["STATEMENT", "IMAGE", "METRIC", "SECTION_BREAK"]
+      rare_types: ["CONTENT", "CODE", "DATA_VIZ"]
+      narrative: "hook -> tension -> resolution -> CTA"
+      anti_pattern: "slide that works without narrator"
+
+    pitch_deck:
+      slides: "10-15"
+      text_density: "moderate"
+      bullets: "rare"
+      self_explanatory: "yes (leave-behind)"
+      structure:
+        sequoia: "Purpose->Problem->Solution->Why Now->Market->Competition->Product->Model->Team->Financials"
+        yc: "Title->Problem->Solution->Traction->Market->Product->Model->Team->Financials->Ask"
+      versions: 2
+      fatal_anti_pattern: "We have no competition"
+      dominant_types: ["TITLE", "CONTENT", "METRIC", "DATA_VIZ", "COMPARISON", "CLOSING"]
+
+    sales_deck:
+      slides: { smb: "8-12", mid: "12-18", enterprise: "18-25" }
+      text_density: "moderate"
+      bullets: "allowed"
+      self_explanatory: "yes (champion)"
+      framework: "SCR: Situation -> Complication -> Resolution"
+      structure: "Hook->Pain->Cost of inaction->Solution->How it works->Proof->Differentiation->Pricing/Next step"
+      dominant_types: ["TITLE", "CONTENT", "COMPARISON", "METRIC", "DATA_VIZ", "IMAGE", "CLOSING"]
+
+    technical:
+      slides: "20-40"
+      text_density: "moderate+"
+      bullets: "allowed"
+      self_explanatory: "partial"
+      slides_per_min: "1-2"
+      code_type: "legitimate"
+      code_min_font: "20pt"
+      backup_slides: "5-10 for Q&A"
+      structure: "Problem->Context->Approach->Implementation(BUILD)->Results(DATA_VIZ)->Limitations->Conclusion"
+      dominant_types: ["CONTENT", "BUILD", "CODE", "DATA_VIZ", "COMPARISON", "IMAGE"]
+
+    zoom_virtual:
+      slides: "variable"
+      text_density: "reduced"
+      bullets: "cautious"
+      self_explanatory: "depends"
+      mode_override: "live"
+      visual_movements: "2+ per minute"
+      interaction_placeholder: "every 3-5 min"
+      center_text: true
+      dominant_types: ["STATEMENT", "SECTION_BREAK", "CONTENT", "METRIC"]
+
+    carousel_stories:
+      slides: "5-10"
+      text_density: "minimal"
+      bullets: "never"
+      self_explanatory: "always"
+      mode_override: "async"
+      ratio_override: "9:16 or 1:1"
+      max_words: 15
+      font: "extra-large"
+      first_slide: "visual hook"
+      last_slide: "CTA: Save, Share, Link in bio"
+      dominant_types: ["STATEMENT", "CONTENT", "METRIC", "CLOSING"]
+
+  # ============================================================
+  # VALIDATION CHECKLISTS
+  # ============================================================
+
+  validation:
+    tsx_web:
+      - "Every text element has style={FONT_SANS} or style={FONT_MONO}"
+      - "SlideLayout wraps every slide"
+      - "Contrast passes WCAG AA (4.5:1 body, 3:1 large text)"
+      - "Animations stripped in async mode"
+      - "prefers-reduced-motion media query present"
+      - "No hardcoded px outside 1920x1080 canvas"
+      - "npm run lint && npm run typecheck = 0 errors"
+
+    pptx:
+      - "Slide dimensions match aspect_ratio (EMU correct)"
+      - "Fonts embedded or system-available"
+      - "Speaker notes populated for palco/live"
+      - "Image resolution >= 96 DPI"
+      - "No overlapping elements"
+      - "Text not clipped by shape boundaries"
+      - "Opens in PowerPoint, Keynote, and Google Slides"
+
+    markdown:
+      - "Slide separators (---) correct"
+      - "Frontmatter valid YAML"
+      - "Code fences use correct language identifiers"
+      - "Images reference valid paths/URLs"
+      - "Speaker notes in comment blocks"
+      - "Renders with slidev or marp CLI"
+      - "PDF export produces correct page count"
+
+    cross_renderer:
+      - "All 12 slide types have mapping in each renderer"
+      - "Slide count matches between JSON and rendered output"
+      - "Speaker notes preserved across formats"
+      - "Brand colors applied consistently"
+
+  # ============================================================
+  # ANTI-PATTERNS
+  # ============================================================
+
+  anti_patterns:
+    pipeline:
+      - pattern: "Skip JSON, render from briefing directly"
+        why: "No interchange format = no multi-output, no evaluation"
+        fix: "Always generate canonical JSON first (Step 3)"
+      - pattern: "Modify JSON per renderer"
+        why: "Schema drift, inconsistent content"
+        fix: "One JSON, multiple renderers. Renderers adapt layout, not content"
+      - pattern: "Evaluate before rendering"
+        why: "Cannot assess design/GAD without rendered output"
+        fix: "Evaluate after rendering (Step 5)"
+      - pattern: "Same word density for all modes"
+        why: "Palco unreadable, async empty"
+        fix: "Respect mode constraints"
+      - pattern: "Generate PPTX by screenshot of TSX"
+        why: "Lossy, low resolution, no editable text"
+        fix: "Each renderer reads JSON independently"
+      - pattern: "Hardcode brand in schema"
+        why: "Schema becomes single-brand"
+        fix: "Brand is reference or inline object, never in schema definition"
+
+    content:
+      - pattern: "Chart title describes data (Revenue by Month)"
+        why: "Title should be insight"
+        fix: "Title IS the conclusion (Revenue Grew 40%)"
+      - pattern: "4+ consecutive same slide type"
+        why: "Kills rhythm"
+        fix: "Max 3, insert rhythm resets"
+      - pattern: "15+ words on palco/live slide"
+        why: "Illegible, splits attention"
+        fix: "Respect mode.max_words"
+      - pattern: "Text paragraph on slide"
+        why: "Slides are not documents"
+        fix: "Keywords and fragments only"
+      - pattern: "Missing speaker notes in palco/live"
+        why: "Narrator has no script"
+        fix: "speaker_notes required for palco/live"
+
+    rendering:
+      - pattern: "CSS animations in PPTX"
+        renderer: "pptx"
+        why: "PPTX uses its own animation system"
+        fix: "Map to PowerPoint entrance effects"
+      - pattern: "v-click in Marp"
+        renderer: "markdown"
+        why: "Only Slidev supports v-click"
+        fix: "Use numbered list for Marp"
+      - pattern: "Stock photos"
+        renderer: "all"
+        why: "Destroys credibility"
+      - pattern: "Code as screenshot"
+        renderer: "all"
+        why: "Inaccessible, pixelates"
+      - pattern: "Color-only data differentiation"
+        renderer: "all"
+        why: "Inaccessible to colorblind"
+
+  # ============================================================
+  # COMPANION REFERENCES
+  # ============================================================
+
+  references:
+    sops:
+      - id: "SOP-SLIDES-001"
+        use_for: "Human-readable process, decision criteria"
+      - id: "SOP-SLIDES-002"
+        use_for: "AIOX TSX code patterns"
+        key_sections: ["section 2 (API)", "section 3 (tokens)", "section 6 (12 types)"]
+      - id: "SOP-SLIDES-003"
+        use_for: "Brand-agnostic TSX code patterns"
+        key_sections: ["section 0 (brand config)", "section 2 (shared module)", "section 4 (12 types)"]
+
+    research:
+      - file: "02-research-report.md"
+        use_for: "Ecosystem overview, tool landscape"
+        key_sections: ["section 1 (libraries)", "section 3.3 (architecture)"]
+      - file: "03-recommendations.md"
+        use_for: "Stack selection, MCP tools"
+        key_sections: ["section 1.1 (MCP server)", "section 2.3 (JSON schema)"]
+      - file: "04-pptagent-v2-domain-analysis.md"
+        use_for: "PPTEval dimensions, business rules"
+        key_sections: ["section 2 (taxonomy)", "section 5 (evaluation)"]
+      - file: "05-competitive-analysis.md"
+        use_for: "GAD Score, cross-project comparison"
+        key_sections: ["section 5 (evaluation)", "section 10 (diagnosis)"]

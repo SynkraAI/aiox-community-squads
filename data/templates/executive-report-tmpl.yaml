@@ -1,0 +1,432 @@
+# Executive Report Template
+# Data Intelligence Pack - Template para Relatório Executivo
+# Based on: Avinash Kaushik (ex-Google) So What Framework
+
+template:
+  id: executive-report-v1
+  name: "Executive Report Template"
+  version: "1.0"
+  primary_agent: avinash-kaushik
+  secondary_agents:
+    - peter-fader
+    - nick-mehta
+  output:
+    format: markdown
+    filename: "executive-report-{{period}}.md"
+
+# ============================================================================
+# VARIÁVEIS DE INPUT
+# ============================================================================
+
+variables:
+  required:
+    - period: "Período do relatório (ex: 2026-Q1, 2026-01)"
+    - report_type: "Tipo: monthly, quarterly, annual"
+
+  optional:
+    - previous_period: "Período anterior para comparação"
+    - audience: "Público alvo: CEO, Board, Leadership"
+    - focus_area: "Área de foco específica"
+    - include_financials: "Incluir métricas financeiras (true/false)"
+    - include_recommendations: "Incluir recomendações de ação (true/false)"
+
+# ============================================================================
+# FRAMEWORK SO WHAT (Kaushik)
+# ============================================================================
+
+so_what_framework:
+  description: |
+    Todo report executivo deve responder 4 perguntas:
+    1. SO WHAT? - Por que isso importa?
+    2. WHAT CHANGED? - O que mudou desde a última análise?
+    3. WHY? - Por que mudou?
+    4. NOW WHAT? - O que vamos fazer?
+
+  rules:
+    - "Nunca apresente dados sem contexto"
+    - "Cada número deve levar a uma decisão"
+    - "Se não muda uma decisão, não inclua"
+    - "Comece pelo insight, não pelos dados"
+    - "Termine com ação específica e owner"
+
+# ============================================================================
+# ESTRUTURA DO RELATÓRIO
+# ============================================================================
+
+sections:
+
+  # --------------------------------------------------------------------------
+  # 1. EXECUTIVE SUMMARY (1 página max)
+  # --------------------------------------------------------------------------
+  - id: executive_summary
+    name: "Executive Summary"
+    required: true
+    max_length: "1 page"
+    template: |
+      # 📊 Executive Report - {{period}}
+
+      **Gerado em:** {{generated_at}}
+      **Período:** {{period_start}} a {{period_end}}
+      **Audiência:** {{audience}}
+
+      ---
+
+      ## 🎯 Executive Summary
+
+      ### Headline (SO WHAT?)
+
+      > {{headline_insight}}
+
+      ### Key Numbers
+
+      | Métrica | Atual | Anterior | Δ | Status |
+      |---------|-------|----------|---|--------|
+      | **Revenue** | {{revenue_current}} | {{revenue_previous}} | {{revenue_delta}} | {{revenue_status}} |
+      | **Customers** | {{customers_current}} | {{customers_previous}} | {{customers_delta}} | {{customers_status}} |
+      | **Health Score Médio** | {{health_avg}} | {{health_prev}} | {{health_delta}} | {{health_status}} |
+      | **Churn Rate** | {{churn_current}} | {{churn_previous}} | {{churn_delta}} | {{churn_status}} |
+
+      ### Traffic Light Summary
+
+      | Área | Status | Tendência |
+      |------|--------|-----------|
+      | Customer Health | {{health_light}} | {{health_trend_icon}} |
+      | Revenue | {{revenue_light}} | {{revenue_trend_icon}} |
+      | Acquisition | {{acquisition_light}} | {{acquisition_trend_icon}} |
+      | Retention | {{retention_light}} | {{retention_trend_icon}} |
+
+      ### Top 3 Insights
+
+      1. {{insight_1}}
+      2. {{insight_2}}
+      3. {{insight_3}}
+
+      ### Recommended Actions
+
+      | # | Ação | Owner | Due Date | Impact |
+      |---|------|-------|----------|--------|
+      | 1 | {{action_1}} | {{owner_1}} | {{due_1}} | {{impact_1}} |
+      | 2 | {{action_2}} | {{owner_2}} | {{due_2}} | {{impact_2}} |
+      | 3 | {{action_3}} | {{owner_3}} | {{due_3}} | {{impact_3}} |
+
+  # --------------------------------------------------------------------------
+  # 2. CUSTOMER HEALTH OVERVIEW
+  # --------------------------------------------------------------------------
+  - id: customer_health
+    name: "Customer Health Overview"
+    required: true
+    so_what_required: true
+    template: |
+      ---
+
+      ## 🏥 Customer Health
+
+      ### SO WHAT?
+
+      {{health_so_what}}
+
+      ### Distribution
+
+      | Categoria | Clientes | % | Δ vs Anterior |
+      |-----------|----------|---|---------------|
+      | 🟢 Healthy (70-100) | {{healthy_count}} | {{healthy_pct}}% | {{healthy_delta}} |
+      | 🟡 At Risk (40-69) | {{at_risk_count}} | {{at_risk_pct}}% | {{at_risk_delta}} |
+      | 🔴 Critical (0-39) | {{critical_count}} | {{critical_pct}}% | {{critical_delta}} |
+
+      ### WHAT CHANGED?
+
+      {{health_what_changed}}
+
+      ### WHY?
+
+      {{health_why}}
+
+      ### NOW WHAT?
+
+      | Ação | Clientes Afetados | Owner |
+      |------|-------------------|-------|
+      {{#each health_actions}}
+      | {{action}} | {{affected}} | {{owner}} |
+      {{/each}}
+
+  # --------------------------------------------------------------------------
+  # 3. REVENUE & CLV
+  # --------------------------------------------------------------------------
+  - id: revenue_clv
+    name: "Revenue & Customer Value"
+    required: true
+    so_what_required: true
+    template: |
+      ---
+
+      ## 💰 Revenue & Customer Value
+
+      ### SO WHAT?
+
+      {{revenue_so_what}}
+
+      ### CLV Distribution by Tier
+
+      | Tier | Clientes | % da Base | CLV Médio | Revenue Total |
+      |------|----------|-----------|-----------|---------------|
+      | Platinum (top 10%) | {{platinum_count}} | {{platinum_pct}}% | {{platinum_avg_clv}} | {{platinum_revenue}} |
+      | Gold (70-90%) | {{gold_count}} | {{gold_pct}}% | {{gold_avg_clv}} | {{gold_revenue}} |
+      | Silver (50-70%) | {{silver_count}} | {{silver_pct}}% | {{silver_avg_clv}} | {{silver_revenue}} |
+      | Bronze (30-50%) | {{bronze_count}} | {{bronze_pct}}% | {{bronze_avg_clv}} | {{bronze_revenue}} |
+      | Standard (<30%) | {{standard_count}} | {{standard_pct}}% | {{standard_avg_clv}} | {{standard_revenue}} |
+
+      ### 80/20 Analysis (Fader)
+
+      - **Top 20% dos clientes** geram **{{top20_revenue_pct}}%** da receita
+      - **Bottom 50% dos clientes** geram **{{bottom50_revenue_pct}}%** da receita
+      - **Implicação:** {{concentration_implication}}
+
+      ### WHAT CHANGED?
+
+      {{revenue_what_changed}}
+
+      ### WHY?
+
+      {{revenue_why}}
+
+      ### NOW WHAT?
+
+      {{revenue_now_what}}
+
+  # --------------------------------------------------------------------------
+  # 4. CHURN & RETENTION
+  # --------------------------------------------------------------------------
+  - id: churn_retention
+    name: "Churn & Retention"
+    required: true
+    so_what_required: true
+    template: |
+      ---
+
+      ## 🚨 Churn & Retention
+
+      ### SO WHAT?
+
+      {{churn_so_what}}
+
+      ### Churn Metrics
+
+      | Métrica | Valor | Target | Status |
+      |---------|-------|--------|--------|
+      | Churn Rate (período) | {{churn_rate}}% | <{{churn_target}}% | {{churn_status}} |
+      | At Risk Count | {{at_risk_total}} | <{{at_risk_target}} | {{at_risk_status}} |
+      | ARR em Risco | {{arr_at_risk}} | - | {{arr_risk_status}} |
+      | Saves (evitados) | {{saves_count}} | - | ✅ |
+
+      ### Top Churn Signals Detectados
+
+      | Signal | Clientes | % do Total At Risk |
+      |--------|----------|-------------------|
+      {{#each top_signals}}
+      | {{signal}} | {{count}} | {{percentage}}% |
+      {{/each}}
+
+      ### WHAT CHANGED?
+
+      {{churn_what_changed}}
+
+      ### WHY?
+
+      {{churn_why}}
+
+      ### NOW WHAT?
+
+      {{churn_now_what}}
+
+  # --------------------------------------------------------------------------
+  # 5. ACQUISITION & GROWTH
+  # --------------------------------------------------------------------------
+  - id: acquisition
+    name: "Acquisition & Growth"
+    required: false
+    so_what_required: true
+    template: |
+      ---
+
+      ## 📈 Acquisition & Growth
+
+      ### SO WHAT?
+
+      {{acquisition_so_what}}
+
+      ### Acquisition by Source
+
+      | Source | Clientes | % | Avg CLV | CLV Total |
+      |--------|----------|---|---------|-----------|
+      {{#each sources}}
+      | {{source}} | {{count}} | {{pct}}% | {{avg_clv}} | {{total_clv}} |
+      {{/each}}
+
+      ### Viral Coefficient (Ellis)
+
+      - **K atual:** {{viral_k}}
+      - **Meta:** K > 0.5
+      - **Interpretação:** {{viral_interpretation}}
+
+      ### WHAT CHANGED?
+
+      {{acquisition_what_changed}}
+
+      ### WHY?
+
+      {{acquisition_why}}
+
+      ### NOW WHAT?
+
+      {{acquisition_now_what}}
+
+  # --------------------------------------------------------------------------
+  # 6. RECOMMENDATIONS
+  # --------------------------------------------------------------------------
+  - id: recommendations
+    name: "Recommendations"
+    required: true
+    template: |
+      ---
+
+      ## ✅ Recommendations & Next Steps
+
+      ### Immediate Actions (This Week)
+
+      | # | Ação | Owner | Due | Expected Impact |
+      |---|------|-------|-----|-----------------|
+      {{#each immediate_actions}}
+      | {{@index}} | {{action}} | {{owner}} | {{due}} | {{impact}} |
+      {{/each}}
+
+      ### Short-term (This Month)
+
+      {{#each short_term_actions}}
+      - **{{action}}** - Owner: {{owner}} - Due: {{due}}
+        - Rationale: {{rationale}}
+      {{/each}}
+
+      ### Strategic (This Quarter)
+
+      {{#each strategic_actions}}
+      #### {{name}}
+      - **Objective:** {{objective}}
+      - **Owner:** {{owner}}
+      - **KPI:** {{kpi}}
+      - **Target:** {{target}}
+      {{/each}}
+
+      ### Questions for Leadership
+
+      {{#if questions}}
+      {{#each questions}}
+      - {{question}}
+      {{/each}}
+      {{/if}}
+
+  # --------------------------------------------------------------------------
+  # 7. APPENDIX
+  # --------------------------------------------------------------------------
+  - id: appendix
+    name: "Appendix"
+    required: false
+    template: |
+      ---
+
+      ## 📎 Appendix
+
+      ### Data Sources
+
+      | Source | Freshness | Confidence |
+      |--------|-----------|------------|
+      {{#each data_sources}}
+      | {{source}} | {{freshness}} | {{confidence}} |
+      {{/each}}
+
+      ### Methodology Notes
+
+      {{methodology_notes}}
+
+      ### Glossary
+
+      | Term | Definition |
+      |------|------------|
+      | CLV | Customer Lifetime Value - valor total esperado do cliente |
+      | RFM | Recency, Frequency, Monetary - framework de segmentação |
+      | Health Score | Score 0-100 indicando saúde do cliente |
+      | Churn | Perda de cliente ou receita |
+      | NRR | Net Revenue Retention |
+
+      ### Report Metadata
+
+      - **Generated:** {{generated_at}}
+      - **Period:** {{period}}
+      - **Data as of:** {{data_date}}
+      - **Next Report:** {{next_report_date}}
+
+# ============================================================================
+# VALIDAÇÃO
+# ============================================================================
+
+validation:
+  required_sections:
+    - executive_summary
+    - customer_health
+    - revenue_clv
+    - churn_retention
+    - recommendations
+
+  so_what_checklist:
+    - "Cada seção tem SO WHAT claramente definido?"
+    - "WHAT CHANGED está com delta vs período anterior?"
+    - "WHY tem root cause identificada?"
+    - "NOW WHAT tem ação específica com owner?"
+
+  quality_checklist:
+    - "Report cabe em 5-7 páginas?"
+    - "Números têm fonte identificada?"
+    - "Gráficos têm legenda clara?"
+    - "Recomendações são acionáveis?"
+    - "Tem executive summary de 1 página?"
+
+# ============================================================================
+# EXEMPLOS
+# ============================================================================
+
+examples:
+  good_so_what: |
+    SO WHAT:
+    "Health Score médio caiu de 72 para 58 este mês, colocando R$340K
+    de ARR em risco. Isso representa 23% da receita recorrente."
+
+  bad_so_what: |
+    "O Health Score médio é 58."
+    (Falta contexto, comparação, e implicação)
+
+  good_now_what: |
+    NOW WHAT:
+    "1. CS Manager liga para top 5 contas críticas (R$120K ARR) - Owner: Maria - Due: amanhã
+     2. Email de reativação para 45 contas inativas - Owner: Marketing - Due: sexta
+     3. Review de onboarding do novo módulo - Owner: Produto - Due: próxima semana"
+
+  bad_now_what: |
+    "Precisamos melhorar o Health Score."
+    (Falta especificidade, owner, e timeline)
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  created: "2026-01-23"
+  author: "Data Intelligence Pack"
+  methodology: "Avinash Kaushik So What Framework"
+  references:
+    - "Web Analytics 2.0 (Kaushik)"
+    - "DMMM Framework"
+    - "Customer Centricity (Fader)"
+  related_workflows:
+    - "implement-customer-360.md"
+    - "create-churn-system.md"
+  related_checklists:
+    - "so-what-checklist.md"

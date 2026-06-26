@@ -1,0 +1,727 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Triage Cascade Framework
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# 4-level decision tree: NL input → scope → domain → profile → execution
+# SSoT: This file defines the routing intelligence pattern.
+# Origin: Extracted from apex-lead routing logic + CLAUDE.md auto-routing.
+#
+# Reusability: HIGH — any multi-agent squad needs triaging. The `squad_template`
+# section at the bottom provides a blank skeleton for new squads.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+meta:
+  name: "Triage Cascade"
+  version: "1.0.0"
+  description: "Transform natural language input into precise execution route in 4 levels"
+  origin: "Extracted from apex-lead routing heuristics (RT001-RT004) + CLAUDE.md auto-routing table"
+  reusability: "HIGH — any multi-agent squad needs triaging"
+  references:
+    - "squads/apex/agents/apex-lead.md → heuristics.routing, tier_routing"
+    - "squads/apex/CLAUDE.md → Auto-Routing, Routing Table, Pipeline Commands"
+    - "squads/apex/data/apex-intelligence.yaml → intent chaining, smart defaults"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LEVEL 1: SCOPE CLASSIFICATION
+# "How big is this request?"
+# ═══════════════════════════════════════════════════════════════════════════════
+
+scope_classification:
+  purpose: "Determine request magnitude to select the right pipeline"
+
+  rules:
+    - scope: "micro"
+      detection: "1 file, 1 domain, specific fix (typo, color, spacing)"
+      pipeline: "*{squad}-fix"
+      agents: 1
+      examples:
+        - "fix the button color"
+        - "adjust padding on the card"
+        - "typo in the header text"
+
+    - scope: "small"
+      detection: "2-3 files, same domain, localized change"
+      pipeline: "*{squad}-fix"
+      agents: 1
+      examples:
+        - "fix the header layout on mobile"
+        - "add hover effect to all nav links"
+        - "update font sizes in the hero section"
+
+    - scope: "medium"
+      detection: "3-10 files, multi-domain, cross-concern change"
+      pipeline: "*{squad}-quick"
+      agents: "2-3"
+      examples:
+        - "create a stats component with chart and animation"
+        - "redesign the confirmation screen with motion"
+        - "add dark mode toggle with proper token system"
+
+    - scope: "large"
+      detection: "10+ files, new feature, full redesign, cross-platform"
+      pipeline: "*{squad}-go"
+      agents: "full pipeline"
+      examples:
+        - "add a patient dashboard with charts, filters, and export"
+        - "redesign the entire services page"
+        - "implement cross-platform component library"
+
+  short_circuit:
+    rule: "IF scope == micro AND target agent is unambiguous → skip pipeline, route direct"
+    benefit: "No overhead for simple fixes — user gets immediate response"
+    guard: "Short-circuit ONLY when both scope AND agent are certain; if either is ambiguous, use pipeline"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LEVEL 2: DOMAIN ROUTING
+# "Which specialist handles this?"
+# ═══════════════════════════════════════════════════════════════════════════════
+
+domain_routing:
+  purpose: "Match request keywords to the best-fit specialist agent"
+  method: "Keyword matching against domain table, enhanced by routing heuristics"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Apex-specific domain table (extracted from CLAUDE.md Routing Table
+  # and apex-lead.md tier_routing + heuristics.routing)
+  # ─────────────────────────────────────────────────────────────────────────────
+  domains:
+
+    # Tier 1 — Architecture
+    - domain: "frontend-architecture"
+      keywords:
+        - architecture
+        - system design
+        - tech stack
+        - monorepo
+        - project structure
+      agent: "frontend-arch"
+      tier: 1
+      examples:
+        - "should we use Next.js or Vite?"
+        - "how should we structure the monorepo?"
+
+    # Tier 2 — Core Design
+    - domain: "interaction-design"
+      keywords:
+        - UX pattern
+        - user flow
+        - interaction
+        - states design
+        - wireframe
+        - screen design
+      agent: "interaction-dsgn"
+      tier: 2
+      examples:
+        - "redesign the confirmation screen"
+        - "improve the onboarding flow"
+
+    - domain: "design-system"
+      keywords:
+        - design system
+        - token
+        - theme
+        - dark mode
+        - color variable
+        - Figma
+        - component library
+      agent: "design-sys-eng"
+      tier: 2
+      examples:
+        - "create a design token system"
+        - "export tokens for Figma"
+
+    # Tier 3 — Design Engineers
+    - domain: "css-layout"
+      keywords:
+        - CSS
+        - layout
+        - flexbox
+        - grid
+        - spacing
+        - z-index
+        - overflow
+        - responsive
+        - typography
+        - font
+        - Tailwind
+        - subgrid
+        - container queries
+      agent: "css-eng"
+      tier: 3
+      heuristic: "RT001 — IF CSS involves grid/subgrid/container queries/has() → always route here"
+      examples:
+        - "fix the header layout on mobile"
+        - "the grid is breaking on tablet"
+
+    - domain: "react-engineering"
+      keywords:
+        - React
+        - component
+        - hook
+        - state
+        - props
+        - JSX
+        - TSX
+        - render
+        - server component
+        - error boundary
+      agent: "react-eng"
+      tier: 3
+      examples:
+        - "add loading state to the form"
+        - "refactor this god component"
+
+    - domain: "mobile-engineering"
+      keywords:
+        - mobile
+        - React Native
+        - iOS
+        - Android
+        - Expo
+        - gesture
+        - haptic
+      agent: "mobile-eng"
+      tier: 3
+      examples:
+        - "implement swipe-to-delete on mobile"
+        - "fix the gesture handler on iOS"
+
+    - domain: "cross-platform"
+      keywords:
+        - cross-platform
+        - universal component
+        - platform parity
+      agent: "cross-plat-eng"
+      tier: 3
+      examples:
+        - "make this component work on web and mobile"
+
+    - domain: "spatial-computing"
+      keywords:
+        - 3D
+        - Three.js
+        - R3F
+        - WebXR
+        - VisionOS
+        - spatial
+        - shader
+        - depth
+      agent: "spatial-eng"
+      tier: 3
+      heuristic: "RT003 — IF feature involves 3D/WebXR/VisionOS/depth → always route here"
+      examples:
+        - "add a 3D product viewer"
+        - "implement spatial UI for VisionOS"
+
+    # Tier 4 — Deep Specialists
+    - domain: "motion-animation"
+      keywords:
+        - animation
+        - transition
+        - spring
+        - motion
+        - Framer Motion
+        - animate
+        - hover effect
+        - orchestration
+        - layout animation
+        - shared element
+      agent: "motion-eng"
+      tier: 4
+      heuristic: "RT002 — IF animation involves orchestration/layout animation/shared element → always route here"
+      examples:
+        - "make the modal entrance smoother"
+        - "add spring physics to the card flip"
+
+    - domain: "accessibility"
+      keywords:
+        - accessibility
+        - a11y
+        - WCAG
+        - screen reader
+        - keyboard navigation
+        - focus
+        - ARIA
+        - contrast
+        - reduced-motion
+      agent: "a11y-eng"
+      tier: 4
+      examples:
+        - "audit the schedule form for a11y"
+        - "fix keyboard navigation in the modal"
+
+    - domain: "performance"
+      keywords:
+        - performance
+        - LCP
+        - INP
+        - CLS
+        - bundle size
+        - Core Web Vitals
+        - lighthouse
+        - loading
+        - lazy load
+      agent: "perf-eng"
+      tier: 4
+      examples:
+        - "why is the page loading slow?"
+        - "reduce the bundle size"
+
+    # Tier 5 — Quality Assurance
+    - domain: "visual-qa"
+      keywords:
+        - visual regression
+        - pixel
+        - screenshot test
+        - looks wrong
+        - looks different
+        - visual QA
+      agent: "qa-visual"
+      tier: 5
+      examples:
+        - "the card looks different than before"
+        - "run visual regression on the homepage"
+
+    - domain: "cross-browser-qa"
+      keywords:
+        - cross-browser
+        - device testing
+        - platform QA
+        - Safari bug
+        - Firefox issue
+      agent: "qa-xplatform"
+      tier: 5
+      examples:
+        - "test on Safari and Firefox"
+        - "verify it works on Android Chrome"
+
+    - domain: "asset-brand-creation"
+      keywords:
+        - logo
+        - icon
+        - brand asset
+        - brand mark
+        - custom icon
+        - icon creation
+        - icon system
+        - recreate logo
+        - asset pipeline
+        - icon audit
+      agent: "design-sys-eng"
+      tier: 2
+      heuristic: "Asset/icon requests → design-sys-eng authority, may delegate to web-intel for external extraction"
+      examples:
+        - "create a logo for my app"
+        - "design custom icons"
+        - "recreate the company logo as SVG"
+        - "setup an icon system"
+        - "audit our icon usage"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Discovery-routed domains (no agent, routes to discovery command)
+  # ─────────────────────────────────────────────────────────────────────────────
+  discovery_domains:
+    - domain: "component-inventory"
+      keywords: [component inventory, orphans, component deps]
+      route: "*discover-components"
+
+    - domain: "design-system-audit"
+      keywords: [design audit, token audit, DS health]
+      route: "*discover-design"
+
+    - domain: "route-map"
+      keywords: [routes, route map, orphan routes, dead routes]
+      route: "*discover-routes"
+
+    - domain: "dependency-health"
+      keywords: [dependencies, outdated, vulnerable, unused packages]
+      route: "*discover-dependencies"
+
+    - domain: "motion-audit"
+      keywords: [animation inventory, motion health, spring audit]
+      route: "*discover-motion"
+
+    - domain: "a11y-scan"
+      keywords: [a11y scan, WCAG scan, accessibility audit]
+      route: "*discover-a11y"
+
+    - domain: "perf-scan"
+      keywords: [performance scan, lazy loading, CWV scan]
+      route: "*discover-performance"
+
+    - domain: "state-audit"
+      keywords: [state management, prop drilling, context sprawl]
+      route: "*discover-state"
+
+    - domain: "type-audit"
+      keywords: [TypeScript coverage, any types, untyped props]
+      route: "*discover-types"
+
+    - domain: "form-audit"
+      keywords: [form validation, form a11y, double submit]
+      route: "*discover-forms"
+
+    - domain: "security-scan"
+      keywords: [XSS, secrets, insecure storage, security audit]
+      route: "*discover-security"
+
+    - domain: "icon-system-audit"
+      keywords: [icon audit, icon inventory, icon health, icon consistency]
+      route: "*icon-system audit"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Conflict resolution rules (when request matches multiple domains)
+  # ─────────────────────────────────────────────────────────────────────────────
+  conflict_resolution:
+    - rule: "Tier Priority"
+      description: "Higher tier agent wins (Tier 1 > Tier 5)"
+      example: "architecture + CSS conflict → frontend-arch decides first, css-eng implements"
+
+    - rule: "Domain Specificity"
+      description: "More specific domain wins over general"
+      example: "'subgrid layout' → css-eng (specific) over react-eng (general component)"
+
+    - rule: "Define vs Implement"
+      description: "Definer runs before implementer"
+      example: "design-sys-eng defines tokens → css-eng implements them"
+
+    - rule: "Audit vs Build"
+      description: "Auditor runs after builder"
+      example: "react-eng builds component → qa-visual audits it"
+
+    - rule: "Multi-domain Orchestration"
+      description: "If request spans 3+ domains, escalate to orchestrator"
+      example: "'redesign with animation, a11y, and perf' → apex-lead coordinates all"
+
+    - rule: "Unresolvable"
+      description: "Escalate to orchestrator (apex-lead) for manual routing"
+      example: "ambiguous request with no clear domain match"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LEVEL 3: PROFILE FILTERING
+# "Is this agent available for this project?"
+# ═══════════════════════════════════════════════════════════════════════════════
+
+profile_filtering:
+  purpose: "Ensure the routed agent is active in the current project profile"
+
+  # Profile detection is automatic — see CLAUDE.md → Dynamic Project Scanner
+  detection_logic: |
+    IF monorepo with web + mobile:     profile = "full" (14 agents)
+    ELIF react-native OR expo:         profile = "full"
+    ELIF next in dependencies:         profile = "web-next" (10 agents)
+    ELIF react + vite:                 profile = "web-spa" (8 agents)
+    ELSE:                              profile = "minimal" (4 agents)
+
+  profiles:
+    full:
+      agents: "all 14"
+      when: "Monorepo, cross-platform (Next.js + RN + Spatial)"
+      includes:
+        - apex-lead
+        - frontend-arch
+        - interaction-dsgn
+        - design-sys-eng
+        - css-eng
+        - react-eng
+        - mobile-eng
+        - cross-plat-eng
+        - spatial-eng
+        - motion-eng
+        - a11y-eng
+        - perf-eng
+        - qa-visual
+        - qa-xplatform
+
+    web-next:
+      agents: 10
+      when: "Next.js App Router projects"
+      includes:
+        - apex-lead
+        - frontend-arch
+        - interaction-dsgn
+        - design-sys-eng
+        - css-eng
+        - react-eng
+        - motion-eng
+        - a11y-eng
+        - perf-eng
+        - qa-visual
+
+    web-spa:
+      agents: 8
+      when: "React + Vite SPA"
+      includes:
+        - apex-lead
+        - interaction-dsgn
+        - css-eng
+        - react-eng
+        - motion-eng
+        - a11y-eng
+        - perf-eng
+        - qa-visual
+
+    minimal:
+      agents: 4
+      when: "Quick fixes, single components, simple SPA"
+      includes:
+        - apex-lead
+        - css-eng
+        - react-eng
+        - a11y-eng
+
+  on_inactive_agent:
+    action: "INFORM user that the requested specialist is not active in current profile"
+    suggest: "Upgrade to a profile that includes the needed agent"
+    never: "Silently skip the agent or route to a less qualified substitute"
+    example: |
+      "spatial-eng is not active in the web-spa profile.
+       Upgrade to 'full' profile to enable 3D/spatial features."
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LEVEL 4: EXECUTION SELECTION
+# "How to execute?"
+# ═══════════════════════════════════════════════════════════════════════════════
+
+execution_selection:
+  purpose: "Choose execution mode based on scope + user preference"
+
+  modes:
+    direct:
+      description: "Single agent fix, no pipeline overhead"
+      when: "scope == micro or small, single domain"
+      pipeline: "*{squad}-fix"
+      flow: "route → execute → typecheck → done"
+      pause_points: 0
+
+    guided:
+      description: "Pipeline with pause after each phase for user review"
+      when: "User wants control at every step"
+      pipeline: "*{squad}-step"
+      flow: "phase 1 → pause → phase 2 → pause → ... → done"
+      pause_points: "every phase"
+
+    autonomous:
+      description: "Pipeline runs continuously, pauses at checkpoints only"
+      when: "scope == medium or large, user trusts the pipeline"
+      pipeline: "*{squad}-go or *{squad}-quick"
+      flow: "phase 1 → phase 2 → checkpoint → ... → done"
+      pause_points: "checkpoints only (6 in full pipeline)"
+
+    dry_run:
+      description: "Preview the execution plan without running anything"
+      when: "User wants to see what would happen before committing"
+      pipeline: "*{squad}-dry-run"
+      flow: "analyze → plan → display → stop"
+      pause_points: 0
+
+  user_override: "User can always choose a different mode — the cascade suggests, never forces"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SMART DEFAULTS
+# Reduce friction by skipping unnecessary questions
+# ═══════════════════════════════════════════════════════════════════════════════
+
+smart_defaults:
+  - condition: "Only 1 component in scope"
+    default: "Skip 'which component?' question — use the only one"
+    override: "User can specify explicitly if the auto-pick is wrong"
+
+  - condition: "Scope is micro (1 file, 1 domain)"
+    default: "Route to *fix, skip pipeline setup"
+    override: "User can request full pipeline via *{squad}-go"
+
+  - condition: "Request is a question, not an action"
+    default: "Answer directly, no pipeline activation"
+    override: "User can request formal audit via *{squad}-audit"
+    detection: "Starts with 'how', 'why', 'what', 'which', 'is', 'are', 'does'"
+
+  - condition: "Same domain as last request in session"
+    default: "Reuse the same agent without re-routing"
+    override: "User can force re-route by specifying a different agent"
+
+  - condition: "Discovery results are cached and fresh"
+    default: "Use cached results instead of re-scanning"
+    override: "User can force re-scan via explicit discovery command"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ROUTING HEURISTICS
+# Specialized rules extracted from apex-lead (RT001-RT004)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+routing_heuristics:
+  description: "Hard rules that override general keyword matching for precision"
+
+  rules:
+    - id: "RT001"
+      name: "CSS Complexity Threshold"
+      rule: "IF CSS involves grid/subgrid/container queries/has() → ROUTE to @css-eng"
+      rationale: "Advanced CSS needs specialist attention — general agents may produce fragile solutions"
+
+    - id: "RT002"
+      name: "Motion Complexity Threshold"
+      rule: "IF animation involves orchestration/layout animation/shared element → ROUTE to @motion-eng"
+      rationale: "Complex motion needs physics expertise — simple transitions can be handled by any agent"
+
+    - id: "RT003"
+      name: "Spatial Feature Detection"
+      rule: "IF feature involves 3D/WebXR/VisionOS/depth → ROUTE to @spatial-eng"
+      rationale: "Spatial computing is a distinct discipline with unique constraints"
+
+    - id: "RT004"
+      name: "i18n Multi-Domain"
+      rule: "IF request involves translation/localization/RTL/multi-language → ROUTE to @react-eng + @css-eng"
+      rationale: "i18n touches both React (string extraction, locale) and CSS (logical properties, RTL)"
+
+    - id: "RT005"
+      name: "Visual Input Detection"
+      rule: "IF user provides screenshot/print/URL → ROUTE to *apex-vision (full visual sweep)"
+      rationale: "Visual input activates all 14 agents in parallel for comprehensive analysis"
+
+    - id: "RT006"
+      name: "Multi-Tier Escalation"
+      rule: "IF request spans 3+ tiers → orchestrator coordinates, no single agent routes"
+      rationale: "Cross-tier work needs orchestration to prevent scope conflicts"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CASCADE FLOW (end-to-end)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+cascade_flow:
+  description: "Complete decision path from NL input to execution"
+  steps:
+    - level: 1
+      name: "Scope Classification"
+      input: "Natural language request"
+      output: "scope (micro | small | medium | large)"
+      duration: "instant"
+
+    - level: 2
+      name: "Domain Routing"
+      input: "scope + request keywords"
+      output: "target agent(s) or discovery command"
+      duration: "instant"
+      fallback: "If no domain match → escalate to orchestrator"
+
+    - level: 3
+      name: "Profile Filtering"
+      input: "target agent + current project profile"
+      output: "confirmed agent (active) or profile upgrade suggestion"
+      duration: "instant"
+      fallback: "If agent inactive → inform user, suggest profile upgrade"
+
+    - level: 4
+      name: "Execution Selection"
+      input: "scope + user preference"
+      output: "execution mode (direct | guided | autonomous | dry_run)"
+      duration: "instant"
+      fallback: "Default to guided if user preference is unknown"
+
+  total_latency: "Near-zero — all 4 levels are heuristic-based, no API calls"
+
+  # Example walkthrough
+  example:
+    input: "o header ta quebrando no mobile"
+    level_1: "scope = small (1-2 files, CSS domain)"
+    level_2: "domain = css-layout → agent = css-eng (Josh)"
+    level_3: "profile = web-spa → css-eng is active → confirmed"
+    level_4: "scope = small → mode = direct → *apex-fix → @css-eng"
+    result: "Josh fixes the header, suggests a11y check with Sara"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SQUAD TEMPLATE
+# Fill these sections to create triage for any new squad
+# ═══════════════════════════════════════════════════════════════════════════════
+
+squad_template:
+  description: "Blank skeleton — copy and fill to create triage for your squad"
+
+  scope_levels:
+    # Define what micro/small/medium/large means for YOUR squad
+    - scope: "micro"
+      detection: ""
+      pipeline: ""
+    - scope: "small"
+      detection: ""
+      pipeline: ""
+    - scope: "medium"
+      detection: ""
+      pipeline: ""
+    - scope: "large"
+      detection: ""
+      pipeline: ""
+
+  domains:
+    # Define domain → agent mapping for YOUR squad
+    - domain: ""
+      keywords: []
+      agent: ""
+      examples: []
+
+  profiles:
+    # Define profile tiers for YOUR squad
+    - name: "full"
+      agents: []
+      when: ""
+    - name: "minimal"
+      agents: []
+      when: ""
+
+  execution_modes:
+    # Define execution modes for YOUR squad
+    - mode: "direct"
+      when: ""
+    - mode: "guided"
+      when: ""
+    - mode: "autonomous"
+      when: ""
+
+  smart_defaults:
+    # Define friction-reducing defaults for YOUR squad
+    - condition: ""
+      default: ""
+      override: ""
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CROSS-SQUAD APPLICABILITY
+# How other squads can instantiate their own Triage Cascade
+# ═══════════════════════════════════════════════════════════════════════════════
+
+cross_squad:
+  n8n_forge:
+    scope_mapping:
+      micro: "1 node fix, 1 connection"
+      small: "1 workflow modification"
+      medium: "Multi-workflow change, new integration"
+      large: "Full pipeline conversion, architecture redesign"
+    domains:
+      - { domain: "workflow-analysis", agent: "workflow-analyst", keywords: [workflow, trigger, schedule, webhook] }
+      - { domain: "code-conversion", agent: "code-converter", keywords: [convert, standalone, n8n to code, export] }
+      - { domain: "integration-arch", agent: "integration-arch", keywords: [API, integration, credential, auth] }
+      - { domain: "qa-automation", agent: "qa-automation", keywords: [test, validate, mock, regression] }
+    profiles:
+      full: { agents: 5, when: "Complex multi-workflow pipeline" }
+      minimal: { agents: 3, when: "Single workflow conversion" }
+
+  squad_creator:
+    scope_mapping:
+      micro: "1 agent tweak, 1 task fix"
+      small: "Agent enhancement, new task"
+      medium: "Full agent creation with tasks + workflows"
+      large: "Full squad creation from scratch"
+    domains:
+      - { domain: "knowledge-extraction", agent: "oalanicolas", keywords: [extract, mind clone, DNA, heuristics] }
+      - { domain: "process-audit", agent: "pedro-valerio", keywords: [audit, quality, axioma, gaps] }
+      - { domain: "business-strategy", agent: "thiago_finch", keywords: [viability, strategy, business, market] }
+    profiles:
+      full: { agents: "3 pro + base", when: "Full squad creation with quality gates" }
+      base_only: { agents: "base squad-creator", when: "Simple agent/task creation" }

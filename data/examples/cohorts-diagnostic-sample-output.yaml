@@ -1,0 +1,10 @@
+example_output:
+  workflow: cohorts-diagnostic
+  generated_at: "{iso_datetime}"
+  artifact_paths:
+    - workspace/businesses/{slug}/analytics/cohorts/segmentation-rfm.yaml
+    - workspace/businesses/{slug}/analytics/cohorts/learning-journey.yaml
+    - workspace/businesses/{slug}/analytics/cohorts/community-health.yaml
+    - workspace/businesses/{slug}/analytics/cohorts/student-health-score.yaml
+    - workspace/businesses/{slug}/analytics/cohorts/icp-deep-analysis.yaml
+    - workspace/businesses/{slug}/analytics/cohorts/executive-summary.yaml

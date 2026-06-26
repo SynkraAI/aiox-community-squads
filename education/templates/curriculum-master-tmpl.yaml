@@ -1,0 +1,82 @@
+# Curriculum Master Template
+# Purpose: Master curriculum architecture following CLT, ARCS, Novak, and Bloom principles
+# Output: Complete curriculum blueprint with progression and competency mapping
+
+metadata:
+  curriculum_id: "{CURRICULUM_ID}"  # e.g., "curriculo-001-marketing-digital"
+  domain: "{DOMAIN}"  # e.g., "Marketing Digital", "Python Programming"
+  created_date: "{CREATED_DATE}"  # YYYY-MM-DD
+  version: "{VERSION}"  # e.g., "1.0"
+  total_hours: {TOTAL_HOURS}  # Integer
+  target_audience: "{TARGET_AUDIENCE}"  # e.g., "Entrepreneurs with no tech background"
+  prerequisites: "{PREREQUISITES}"  # e.g., "None" or "Basic computer literacy"
+
+domain_overview:
+  purpose: "{PURPOSE}"  # Why this curriculum exists
+  scope: "{SCOPE}"  # What is covered and what is NOT
+  core_promise: "{CORE_PROMISE}"  # What learner will be able to DO after completion
+
+knowledge_map_summary:
+  # High-level concept hierarchy (details in knowledge-map-tmpl.yaml)
+  focus_question: "{FOCUS_QUESTION}"  # e.g., "How does marketing automation work?"
+  core_concepts:
+    - "{CONCEPT_1}"  # Top-level concepts only
+    - "{CONCEPT_2}"
+    - "{CONCEPT_3}"
+  concept_count: {CONCEPT_COUNT}  # Total concepts in full knowledge map
+
+progression_table:
+  # Defines logical sequence of learning
+  # Format: Level → Modules → Prerequisites → Final Competency
+  levels:
+    - level: 1
+      name: "{LEVEL_1_NAME}"  # e.g., "Foundation"
+      modules:
+        - module_id: "{MODULE_ID}"  # e.g., "mod-001-intro-marketing"
+          name: "{MODULE_NAME}"
+          hours: {HOURS}
+          prerequisites: []  # List of module_ids or empty
+          final_competency: "{COMPETENCY}"  # What learner can DO after this module
+
+    - level: 2
+      name: "{LEVEL_2_NAME}"  # e.g., "Application"
+      modules:
+        - module_id: "{MODULE_ID}"
+          name: "{MODULE_NAME}"
+          hours: {HOURS}
+          prerequisites: ["{PREREQUISITE_MODULE_ID}"]
+          final_competency: "{COMPETENCY}"
+
+    # Add more levels as needed
+
+competency_matrix:
+  # SABER/ENTENDER/FAZER breakdown (detailed in competency-matrix-tmpl.yaml)
+  # Summary only — shows highest Bloom level per module
+  modules:
+    - module_id: "{MODULE_ID}"
+      saber_level: "{BLOOM_LEVEL}"  # Remember, Understand
+      entender_level: "{BLOOM_LEVEL}"  # Understand, Apply, Analyze
+      fazer_level: "{BLOOM_LEVEL}"  # Apply, Analyze, Evaluate, Create
+
+mastery_definition:
+  # How "completion" is measured
+  minimum_passar_tier: "{LTEM_TIER}"  # e.g., "TIER_1" (minimum acceptable transfer)
+  passing_criteria:
+    - "{CRITERION_1}"  # e.g., "80% on TIER_1 assessments"
+    - "{CRITERION_2}"  # e.g., "Complete 1 real-world project (TIER_2)"
+
+  certification_criteria:
+    - "{CRITERION_1}"  # Higher bar for certification vs passing
+
+mec_compliance_status:
+  # Only if applicable (Brazilian courses)
+  applies: {BOOLEAN}  # true/false
+  course_type: "{COURSE_TYPE}"  # e.g., "Livre", "Técnico", "Superior"
+  minimum_hours_required: {HOURS}  # Per MEC regulation
+  hours_designed: {HOURS}  # This curriculum
+  compliance_report: "{REPORT_PATH}"  # Path to mec-compliance-report.yaml
+  status: "{STATUS}"  # "Compliant", "Non-compliant", "N/A"
+
+notes: |
+  {ADDITIONAL_NOTES}
+  # E.g., design rationale, known gaps, future iterations

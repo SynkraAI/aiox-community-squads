@@ -1,0 +1,85 @@
+# Managed by materialize-map.py
+# Source: outputs/sinkra-squad/aiox-sop/map/20260329-190639-claude-opus/phase-handoff.yaml
+# Category: formalization
+
+handoff:
+  from_phase: '8'
+  from_agent: sinkra-qa
+  to_phase: '9'
+  timestamp: '2026-03-30T09:00:00-03:00'
+  artifacts_produced:
+  - file: sinkra_compliance_report.md
+    description: SINKRA v1.2 Map Readiness Compliance Report — 74.2/100 REVIEW, 5
+      applicable categories evaluated, 2 HIGH + 4 MEDIUM/LOW gaps documented with
+      resolution paths
+  - file: score_card.json
+    description: Structured compliance scorecard — 9 dimensions (5 applicable, 4 N/A),
+      per-check findings, design vs downstream gap classification, Phase 6 alignment
+      validation
+  decisions:
+  - REVIEW verdict (74.2/100) — not MAP-READY (80+). Score is in 60-79 REVIEW band.
+    Proceed is recommended conditionally, not automatically.
+  - Zero CRITICAL violations and zero auto-fail conditions — no hard block on Phase
+    9. REVIEW is not VETO.
+  - '2 HIGH design gaps must resolve before Phase 9 start: (1) token_assignments.json
+    families and (2) Clone HIL explicit field in T3.1/T3.3. Combined effort: 2.5h.'
+  - 4 categories N/A (ART, BU, ENT/INH, JLOG) — this is single-BU stateless operational
+    pipeline. Weights redistributed proportionally.
+  - Token gap is Phase 5 responsibility (composition-engineer scaffold not filled)
+    — not a Phase 3/4/6 design failure. Gap is implementation debt, not architecture
+    failure.
+  - Phase 6 (78.3) and Phase 8 (74.2) are coherent — delta 4.1 is expected (Phase
+    8 more granular on structural checks like tokens and Clone HIL). Mandamentos audit
+    identical in both.
+  - 'Deterministic baseline 63.8 vs QA score 74.2: gap is 10.4 points explained by
+    (a) accountable human IS defined via escalation_path (not a dedicated field),
+    (b) token scaffold penalized by scorer but maps to known gap, (c) N/A categories
+    not penalizing in QA scoring.'
+  warnings:
+  - token_assignments.json MUST be filled before Phase 9 materializes any squad files
+    — token families drive Accountability and Mode token binding during materialization.
+  - T3.1 and T3.3 Clone tasks need human_review_trigger field added — this is a contract
+    completeness requirement, not a runtime issue. Without it, Clone HIL is informal.
+  - risk_register.json (P1) and scaling_strategy.md (P2) from Phase 6 corrective actions
+    are still pending — infrastructure-mapper should create these in parallel with
+    Phase 9.
+  - 'Mandamento 6 PARTIAL_PASS: baseline_kpis{} section missing from workflow_definition.json
+    — process should not be declared ''improved'' without measured baseline to compare
+    against.'
+  - Domain language inconsistency (PT-BR vs English) is cosmetic — no logic error
+    — but materialization tooling should pick one standard to avoid field lookup failures.
+  checkpoint:
+    id: SINKRA_QA_GATE
+    verdict: REVIEW
+    score: 74.2
+    details:
+      critical_violations: 0
+      auto_fail_triggered: false
+      high_violations: 2
+      medium_violations: 4
+      categories_applicable: 5
+      categories_na: 4
+      deterministic_baseline: 63.8
+      phase6_axioma_score: 78.3
+      mandamentos_pass: 9
+      mandamentos_partial: 1
+  next_agent_focus:
+  - 'Phase 9 (squad materializer / sinkra-chief): materialize the map into squads/aiox-sop/
+    directory structure following SINKRA squad pattern (config.yaml, agents/, tasks/,
+    workflows/, templates/, data/).'
+  - 'CRITICAL pre-condition: Verify token_assignments.json is filled (9 token families)
+    before generating squad files — token data drives Accountability token binding.'
+  - 'CRITICAL pre-condition: Verify T3.1 and T3.3 in task_definitions.json have human_review_trigger
+    field — needed for correct Clone task materialization.'
+  - Use workflow_definition.json (5 workflows) + task_definitions.json (27 tasks)
+    + executor_matrix.json as the three primary source files for squad materialization.
+  - Materialize 5 workflow organisms as workflow YAML files in squads/aiox-sop/workflows/.
+  - Materialize 27 task atoms as task markdown/YAML files in squads/aiox-sop/tasks/.
+  - Materialize 2 Clone executor tasks (T3.1, T3.3) with human_review_trigger in task
+    definition.
+  - 'Create squads/aiox-sop/config.yaml with SINKRA v3.1 fields: artifact_contracts,
+    bu_mapping (single-BU), supported_modes.'
+  - Corrective actions P1 (risk_register.json), P2 (scaling_strategy.md), P3 (baseline_kpis)
+    can run in parallel — do NOT block Phase 9 on these.
+  - 'After materialization: run validate-squad script against squads/aiox-sop/ to
+    confirm physical structure matches the map.'

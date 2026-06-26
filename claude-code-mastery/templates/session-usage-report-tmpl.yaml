@@ -1,0 +1,224 @@
+version: "1.9.0"
+artifact_id: session-usage-report
+lifecycle: draft
+
+report:
+  title: "Claude Code Session Usage Report"
+  available_formats: ["markdown", "json", "html"]
+  html_export_path: ""
+  period:
+    days: 14
+    start_date: "{start_date}"
+    end_date: "{end_date}"
+  generated_by: "{agent_name}"
+  generated_at: "{timestamp}"
+
+summary:
+  total_sessions: 0
+  total_sessions_scanned: 0
+  total_subagents: 0
+  days_active: 0
+  messages_per_day: 0
+  total_duration_hours: 0
+  excluded_meta_sessions: 0
+  excluded_non_substantive_sessions: 0
+  excluded_minimal_facet_sessions: 0
+  total_branches: 0
+  total_branches_deduped: 0
+  total_input_tokens: 0
+  total_output_tokens: 0
+  total_tool_errors: 0
+  total_user_interruptions: 0
+  avg_user_response_seconds: 0
+  median_user_response_seconds: 0
+  message_hours: []
+  total_lines_added: 0
+  total_lines_removed: 0
+  total_unique_files_modified: 0
+  sessions_with_task_agent: 0
+  sessions_with_mcp: 0
+  sessions_with_web_search: 0
+  sessions_with_web_fetch: 0
+  git_commits: 0
+  git_pushes: 0
+  languages: {}
+  session_meta_cache_hits: 0
+  session_meta_cache_misses: 0
+  facets_cache_hits: 0
+  facets_cache_misses: 0
+  tool_error_categories: {}
+  projects: []
+  # Each project entry:
+  # - name: "project-name"
+  #   interactive: 0
+  #   headless: 0
+  #   subagents: 0
+  #   date_range: "YYYY-MM-DD to YYYY-MM-DD"
+  #   input_tokens: 0
+  #   output_tokens: 0
+  #   tool_errors: 0
+  #   branches_total: 0
+  #   branches_deduped: 0
+  #   lines_added: 0
+  #   lines_removed: 0
+  #   unique_files_modified: 0
+  #   avg_user_response_seconds: 0
+
+top_tools:
+  description: "Ferramentas Claude usadas nas sessões, ranqueadas por invocações"
+  entries: []
+  # Each entry:
+  # - name: "Edit"
+  #   invocations: 0
+  #   projects: ["project-a", "project-b"]
+
+usage_inventory:
+  description: "Inventário operacional determinístico para adoção, impacto e fricção de skills normalizadas, invocações slash cruas, agents, tools e runners"
+  summary:
+    normalized_skills: 0
+    slash_commands: 0
+    skill_tools: 0
+    agents: 0
+    tools: 0
+    runners: 0
+  normalized_skills:
+    entries: []
+    top_by_usage: []
+    top_by_impact: []
+    top_by_context_cost: []
+    top_by_friction: []
+  slash_commands:
+    description: "Invocações slash cruas observadas nas sessões; não confundir com skill_groups do inventário do workspace"
+    entries: []
+    top_by_usage: []
+  skill_tools:
+    entries: []
+    top_by_usage: []
+  agents:
+    entries: []
+    top_by_usage: []
+    top_by_impact: []
+    top_by_context_cost: []
+    top_by_friction: []
+  tools:
+    entries: []
+    top_by_usage: []
+    top_by_impact: []
+    top_by_context_cost: []
+    top_by_friction: []
+  runners:
+    entries: []
+    top_by_usage: []
+
+facets:
+  description: "Facets agregadas por sessão, com fonte heurística e enrichment opcional por LLM"
+  sessions_with_facets: 0
+  sources: {}
+  goal_categories: {}
+  outcomes: {}
+  satisfaction: {}
+  friction_points: {}
+
+narrative:
+  description: "Narrativa agregada do período, com fallback determinístico e override opcional por LLM"
+  source: "deterministic"
+  at_a_glance: ""
+  at_a_glance_sections:
+    whats_working: ""
+    whats_hindering: ""
+    quick_wins: ""
+    ambitious_workflows: ""
+  project_areas: ""
+  project_area_items: []
+  interaction_style: ""
+  what_works: ""
+  what_works_items: []
+  friction_analysis: ""
+  friction_categories: []
+  suggestions: ""
+  claude_md_additions: []
+  features_to_try: []
+  usage_patterns: []
+  on_the_horizon: ""
+  horizon_opportunities: []
+  feedback:
+    cc_team_improvements: []
+    model_behavior_improvements: []
+  fun_ending: ""
+  fun_ending_card:
+    headline: ""
+    detail: ""
+
+recommendations:
+  description: "Recomendações acionáveis geradas a partir do report para alimentar optimize-workflow"
+  summary:
+    total_recommendations: 0
+    high_impact: 0
+    medium_impact: 0
+    low_impact: 0
+    quick_wins: 0
+    estimated_minutes_saved_per_week: 0
+  global: []
+  by_project: {}
+  top_recommendations: []
+
+top_skills:
+  description: "Skills/commands ranked by user invocations (slash command + Skill tool combined)"
+  entries: []
+  # Each entry:
+  # - name: "/skill-name"
+  #   interactive: 0
+  #   headless: 0
+  #   projects: ["project-a", "project-b"]
+
+top_agents:
+  description: "Agent subagent_types ranked by invocations via Agent tool"
+  entries: []
+  # Each entry:
+  # - name: "agent-type"
+  #   invocations: 0
+  #   projects: ["project-a", "project-b"]
+
+top_shell_runners:
+  description: "Shell scripts (.sh) invoked via Bash tool, ranked by execution count"
+  entries: []
+  # Each entry:
+  # - name: "script.sh"
+  #   invocations: 0
+  #   projects: ["project-a"]
+
+commits_by_area:
+  description: "Commits categorized by skill/squad/area mentioned in commit message"
+  entries: []
+  # Each entry:
+  # - area: "area-name"
+  #   count: 0
+
+unused:
+  commands:
+    description: "Command squad directories with 0 invocations in the period"
+    entries: []
+    # Each entry:
+    # - squad: "squad-name"
+    #   file_count: 0
+  agents:
+    description: "Agents defined in .claude/agents/ but never used as subagent_type"
+    entries: []
+    # Each entry:
+    # - name: "agent-name"
+    #   recommendation: "KEEP|DELETE|EVALUATE"
+    #   reason: "reason for recommendation"
+  skills:
+    description: "Skills in .claude/skills/ with 0 invocations (neither Skill tool nor slash command)"
+    entries: []
+    # Each entry:
+    # - name: "skill-name"
+    #   recommendation: "KEEP|DELETE"
+    #   reason: "reason for recommendation"
+
+cleanup_recommendation:
+  commands_to_delete: []
+  agents_to_evaluate: []
+  skills_to_delete: []
+  estimated_token_savings_per_session: 0
+  estimated_total_waste_in_period: 0

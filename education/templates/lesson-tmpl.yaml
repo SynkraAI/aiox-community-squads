@@ -1,0 +1,129 @@
+# Lesson Design Template
+# Purpose: Design a single lesson following Mayer's principles and replicable structure
+# Output: Complete lesson plan ready for content creation
+
+metadata:
+  lesson_id: "{LESSON_ID}"  # e.g., "lesson-001-intro-email-seq"
+  lesson_name: "{LESSON_NAME}"
+  module_id: "{MODULE_ID}"  # Parent module
+  duration_minutes: {MINUTES}
+  format: "{FORMAT}"  # Video, Text, Interactive, Live
+  created_date: "{CREATED_DATE}"
+  version: "{VERSION}"
+
+hook_initial:
+  # First 2-3 minutes (ARCS: Attention)
+  duration_minutes: {MINUTES}  # 2-3
+  strategy: "{STRATEGY}"  # e.g., "Problem the learner has faced", "Surprising fact"
+  script: |
+    {HOOK_SCRIPT}
+    # Exact text or video script for the hook
+    # Must create curiosity and relevance
+
+core_concept:
+  # The ONE key idea this lesson teaches
+  concept_name: "{CONCEPT}"
+  definition: "{DEFINITION}"  # Clear, jargon-free definition
+  why_it_matters: "{RELEVANCE}"  # ARCS: Relevance
+  bloom_level: "{BLOOM_LEVEL}"  # Target cognitive level for this lesson
+
+structured_explanation:
+  # Mayer's Coherence + Segmenting principles
+  segments:
+    - segment: 1
+      title: "{SEGMENT_TITLE}"
+      duration_minutes: {MINUTES}
+      content: |
+        {EXPLANATION_CONTENT}
+        # Uses Mayer's modality principle if video (narration + visuals)
+        # Uses contiguity principle (text near images)
+
+      cognitive_load_note: "{NOTE}"  # e.g., "Introduce elements sequentially, not all at once"
+
+    - segment: 2
+      title: "{SEGMENT_TITLE}"
+      duration_minutes: {MINUTES}
+      content: |
+        {EXPLANATION_CONTENT}
+
+analogies_examples:
+  # Minimum 2 analogies + 1 real example (CLT: schemas)
+  analogies:
+    - analogy: "{ANALOGY_1}"
+      maps_to: "{CONCEPT_ELEMENT}"
+      explanation: "{HOW_IT_MAPS}"
+
+    - analogy: "{ANALOGY_2}"
+      maps_to: "{CONCEPT_ELEMENT}"
+      explanation: "{HOW_IT_MAPS}"
+
+  real_world_example:
+    - example: "{EXAMPLE_1}"
+      context: "{CONTEXT}"  # Familiar to target audience
+      connection: "{CONNECTION}"  # How it demonstrates the concept
+
+guided_application:
+  # Worked example (CLT: reduce cognitive load during initial learning)
+  task: "{TASK}"  # e.g., "Let's build a 3-email sequence together"
+  steps:
+    - step: 1
+      action: "{ACTION}"
+      explanation: "{WHY}"  # Explain reasoning, not just mechanics
+
+    - step: 2
+      action: "{ACTION}"
+      explanation: "{WHY}"
+
+  result: "{RESULT}"  # What was created/achieved
+
+independent_exercise:
+  # Learner practices alone (fading guidance)
+  task: "{TASK}"
+  success_criteria: "{CRITERIA}"  # Clear, measurable
+  estimated_time: {MINUTES}
+
+  hints:
+    - "{HINT_1}"  # Available if learner gets stuck
+    - "{HINT_2}"
+
+  solution_provided: {BOOLEAN}  # true/false
+  solution_path: "{PATH}"  # Path to solution file if provided
+
+strategic_recap:
+  # Retrieval practice (spaced repetition principle)
+  duration_minutes: {MINUTES}  # 2-3
+  retrieval_questions:
+    - "{QUESTION_1}"  # Forces active recall
+    - "{QUESTION_2}"
+
+  key_takeaway: "{TAKEAWAY}"  # One-sentence summary
+  connection_to_next: "{CONNECTION}"  # What comes next and why
+
+lesson_metadata:
+  # Pedagogical design notes
+  format_recommendation_mayer:
+    - "{PRINCIPLE_1}"  # e.g., "Use dual channels (visual + auditory)"
+    - "{PRINCIPLE_2}"  # e.g., "Eliminate extraneous words/images"
+
+  cognitive_load_sweller:
+    intrinsic: "{ASSESSMENT}"  # Low/Medium/High
+    strategy: "{STRATEGY}"  # How load is managed
+
+  spaced_repetition_fsrs:
+    first_review: "{TIMING}"  # e.g., "24 hours"
+    second_review: "{TIMING}"  # e.g., "7 days"
+    trigger: "{TRIGGER}"  # What prompts review (quiz, reflection)
+
+  competency_bloom:
+    target_level: "{BLOOM_LEVEL}"
+    assessment_verb: "{VERB}"  # e.g., "Create", "Analyze"
+
+resources:
+  # Materials needed
+  - type: "{TYPE}"  # e.g., "Slide deck", "PDF worksheet"
+    path: "{PATH}"
+    description: "{DESCRIPTION}"
+
+notes: |
+  {ADDITIONAL_NOTES}
+  # Instructor notes, common learner mistakes, iteration feedback

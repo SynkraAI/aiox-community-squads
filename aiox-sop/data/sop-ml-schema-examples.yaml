@@ -1,0 +1,420 @@
+# =============================================================================
+# SOP ML Schema - Examples (extracted from sop-ml-schema.yaml)
+# =============================================================================
+# Purpose: Reference examples for agents creating ML SOPs.
+# The schema definition lives in sop-ml-schema.yaml.
+# =============================================================================
+
+examples:
+
+  minimal:
+    description: "The smallest valid ML SOP that passes schema validation"
+    document:
+      sop_ml:
+        metadata:
+          schema_version: "1.0.0"
+          sop_id: "SOP-MIN-001"
+          title: "Minimal Example SOP"
+          version: "1.0.0"
+          status: draft
+          created_date: "2026-03-09"
+          last_updated: "2026-03-09"
+          owner:
+            role: "Process Owner"
+
+        purpose:
+          objective: "Demonstrate the minimal valid ML SOP structure."
+          scope:
+            in_scope:
+              - "Schema validation testing"
+          target_audience:
+            - type: human
+              role: "Developer"
+
+        raci:
+          - activity: "Execute procedure"
+            responsible: "Developer"
+            accountable: "Process Owner"
+
+        prerequisites:
+          tools: []
+
+        procedure:
+          phases:
+            - phase_id: "P1"
+              name: "Execution"
+              steps:
+                - step_id: "S1.1"
+                  action: "Perform the documented action"
+                  actor: "Developer"
+
+        quality_criteria:
+          kpis:
+            - kpi_id: "KPI-01"
+              name: "Completion Rate"
+              target: "100%"
+              unit: "percentage"
+          acceptance_criteria:
+            - criteria: "All steps completed successfully"
+              measurable: true
+
+        revision_history:
+          - version: "1.0.0"
+            date: "2026-03-09"
+            author: "SOP Factory"
+            changes: "Initial draft"
+
+  comprehensive:
+    description: "A fully-featured ML SOP demonstrating all schema capabilities"
+    document:
+      sop_ml:
+        metadata:
+          schema_version: "1.0.0"
+          sop_id: "SOP-DB-001"
+          title: "Production Database Backup Procedure"
+          version: "2.1.0"
+          status: published
+          created_date: "2025-06-15"
+          last_updated: "2026-03-09"
+          next_review: "2026-06-09"
+          owner:
+            role: "DevOps Lead"
+            name: "Jane Smith"
+            contact: "devops-lead@company.com"
+          tags:
+            - database
+            - backup
+            - disaster-recovery
+            - postgresql
+            - infrastructure
+          compliance:
+            - standard_id: "ISO-9001"
+              clauses: ["7.5", "8.1"]
+            - standard_id: "FDA-21CFR11"
+              clauses: ["11.10(b)", "11.10(c)", "11.10(e)"]
+          source:
+            type: original
+
+        purpose:
+          objective: "Ensure consistent, reliable daily backup of all production PostgreSQL databases with verified recovery capability."
+          scope:
+            in_scope:
+              - "Production PostgreSQL databases (primary and replicas)"
+              - "Automated daily backup execution"
+              - "Manual on-demand backup execution"
+              - "Backup verification and integrity checks"
+              - "Backup retention management"
+            out_of_scope:
+              - "Development and staging databases"
+              - "Application-level data exports"
+              - "Disaster recovery site failover (see SOP-DR-001)"
+          target_audience:
+            - type: ai_agent
+              role: "Backup Automation Agent"
+              required_skills:
+                - "PostgreSQL administration"
+                - "Shell scripting"
+                - "AWS S3 operations"
+            - type: human
+              role: "Database Administrator"
+              required_skills:
+                - "PostgreSQL administration"
+                - "Linux system administration"
+
+        definitions:
+          - term: "Full Backup"
+            definition: "Complete copy of all database objects and data"
+            acronym: "FB"
+          - term: "WAL"
+            definition: "Write-Ahead Log - PostgreSQL transaction log for point-in-time recovery"
+          - term: "RTO"
+            definition: "Recovery Time Objective - maximum acceptable time to restore service"
+          - term: "RPO"
+            definition: "Recovery Point Objective - maximum acceptable data loss measured in time"
+
+        raci:
+          - activity: "Daily backup execution"
+            responsible: "Backup Automation Agent"
+            accountable: "DevOps Lead"
+            informed: ["Engineering Manager"]
+          - activity: "Backup verification"
+            responsible: "Backup Automation Agent"
+            accountable: "DevOps Lead"
+            informed: ["Database Administrator"]
+          - activity: "Failure investigation"
+            responsible: "Database Administrator"
+            accountable: "DevOps Lead"
+            consulted: ["Engineering Manager"]
+            informed: ["CTO"]
+          - activity: "Retention policy management"
+            responsible: "DevOps Lead"
+            accountable: "CTO"
+            consulted: ["Legal", "Compliance"]
+
+        prerequisites:
+          tools:
+            - name: "pg_dump"
+              version: ">=14.0"
+              purpose: "PostgreSQL backup utility"
+              install_command: "pg_dump --version"
+            - name: "aws-cli"
+              version: ">=2.0"
+              purpose: "AWS S3 upload for offsite storage"
+              install_command: "aws --version"
+            - name: "sha256sum"
+              purpose: "Backup integrity verification"
+              install_command: "sha256sum --version"
+          access:
+            - system: "Production PostgreSQL"
+              level: "read-only (backup role)"
+              how_to_request: "Submit JIRA ticket to DevOps team"
+            - system: "AWS S3 backup bucket"
+              level: "write (PutObject, GetObject)"
+              how_to_request: "Request via IAM role assignment"
+          conditions:
+            - condition: "Database server is accessible on port 5432"
+              verification: "pg_isready -h $DB_HOST -p 5432"
+            - condition: "Sufficient disk space for backup (>= 2x database size)"
+              verification: "df -h /backups | awk 'NR==2 {print $4}'"
+            - condition: "AWS credentials are configured"
+              verification: "aws sts get-caller-identity"
+
+        procedure:
+          phases:
+            - phase_id: "P1"
+              name: "Pre-Backup Checks"
+              description: "Verify all prerequisites are met before starting backup"
+              estimated_duration: "PT5M"
+              steps:
+                - step_id: "S1.1"
+                  action: "Verify database connectivity"
+                  actor: "Backup Automation Agent"
+                  command: "pg_isready -h $DB_HOST -p 5432 -U $DB_BACKUP_USER"
+                  verification:
+                    method: command
+                    check: "pg_isready exit code"
+                    expected: "Exit code 0, output contains 'accepting connections'"
+                  on_failure:
+                    action: retry
+                    max_retries: 3
+                    retry_delay: "PT30S"
+                    escalate_to: "Database Administrator"
+
+                - step_id: "S1.2"
+                  action: "Check available disk space"
+                  actor: "Backup Automation Agent"
+                  command: "df -B1 /backups | awk 'NR==2 {print $4}'"
+                  verification:
+                    method: command
+                    check: "Available space > 2x estimated backup size"
+                    expected: ">= 20GB free"
+                  on_failure:
+                    action: escalate
+                    escalate_to: "Database Administrator"
+                  warnings:
+                    - level: warning
+                      message: "If space < 50GB, alert DevOps for capacity planning"
+
+                - step_id: "S1.3"
+                  action: "Verify no conflicting backup is running"
+                  actor: "Backup Automation Agent"
+                  command: "ps aux | grep pg_dump | grep -v grep | wc -l"
+                  verification:
+                    method: command
+                    check: "Count of running pg_dump processes"
+                    expected: "0"
+                  decision:
+                    condition: "running_backup_count > 0"
+                    if_true: "S1.3"
+                    if_false: "S2.1"
+
+            - phase_id: "P2"
+              name: "Backup Execution"
+              description: "Perform the actual database backup"
+              estimated_duration: "PT30M"
+              steps:
+                - step_id: "S2.1"
+                  action: "Execute full database backup using pg_dump"
+                  actor: "Backup Automation Agent"
+                  input:
+                    type: environment_variable
+                    source: "DB_HOST, DB_BACKUP_USER, DB_NAME"
+                  output:
+                    type: file
+                    description: "Compressed custom-format backup file"
+                    location: "/backups/daily/$DB_NAME-$(date +%Y%m%d-%H%M%S).dump"
+                  command: "pg_dump -h $DB_HOST -U $DB_BACKUP_USER -d $DB_NAME -F c -Z 6 -f /backups/daily/$DB_NAME-$(date +%Y%m%d-%H%M%S).dump"
+                  verification:
+                    method: command
+                    check: "pg_dump exit code and file size > 0"
+                    expected: "Exit code 0, file size > 1MB"
+                  on_failure:
+                    action: retry
+                    max_retries: 2
+                    retry_delay: "PT60S"
+                    escalate_to: "Database Administrator"
+                  warnings:
+                    - level: caution
+                      message: "Backup may cause increased I/O on database server during execution"
+
+                - step_id: "S2.2"
+                  action: "Generate SHA-256 checksum of backup file"
+                  actor: "Backup Automation Agent"
+                  command: "sha256sum /backups/daily/$BACKUP_FILE > /backups/daily/$BACKUP_FILE.sha256"
+                  output:
+                    type: file
+                    description: "Checksum file for integrity verification"
+                    location: "/backups/daily/$BACKUP_FILE.sha256"
+
+            - phase_id: "P3"
+              name: "Backup Verification"
+              description: "Verify backup integrity and recoverability"
+              estimated_duration: "PT10M"
+              steps:
+                - step_id: "S3.1"
+                  action: "Verify backup file integrity using checksum"
+                  actor: "Backup Automation Agent"
+                  command: "sha256sum -c /backups/daily/$BACKUP_FILE.sha256"
+                  verification:
+                    method: command
+                    check: "Checksum verification result"
+                    expected: "OK"
+                  on_failure:
+                    action: abort
+                    escalate_to: "Database Administrator"
+
+                - step_id: "S3.2"
+                  action: "Test backup restorability using pg_restore --list"
+                  actor: "Backup Automation Agent"
+                  command: "pg_restore --list /backups/daily/$BACKUP_FILE > /dev/null 2>&1"
+                  verification:
+                    method: command
+                    check: "pg_restore exit code"
+                    expected: "Exit code 0"
+                  on_failure:
+                    action: abort
+                    escalate_to: "Database Administrator"
+
+            - phase_id: "P4"
+              name: "Offsite Upload"
+              description: "Upload verified backup to offsite storage"
+              estimated_duration: "PT15M"
+              steps:
+                - step_id: "S4.1"
+                  action: "Upload backup and checksum to S3"
+                  actor: "Backup Automation Agent"
+                  command: "aws s3 cp /backups/daily/$BACKUP_FILE s3://$BACKUP_BUCKET/daily/ && aws s3 cp /backups/daily/$BACKUP_FILE.sha256 s3://$BACKUP_BUCKET/daily/"
+                  verification:
+                    method: command
+                    check: "aws s3 ls for uploaded files"
+                    expected: "Both files present in S3 bucket"
+                  on_failure:
+                    action: retry
+                    max_retries: 3
+                    retry_delay: "PT120S"
+
+                - step_id: "S4.2"
+                  action: "Log backup completion to monitoring system"
+                  actor: "Backup Automation Agent"
+                  output:
+                    type: log_entry
+                    description: "Backup success record with timestamp, size, and duration"
+
+        exception_handling:
+          - exception_id: "EX001"
+            trigger: "Database connection refused during backup"
+            severity: critical
+            symptoms:
+              - "pg_isready returns non-zero exit code"
+              - "Connection timeout after 30 seconds"
+              - "Error: could not connect to server"
+            resolution:
+              - "Check database server status: systemctl status postgresql"
+              - "Check network connectivity: telnet $DB_HOST 5432"
+              - "Check pg_hba.conf for backup user access"
+              - "Restart PostgreSQL if necessary: systemctl restart postgresql"
+            escalation:
+              to: "Database Administrator"
+              sla: "15 minutes"
+            prevention: "Monitor database uptime with health checks every 60 seconds"
+
+          - exception_id: "EX002"
+            trigger: "Insufficient disk space during backup"
+            severity: high
+            symptoms:
+              - "pg_dump exits with error: No space left on device"
+              - "Backup file size is 0 bytes"
+            resolution:
+              - "Remove oldest local backups: find /backups/daily -mtime +7 -delete"
+              - "Check for unexpected large files: du -sh /backups/*"
+              - "Verify retention policy is running correctly"
+              - "If persistent, increase volume size"
+            escalation:
+              to: "DevOps Lead"
+              sla: "30 minutes"
+            prevention: "Alert when disk usage exceeds 70% capacity"
+
+          - exception_id: "EX003"
+            trigger: "Backup file fails integrity check"
+            severity: critical
+            symptoms:
+              - "sha256sum -c returns FAILED"
+              - "pg_restore --list returns non-zero"
+            resolution:
+              - "Delete corrupted backup file"
+              - "Re-run backup from step S2.1"
+              - "If repeated failure, check disk health: smartctl -a /dev/sda"
+              - "If disk healthy, check for PostgreSQL corruption"
+            escalation:
+              to: "Database Administrator"
+              sla: "15 minutes"
+            prevention: "Monitor disk health weekly, run pg_checksums monthly"
+
+        quality_criteria:
+          kpis:
+            - kpi_id: "KPI-01"
+              name: "Backup Success Rate"
+              target: ">= 99.5%"
+              unit: "percentage"
+              measurement_method: "Successful backups / Total scheduled backups"
+              frequency: monthly
+            - kpi_id: "KPI-02"
+              name: "Backup Duration"
+              target: "<= 60 minutes"
+              unit: "minutes"
+              measurement_method: "Time from start to verified upload completion"
+              frequency: per_execution
+            - kpi_id: "KPI-03"
+              name: "Recovery Test Success"
+              target: "100%"
+              unit: "percentage"
+              measurement_method: "Monthly recovery drill pass/fail"
+              frequency: monthly
+          acceptance_criteria:
+            - criteria: "Backup file size is within 20% of previous backup"
+              measurable: true
+              threshold: "20% variance"
+            - criteria: "Backup completes within RTO window"
+              measurable: true
+              threshold: "60 minutes"
+            - criteria: "Checksum verification passes"
+              measurable: true
+            - criteria: "Offsite upload confirmed"
+              measurable: true
+
+        revision_history:
+          - version: "2.1.0"
+            date: "2026-03-09"
+            author: "SOP Factory"
+            changes: "Added ML schema compliance, confidence scores, expanded exception handling"
+            approved_by: "DevOps Lead"
+          - version: "2.0.0"
+            date: "2025-11-01"
+            author: "DevOps Team"
+            changes: "Major rewrite: added S3 upload, checksum verification, RACI matrix"
+            approved_by: "CTO"
+          - version: "1.0.0"
+            date: "2025-06-15"
+            author: "DevOps Lead"
+            changes: "Initial version"
+            approved_by: "Engineering Manager"

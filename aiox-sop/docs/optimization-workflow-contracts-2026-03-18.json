@@ -1,0 +1,81 @@
+{
+  "generated_at": "2026-03-18T17:28:34.535Z",
+  "root": "<project-root>",
+  "options": {
+    "squads": [
+      "aiox-sop"
+    ],
+    "strict": true,
+    "fail_on_warnings": true
+  },
+  "totals": {
+    "files_checked": 3,
+    "errors": 0,
+    "warnings": 0,
+    "invalid_files": 0
+  },
+  "squads": [
+    {
+      "squad": "aiox-sop",
+      "squad_path": "squads/aiox-sop",
+      "workflows_dir": "squads/aiox-sop/workflows",
+      "workflows_checked": 3,
+      "valid_files": 3,
+      "invalid_files": 0,
+      "invalid_file_list": [],
+      "errors": 0,
+      "warnings": 0,
+      "errors_by_code": {},
+      "warnings_by_code": {},
+      "warnings_by_file": {},
+      "details": [
+        {
+          "file": "wf-sop-audit-pipeline.yaml",
+          "valid": true,
+          "errors": 0,
+          "warnings": 0,
+          "error_codes": [],
+          "warning_codes": [],
+          "errors_detail": [],
+          "warnings_detail": [],
+          "cross_squad_contract": {
+            "checked_agents": 0,
+            "resolved_agents": [],
+            "errors": []
+          }
+        },
+        {
+          "file": "wf-sop-creation-pipeline.yaml",
+          "valid": true,
+          "errors": 0,
+          "warnings": 0,
+          "error_codes": [],
+          "warning_codes": [],
+          "errors_detail": [],
+          "warnings_detail": [],
+          "cross_squad_contract": {
+            "checked_agents": 0,
+            "resolved_agents": [],
+            "errors": []
+          }
+        },
+        {
+          "file": "wf-sop-extraction-pipeline.yaml",
+          "valid": true,
+          "errors": 0,
+          "warnings": 0,
+          "error_codes": [],
+          "warning_codes": [],
+          "errors_detail": [],
+          "warnings_detail": [],
+          "cross_squad_contract": {
+            "checked_agents": 0,
+            "resolved_agents": [],
+            "errors": []
+          }
+        }
+      ]
+    }
+  ],
+  "report_path": null
+}

@@ -1,0 +1,184 @@
+workflow:
+  id: wf-domain-research
+  name: "Domain Research & Knowledge Mapping"
+  version: "1.0"
+  squad: education
+  description: "Standalone workflow: Deep curriculum research → knowledge mapping → gap analysis"
+  orchestrator: novak-mapper
+  estimated_duration: "1-2 hours"
+
+  metadata:
+    author: "AIOS Education Squad"
+    created: "2026-02-14"
+    updated: "2026-02-14"
+    tags: [research, knowledge-map, curriculum-analysis]
+
+phases:
+  - id: phase_1_focus
+    name: "Define Research Focus"
+    description: "Clarify domain boundaries and research questions"
+    agents: [novak-mapper]
+
+    tasks:
+      - id: define-focus-question
+        description: "What specific knowledge domain are we mapping?"
+        inputs:
+          - domain_name
+          - target_audience
+          - learning_goals
+        outputs:
+          - research_focus_statement
+          - boundary_definitions
+
+    checkpoint:
+      gate: "Focus question clear and bounded?"
+      validation_criteria:
+        - "Research question specific and answerable"
+        - "Domain boundaries defined"
+
+  - id: phase_2_web_research
+    name: "Web Research"
+    description: "Search for 5+ curricula, syllabi, courses"
+    agents: [novak-mapper]
+
+    tasks:
+      - id: search-curricula
+        description: "WebSearch for existing curricula in domain"
+        inputs:
+          - research_focus_statement
+        outputs:
+          - curriculum_sources (5+ URLs)
+          - syllabus_documents
+
+      - id: extract-content
+        description: "WebFetch each source, extract structure and topics"
+        inputs:
+          - curriculum_sources
+        outputs:
+          - extracted_curricula
+          - topic_lists
+
+    checkpoint:
+      gate: "5+ curricula found and extracted?"
+      validation_criteria:
+        - "At least 3 curricula (5+ preferred)"
+        - "Topic lists extracted from each"
+      veto_conditions:
+        - condition: "Fewer than 3 curricula"
+          action: "BLOCK, search additional sources or request human input"
+
+  - id: phase_3_comparison
+    name: "Curriculum Comparison"
+    description: "Matrix comparison to identify patterns and gaps"
+    agents: [novak-mapper]
+
+    tasks:
+      - id: build-matrix
+        description: "Create curriculum comparison matrix"
+        inputs:
+          - extracted_curricula
+        outputs:
+          - curriculum_matrix
+          - commonalities
+          - unique_approaches
+
+      - id: gap-analysis
+        description: "Identify gaps — what's missing or inconsistent?"
+        inputs:
+          - curriculum_matrix
+        outputs:
+          - gap_analysis
+          - conflict_resolution
+
+    checkpoint:
+      gate: "Matrix complete? Gaps identified?"
+      validation_criteria:
+        - "All curricula compared"
+        - "Commonalities documented"
+        - "Gaps listed and analyzed"
+
+  - id: phase_4_mapping
+    name: "Knowledge Map Creation"
+    description: "Novak-style concept map with hierarchical relationships"
+    agents: [novak-mapper]
+
+    tasks:
+      - id: create-concept-map
+        description: "Mermaid diagram — concepts + relationships"
+        inputs:
+          - curriculum_matrix
+          - gap_analysis
+        outputs:
+          - knowledge_map (Mermaid format)
+          - concept_relationships
+
+      - id: validate-hierarchy
+        description: "Check hierarchical structure — superordinate → subordinate"
+        inputs:
+          - knowledge_map
+        outputs:
+          - hierarchy_validation
+          - suggested_corrections
+
+    checkpoint:
+      gate: "Knowledge map complete with valid hierarchy?"
+      validation_criteria:
+        - "Mermaid diagram renders correctly"
+        - "Hierarchical relationships present"
+        - "Cross-links identified"
+        - "Propositional relationships labeled"
+      checklist: domain-research-quality.md
+
+  - id: phase_5_delivery
+    name: "Gap Analysis & Storage"
+    description: "Final gap report and store in minds/"
+    agents: [novak-mapper]
+
+    tasks:
+      - id: finalize-gaps
+        description: "Document gaps with recommendations"
+        inputs:
+          - gap_analysis
+          - knowledge_map
+        outputs:
+          - gap_report
+          - recommendations
+
+      - id: store-research
+        description: "Save to minds/{domain}/"
+        inputs:
+          - knowledge_map
+          - curriculum_matrix
+          - gap_report
+        outputs:
+          - "minds/{domain}/knowledge-map.md"
+          - "minds/{domain}/curriculum-matrix/"
+          - "minds/{domain}/gap-analysis.md"
+
+    checkpoint:
+      gate: "All artifacts stored in minds/{domain}/?"
+      validation_criteria:
+        - "Knowledge map stored"
+        - "Curriculum matrix stored"
+        - "Gap analysis stored"
+
+success_criteria:
+  - "5+ curricula analyzed"
+  - "Knowledge map complete with hierarchical structure"
+  - "Gaps identified and documented"
+  - "All artifacts stored in minds/{domain}/"
+
+output_artifacts:
+  - "minds/{domain}/knowledge-map.md"
+  - "minds/{domain}/curriculum-matrix/"
+  - "minds/{domain}/gap-analysis.md"
+
+human_review: true
+review_focus: "Knowledge map accuracy and gap analysis validity"
+
+dependencies:
+  - squads/education/agents/novak-mapper.md
+  - squads/education/tasks/diagnose-domain.md
+  - squads/education/tasks/compare-curricula.md
+  - squads/education/tasks/create-knowledge-map.md
+  - squads/education/checklists/domain-research-quality.md

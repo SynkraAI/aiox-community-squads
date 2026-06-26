@@ -1,0 +1,164 @@
+# ==============================================================================
+# APEX SQUAD — Asset Viability Matrix
+# data/asset-viability-matrix.yaml
+# ==============================================================================
+# Purpose:  Pre-flight check for asset requests. Classifies complexity and
+#           viability BEFORE starting work. Prevents the frustration cycle
+#           of "user requests → AI fails → user disappointed".
+#
+# Usage:    Automatically consulted by *asset-pipeline before execution.
+#           Can be checked manually: *asset-check {description}
+#
+# Owner:    apex-lead + design-sys-eng
+# Version:  1.0.0
+# ==============================================================================
+
+version: "1.0.0"
+
+# ==============================================================================
+# COMPLEXITY DIMENSIONS (scored 1-5 each)
+# ==============================================================================
+dimensions:
+
+  geometric_complexity:
+    weight: 0.30
+    description: "How geometrically complex is the asset?"
+    scores:
+      1: "Simple shapes — circles, squares, lines, basic polygons"
+      2: "Composed shapes — icons from geometric primitives, badges, shields"
+      3: "Moderate curves — stylized letters, simple illustrations, abstract marks"
+      4: "Complex curves — organic shapes, detailed illustrations, character art"
+      5: "Photorealistic or hyper-detailed — gradients, textures, fine detail"
+
+  brand_specificity:
+    weight: 0.25
+    description: "How brand-specific must the output be?"
+    scores:
+      1: "Generic — any reasonable interpretation works (generic icon)"
+      2: "Themed — matches a style/mood but not a specific brand"
+      3: "Brand-adjacent — inspired by a brand, not exact reproduction"
+      4: "Brand-faithful — must closely match an existing brand's style"
+      5: "Brand-exact — pixel-perfect reproduction of an existing asset"
+
+  color_precision:
+    weight: 0.15
+    description: "How precise must the colors be?"
+    scores:
+      1: "Monochrome or currentColor — color-agnostic"
+      2: "Simple palette — 2-3 solid colors"
+      3: "Defined palette — specific hex values from brand guide"
+      4: "Gradient/blend — multi-stop gradients, subtle transitions"
+      5: "Photo-derived — colors must match a reference image exactly"
+
+  reproduction_source:
+    weight: 0.20
+    description: "What source material exists?"
+    scores:
+      1: "No reference needed — creating from scratch with freedom"
+      2: "Text description only — conceptual guidance"
+      3: "Style reference — 'like this but for us'"
+      4: "Exact reference — screenshot/image that must be matched"
+      5: "No source accessible — must recreate from memory/description alone"
+
+  format_requirements:
+    weight: 0.10
+    description: "Output format constraints"
+    scores:
+      1: "Any format — SVG, PNG, CSS, whatever works"
+      2: "SVG preferred — scalable, but CSS/inline fallback OK"
+      3: "SVG required — must be clean, optimized SVG"
+      4: "Multi-format — SVG + PNG + favicon + social media sizes"
+      5: "Production-ready — SVG with animation, responsive, all sizes"
+
+# ==============================================================================
+# VIABILITY ZONES
+# ==============================================================================
+zones:
+
+  green:
+    score_range: [1.0, 2.5]
+    label: "GO — High confidence"
+    description: "AI can produce this with high quality. Proceed."
+    action: "Execute *asset-pipeline directly"
+    examples:
+      - "Create a simple geometric logo mark (circle + cross)"
+      - "Design an icon in Lucide style"
+      - "Generate a color palette from description"
+      - "Create a badge/shield with text"
+
+  yellow:
+    score_range: [2.5, 3.5]
+    label: "PROCEED WITH CAVEATS"
+    description: "AI can attempt this, but user should know limitations."
+    action: "Show limitations upfront, set expectations, then execute"
+    caveats:
+      - "Output may need iteration — expect 2-3 rounds"
+      - "Complex curves may not match reference exactly"
+      - "Recommend geometric simplification where possible"
+    examples:
+      - "Recreate a stylized wordmark (geometric approximation)"
+      - "Design an illustration-style icon"
+      - "Create a logo inspired by a specific brand"
+
+  red:
+    score_range: [3.5, 5.0]
+    label: "STOP — Honesty gate"
+    description: "AI cannot reliably produce this. Be honest."
+    action: "Inform user of limitation, suggest alternatives"
+    alternatives:
+      - "Use the original asset file (request from brand/client)"
+      - "Hire a designer for this specific asset"
+      - "Use a stock/licensed version"
+      - "Simplify the request to bring it into yellow/green zone"
+      - "Use a placeholder and flag for human design"
+    examples:
+      - "Reproduce the Nike swoosh exactly as SVG"
+      - "Recreate a photographed logo from a business card"
+      - "Design a detailed mascot character"
+      - "Match a complex gradient logo pixel-for-pixel"
+
+# ==============================================================================
+# SCORING FORMULA
+# ==============================================================================
+scoring:
+  formula: >
+    viability_score = sum(dimension_score * dimension_weight)
+    for each dimension in [geometric_complexity, brand_specificity,
+    color_precision, reproduction_source, format_requirements]
+
+  interpretation: |
+    1.0 - 2.0  →  Trivial — execute immediately
+    2.0 - 2.5  →  Green — high confidence, proceed
+    2.5 - 3.0  →  Yellow-Green — proceed, minor caveats
+    3.0 - 3.5  →  Yellow-Red — proceed with explicit limitations
+    3.5 - 4.0  →  Red-Light — recommend alternatives first
+    4.0 - 5.0  →  Red — honesty gate, cannot reliably produce
+
+# ==============================================================================
+# PRE-FLIGHT TEMPLATE
+# ==============================================================================
+preflight_template: |
+  ## Asset Viability Check
+
+  **Request:** {description}
+
+  | Dimension | Score | Rationale |
+  |-----------|-------|-----------|
+  | Geometric Complexity | {1-5} | {why} |
+  | Brand Specificity | {1-5} | {why} |
+  | Color Precision | {1-5} | {why} |
+  | Reproduction Source | {1-5} | {why} |
+  | Format Requirements | {1-5} | {why} |
+
+  **Viability Score:** {weighted_total}/5.0
+  **Zone:** {green|yellow|red}
+  **Recommendation:** {action}
+
+# ==============================================================================
+# INTEGRATION POINTS
+# ==============================================================================
+integration:
+  asset_pipeline: "Consulted automatically at Step 0 (before mode selection)"
+  icon_system: "Consulted in CREATE mode before generating"
+  veto_conditions: "Feeds VC-ASSET-007 (honesty gate) — red zone = automatic block"
+  intent_chain: "after_asset_check → green: proceed | yellow: show_caveats | red: suggest_alternatives"

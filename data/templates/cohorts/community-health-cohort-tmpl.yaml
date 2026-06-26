@@ -1,0 +1,60 @@
+template_metadata:
+  schema_version: "analytics-template-v1"
+  template_id: "community-health-cohort-tmpl"
+  artifact: "community-health"
+  artifact_family: "cohorts"
+  owner_agent: "david-spinks"
+  governance_owners:
+    - "marketing-lead"
+    - "narrative-strategist"
+    - "data-chief"
+  output_path: "workspace/businesses/{slug}/analytics/cohorts/community-health.yaml"
+  custom_fallback_path: "docs/data/{slug}/community-health-{date}.md"
+  contains_real_data: false
+  pii_allowed: false
+
+context:
+  business_slug: "{slug}"
+  product_slug: "{product_slug}"
+  cohort_slug: "{cohort_slug}"
+  period_start: "{yyyy-mm-dd}"
+  period_end: "{yyyy-mm-dd}"
+  generated_at: "{iso_datetime}"
+  generated_by: "{agent_or_workflow}"
+
+analysis:
+  activity_metrics:
+    dau: null
+    wau: null
+    mau: null
+    stickiness: null
+  archetypes:
+    helper: []
+    lurker: []
+    struggler: []
+  helper_ratio:
+    helpers_over_active_members: null
+  network_effect:
+    member_to_member_interactions: null
+    response_latency_hours: null
+  spaces_assessment:
+    support: null
+    product: null
+    acquisition: null
+    contribution: null
+    engagement: null
+    success: null
+
+insights: []
+
+recommendations:
+  programming_actions: []
+  moderation_actions: []
+  activation_actions: []
+
+quality:
+  completeness_score: null
+  confidence_score: null
+  validation:
+    sources_linked: false
+    assumptions_listed: false

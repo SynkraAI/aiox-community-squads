@@ -1,0 +1,440 @@
+{
+  "projectName": "Data Intelligence Pack v1.0 - Setup",
+  "version": "1.0",
+  "description": "Criar 6 clones especializados em Data Intelligence + tasks operacionais. Framework baseado em 3 camadas: Fundamentação (Fader, Ellis), Operacionalização (Mehta, Spinks, Kao), e Comunicação (Kaushik).",
+  "created": "2026-01-23",
+  "totalStories": 24,
+  "context": {
+    "frameworkDocs": "squads/data/data/framework/",
+    "targetDir": "squads/data/",
+    "modeloReferencia": "squads/copy/agents/ (1500+ linhas por agent)"
+  },
+  "userStories": [
+    {
+      "id": "DATA-001",
+      "title": "Create Agent: Peter Fader - Customer Centricity Master",
+      "description": "Criar agent completo do Peter Fader (Wharton) - especialista em CLV, RFM, Customer Centricity",
+      "acceptanceCriteria": [
+        "READ: squads/data/data/framework/03_tier0_fundamentadores.md (seção Fader)",
+        "RESEARCH: Web search para livros, papers, talks de Peter Fader",
+        "CREATE: squads/data/agents/peter-fader.md (1500+ linhas)",
+        "INCLUDE: YAML metadata com tier:0, whenToUse",
+        "INCLUDE: 10+ operational_frameworks (Customer Centricity, RFM, CLV models)",
+        "INCLUDE: 30+ signature_phrases extraídas de suas falas/livros",
+        "INCLUDE: Commands (*clv, *rfm, *segment, *cohort, etc.)",
+        "INCLUDE: Perguntas de diagnóstico que ele faria",
+        "VERIFY: Frameworks Customer Centricity e RFM completos"
+      ],
+      "tier": 0,
+      "sourceFramework": "03_tier1_fundamentadores.md",
+      "priority": 1,
+      "passes": true,
+      "notes": "Completed: 1799 lines, 12 operational_frameworks (Customer Centricity, RFM Analysis, CLV Models, CBCV, Pareto Analysis, Cohort Analysis, Acquisition Optimization, Retention Prioritization, Customer 360, Heterogeneity Analysis, P(Alive), Metrics Hierarchy), 35 signature_phrases from books/interviews/podcasts, 14 commands (*clv, *rfm, *segment, *cohort, *predict, *customer-centricity, *best-customers, *acquisition-strategy, *retention-priority, *bgnbd, *gamma-gamma, *pareto, *cbcv, *audit-metrics), diagnostic questions for 4 areas (initial assessment, data readiness, strategic maturity, model sophistication), 6 objection algorithms, comprehensive CLV calculation examples with BG/NBD Python code, RFM implementation guide with SQL"
+    },
+    {
+      "id": "DATA-002",
+      "title": "Create Agent: Sean Ellis - Growth Hacking Pioneer",
+      "description": "Criar agent completo do Sean Ellis - AARRR, North Star Metric, PMF",
+      "acceptanceCriteria": [
+        "READ: squads/data/data/framework/03_tier0_fundamentadores.md (seção Ellis)",
+        "RESEARCH: Web search para livro Hacking Growth, GrowthHackers, talks",
+        "CREATE: squads/data/agents/sean-ellis.md (1500+ linhas)",
+        "INCLUDE: YAML metadata com tier:0, whenToUse",
+        "INCLUDE: 10+ operational_frameworks (AARRR, North Star, ICE, Sean Ellis Test)",
+        "INCLUDE: 30+ signature_phrases",
+        "INCLUDE: Commands (*pmf-test, *north-star, *aarrr, *ice-score, etc.)",
+        "INCLUDE: Growth experiment templates",
+        "VERIFY: AARRR framework completo com métricas por estágio"
+      ],
+      "tier": 0,
+      "sourceFramework": "03_tier1_fundamentadores.md",
+      "priority": 1,
+      "passes": true,
+      "notes": "Completed: 2444 lines, 12 operational_frameworks (PMF Test with 40% threshold and complete survey methodology, AARRR Pirate Metrics with primary/secondary metrics per stage, North Star Metric with famous examples and selection worksheet, ICE Prioritization with scoring guidance, High-Tempo Testing system, Viral Loops with K factor calculation and Dropbox case study, Growth Model framework, Activation Optimization with aha moment methodology, Retention Deep Dive with curve analysis, Growth Team Structure, Channel Optimization, Experiment Design), 35 signature_phrases organized in 7 tiers (PMF fundamentals, experimentation, AARRR metrics, Dropbox stories, practical wisdom, mindset/culture, warnings/guardrails), 22 commands, diagnostic questions for 4 areas, 6 objection algorithms, comprehensive experiment templates, PMF survey implementation guide with Python code, AARRR metrics dashboard template, North Star selection worksheet, ICE scoring worksheet"
+    },
+    {
+      "id": "DATA-003",
+      "title": "Create Agent: Nick Mehta - Customer Success & Health Score",
+      "description": "Criar agent do Nick Mehta (Gainsight CEO) - Health Score, Churn Prediction, DEAR framework",
+      "acceptanceCriteria": [
+        "READ: squads/data/data/framework/04_tier1_operacionalizadores.md (seção Mehta)",
+        "RESEARCH: Web search para livros Customer Success, Gainsight metodologia",
+        "CREATE: squads/data/agents/nick-mehta.md (1500+ linhas)",
+        "INCLUDE: YAML metadata com tier:1, whenToUse",
+        "INCLUDE: 10+ operational_frameworks (DEAR, Health Score, Churn Prediction)",
+        "INCLUDE: 30+ signature_phrases",
+        "INCLUDE: Commands (*health-score, *churn-risk, *dear, *cs-playbook)",
+        "INCLUDE: Health Score calculation methodology detalhada",
+        "VERIFY: DEAR framework completo"
+      ],
+      "tier": 1,
+      "sourceFramework": "04_tier2_operacionalizadores.md",
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "DATA-004",
+      "title": "Create Agent: David Spinks - Community Metrics Master",
+      "description": "Criar agent do David Spinks (CMX) - Community metrics, SPACES framework",
+      "acceptanceCriteria": [
+        "READ: squads/data/data/framework/04_tier1_operacionalizadores.md (seção Spinks)",
+        "RESEARCH: Web search para livro The Business of Belonging, CMX, SPACES",
+        "CREATE: squads/data/agents/david-spinks.md (1500+ linhas)",
+        "INCLUDE: YAML metadata com tier:1, whenToUse",
+        "INCLUDE: 10+ operational_frameworks (SPACES, Community Metrics, Engagement)",
+        "INCLUDE: 30+ signature_phrases",
+        "INCLUDE: Commands (*community-health, *spaces, *engagement, *member-value)",
+        "INCLUDE: Community metrics hierarchy",
+        "VERIFY: SPACES framework completo"
+      ],
+      "tier": 1,
+      "sourceFramework": "04_tier2_operacionalizadores.md",
+      "priority": 1,
+      "passes": true,
+      "notes": "Completed: 1880 lines, 12 operational_frameworks (SPACES Model, 7Ps of Community, 11 Pillars Philosophy, Community Health Metrics, Stickiness Ratio, Community-Member Fit, Three-Level Strategy, 2x Growth Multiplier, Founding Members, Host Playbook, ROI Calculation, Dead Community Diagnosis), 38 signature_phrases from The Business of Belonging/CMX/Substack/podcasts, 22 commands (*community-health, *spaces, *engagement, *member-value, *7ps, *11-pillars, *community-strategy, *program-design, *diagnose-dead, *cmf-score, *stickiness, *founding-members, *2x-growth, *host-playbook, *roi, *prove-value, *metrics-report, *review, *benchmark, *chat-mode, *help, *exit), diagnostic questions for 5 areas (initial assessment, health diagnosis, strategy alignment, growth readiness, dead community triage), comprehensive metrics reference with CMX benchmarks, output templates for 4 report types"
+    },
+    {
+      "id": "DATA-005",
+      "title": "Create Agent: Wes Kao - Cohort-Based Learning Expert",
+      "description": "Criar agent da Wes Kao (Maven) - Learning metrics, CBC, Completion rates",
+      "acceptanceCriteria": [
+        "READ: squads/data/data/framework/04_tier1_operacionalizadores.md (seção Kao)",
+        "RESEARCH: Web search para Maven, Wes Kao newsletters, CBC methodology",
+        "CREATE: squads/data/agents/wes-kao.md (1500+ linhas)",
+        "INCLUDE: YAML metadata com tier:1, whenToUse",
+        "INCLUDE: 10+ operational_frameworks (CBC Model, Learning Outcomes, Completion)",
+        "INCLUDE: 30+ signature_phrases",
+        "INCLUDE: Commands (*completion-rate, *learning-outcomes, *cbc, *cohort-design)",
+        "INCLUDE: Cohort-based course metrics",
+        "VERIFY: CBC framework completo"
+      ],
+      "tier": 1,
+      "sourceFramework": "04_tier2_operacionalizadores.md",
+      "priority": 1,
+      "passes": true,
+      "notes": "Completed: 2108 lines, 12 operational_frameworks (CBC Model, Course Mechanics Canvas 12 Levers, State Change Method, Super Specific How, Spiky Point of View, Rigorous Thinking, Learning Outcomes Framework, Course Community Design, Premium Pricing Strategy, 15 Principles Managing Up, Completion Rate Optimization, MOOC to CBC Transformation), 40 signature_phrases from a16z article/newsletter/podcasts/blog (Content is no longer king-cohorts are, Students don't owe you their attention, Completion rate is a design problem not a student problem, State change every 3-5 minutes, 80% on HOW not WHAT, etc.), 22 commands (*completion-rate, *learning-outcomes, *cbc, *cohort-design, *course-mechanics, *state-change, *super-specific-how, *live-session, *pricing, *course-market-fit, *transformation, *mooc-to-cbc, *spiky-pov, *rigorous-thinking, *managing-up, *executive-comm, *course-community, *alumni, *engagement-triggers, *diagnose-mooc, *benchmark, *review), diagnostic questions for 5 areas (initial assessment, engagement, accountability, pricing, transformation), comprehensive metrics reference (completion/engagement/outcome/business metrics), 4 output templates, MOOC vs CBC comparison (6% vs 96% completion), Course Mechanics Canvas with all 12 levers, State Change Method with session design template, altMBA/Maven methodology reference"
+    },
+    {
+      "id": "DATA-006",
+      "title": "Create Agent: Avinash Kaushik - Analytics Evangelist",
+      "description": "Criar agent do Avinash Kaushik (ex-Google) - Attribution, DMMM, So What Test",
+      "acceptanceCriteria": [
+        "READ: squads/data/data/framework/05_tier2_comunicadores.md",
+        "RESEARCH: Web search para livros Web Analytics, Occam's Razor blog, Google talks",
+        "CREATE: squads/data/agents/avinash-kaushik.md (1500+ linhas)",
+        "INCLUDE: YAML metadata com tier:2, whenToUse",
+        "INCLUDE: 10+ operational_frameworks (DMMM, So What Test, Attribution)",
+        "INCLUDE: 30+ signature_phrases (Avinash é conhecido por frases marcantes)",
+        "INCLUDE: Commands (*attribution, *so-what, *dmmm, *dashboard-critique)",
+        "INCLUDE: Dashboard storytelling framework",
+        "VERIFY: DMMM e So What Test completos"
+      ],
+      "tier": 2,
+      "sourceFramework": "05_tier3_comunicadores.md",
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "DATA-007",
+      "title": "Create Task: calculate-clv.md",
+      "description": "Task para calcular Customer Lifetime Value usando metodologia Fader",
+      "acceptanceCriteria": [
+        "READ: squads/data/agents/peter-fader.md (se existir)",
+        "READ: squads/data/data/framework/03_tier0_fundamentadores.md",
+        "CREATE: squads/data/tasks/calculate-clv.md (800+ linhas)",
+        "INCLUDE: Múltiplos métodos de CLV (histórico, preditivo, BG/NBD)",
+        "INCLUDE: Input requirements",
+        "INCLUDE: Output format",
+        "INCLUDE: Elicitation questions",
+        "INCLUDE: Exemplos de cálculo",
+        "REFERENCE: Peter Fader como primary agent"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Completed: 1646 lines, 3 CLV methodologies (historical/predictive/probabilistic), BG/NBD + Gamma-Gamma implementation, complete Python code, segmentation strategies, validation approach, Fader/Hardie references"
+    },
+    {
+      "id": "DATA-008",
+      "title": "Create Task: segment-rfm.md",
+      "description": "Task para segmentação RFM de clientes",
+      "acceptanceCriteria": [
+        "CREATE: squads/data/tasks/segment-rfm.md (800+ linhas)",
+        "INCLUDE: RFM methodology completa",
+        "INCLUDE: Scoring systems (1-5, percentile)",
+        "INCLUDE: Segment definitions (Champions, Loyal, At Risk, etc.)",
+        "INCLUDE: Action recommendations por segmento",
+        "INCLUDE: SQL/código exemplo para cálculo",
+        "REFERENCE: Peter Fader como primary agent"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Completed: 2063 lines, 11-segment model (Champions, Loyal Customers, Potential Loyalists, New Customers, Promising, Need Attention, About to Sleep, At Risk, Cannot Lose, Hibernating, Lost), 3 scoring methods (quintile, percentile, fixed thresholds), complete SQL queries for RFM calculation and segmentation, Python implementation with RFMSegmenter class (400+ lines), detailed action playbooks for each segment with tactics/KPIs/alerts, pre-flight data validation checklist, visualization recommendations (6 chart types + dashboard template), elicitation questions, common pitfalls section, Peter Fader methodology reference"
+    },
+    {
+      "id": "DATA-009",
+      "title": "Create Task: design-health-score.md",
+      "description": "Task para criar Health Score de clientes",
+      "acceptanceCriteria": [
+        "READ: squads/data/data/framework/04_tier1_operacionalizadores.md",
+        "CREATE: squads/data/tasks/design-health-score.md (800+ linhas)",
+        "INCLUDE: Health Score components (usage, engagement, support, growth)",
+        "INCLUDE: Weight calculation methodology",
+        "INCLUDE: Threshold definitions (healthy, warning, critical)",
+        "INCLUDE: Alert triggers",
+        "INCLUDE: Dashboard recommendations",
+        "REFERENCE: Nick Mehta + Peter Fader como agents"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Completed: 1938 lines, 6 phases (Pre-Flight Check, Components with DEAR framework + 6 extended categories, Weight Calculation with 3 methodologies, Threshold Definitions with hysteresis bands, Alert Triggers with 6 alert types, Dashboard Recommendations with 3 levels), DEAR framework complete (Deployment/Engagement/Adoption/ROI), extended components (support_health, relationship_health, growth_signals, financial_health), weight calculation (expert-based, data-driven logistic regression, hybrid approach), threshold definitions (Healthy 70-100, At Risk 40-69, Critical 0-39) with sub-thresholds, 6 alert types (threshold_breach, rapid_decline, component_spike, trend_alert, renewal_proximity, champion_loss), 3 dashboard levels (Executive, CS Manager, CSM Individual + Account Detail), implementation guide 5 phases, training curriculum 5 modules, 3 examples (B2B SaaS, Tech-Touch, Enterprise), Nick Mehta + Peter Fader dual methodology"
+    },
+    {
+      "id": "DATA-010",
+      "title": "Create Task: predict-churn.md",
+      "description": "Task para predição de churn",
+      "acceptanceCriteria": [
+        "CREATE: squads/data/tasks/predict-churn.md (800+ linhas)",
+        "INCLUDE: Churn definition methodology",
+        "INCLUDE: Leading indicators",
+        "INCLUDE: Churn scoring model",
+        "INCLUDE: Intervention playbooks por risk level",
+        "INCLUDE: Tracking e feedback loops",
+        "REFERENCE: Nick Mehta como primary agent"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Completed: 1972 lines, 6-phase methodology (churn definition, leading indicators, scoring model, intervention playbooks, tracking/feedback loops, operationalization), 25+ churn signals across 3 tiers (red flags, warnings, early warnings), rule-based scorecard with 5 categories, 4 intervention playbooks by risk level, signal-specific interventions, dashboard specs, team workflow integration, 3 real-world examples (SaaS, high-volume, enterprise)"
+    },
+    {
+      "id": "DATA-011",
+      "title": "Create Task: run-pmf-test.md",
+      "description": "Task para executar Sean Ellis PMF Test",
+      "acceptanceCriteria": [
+        "CREATE: squads/data/tasks/run-pmf-test.md (600+ linhas)",
+        "INCLUDE: Survey template (Very disappointed question)",
+        "INCLUDE: Sample size requirements",
+        "INCLUDE: Analysis methodology (40% threshold)",
+        "INCLUDE: Follow-up questions",
+        "INCLUDE: Action recommendations por resultado",
+        "REFERENCE: Sean Ellis como primary agent"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Completed: 1514 lines, Sean Ellis PMF methodology, complete survey template with 8 questions (core PMF question + 5 follow-up + 3 segmentation), sample size calculator with margin of error table (40-1000 sample sizes), 40% threshold analysis framework with PMF score calculation, 5 follow-up questions (beneficiary, main benefit, improvement, alternatives, segmentation) with interpretation guides, action recommendations by 5 score ranges (0-15% fundamental problem, 15-25% segment opportunity, 25-40% conversion opportunity, 40-60% growth mode, 60%+ accelerate), segment analysis framework with PMF by persona/company/use-case, ICE prioritization for improvements, PMF dashboard template, iteration playbook, 3 real-world examples (early-stage SaaS at 23%→41%, B2B approaching PMF at 39%→47%, consumer app with strong PMF at 63%)"
+    },
+    {
+      "id": "DATA-012",
+      "title": "Create Task: define-north-star.md",
+      "description": "Task para definir North Star Metric",
+      "acceptanceCriteria": [
+        "CREATE: squads/data/tasks/define-north-star.md (600+ linhas)",
+        "INCLUDE: North Star criteria (value, leading, actionable)",
+        "INCLUDE: Discovery workshop format",
+        "INCLUDE: Common North Stars por business model",
+        "INCLUDE: Input metrics tree",
+        "INCLUDE: Validation checklist",
+        "REFERENCE: Sean Ellis como primary agent"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Completed: 1779 lines, 6-phase methodology (Pre-Workshop Preparation, North Star Criteria with 3 requirements, Discovery Workshop with 3 exercises, Common NSMs by Business Model with 5 categories and 15+ examples, Input Metrics Tree framework with template and 3 detailed examples, Validation Checklist with 12 criteria), workshop format with detailed agenda, Customer Value Canvas exercise, Aha Moment Mapping, NSM examples by category (Attention/Media, Transaction, Productivity/SaaS, Subscription/Retention, Customer Success), detailed company examples (Slack, HubSpot, Zoom, Notion, Airbnb, Uber, Spotify, Duolingo, Amazon), input metrics template, 3 real-world examples (B2B SaaS, Consumer Education, B2B Marketplace), 5 common pitfalls with solutions, operationalization guide with measurement setup and team alignment document, Sean Ellis methodology reference"
+    },
+    {
+      "id": "DATA-013",
+      "title": "Create Task: measure-community.md",
+      "description": "Task para medir métricas de comunidade (SPACES)",
+      "acceptanceCriteria": [
+        "CREATE: squads/data/tasks/measure-community.md (800+ linhas)",
+        "INCLUDE: SPACES framework completo (Support, Product, Acquisition, Contribution, Engagement, Success)",
+        "INCLUDE: Metrics por dimensão",
+        "INCLUDE: Community health score",
+        "INCLUDE: Member value calculation",
+        "INCLUDE: Benchmarks por tipo de comunidade",
+        "REFERENCE: David Spinks como primary agent"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Completed: 1376 lines, SPACES 6 dimensions complete, health score calculation, MLTV framework, benchmarks for 4 community types (SaaS, Creator, Support, Professional)"
+    },
+    {
+      "id": "DATA-014",
+      "title": "Create Task: analyze-cohort.md",
+      "description": "Task para análise de cohort",
+      "acceptanceCriteria": [
+        "CREATE: squads/data/tasks/analyze-cohort.md (800+ linhas)",
+        "INCLUDE: Cohort definition methodology",
+        "INCLUDE: Retention curves",
+        "INCLUDE: Cohort comparison",
+        "INCLUDE: Insights extraction",
+        "INCLUDE: Visualization recommendations",
+        "REFERENCE: Peter Fader + Wes Kao como agents"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Completed: 1777 lines, 8 phases (Diagnostico Inicial, Cohort Definition with 5 dimension types, Retention Curves with sBG model + Wes Kao CBC metrics, Cohort Comparison framework with statistical significance, Insights Extraction with DICE framework, Visualization Recommendations with 6 chart types + dashboard layout, Action Plan by Cohort with 5 playbooks, Benchmarks for 5 industries), 3 SQL templates (Acquisition Cohort, Channel Cohort, Course Completion), Shifted-Beta-Geometric model Excel implementation, MOOC vs CBC comparison (14x retention), Peter Fader + Wes Kao dual methodology, executive report template"
+    },
+    {
+      "id": "DATA-015",
+      "title": "Create Task: design-learning-outcomes.md",
+      "description": "Task para definir learning outcomes e completion metrics",
+      "acceptanceCriteria": [
+        "CREATE: squads/data/tasks/design-learning-outcomes.md (800+ linhas)",
+        "INCLUDE: Completion rate methodology",
+        "INCLUDE: Engagement score por conteúdo",
+        "INCLUDE: Learning progression tracking",
+        "INCLUDE: Outcome measurement (NPS, skill assessment)",
+        "INCLUDE: Cohort-based benchmarks",
+        "REFERENCE: Wes Kao como primary agent"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Completed: 2122 lines, 6 phases (Diagnostico Inicial, Completion Rate Methodology, Engagement Score System, Learning Progression Tracking, Outcome Measurement, Cohort-Based Benchmarks), 12+ frameworks (Completion Levels 4-tier, Engagement Score 4-component, Progression States 7-state, Outcome Hierarchy Kirkpatrick 4-level, State Change Method, Course Mechanics Canvas, NPS for Learning, Pre/Post Assessment, etc.), 3 SQL templates (Completion by Cohort, Weekly Retention Funnel, Engagement Segments), benchmarks for 4 program types (MOOC, CBC, Bootcamp, Corporate), 4 intervention playbooks (At-Risk Student, Messy Middle, Final Project, NPS Detractor), dashboard specs (Progression Funnel, Cohort Comparison, At-Risk Alerts, NPS Trend), Wes Kao methodology reference (altMBA 96% completion, Maven data 14x vs MOOC, State Change Method every 3-5min)"
+    },
+    {
+      "id": "DATA-016",
+      "title": "Create Task: build-attribution.md",
+      "description": "Task para construir modelo de attribution",
+      "acceptanceCriteria": [
+        "CREATE: squads/data/tasks/build-attribution.md (800+ linhas)",
+        "INCLUDE: Attribution models (last-touch, first-touch, linear, time-decay, data-driven)",
+        "INCLUDE: Channel mapping",
+        "INCLUDE: Conversion window definition",
+        "INCLUDE: Multi-touch attribution methodology",
+        "INCLUDE: Reporting recommendations",
+        "REFERENCE: Avinash Kaushik como primary agent"
+      ],
+      "priority": 2,
+      "passes": true
+    },
+    {
+      "id": "DATA-017",
+      "title": "Create Task: create-dashboard.md",
+      "description": "Task para criar dashboards efetivos (DMMM methodology)",
+      "acceptanceCriteria": [
+        "CREATE: squads/data/tasks/create-dashboard.md (800+ linhas)",
+        "INCLUDE: DMMM framework (Digital Marketing Measurement Model)",
+        "INCLUDE: So What Test application",
+        "INCLUDE: Dashboard design principles",
+        "INCLUDE: Metric hierarchy (acquisition, behavior, outcomes)",
+        "INCLUDE: Storytelling with data",
+        "REFERENCE: Avinash Kaushik como primary agent"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Completed: 1600+ lines, DMMM framework completo (5 níveis: Business Objectives → Goals → KPIs → Targets → Segments) com exemplos E-commerce e SaaS, So What Test framework com worksheet e audit process, 5 Dashboard Design Principles (Information Hierarchy, Visual Best Practices, Context Always, Actionable Annotations, Mobile-First), Three-Tier Metric Model (Acquisition → Behavior → Outcomes) com métricas por tipo de dashboard (Executive, Marketing, Product, Customer Success, Sales), Data Storytelling Framework (Setup, Conflict, Resolution, Call to Action) com So What narrative templates, 4 Dashboard Templates completos (Executive, Marketing, Product, Customer Success), 7 SQL patterns para KPIs e alertas, Implementation Process 4 fases, 8 Common Pitfalls com solutions, BI Tool Selection guide"
+    },
+    {
+      "id": "DATA-018",
+      "title": "Create Task: run-growth-experiment.md",
+      "description": "Task para executar experimentos de growth",
+      "acceptanceCriteria": [
+        "CREATE: squads/data/tasks/run-growth-experiment.md (800+ linhas)",
+        "INCLUDE: ICE prioritization framework",
+        "INCLUDE: Experiment design template",
+        "INCLUDE: Sample size calculator",
+        "INCLUDE: Statistical significance",
+        "INCLUDE: Learning documentation",
+        "REFERENCE: Sean Ellis como primary agent"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Completed: 1863 lines, ICE framework completo (scoring criteria 1-10 para Impact/Confidence/Ease, fórmulas de cálculo, exemplos detalhados, comparação com RICE/PIE, prioritization process 5 steps), experiment design template com 9 seções (problem statement, hypothesis with If/Then/Because format, metrics with primary/secondary/guardrail, design with variants/split/targeting, sample size calculation, implementation with QA checklist, analysis plan, results, learnings), sample size calculator com fórmulas estatísticas e Python code (calculate_sample_size + calculate_test_duration), statistical significance methodology completa (z-test for proportions, p-value interpretation, Type I/II errors, confidence intervals, Bayesian vs Frequentist comparison, common mistakes like peeking), learning documentation framework (template, repository structure, monthly/quarterly synthesis process), end-to-end workflow 8 phases, weekly cadence, 8 common pitfalls with solutions, QA checklist completo, glossary 20+ termos"
+    },
+    {
+      "id": "DATA-019",
+      "title": "Create Checklist: customer-360-checklist.md",
+      "description": "Checklist para implementação de Customer 360",
+      "acceptanceCriteria": [
+        "CREATE: squads/data/checklists/customer-360-checklist.md (400+ linhas)",
+        "INCLUDE: Data sources inventory",
+        "INCLUDE: Identity resolution",
+        "INCLUDE: Profile completeness",
+        "INCLUDE: Segmentation validation",
+        "INCLUDE: Quality gates"
+      ],
+      "priority": 3,
+      "passes": true
+    },
+    {
+      "id": "DATA-020",
+      "title": "Create Checklist: health-score-checklist.md",
+      "description": "Checklist para validação de Health Score",
+      "acceptanceCriteria": [
+        "CREATE: squads/data/checklists/health-score-checklist.md (300+ linhas)",
+        "INCLUDE: Component validation",
+        "INCLUDE: Weight justification",
+        "INCLUDE: Threshold testing",
+        "INCLUDE: Alert accuracy",
+        "INCLUDE: Correlation with outcomes"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": "Completed: 984 lines, 6 phases (Pre-Flight, Component Validation with DEAR framework, Weight Justification with 3 methodologies, Threshold Testing with distribution/actionability/differentiation checks, Alert Accuracy with precision/recall metrics, Correlation with Outcomes including ROC/AUC and cohort analysis), Quality Gates, Score Card, troubleshooting appendix, templates (design doc, monthly review)"
+    },
+    {
+      "id": "DATA-021",
+      "title": "Create Template: clv-report-tmpl.yaml",
+      "description": "Template para relatório de CLV",
+      "acceptanceCriteria": [
+        "CREATE: squads/data/templates/clv-report-tmpl.yaml",
+        "INCLUDE: Executive summary section",
+        "INCLUDE: CLV by segment",
+        "INCLUDE: Cohort comparison",
+        "INCLUDE: Recommendations",
+        "INCLUDE: Next steps"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": "Completed: 818 lines, 10 sections (executive_summary, clv_by_segment with strategies per segment, cohort_comparison with evolution matrix, pareto_analysis with Lorenz curve and Gini, clv_distribution with percentiles/skewness, probabilistic_metrics BG/NBD, recommendations with playbooks, next_steps with monitoring/alerts, appendix_methodology, appendix_glossary), Fader/Hardie methodology reference, 4 segment definitions (Champions/Gold/Silver/Bronze) with tactical recommendations, CLV:CAC ratio tracking, validation checklist, examples for basic and full usage"
+    },
+    {
+      "id": "DATA-022",
+      "title": "Create Template: health-score-report-tmpl.yaml",
+      "description": "Template para relatório de Health Score",
+      "acceptanceCriteria": [
+        "CREATE: squads/data/templates/health-score-report-tmpl.yaml",
+        "INCLUDE: Overall health distribution",
+        "INCLUDE: At-risk customers",
+        "INCLUDE: Trend analysis",
+        "INCLUDE: Alert summary",
+        "INCLUDE: Action items"
+      ],
+      "priority": 3,
+      "passes": true
+    },
+    {
+      "id": "DATA-023",
+      "title": "Create data-chief.md - Orchestrator Agent",
+      "description": "Criar agent orquestrador que roteia para os especialistas corretos",
+      "acceptanceCriteria": [
+        "READ: squads/data/data/framework/06_matriz_decisao.md",
+        "CREATE: squads/data/agents/data-chief.md (800+ linhas)",
+        "INCLUDE: Decision matrix para routing",
+        "INCLUDE: Workflow orchestration",
+        "INCLUDE: Agent capabilities summary",
+        "INCLUDE: Common scenarios e routing",
+        "REFERENCE: Similar ao copy-chief.md"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "Completed: 993 lines, tier-based workflow system (Tier 0 Fundamentadores, Tier 1 Operacionalizadores, Tier 2 Comunicadores), decision matrix by question/project/stakeholder, 6 specialists (Fader, Ellis, Mehta, Spinks, Kao, Kaushik), 35+ commands, 3 complete workflows (Customer 360, Churn System, Completion Optimization), anti-patterns section, recommendation logic, copy-chief.md structure reference"
+    },
+    {
+      "id": "DATA-024",
+      "title": "Create README.md for Data Pack",
+      "description": "Criar documentação principal do Data Intelligence Pack",
+      "acceptanceCriteria": [
+        "CREATE: squads/data/README.md",
+        "INCLUDE: Overview do pack",
+        "INCLUDE: Lista de agents com descrição",
+        "INCLUDE: Lista de tasks com descrição",
+        "INCLUDE: Quick start guide",
+        "INCLUDE: Workflow examples",
+        "INCLUDE: Links para framework docs"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": "Completed: Comprehensive README.md with overview (problem/solution), 3-tier architecture diagram, quick start guide (4 steps), detailed agent descriptions (6 specialists + orchestrator with status), tasks table (12 tasks categorized by domain), checklists and templates sections, 4 workflow examples (Customer 360, Churn System, Attribution, Completion Optimization), 6 framework summaries, selection guides by question/stakeholder, anti-patterns table, pack structure diagram, links to all 8 framework docs"
+    }
+  ]
+}

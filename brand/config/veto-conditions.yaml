@@ -1,0 +1,54 @@
+# Veto Conditions Baseline — Brand Squad
+# Source: Adapted from branding squad (_validar) + SINKRA standards
+
+veto_conditions:
+  tier_0_universal:
+    - id: "VT0-001"
+      name: "NO OUTPUT WITHOUT INPUT DATA"
+      trigger: "Any request for analysis or recommendations"
+      condition: "Required input data has not been collected"
+      action: "BLOCK"
+      enforcement: "runtime"
+      bypass: false
+
+    - id: "VT0-002"
+      name: "NO UNSUBSTANTIATED CLAIMS"
+      trigger: "Any derived number or factual claim in output"
+      condition: "Claim without source attribution"
+      action: "MODIFY"
+      enforcement: "output_validation"
+      bypass: false
+
+    - id: "VT0-003"
+      name: "NO SKIPPED PHASES"
+      trigger: "Attempt to advance to next phase"
+      condition: "Current phase checkpoint not passed"
+      action: "BLOCK"
+      enforcement: "workflow_gate"
+      bypass: false
+
+  tier_1_brand_specific:
+    - id: "VT1-001"
+      name: "NO NAMING WITHOUT BRIEF"
+      trigger: "Request for naming generation"
+      condition: "Strategic brief not completed or validated"
+      action: "BLOCK"
+      enforcement: "workflow_gate"
+      bypass: false
+
+    - id: "VT1-002"
+      name: "NO BRAND IDENTITY WITHOUT POSITIONING"
+      trigger: "Request for visual identity or brand book"
+      condition: "Positioning and archetype not defined"
+      action: "BLOCK"
+      enforcement: "workflow_gate"
+      bypass: false
+
+  tier_3_handoff:
+    - id: "VT3-001"
+      name: "HANDOFF CONTEXT REQUIRED"
+      trigger: "Agent-to-agent transfer"
+      condition: "Handoff context template not populated"
+      action: "BLOCK_HANDOFF"
+      enforcement: "handoff_validation"
+      bypass: false

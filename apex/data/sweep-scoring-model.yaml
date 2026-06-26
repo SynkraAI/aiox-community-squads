@@ -1,0 +1,292 @@
+# Apex Score — Scoring Model
+# SSoT for score calculation across visual and code sweeps
+# Used by: visual-intelligence-sweep.md, full-codebase-sweep.md
+# Version: 1.0.0
+
+# ═══════════════════════════════════════════════════════════════
+# VISUAL SWEEP SCORING (from prints/URLs)
+# ═══════════════════════════════════════════════════════════════
+
+visual_sweep:
+  description: >
+    Score computed from multi-agent visual analysis of screenshots/URLs.
+    Each agent analyzes their domain and produces a 0-100 score.
+    Weighted sum produces the Apex Visual Score.
+
+  domain_weights:
+    css_layout:
+      agent: "@css-eng"
+      weight: 0.15
+      analyzes: "Layout, spacing, responsive, tokens, z-index, overflow"
+    react:
+      agent: "@react-eng"
+      weight: 0.10
+      analyzes: "Component patterns, hooks usage, error boundaries"
+    motion:
+      agent: "@motion-eng"
+      weight: 0.08
+      analyzes: "Transitions, animations, springs, reduced-motion"
+    accessibility:
+      agent: "@a11y-eng"
+      weight: 0.18
+      analyzes: "Contrast, targets, labels, headings, ARIA, keyboard"
+      note: "Highest weight — accessibility is non-negotiable"
+    performance:
+      agent: "@perf-eng"
+      weight: 0.15
+      analyzes: "Images, lazy load, LCP, CLS, fonts, bundle"
+    design_system:
+      agent: "@design-sys-eng"
+      weight: 0.10
+      analyzes: "Token consistency, near-duplicates, design language"
+    ux_interaction:
+      agent: "@interaction-dsgn"
+      weight: 0.10
+      analyzes: "UX patterns, CTAs, user flow, states, feedback"
+    visual_qa:
+      agent: "@qa-visual"
+      weight: 0.08
+      analyzes: "Alignment, pixel consistency, spacing uniformity"
+    architecture:
+      agent: "@frontend-arch"
+      weight: 0.06
+      analyzes: "Component structure, file organization, patterns"
+
+  optional_bonus:
+    description: "Extra domains add bonus points when detected"
+    spatial:
+      agent: "@spatial-eng"
+      bonus: 2
+      condition: "Project has 3D/WebXR capabilities"
+    mobile:
+      agent: "@mobile-eng"
+      bonus: 2
+      condition: "Project has React Native/Expo"
+    cross_platform:
+      agent: "@cross-plat-eng"
+      bonus: 2
+      condition: "Project targets multiple platforms"
+    i18n:
+      agent: "@i18n-eng"
+      bonus: 2
+      condition: "Project has internationalization"
+    error_handling:
+      agent: "@error-eng"
+      bonus: 2
+      condition: "Error boundary architecture present"
+
+  max_bonus: 10
+  max_score_with_bonus: 110
+  display_cap: 100
+
+# ═══════════════════════════════════════════════════════════════
+# CODE SWEEP SCORING (from discoveries)
+# ═══════════════════════════════════════════════════════════════
+
+code_sweep:
+  description: >
+    Score computed from 11 discovery tools running on codebase.
+    Each discovery produces a 0-100 health score.
+    Weighted sum produces the Apex Code Score.
+
+  discovery_weights:
+    components:
+      discovery: "*discover-components"
+      agent: "@react-eng"
+      weight: 0.12
+      analyzes: "Component tree, orphans, complexity, test coverage"
+    design_system:
+      discovery: "*discover-design"
+      agent: "@design-sys-eng"
+      weight: 0.10
+      analyzes: "Tokens, violations, near-duplicates, DS score"
+    routes:
+      discovery: "*discover-routes"
+      agent: "@frontend-arch"
+      weight: 0.08
+      analyzes: "Route map, orphans, dead routes, SEO gaps"
+    dependencies:
+      discovery: "*discover-dependencies"
+      agent: "@perf-eng"
+      weight: 0.10
+      analyzes: "Outdated, vulnerable, heavy, unused packages"
+    motion:
+      discovery: "*discover-motion"
+      agent: "@motion-eng"
+      weight: 0.05
+      analyzes: "Animations, CSS→spring violations, reduced-motion"
+    accessibility:
+      discovery: "*discover-a11y"
+      agent: "@a11y-eng"
+      weight: 0.18
+      analyzes: "Contrast, labels, ARIA, keyboard, headings"
+      note: "Highest weight — accessibility is non-negotiable"
+    performance:
+      discovery: "*discover-performance"
+      agent: "@perf-eng"
+      weight: 0.15
+      analyzes: "Lazy loading, images, re-renders, bundle, CWV"
+    state:
+      discovery: "*discover-state"
+      agent: "@react-eng"
+      weight: 0.08
+      analyzes: "Context sprawl, prop drilling, unused state"
+    types:
+      discovery: "*discover-types"
+      agent: "@frontend-arch"
+      weight: 0.06
+      analyzes: "TypeScript coverage, any usage, unsafe casts"
+    forms:
+      discovery: "*discover-forms"
+      agent: "@interaction-dsgn"
+      weight: 0.05
+      analyzes: "Validation gaps, error states, double submit"
+    security:
+      discovery: "*discover-security"
+      agent: "@frontend-arch"
+      weight: 0.03
+      analyzes: "XSS vectors, exposed secrets, insecure storage"
+      note: "Low weight but critical — any HIGH finding is a blocker"
+
+  na_handling: >
+    If a discovery is not applicable (e.g., no forms in project),
+    its weight is redistributed proportionally among applicable
+    discoveries. Score is never penalized for missing domains.
+
+# ═══════════════════════════════════════════════════════════════
+# UNIFIED SCORE (visual + code combined)
+# ═══════════════════════════════════════════════════════════════
+
+unified_sweep:
+  description: >
+    When both visual and code sweeps are run (*apex-vision-full),
+    scores are combined into a single Apex Unified Score.
+
+  formula: "unified = (visual × 0.45) + (code × 0.45) + (consistency × 0.10)"
+
+  consistency_score:
+    description: >
+      Measures agreement between visual and code analysis.
+      If visual says contrast is fine but code finds violations,
+      consistency drops. High consistency = visual matches code.
+    calculation: >
+      For each domain that appears in BOTH sweeps:
+        agreement = 1 - abs(visual_score - code_score) / 100
+      consistency = average(agreements) × 100
+
+# ═══════════════════════════════════════════════════════════════
+# SCORE INTERPRETATION
+# ═══════════════════════════════════════════════════════════════
+
+interpretation:
+  ranges:
+    - range: "90-100"
+      rating: "Elite"
+      emoji: "🏆"
+      meaning: "Production-ready, best practices everywhere"
+      action: "Ship with confidence. Minor polish only."
+
+    - range: "80-89"
+      rating: "Strong"
+      emoji: "💪"
+      meaning: "Minor improvements possible"
+      action: "Fix HIGH findings. MEDIUM are optional."
+
+    - range: "70-79"
+      rating: "Good"
+      emoji: "👍"
+      meaning: "Some areas need attention"
+      action: "Fix HIGH, review MEDIUM. Ship after fixes."
+
+    - range: "60-69"
+      rating: "Fair"
+      emoji: "⚠️"
+      meaning: "Several issues, prioritize HIGH findings"
+      action: "Fix all HIGH before shipping. Plan MEDIUM."
+
+    - range: "0-59"
+      rating: "Needs Work"
+      emoji: "🔧"
+      meaning: "Significant improvements needed"
+      action: "Full remediation needed. Do not ship."
+
+# ═══════════════════════════════════════════════════════════════
+# FINDING SEVERITY
+# ═══════════════════════════════════════════════════════════════
+
+severity:
+  HIGH:
+    description: "Must fix before shipping"
+    impact: "-5 to -10 points per finding"
+    examples:
+      - "WCAG AA contrast failure"
+      - "Touch target below 24px"
+      - "Missing alt text on meaningful images"
+      - "Keyboard trap in modal"
+      - "XSS vulnerability"
+      - "LCP > 2.5s"
+    color: "red"
+
+  MEDIUM:
+    description: "Should fix, impacts quality"
+    impact: "-2 to -4 points per finding"
+    examples:
+      - "Missing skip link"
+      - "Heading hierarchy gap (h1 → h3)"
+      - "Hardcoded color values"
+      - "Image without dimensions (CLS risk)"
+      - "CSS transition instead of spring"
+    color: "yellow"
+
+  LOW:
+    description: "Nice to fix, polish"
+    impact: "-1 point per finding"
+    examples:
+      - "Generic alt text"
+      - "Non-semantic element as button"
+      - "Unused CSS variable"
+      - "Bundle slightly over budget"
+      - "Missing favicon"
+    color: "blue"
+
+# ═══════════════════════════════════════════════════════════════
+# FINDING DEDUPLICATION
+# ═══════════════════════════════════════════════════════════════
+
+deduplication:
+  description: >
+    When multiple agents flag the same element, merge into
+    a single finding. Keep the highest severity.
+
+  rules:
+    - pattern: "Same element + same issue type"
+      action: "Merge, keep highest severity, list all agents"
+      example: "@a11y-eng and @css-eng both flag contrast → 1 finding"
+
+    - pattern: "Same file + related issues"
+      action: "Group under same component, separate findings"
+      example: "Hero.tsx has contrast + target size → 2 findings, 1 component"
+
+    - pattern: "Same issue across multiple components"
+      action: "Group as pattern issue, count as 1 finding with N instances"
+      example: "hardcoded #333 in 5 components → 1 finding, 5 instances"
+
+# ═══════════════════════════════════════════════════════════════
+# SCORE DELTA TRACKING
+# ═══════════════════════════════════════════════════════════════
+
+delta_tracking:
+  description: >
+    After each fix, re-calculate the affected domain score
+    and update the Apex Score. Show delta to user.
+
+  re_score_scope:
+    after_single_fix: "Re-score only the affected domain"
+    after_batch_fix: "Re-score all affected domains"
+    after_all_high: "Full re-score"
+
+  display_format: "Score: {old} → {new} (+{delta})"
+
+  history:
+    max_entries: 50
+    stored_at: ".aios/apex-context/score-history.yaml"

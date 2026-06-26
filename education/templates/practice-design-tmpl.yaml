@@ -1,0 +1,187 @@
+# Deliberate Practice Design Template
+# Purpose: Design practice activities following Ericsson's deliberate practice principles
+# Output: Practice specification with feedback, progression, and spacing
+
+metadata:
+  practice_id: "{PRACTICE_ID}"  # e.g., "practice-001-write-bullets"
+  skill: "{SKILL}"  # e.g., "Writing fascination bullets (Bencivenga style)"
+  module_id: "{MODULE_ID}"  # Parent module
+  lesson_id: "{LESSON_ID}"  # Parent lesson (optional)
+  created_date: "{CREATED_DATE}"
+  version: "{VERSION}"
+
+skill_context:
+  # What skill is being practiced
+  skill_name: "{SKILL_NAME}"
+  skill_definition: "{DEFINITION}"
+  why_it_matters: "{RELEVANCE}"  # ARCS: Relevance
+  bloom_level: "{BLOOM_LEVEL}"  # Target cognitive level
+  ltem_tier_target: "{LTEM_TIER}"  # Desired transfer level
+
+practice_type:
+  # Ericsson's categories
+  type: "{DELIBERATE|PURPOSEFUL|NAIVE}"
+
+  characteristics:
+    deliberate_practice:
+      - "Well-defined goal"
+      - "Immediate feedback"
+      - "Intense focus on weak points"
+      - "Outside comfort zone"
+      - "Expert-designed"
+
+    purposeful_practice:
+      - "Has goal, less structured feedback"
+      - "Self-directed improvement"
+
+    naive_practice:
+      - "Repetition without feedback"
+      - "Comfort zone (not effective)"
+
+  selected_type_justification: |
+    {JUSTIFICATION}
+    # E.g., "DELIBERATE: Skill requires expert feedback to detect subtle errors"
+
+goal:
+  # Clear, measurable practice objective
+  statement: "{GOAL_STATEMENT}"  # e.g., "Write 10 fascination bullets in <15min with >80% curiosity score"
+
+  success_criteria:
+    - "{CRITERION_1}"  # e.g., "Bullets use sensory language"
+    - "{CRITERION_2}"  # e.g., "Each bullet has curiosity gap"
+    - "{CRITERION_3}"  # e.g., "No jargon or abstract terms"
+
+  measurable: {BOOLEAN}  # Can success be objectively measured?
+  measurement_method: "{METHOD}"  # How success is measured
+
+task_design:
+  # The practice activity
+  description: |
+    {TASK_DESCRIPTION}
+    # Exact instructions for learner
+
+  duration: {MINUTES}  # Expected time to complete
+
+  materials_needed:
+    - "{MATERIAL_1}"  # e.g., "Product description doc"
+    - "{MATERIAL_2}"  # e.g., "Bencivenga bullet examples (swipe file)"
+
+  setup: |
+    {SETUP_INSTRUCTIONS}
+    # What learner needs to do before starting
+
+feedback_mechanism:
+  # How learner gets feedback (CRITICAL for deliberate practice)
+  type: "{IMMEDIATE|DELAYED}"
+  source: "{SOURCE}"  # e.g., "Rubric", "Instructor", "Peer review", "Automated scoring"
+
+  feedback_loop:
+    - action: "{ACTION}"  # e.g., "Learner writes bullet"
+    - feedback: "{FEEDBACK}"  # e.g., "Rubric scores curiosity 1-5"
+    - revision: "{REVISION}"  # e.g., "Learner rewrites low-scoring bullets"
+
+  rubric:
+    # If rubric-based feedback
+    criteria:
+      - criterion: "{CRITERION_1}"  # e.g., "Curiosity gap"
+        scale: "{SCALE}"  # e.g., "1-5"
+        descriptors:
+          5: "{DESCRIPTION}"  # e.g., "Creates intense curiosity, uses specifics"
+          3: "{DESCRIPTION}"  # e.g., "Some curiosity, vague"
+          1: "{DESCRIPTION}"  # e.g., "No curiosity, states fact"
+
+      - criterion: "{CRITERION_2}"
+        scale: "{SCALE}"
+        descriptors:
+          5: "{DESCRIPTION}"
+          3: "{DESCRIPTION}"
+          1: "{DESCRIPTION}"
+
+reflection_prompt:
+  # Metacognitive component (deliberate practice)
+  prompt: |
+    {REFLECTION_PROMPT}
+    # E.g., "What made your highest-scoring bullet effective? What pattern do you notice?"
+
+  purpose: "{PURPOSE}"  # Why this reflection matters
+  timing: "{TIMING}"  # When learner reflects: "After completing all bullets"
+
+difficulty_progression:
+  # How practice gets harder (zone of proximal development)
+  initial_difficulty: "{DIFFICULTY}"  # e.g., "Beginner: Template provided"
+
+  progression_stages:
+    - stage: 1
+      difficulty: "{DIFFICULTY}"
+      description: |
+        {DESCRIPTION}
+        # E.g., "Fill-in-blank templates (low cognitive load)"
+      success_threshold: "{THRESHOLD}"  # When to advance: "80% score"
+
+    - stage: 2
+      difficulty: "{DIFFICULTY}"
+      description: |
+        {DESCRIPTION}
+        # E.g., "Bullet prompts provided (partial support)"
+      success_threshold: "{THRESHOLD}"
+
+    - stage: 3
+      difficulty: "{DIFFICULTY}"
+      description: |
+        {DESCRIPTION}
+        # E.g., "Only product description (no support)"
+      success_threshold: "{THRESHOLD}"
+
+  final_stage: "{FINAL_DIFFICULTY}"  # Where learner should end up
+
+spacing_schedule:
+  # Spaced repetition (FSRS or similar)
+  initial_practice: "{TIMING}"  # When first practice happens in curriculum
+
+  repetitions:
+    - repetition: 1
+      timing: "{TIMING}"  # e.g., "24 hours after initial"
+      focus: "{FOCUS}"  # What to practice again
+
+    - repetition: 2
+      timing: "{TIMING}"  # e.g., "7 days after initial"
+      focus: "{FOCUS}"
+
+    - repetition: 3
+      timing: "{TIMING}"  # e.g., "30 days after initial"
+      focus: "{FOCUS}"
+
+  retrieval_practice: {BOOLEAN}  # Does practice require active recall?
+
+common_errors:
+  # Known mistakes and corrections (expert knowledge)
+  - error: "{ERROR_1}"  # e.g., "Writing vague bullets ('amazing results')"
+    correction: "{CORRECTION}"  # e.g., "Use specifics: '3X revenue in 14 days'"
+    why_it_happens: "{WHY}"  # e.g., "Learner hasn't internalized specificity principle"
+
+  - error: "{ERROR_2}"
+    correction: "{CORRECTION}"
+    why_it_happens: "{WHY}"
+
+expert_model:
+  # Example of expert performance (for comparison)
+  example: |
+    {EXPERT_EXAMPLE}
+    # E.g., Bencivenga bullet: "The desperate 'almost-hysterical' woman whose strange..."
+
+  what_makes_it_expert:
+    - "{QUALITY_1}"  # e.g., "Sensory details ('desperate', 'almost-hysterical')"
+    - "{QUALITY_2}"  # e.g., "Curiosity gap (what did she do?)"
+
+validation:
+  # How practice effectiveness is measured
+  metrics:
+    - metric: "{METRIC}"  # e.g., "Skill improvement (pre vs post)"
+      target: "{TARGET}"  # e.g., "+2 points on rubric"
+
+    - metric: "{METRIC}"  # e.g., "Time to complete (speed + accuracy)"
+      target: "{TARGET}"  # e.g., "<15min while maintaining >80% quality"
+
+notes: |
+  {ADDITIONAL_NOTES}
+  # Iteration history, learner feedback on practice design

@@ -1,0 +1,43 @@
+quality_gates:
+  setup_audit:
+    audit_score_threshold:
+      threshold: 0.8
+    settings_parse_success:
+      threshold: 1.0
+    deny_rule_coverage:
+      threshold: 1.0
+  mcp_runtime:
+    context_budget_adherence:
+      threshold: 0.85
+    server_connectivity_rate:
+      threshold: 0.9
+    integration_success_rate:
+      threshold: 0.9
+  knowledge_update:
+    source_fetch_success:
+      threshold: 0.85
+    delta_coverage:
+      threshold: 0.9
+    agent_sync_coverage:
+      threshold: 0.8
+  governance:
+    token_family_coverage:
+      threshold: 1.0
+    task_contract_coverage:
+      threshold: 1.0
+    artifact_contract_coverage:
+      threshold: 1.0
+
+veto_conditions:
+  - id: CCM_QG_001
+    condition: "audit_score_threshold < 0.8"
+    action: "Bloquear publicação do setup"
+  - id: CCM_QG_002
+    condition: "settings_parse_success < 1.0"
+    action: "Bloquear merge de configuração"
+  - id: CCM_QG_003
+    condition: "server_connectivity_rate < 0.9"
+    action: "Emitir handoff de integração"
+  - id: CCM_QG_004
+    condition: "token_family_coverage < 1.0"
+    action: "Reabrir remediação estrutural"

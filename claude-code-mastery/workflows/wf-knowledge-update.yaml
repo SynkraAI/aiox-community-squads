@@ -1,0 +1,447 @@
+# ============================================================================
+# Workflow: Anthropic Ecosystem Knowledge Update
+# Squad: claude-code-mastery
+# Version: 2.0.0
+# Purpose: Refresh squad knowledge from the FULL Anthropic ecosystem —
+#          Claude Code, Claude Desktop, Claude Cowork, Claude Agent SDK,
+#          Claude Remote, Anthropic API, and community sources.
+# ============================================================================
+
+workflow:
+  id: wf-knowledge-update
+  name: "Anthropic Ecosystem Knowledge Update"
+  version: "2.0.0"
+  description: |
+    Workflow to refresh the claude-code-mastery squad's knowledge base
+    from the FULL Anthropic ecosystem: Claude Code, Claude Desktop,
+    Claude Cowork, Claude Agent SDK, Claude Remote, Anthropic API,
+    official blog, and community resources.
+
+    v2.0 expands scope from Claude Code-only to full ecosystem coverage.
+
+  trigger: "*update-knowledge"
+  aliases: ["*updates", "*ecosystem-update"]
+  entry_agent: roadmap-sentinel
+  estimated_duration: "30-60 minutes"
+
+thresholds:
+  source_fetch_success:
+    threshold: 0.85
+  delta_coverage_threshold:
+    threshold: 0.9
+  agent_update_coverage:
+    threshold: 0.8
+  report_generation_success:
+    threshold: 1.0
+
+error_handling:
+  on_source_unavailable: WARN_AND_CAPTURE_GAP
+  on_delta_none: SKIP_REMAINING_PHASES
+  on_agent_sync_failure: EMIT_REVIEW_HANDOFF
+  on_report_publish_failure: BLOCK
+
+state_machine:
+  initial: phase_0
+  terminal: phase_5
+  transitions:
+    - from: phase_0
+      to: phase_1
+      requires: [ecosystem_snapshot, new_features_by_product]
+      gate: "source_fetch_success >= 0.85"
+      journey_log: JLOG-CCM-008
+    - from: phase_1
+      to: phase_2
+      requires: [delta_report, update_priority]
+      gate: "update_priority != 'none'"
+      journey_log: JLOG-CCM-009
+    - from: phase_2
+      to: phase_3
+      requires: [files_updated]
+    - from: phase_3
+      to: phase_4
+      requires: [agent_updates]
+      journey_log: JLOG-CCM-010
+    - from: phase_4
+      to: phase_5
+      requires: [agents_updated]
+      journey_log: JLOG-CCM-011
+  veto_transitions:
+    - from: phase_0
+      condition: "no sources accessible"
+      action: "abort — network issue"
+  skip_transitions:
+    - from: phase_1
+      condition: "update_priority == 'none'"
+      action: "skip remaining phases"
+      journey_log: JLOG-CCM-012
+
+task_ref: wf-knowledge-update
+
+# ────────────────────────────────────────────────────────────────────────────
+# SOURCE REGISTRY (centralized — referenced by phases)
+# ────────────────────────────────────────────────────────────────────────────
+
+source_registry:
+
+  # ─── Claude Code (CLI) ─────────────────────────────────────────────────
+  claude_code:
+    label: "Claude Code (CLI)"
+    priority: critical
+    sources:
+      changelog: "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md"
+      releases: "https://github.com/anthropics/claude-code/releases"
+      docs: "https://code.claude.com/docs/en/overview"
+      github_issues: "https://github.com/anthropics/claude-code/issues"
+    affects_agents:
+      - hooks-architect      # hook events, lifecycle
+      - mcp-integrator       # MCP transport, tool discovery
+      - swarm-orchestrator   # subagents, agent teams, worktrees
+      - config-engineer      # settings, permissions, CLAUDE.md
+      - skill-craftsman      # skills, plugins, commands
+      - project-integrator   # CI/CD, headless, monorepo
+      - roadmap-sentinel     # changelog, roadmap, versions
+      - claude-mastery-chief # quick_reference, overview
+
+  # ─── Claude Desktop ────────────────────────────────────────────────────
+  claude_desktop:
+    label: "Claude Desktop (App)"
+    priority: important
+    sources:
+      docs: "https://code.claude.com/docs/en/desktop"
+      install_guide: "https://support.claude.com/en/articles/10065433-installing-claude-desktop"
+    affects_agents:
+      - config-engineer      # desktop-specific settings
+      - mcp-integrator       # MCP in desktop context
+      - project-integrator   # desktop integration patterns
+
+  # ─── Claude Cowork (GUI) ───────────────────────────────────────────────
+  claude_cowork:
+    label: "Claude Cowork (GUI Research Preview)"
+    priority: important
+    sources:
+      product_page: "https://claude.com/product/cowork"
+      blog_announcement: "https://claude.com/blog/cowork-research-preview"
+      getting_started: "https://support.claude.com/en/articles/13345190-get-started-with-cowork"
+      tutorial: "https://claude.com/resources/tutorials/claude-cowork-a-research-preview"
+    affects_agents:
+      - swarm-orchestrator   # agent teams GUI, parallel execution
+      - roadmap-sentinel     # new product tracking
+      - claude-mastery-chief # ecosystem overview
+
+  # ─── Claude Agent SDK ──────────────────────────────────────────────────
+  claude_agent_sdk:
+    label: "Claude Agent SDK (Python + TypeScript)"
+    priority: important
+    sources:
+      docs: "https://platform.claude.com/docs/en/agent-sdk/overview"
+      github_python: "https://github.com/anthropics/claude-agent-sdk-python"
+      github_typescript: "https://github.com/anthropics/claude-agent-sdk-typescript"
+      github_demos: "https://github.com/anthropics/claude-agent-sdk-demos"
+      npm_package: "https://www.npmjs.com/package/@anthropic-ai/claude-agent-sdk"
+    affects_agents:
+      - swarm-orchestrator   # SDK-based agent orchestration
+      - project-integrator   # SDK integration in projects
+      - roadmap-sentinel     # SDK versioning and roadmap
+
+  # ─── Claude Remote Control ─────────────────────────────────────────────
+  claude_remote:
+    label: "Claude Remote Control"
+    priority: recommended
+    sources:
+      docs: "https://code.claude.com/docs/en/remote-control"
+    affects_agents:
+      - config-engineer      # remote control settings
+      - project-integrator   # remote workflows, CI integration
+      - swarm-orchestrator   # remote agent coordination
+
+  # ─── Anthropic API / Developer Platform ────────────────────────────────
+  anthropic_api:
+    label: "Anthropic API & Developer Platform"
+    priority: important
+    sources:
+      api_docs: "https://docs.anthropic.com"
+      release_notes: "https://docs.anthropic.com/en/release-notes/overview"
+      platform_docs: "https://platform.claude.com/docs"
+      status: "https://status.anthropic.com/"
+      sdk_typescript: "https://github.com/anthropics/anthropic-sdk-typescript"
+    affects_agents:
+      - roadmap-sentinel     # model releases, API changes
+      - claude-mastery-chief # model IDs, context windows, pricing
+
+  # ─── Blog & Announcements ──────────────────────────────────────────────
+  announcements:
+    label: "Official Announcements"
+    priority: important
+    sources:
+      anthropic_news: "https://www.anthropic.com/news"
+      claude_blog: "https://claude.com/blog/"
+      anthropic_engineering: "https://www.anthropic.com/engineering"
+      twitter: "https://x.com/AnthropicAI"
+    affects_agents:
+      - roadmap-sentinel     # all announcements
+      - claude-mastery-chief # ecosystem overview
+
+  # ─── Community Sources ─────────────────────────────────────────────────
+  community:
+    label: "Community & Third-Party"
+    priority: optional
+    sources:
+      claudelog: "https://claudelog.com/claude-code-changelog/"
+      claudefast: "https://claudefa.st/blog/guide/changelog"
+      github_org: "https://github.com/anthropics"
+    affects_agents:
+      - roadmap-sentinel     # community-reported features
+
+# ────────────────────────────────────────────────────────────────────────────
+# PHASES
+# ────────────────────────────────────────────────────────────────────────────
+
+phases:
+
+  # ─── PHASE 0: Full Ecosystem Source Collection ─────────────────────────
+  - id: phase_0
+    name: "Ecosystem Source Collection"
+    agent: roadmap-sentinel
+    description: |
+      Fetch latest information from ALL Anthropic ecosystem sources.
+      Covers 7 product areas: Claude Code, Desktop, Cowork, Agent SDK,
+      Remote, API, and official announcements.
+    steps:
+      # Claude Code (critical)
+      - "Fetch Claude Code CHANGELOG.md from GitHub"
+      - "Fetch latest releases from GitHub releases page"
+      - "Check Claude Code docs at code.claude.com/docs"
+      # Claude Desktop
+      - "Check Claude Desktop docs for new features or changes"
+      # Claude Cowork
+      - "Check Cowork product page and blog for updates"
+      - "Check Cowork getting-started guide for new capabilities"
+      # Claude Agent SDK
+      - "Check Agent SDK docs at platform.claude.com"
+      - "Check GitHub repos (Python + TypeScript) for new releases"
+      - "Check npm @anthropic-ai/claude-agent-sdk for version bumps"
+      # Claude Remote
+      - "Check Remote Control docs for new subcommands or features"
+      # Anthropic API
+      - "Check API release notes at docs.anthropic.com"
+      - "Check for new model IDs, context window changes, pricing updates"
+      # Announcements
+      - "Check anthropic.com/news for product announcements"
+      - "Check claude.com/blog for feature posts"
+      # Community
+      - "Check claudelog.com and claudefast.com for community-reported changes"
+    source_refs:
+      - claude_code
+      - claude_desktop
+      - claude_cowork
+      - claude_agent_sdk
+      - claude_remote
+      - anthropic_api
+      - announcements
+      - community
+    outputs:
+      - ecosystem_snapshot:
+          claude_code_version: "string (e.g., 1.0.47)"
+          agent_sdk_version: "string (e.g., 0.5.0)"
+          api_model_latest: "string (e.g., claude-opus-4-6)"
+          cowork_status: "string (research_preview | beta | ga)"
+      - new_features_by_product: "map<product_id, array<feature>>"
+      - breaking_changes: "array (if any)"
+      - deprecations: "array (if any)"
+      - new_products: "array (if any — e.g., new Anthropic product launched)"
+    checkpoint:
+      gate: "At least claude_code and anthropic_api sources fetched"
+      veto: "No sources accessible (network issue)"
+
+  # ─── PHASE 1: Cross-Product Delta Analysis ────────────────────────────
+  - id: phase_1
+    name: "Cross-Product Delta Analysis"
+    agent: roadmap-sentinel
+    depends_on: [phase_0]
+    description: |
+      Compare new information against squad's current knowledge base
+      across ALL products. Generates a unified delta report.
+    steps:
+      - "Read current data/claude-code-quick-ref.yaml"
+      - "Compare Claude Code: tool list, hook events, permission modes, MCP transports"
+      - "Compare Claude Desktop: features, settings, MCP support"
+      - "Compare Claude Cowork: capabilities, integration with Claude Code"
+      - "Compare Agent SDK: API surface, new classes/methods, breaking changes"
+      - "Compare Remote Control: subcommands, protocols"
+      - "Compare Anthropic API: model IDs, context windows, pricing, new endpoints"
+      - "Identify cross-product interactions (e.g., SDK + Cowork, Desktop + MCP)"
+      - "Assess impact on each specialist agent using source_registry.affects_agents"
+    outputs:
+      - delta_report:
+          per_product:
+            - product_id: "string"
+              new_features: "array"
+              deprecated_features: "array"
+              changed_features: "array"
+              breaking_changes: "array"
+          cross_product_changes: "array (interactions between products)"
+          affected_agents: "array of agent IDs with reason"
+      - update_priority: "string (critical | important | minor | none)"
+    checkpoint:
+      gate: "Delta report generated with per-product breakdown"
+      veto: "If update_priority is 'none', skip remaining phases"
+
+  # ─── PHASE 2: Knowledge Base Update ────────────────────────────────────
+  - id: phase_2
+    name: "Knowledge Base Update"
+    agent: roadmap-sentinel
+    depends_on: [phase_1]
+    description: |
+      Update the squad's data files with new information from all products.
+    steps:
+      # Core data files
+      - "Update data/claude-code-quick-ref.yaml — tools, hooks, permissions, settings, MCP, memory, ecosystem stats"
+      - "Update data/hook-patterns.yaml — if new hook events added"
+      - "Update data/mcp-integration-catalog.yaml — if new MCP transports or servers"
+      # New data files (create if missing)
+      - "Update or create data/ecosystem-products.yaml — product catalog with versions and status"
+      - "Update or create data/agent-sdk-reference.yaml — SDK API surface, classes, patterns"
+      - "Update or create data/model-catalog.yaml — model IDs, context windows, pricing"
+      # Maintenance
+      - "Add new entries to relevant data files"
+      - "Mark deprecated entries (do NOT remove without deprecation notice)"
+      - "Update version numbers and timestamps"
+    outputs:
+      - files_updated: "array of file paths"
+      - files_created: "array of file paths (if new data files needed)"
+      - entries_added: "number"
+      - entries_deprecated: "number"
+    checkpoint:
+      gate: "All identified deltas addressed in data files"
+      veto: "Removing entries without deprecation notice"
+
+  # ─── PHASE 3: Agent Impact Assessment ──────────────────────────────────
+  - id: phase_3
+    name: "Agent Impact Assessment"
+    agent: claude-mastery-chief
+    depends_on: [phase_2]
+    description: |
+      Assess which specialist agents need updates based on the cross-product delta.
+      Uses source_registry.affects_agents mapping for systematic coverage.
+    steps:
+      - "For each affected agent, identify impacted sections"
+      - "Check if agent's quick_reference data is still accurate"
+      - "Check if agent's commands list needs new entries"
+      - "Check if agent's output_examples reference outdated features"
+      - "Check if agent's triage keywords need expansion (new products/features)"
+      - "Flag agents needing knowledge_base or core_principles updates"
+      - "Generate update recommendations per agent with specific sections"
+    outputs:
+      - agent_updates:
+          - agent_id: "string"
+            product_source: "string (which product triggered the update)"
+            sections_affected: "array (e.g., quick_reference, commands, output_examples)"
+            priority: "string (critical | recommended | optional)"
+            recommendation: "string (specific change description)"
+    checkpoint:
+      gate: "All affected agents assessed"
+      veto: "N/A (assessment only)"
+
+  # ─── PHASE 4: Agent File Updates (NEW) ─────────────────────────────────
+  - id: phase_4
+    name: "Agent File Updates"
+    agent: claude-mastery-chief
+    depends_on: [phase_3]
+    description: |
+      Apply recommended updates directly to agent .md files.
+      Only updates sections flagged as 'critical' or 'recommended'.
+      Optional updates require human approval.
+    steps:
+      - "For each agent with critical/recommended updates:"
+      - "  Read agent file from squads/claude-code-mastery/agents/{agent_id}.md"
+      - "  Apply section-specific edits (quick_reference, commands, output_examples)"
+      - "  Preserve voice_dna, persona, and core_principles (do NOT modify)"
+      - "  Update version comment if present"
+      - "Re-sync updated agents to .claude/skills/claude-code-mastery/"
+    outputs:
+      - agents_updated: "array of agent IDs"
+      - agents_skipped: "array (optional updates deferred)"
+      - files_synced: "array of .claude/skills/ paths"
+    checkpoint:
+      gate: "All critical/recommended agent updates applied"
+      veto: "Modifying agent voice_dna or persona sections (preserve identity)"
+
+  # ─── PHASE 5: Ecosystem Summary & Report ───────────────────────────────
+  - id: phase_5
+    name: "Ecosystem Update Report"
+    agent: claude-mastery-chief
+    depends_on: [phase_4]
+    description: |
+      Generate comprehensive update report covering all products.
+    steps:
+      - "Compile ecosystem-wide update summary"
+      - "List all changes per product"
+      - "List all agent files updated"
+      - "Provide version comparison table (was → now) per product"
+      - "Highlight cross-product interactions discovered"
+      - "List any new products/features that may warrant new agents or tasks"
+      - "Save report to outputs/knowledge-updates/update-{date}.md"
+    outputs:
+      - update_report:
+          date: "string (ISO 8601)"
+          products_checked: "number"
+          products_with_changes: "number"
+          data_files_updated: "number"
+          agents_updated: "number"
+          version_table:
+            - product: "string"
+              version_before: "string"
+              version_after: "string"
+          cross_product_notes: "array"
+          expansion_recommendations: "array (e.g., 'Consider creating cowork-specialist agent')"
+          summary: "string"
+
+# ────────────────────────────────────────────────────────────────────────────
+# COMPLETION CRITERIA
+# ────────────────────────────────────────────────────────────────────────────
+
+completion_criteria:
+  - "All 7 product areas checked (Code, Desktop, Cowork, SDK, Remote, API, Announcements)"
+  - "Cross-product delta report generated"
+  - "Knowledge base data files updated"
+  - "Agent impact assessment completed"
+  - "Critical/recommended agent file updates applied"
+  - "Agent files re-synced to .claude/skills/"
+  - "Ecosystem update report saved to outputs/"
+
+# ────────────────────────────────────────────────────────────────────────────
+# SCHEDULE
+# ────────────────────────────────────────────────────────────────────────────
+
+schedule:
+  recommended: "Run after any Anthropic product announcement or version bump"
+  minimum: "Bi-weekly"
+  trigger_on:
+    - "User runs *update-knowledge or *updates or *ecosystem-update"
+    - "Claude Code version change detected"
+    - "New Anthropic product announced"
+    - "User asks 'what is new in Claude Code / Anthropic?'"
+    - "Agent SDK new release detected"
+    - "API model change detected (new model ID)"
+
+# ────────────────────────────────────────────────────────────────────────────
+# CHANGELOG
+# ────────────────────────────────────────────────────────────────────────────
+
+changelog:
+  - version: "2.0.0"
+    date: "2026-03-09"
+    changes:
+      - "Expanded scope from Claude Code-only to full Anthropic ecosystem"
+      - "Added source_registry with 7 product areas and affects_agents mapping"
+      - "Added Claude Desktop, Cowork, Agent SDK, Remote, API sources"
+      - "Added Phase 4 (Agent File Updates) — applies edits + re-syncs to .claude/skills/"
+      - "Renamed Phase 4→5 (Summary) with ecosystem-wide report and expansion recommendations"
+      - "Added cross-product delta analysis in Phase 1"
+      - "Added new data files: ecosystem-products.yaml, agent-sdk-reference.yaml, model-catalog.yaml"
+      - "Updated schedule from monthly to bi-weekly minimum"
+      - "Added changelog section"
+  - version: "1.0.0"
+    date: "2026-02-15"
+    changes:
+      - "Initial version — Claude Code changelog and docs only"

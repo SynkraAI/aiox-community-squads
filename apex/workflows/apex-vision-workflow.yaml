@@ -1,0 +1,283 @@
+# Apex Vision Workflow
+# Orchestrates the full visual intelligence sweep pipeline
+# Triggered by: *apex-vision, *apex-vision-full, prints, URLs
+# Version: 1.0.0
+
+id: apex-vision-workflow
+name: "Apex Vision — Intelligent Visual Sweep"
+version: "1.0.0"
+owner: apex-lead
+trigger:
+  commands:
+    - "*apex-vision"
+    - "*apex-vision-full"
+  auto_detect:
+    - "User sends 1+ screenshots"
+    - "User sends URL (http/https)"
+    - "User asks to analyze app/site visually"
+    - "User says 'como ta', 'analisa', 'varredura'"
+
+# ═══════════════════════════════════════════════════════════════
+# WORKFLOW PHASES
+# ═══════════════════════════════════════════════════════════════
+
+phases:
+
+  # ─── PHASE 0: INPUT DETECTION ──────────────────────────────
+  - id: "input-detection"
+    name: "Input Detection"
+    description: "Detect what the user provided and prepare for analysis"
+    executor: apex-lead
+    auto: true
+    steps:
+      - detect_input_type:
+          screenshot: "Read image, prepare for structure detection"
+          url: "Navigate, capture at 3 viewports (desktop/tablet/mobile), prepare captures"
+          url_plus_screenshot: "Capture URL + compare with screenshot (drift detection)"
+          multiple_screenshots: "Prepare multi-page consistency analysis"
+          text_only: "Prompt user for print or URL, or offer *apex-full"
+      - validate_input:
+          screenshot_quality: "Check image is readable (not blurry, not too small)"
+          url_reachable: "Check URL responds (200 OK, not behind auth)"
+          fallback: "If URL fails, ask for screenshot instead"
+    output: "Prepared input(s) ready for structure detection"
+    checkpoint: false  # auto, no user pause
+
+  # ─── PHASE 1: STRUCTURE DETECTION ─────────────────────────
+  - id: "structure-detection"
+    name: "Structure Detection"
+    description: "Identify all semantic regions and elements in the page"
+    executor: apex-lead
+    auto: true
+    data_source: "data/structure-detection-patterns.yaml"
+    steps:
+      - scan_page:
+          method: "Visual analysis of screenshot(s) or captured URL"
+          detect: "All regions from structure-detection-patterns.yaml"
+          output: "page_structure map with regions, elements, positions"
+      - assign_agents:
+          method: "Map each region to responsible agents from patterns"
+          output: "Agent assignment matrix (which agents analyze which regions)"
+      - detect_elements:
+          method: "Fine-grained element analysis (typography, colors, spacing, effects)"
+          output: "Element inventory per region"
+      - select_profile:
+          method: "Determine active profile from project scan"
+          output: "Agent roster for sweep (full/web-next/web-spa/minimal)"
+    output: "Complete structure map + agent assignments"
+    checkpoint: false  # auto, no user pause
+
+  # ─── PHASE 2: MULTI-AGENT SWEEP ──────────────────────────
+  - id: "multi-agent-sweep"
+    name: "Multi-Agent Sweep"
+    description: "All agents analyze their domains in parallel"
+    executor: apex-lead
+    auto: true
+    parallel: true
+    timeout_per_agent: 60000  # 60 seconds
+    steps:
+      - dispatch_to_agents:
+          input: "Structure map + screenshots/URL captures + codebase"
+          agents: "All agents from active profile"
+          mode: "parallel — each agent works independently"
+      - collect_results:
+          wait: "All agents complete or timeout"
+          graceful_degradation: "If agent times out, mark domain as N/A"
+          output: "Per-agent results: score + findings + fix suggestions"
+      - code_cross_reference:
+          description: "Cross-reference visual findings with actual code"
+          method: "For each visual finding, locate the source file + line"
+          output: "Findings enriched with file paths and code context"
+    output: "Multi-agent sweep results with code references"
+    checkpoint: false  # auto
+
+  # ─── PHASE 3: AGGREGATION + SCORING ───────────────────────
+  - id: "aggregation"
+    name: "Aggregation + Scoring"
+    description: "Compute Apex Score and organize findings"
+    executor: apex-lead
+    auto: true
+    scoring_model: "data/sweep-scoring-model.yaml"
+    steps:
+      - compute_domain_scores:
+          method: "Each agent's findings → domain score (0-100)"
+          weights: "From sweep-scoring-model.yaml"
+      - compute_apex_score:
+          method: "Weighted sum of domain scores + optional bonuses"
+          output: "Apex Score (0-100)"
+      - deduplicate_findings:
+          method: "Merge same-element findings from multiple agents"
+          rules: "From sweep-scoring-model.yaml deduplication section"
+      - sort_findings:
+          primary: "severity (HIGH → MEDIUM → LOW)"
+          secondary: "region (header → hero → body → footer)"
+          tertiary: "agent domain"
+      - generate_structure_summary:
+          method: "Region status: ✅ (no findings), ⚠ (has findings), ❌ (critical)"
+    output: "Apex Score + sorted findings + structure summary"
+    checkpoint: false  # auto
+
+  # ─── PHASE 4: PRESENT + NAVIGATE ──────────────────────────
+  - id: "present-navigate"
+    name: "Present + Navigate"
+    description: "Show results and enter interactive navigator"
+    executor: apex-lead
+    auto: false  # USER INTERACTION STARTS HERE
+    task: "sweep-navigator"
+    steps:
+      - display_dashboard:
+          show:
+            - "Apex Score with bar visualization"
+            - "Domain breakdown with per-domain scores"
+            - "Structure map with region status"
+            - "Finding count by severity"
+            - "Options (numbered + natural language)"
+      - enter_navigator:
+          mode: "interactive"
+          accepts: "numbers, natural language, commands"
+          exits_on: "'done', 'pronto', 'exit'"
+      - after_fix:
+          re_score: "Affected domain only (fast)"
+          show_delta: "Score: {old} → {new} (+{delta})"
+          typecheck: "Run after every fix"
+      - on_exit:
+          save_state: ".aios/apex-context/sweep-cache.yaml"
+          show_summary: "Total fixes, score delta, remaining findings"
+    output: "Interactive session + cached state"
+    checkpoint: true  # User controls this phase entirely
+
+  # ─── PHASE 5: CACHE + HANDOFF ─────────────────────────────
+  - id: "cache-handoff"
+    name: "Cache + Handoff"
+    description: "Store results for subsequent commands"
+    executor: apex-lead
+    auto: true
+    steps:
+      - save_cache:
+          location: ".aios/apex-context/sweep-cache.yaml"
+          contents:
+            - "Apex Score (current)"
+            - "Structure map"
+            - "All findings (resolved + remaining)"
+            - "Files modified"
+            - "Score history"
+          ttl: "24 hours or until >5 files changed via git commit"
+      - notify_completion:
+          if_fixes_applied: "Suggest commit (delegate to user decision)"
+          if_no_fixes: "Just save cache, report done"
+    output: "Sweep cache saved"
+
+# ═══════════════════════════════════════════════════════════════
+# COMBINED MODE (*apex-vision-full)
+# ═══════════════════════════════════════════════════════════════
+
+combined_mode:
+  trigger: "*apex-vision-full"
+  description: >
+    Runs BOTH visual sweep (phases 0-5 above) AND code sweep
+    (full-codebase-sweep.md) in parallel. Produces unified
+    Apex Score combining visual + code + consistency.
+  parallel_execution:
+    - "Visual sweep (this workflow)"
+    - "Code sweep (full-codebase-sweep.md)"
+  merge_strategy:
+    score: "unified = (visual × 0.45) + (code × 0.45) + (consistency × 0.10)"
+    findings: "Merge + deduplicate across both sweeps"
+    navigator: "Single navigator for all findings"
+
+# ═══════════════════════════════════════════════════════════════
+# URL-SPECIFIC BEHAVIOR
+# ═══════════════════════════════════════════════════════════════
+
+url_handling:
+  capture:
+    tool: "playwright or browser MCP"
+    viewports:
+      - { name: "desktop", width: 1920, height: 1080, dpr: 1 }
+      - { name: "tablet", width: 768, height: 1024, dpr: 2 }
+      - { name: "mobile", width: 375, height: 812, dpr: 3 }
+    scroll_capture: "Scroll in 100vh increments, capture each fold"
+    wait_for: "networkidle (all resources loaded)"
+    disable_animations: true
+    timeout: 30000  # 30 seconds per viewport
+
+  live_analysis:
+    description: "Additional checks only possible with live URL"
+    checks:
+      - "SSL certificate validity"
+      - "Response time (TTFB)"
+      - "HTTP headers (security headers, caching)"
+      - "Console errors/warnings"
+      - "Network requests (API calls, third-party scripts)"
+      - "Lighthouse-style CWV estimation"
+
+  cross_reference:
+    description: "When user provides URL + screenshot"
+    steps:
+      - "Capture URL at same viewport as screenshot"
+      - "Visual diff between screenshot and live capture"
+      - "Report: what changed (drift detection)"
+      - "Run full sweep on live version"
+      - "Show delta: 'Screenshot score: X → Live score: Y'"
+
+# ═══════════════════════════════════════════════════════════════
+# ERROR HANDLING
+# ═══════════════════════════════════════════════════════════════
+
+error_handling:
+  agent_timeout:
+    action: "Mark domain as N/A, exclude from score calculation"
+    message: "@{agent} timed out. Domain excluded from score."
+
+  url_unreachable:
+    action: "Ask for screenshot instead"
+    message: "URL não respondeu. Manda um print?"
+
+  screenshot_unreadable:
+    action: "Ask for better quality image"
+    message: "Print não legível. Pode mandar em melhor resolução?"
+
+  no_input:
+    action: "Prompt for input type"
+    message: |
+      Para análise visual completa:
+      1. Manda um print
+      2. Cola uma URL
+      3. Ambos (print + URL)
+      4. Sweep só por código (*apex-full)
+
+# ==============================================================================
+# ROLLBACK PROTOCOL
+# ==============================================================================
+# Added to ensure every workflow has a documented recovery path.
+# Triggered when a phase fails and cannot be resolved in-place.
+# ==============================================================================
+
+rollback:
+  trigger: "Phase failure that cannot be resolved within the current phase"
+
+  phases:
+    - input-detection
+    - structure-detection
+    - multi-agent-sweep
+    - aggregation
+    - present-navigate
+    - cache-handoff
+
+  protocol:
+    step_1: "SNAPSHOT — Capture current state (git stash or checkpoint commit)"
+    step_2: "IDENTIFY — Determine which phase introduced the failure"
+    step_3: "REVERT — Roll back changes from the failed phase only"
+    step_4: "VERIFY — Confirm the pre-failure state is restored and stable"
+    step_5: "REPORT — Document what failed, why, and what was rolled back"
+    step_6: "RETRY or ESCALATE — Re-attempt the phase or escalate to apex-lead"
+
+  scope: "per-phase"
+  method: "git-based"
+
+  rules:
+    - "NEVER rollback more than 1 phase at a time"
+    - "ALWAYS create a checkpoint commit before retrying"
+    - "If rollback fails → escalate to apex-lead immediately"
+    - "Preserve all artifacts from the failed attempt for debugging"
+    - "User must approve rollback before execution"

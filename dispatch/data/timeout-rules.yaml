@@ -1,0 +1,58 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# TIMEOUT RULES — Every task MUST have a deadline
+# Source: PRD Section 3.8.1 (PV Audit Fix — PV002)
+# Principle: "O que não tem data pode ser feito qualquer hora. Qualquer hora = nunca."
+# ═══════════════════════════════════════════════════════════════════════════════
+
+principle: |
+  "O que não tem data pode ser feito qualquer hora.
+  Qualquer hora = nunca." — Pedro Valério PV002
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PER-TASK TIMEOUTS (seconds)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+per_task:
+  worker_script: 30       # Scripts are instant — if > 30s, something broke
+  haiku_agent: 120        # Well-defined, should be fast
+  sonnet_agent: 300       # Judgment tasks take longer
+  mcp_operation: 60       # API calls with retry
+  code_generation: 180    # Code tasks can be longer
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PER-WAVE TIMEOUTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+per_wave:
+  max_wall_clock: 900     # 15 minutes — if wave takes longer, something broke
+  behavior_on_timeout: "Mark all pending tasks FAILED, save state, escalate"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PER-RUN TIMEOUTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+per_run:
+  max_total: 3600         # 1 hour safety limit
+  behavior_on_timeout: "Circuit breaker, save state, notify user"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VETO ENFORCEMENT
+# ═══════════════════════════════════════════════════════════════════════════════
+
+veto:
+  id: V1.8
+  condition: "Task has no timeout defined"
+  check: "task.timeout is None"
+  action: "VETO — Assign timeout from this file based on executor type"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TIMEOUT ASSIGNMENT ALGORITHM
+# ═══════════════════════════════════════════════════════════════════════════════
+
+assignment:
+  - rule: "IF executor_type == 'worker' → 30s"
+  - rule: "IF model == 'haiku' → 120s"
+  - rule: "IF model == 'sonnet' → 300s"
+  - rule: "IF task involves MCP → 60s"
+  - rule: "IF task.type == 'code_generation' → 180s"
+  - rule: "DEFAULT → 120s"

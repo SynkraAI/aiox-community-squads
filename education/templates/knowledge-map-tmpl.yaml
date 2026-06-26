@@ -1,0 +1,102 @@
+# Knowledge Map Template (Novak Concept Map)
+# Purpose: Represent domain knowledge as hierarchical concept relationships
+# Output: Complete concept map for curriculum/module following Novak methodology
+
+metadata:
+  map_id: "{MAP_ID}"  # e.g., "kmap-001-email-marketing"
+  domain: "{DOMAIN}"  # e.g., "Email Marketing Fundamentals"
+  scope: "{SCOPE}"  # What this map covers
+  created_date: "{CREATED_DATE}"
+  version: "{VERSION}"
+  related_curriculum: "{CURRICULUM_ID}"  # Optional
+
+focus_question:
+  # Novak: Every concept map answers a focus question
+  question: "{FOCUS_QUESTION}"  # e.g., "How does email marketing automation work?"
+  purpose: "{PURPOSE}"  # Why this question guides the map
+
+concepts:
+  # Hierarchical list (general → specific)
+  # Format: level indicates hierarchy (1 = most general, 4 = most specific)
+  - level: 1
+    concept: "{CONCEPT_1}"  # e.g., "Email Marketing"
+    definition: "{DEFINITION}"
+    type: "{TYPE}"  # General, Intermediate, Specific
+
+  - level: 2
+    concept: "{CONCEPT_2}"  # e.g., "Automation"
+    definition: "{DEFINITION}"
+    type: "{TYPE}"
+    parent_concept: "{CONCEPT_1}"  # What it derives from
+
+  - level: 3
+    concept: "{CONCEPT_3}"  # e.g., "Trigger-based email"
+    definition: "{DEFINITION}"
+    type: "{TYPE}"
+    parent_concept: "{CONCEPT_2}"
+
+  - level: 3
+    concept: "{CONCEPT_4}"  # e.g., "Segmentation"
+    definition: "{DEFINITION}"
+    type: "{TYPE}"
+    parent_concept: "{CONCEPT_2}"
+
+propositions:
+  # Concept → Linking Word → Concept (Novak: meaningful statements)
+  # Each proposition is a complete, valid statement
+  - from_concept: "{CONCEPT_A}"
+    linking_word: "{VERB/PREPOSITION}"  # e.g., "requires", "enables", "consists of"
+    to_concept: "{CONCEPT_B}"
+    statement: "{COMPLETE_STATEMENT}"  # e.g., "Automation REQUIRES segmentation"
+    justification: "{WHY}"  # Why this relationship exists
+
+  - from_concept: "{CONCEPT_C}"
+    linking_word: "{LINKING_WORD}"
+    to_concept: "{CONCEPT_D}"
+    statement: "{STATEMENT}"
+    justification: "{WHY}"
+
+cross_links:
+  # Connections across hierarchical branches (Novak: shows integration)
+  - from_concept: "{CONCEPT_X}"
+    to_concept: "{CONCEPT_Y}"
+    relationship: "{RELATIONSHIP}"  # How they connect despite being in different branches
+    significance: "{SIGNIFICANCE}"  # Why this cross-link matters for learning
+
+prerequisite_chains:
+  # What must be learned before what (supports curriculum sequencing)
+  - target_concept: "{CONCEPT}"
+    prerequisites:
+      - concept: "{PREREQUISITE_1}"
+        reason: "{REASON}"  # Why this must come first
+
+      - concept: "{PREREQUISITE_2}"
+        reason: "{REASON}"
+
+sources_compared:
+  # If map synthesizes multiple sources, list them
+  - source: "{SOURCE_1}"  # e.g., "ConvertKit documentation"
+    perspective: "{PERSPECTIVE}"  # What this source emphasizes
+
+  - source: "{SOURCE_2}"
+    perspective: "{PERSPECTIVE}"
+
+  synthesis_note: |
+    {SYNTHESIS_NOTE}
+    # How sources were reconciled, what was prioritized
+
+visual_representation:
+  # Optional: path to visual diagram
+  diagram_path: "{PATH}"  # e.g., "output/diagrams/kmap-001.png"
+  tool_used: "{TOOL}"  # e.g., "CmapTools", "Miro", "Graphviz"
+
+validation:
+  # How map was validated
+  reviewed_by: "{REVIEWER}"  # Subject matter expert
+  review_date: "{DATE}"
+  changes_from_review: |
+    {CHANGES}
+
+notes: |
+  {ADDITIONAL_NOTES}
+  # Design decisions, alternative structures considered, iteration history

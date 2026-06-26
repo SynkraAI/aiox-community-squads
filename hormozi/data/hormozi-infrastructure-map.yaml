@@ -1,0 +1,16 @@
+version: "1.0.0"
+updated_at: "2026-03-28"
+
+infrastructure:
+  runtime_entrypoint:
+    connection: "scripts/hormozi.sh"
+    service_ref: "squads/hormozi/scripts/"
+  handoff_validation:
+    integration: "scripts/validate-handoff.py"
+    service_ref: "squads/hormozi/templates/handoff-context-tmpl.yaml"
+  launch_math:
+    connection: "scripts/validate-mvn.py"
+    service_ref: "squads/hormozi/data/quality-gates.yaml"
+  publication_bundle:
+    connection: "scripts/validate-antipattern.py"
+    service_catalog: "squads/hormozi/data/hormozi-service-catalog.yaml"

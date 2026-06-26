@@ -1,0 +1,232 @@
+# =============================================================================
+# State Machine Template for ML SOPs
+# =============================================================================
+# Template: state-machine-template.yaml | SOP Factory | Synkra AIOX
+# Used by: sop-ml-architect (*state-machine command)
+#
+# Based on: Harel Statecharts + XState patterns
+#
+# Usage:
+#   1. Model each process phase as a state
+#   2. Define transitions with guards (conditions) and actions
+#   3. Ensure: no orphans, no dead-ends, all branches covered
+#   4. Embed into ml-sop-yaml-template.yaml state_machine section
+#
+# State Types:
+#   initial       - Entry point (exactly one per machine)
+#   intermediate  - Processing phase
+#   decision      - Branching point (must have transitions for ALL outcomes)
+#   parallel      - Fork/join for concurrent operations
+#   wait          - Pause for external event or timer
+#   terminal      - End state (SUCCESS, FAILURE, ESCALATE, TIMEOUT)
+# =============================================================================
+
+state_machine:
+  id: "{{process_name}}_fsm"
+  version: "1.0.0"
+  description: "{{process_description}}"
+
+  # --- Configuration ----------------------------------------------------------
+  config:
+    max_depth: 20                              # Prevent infinite loops
+    timeout: "{{PT2H}}"                        # Global state machine timeout
+    idempotent: true                           # Safe to retry from any state
+
+  # --- Terminal State Definitions ---------------------------------------------
+  initial_state: "INIT"
+  terminal_states:
+    - "SUCCESS"
+    - "FAILURE"
+    - "ESCALATE"
+    - "TIMEOUT"
+  error_states:
+    - "ERROR_TRANSIENT"
+    - "ERROR_PERMANENT"
+
+  # --- States -----------------------------------------------------------------
+  states:
+
+    # === INITIAL STATE ========================================================
+    - id: "INIT"
+      name: "Initialize"
+      type: "initial"
+      description: "Validate preconditions and prepare execution context"
+      on_enter:
+        - "log_start"
+        - "validate_inputs"
+      on_exit:
+        - "set_start_timestamp"
+      transitions:
+        - target: "{{first_processing_state}}"
+          guard: "inputs_valid == true"
+          action: "prepare_context"
+        - target: "FAILURE"
+          guard: "inputs_valid == false"
+          action: "log_validation_failure"
+
+    # === PROCESSING STATE (copy and modify for each phase) ====================
+    - id: "{{state_id}}"
+      name: "{{state_name}}"
+      type: "intermediate"                     # intermediate | decision | parallel | wait
+      description: "{{state_description}}"
+      on_enter:
+        - "{{entry_action}}"                   # Action on entering this state
+      on_exit:
+        - "{{exit_action}}"                    # Action on leaving this state
+      data:                                    # State-local data
+        step_ref: "{{S00x}}"                   # Maps to steps[].id in the SOP
+        retry_count: 0
+      transitions:
+        - target: "{{next_state}}"
+          guard: "{{success_condition}}"
+          action: "{{success_action}}"
+        - target: "ERROR_TRANSIENT"
+          guard: "{{transient_error_condition}}"
+          action: "increment_retry"
+        - target: "ERROR_PERMANENT"
+          guard: "{{permanent_error_condition}}"
+          action: "log_permanent_failure"
+
+    # === DECISION STATE (branching logic) =====================================
+    - id: "{{decision_state_id}}"
+      name: "{{decision_name}}"
+      type: "decision"
+      description: "{{what_is_being_decided}}"
+      on_enter:
+        - "evaluate_condition"
+      evaluate: "{{expression_to_evaluate}}"   # Variable or expression
+      transitions:
+        - target: "{{branch_a_state}}"
+          guard: "{{condition_a}}"
+          label: "{{branch_a_label}}"
+        - target: "{{branch_b_state}}"
+          guard: "{{condition_b}}"
+          label: "{{branch_b_label}}"
+        - target: "{{default_state}}"
+          guard: "default"                     # REQUIRED: catch-all fallback
+          label: "Default path"
+
+    # === PARALLEL STATE (fork/join) ===========================================
+    - id: "{{parallel_state_id}}"
+      name: "{{parallel_name}}"
+      type: "parallel"
+      description: "{{parallel_description}}"
+      regions:
+        - id: "{{region_a_id}}"
+          initial: "{{region_a_start}}"
+          states:
+            - id: "{{region_a_start}}"
+              type: "intermediate"
+              transitions:
+                - target: "{{region_a_end}}"
+            - id: "{{region_a_end}}"
+              type: "terminal"
+        - id: "{{region_b_id}}"
+          initial: "{{region_b_start}}"
+          states:
+            - id: "{{region_b_start}}"
+              type: "intermediate"
+              transitions:
+                - target: "{{region_b_end}}"
+            - id: "{{region_b_end}}"
+              type: "terminal"
+      join_condition: "all_complete"            # all_complete | any_complete
+      transitions:
+        - target: "{{after_join_state}}"
+          guard: "all_regions_succeeded"
+        - target: "ERROR_TRANSIENT"
+          guard: "any_region_failed"
+
+    # === WAIT STATE (external event / timer) ==================================
+    - id: "{{wait_state_id}}"
+      name: "{{wait_name}}"
+      type: "wait"
+      description: "{{waiting_for_what}}"
+      wait_for:
+        type: "{{event | timer | approval}}"
+        event: "{{event_name}}"                # If type=event
+        timeout: "{{PTxM}}"                    # Max wait duration
+      transitions:
+        - target: "{{received_state}}"
+          guard: "event_received == true"
+        - target: "TIMEOUT"
+          guard: "timeout_exceeded == true"
+
+    # === ERROR STATES =========================================================
+    - id: "ERROR_TRANSIENT"
+      name: "Transient Error"
+      type: "intermediate"
+      description: "Recoverable error -- retry with backoff"
+      on_enter:
+        - "log_error"
+        - "increment_global_retry"
+      transitions:
+        - target: "{{retry_target_state}}"     # State to retry
+          guard: "retry_count < max_retries"
+          action: "wait_backoff"
+        - target: "ERROR_PERMANENT"
+          guard: "retry_count >= max_retries"
+          action: "log_max_retries_exceeded"
+
+    - id: "ERROR_PERMANENT"
+      name: "Permanent Error"
+      type: "intermediate"
+      description: "Unrecoverable error -- escalate or fail"
+      on_enter:
+        - "log_permanent_error"
+        - "capture_diagnostics"
+      transitions:
+        - target: "ESCALATE"
+          guard: "escalation_configured == true"
+          action: "notify_escalation_target"
+        - target: "FAILURE"
+          guard: "escalation_configured == false"
+
+    # === TERMINAL STATES ======================================================
+    - id: "SUCCESS"
+      name: "Success"
+      type: "terminal"
+      on_enter:
+        - "log_success"
+        - "emit_completion_event"
+        - "set_end_timestamp"
+
+    - id: "FAILURE"
+      name: "Failure"
+      type: "terminal"
+      on_enter:
+        - "log_failure"
+        - "emit_failure_event"
+        - "set_end_timestamp"
+        - "trigger_compensation"               # Rollback if needed
+
+    - id: "ESCALATE"
+      name: "Escalation"
+      type: "terminal"
+      on_enter:
+        - "log_escalation"
+        - "notify_escalation_contacts"
+        - "set_end_timestamp"
+
+    - id: "TIMEOUT"
+      name: "Timeout"
+      type: "terminal"
+      on_enter:
+        - "log_timeout"
+        - "emit_timeout_event"
+        - "set_end_timestamp"
+
+# =============================================================================
+# VALIDATION RULES (agent must verify before embedding)
+# =============================================================================
+# 1. Exactly ONE state with type: initial
+# 2. At least ONE state with type: terminal
+# 3. Every non-terminal state has at least one outgoing transition
+# 4. Every decision state has a guard: "default" transition
+# 5. No orphan states (all reachable from initial)
+# 6. No dead-end non-terminal states
+# 7. All transition targets reference existing state IDs
+# 8. Parallel regions have at least 2 regions
+# 9. Wait states have explicit timeouts
+# 10. Error states have recovery or escalation paths
+# =============================================================================

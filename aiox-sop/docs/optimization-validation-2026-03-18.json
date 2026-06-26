@@ -1,0 +1,53 @@
+{
+  "date": "2026-03-18",
+  "squad": "aiox-sop",
+  "status": "PASS",
+  "local_validation": {
+    "validate_squad_quick": {
+      "command": "bash squads/squad-creator/scripts/validate-squad.sh aiox-sop --quick --json",
+      "result": "PASS",
+      "final_score": 10,
+      "type": "pipeline",
+      "metrics": {
+        "agents": 6,
+        "tasks": 17,
+        "checklists": 6,
+        "total_lines": 20578
+      },
+      "workflow_contracts": {
+        "files_checked": 3,
+        "errors": 0,
+        "warnings": 0
+      }
+    },
+    "workflow_contracts_strict": {
+      "command": "node infrastructure/scripts/squads/validate_workflow_contracts.cjs --squads aiox-sop --strict --fail-on-warnings --json",
+      "status": "PASS",
+      "files_checked": 3,
+      "errors": 0,
+      "warnings": 0
+    },
+    "doc_drift": {
+      "command": "node infrastructure/scripts/squads/check_doc_drift.cjs --squad aiox-sop --json",
+      "status": "PASS"
+    }
+  },
+  "quality_gates": {
+    "lint": {
+      "command": "npm run lint",
+      "status": "pass"
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "status": "pass"
+    },
+    "test": {
+      "command": "npm test",
+      "status": "pass"
+    }
+  },
+  "advisory_warnings": [
+    "repo-wide warning unchanged and outside optimization scope: squads/course-creator/config.yaml missing score field",
+    "shell locale warnings for LC_ALL=C.UTF-8 remain non-blocking"
+  ]
+}

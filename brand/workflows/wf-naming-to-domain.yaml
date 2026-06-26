@@ -1,0 +1,152 @@
+id: wf-naming-to-domain
+name: Naming to Domain Workflow
+description: SNP naming + validação de domínio e risco legal básico
+version: 1.1.0
+squad: brand
+created: "2026-02-18"
+type: legacy
+config:
+  mode: sequential
+  allow_skip: false
+  checkpoint_required: true
+inputs:
+  required:
+    - name: brand_name
+      type: string
+    - name: context_type
+      type: enum
+      options:
+        - produto
+        - empresa
+        - servico
+    - name: business_context
+      type: string
+    - name: target_market
+      type: enum
+      options:
+        - brasil
+        - latam
+        - global
+  optional:
+    - name: constraints
+      type: string
+    - name: budget
+      type: number
+      default: 150
+workspace_contract:
+  required_preflight:
+    - bash squads/brand/scripts/bootstrap-brand-workspace.sh {{brand_name}}
+    - bash squads/brand/scripts/validate-brand-essentials.sh
+    - node workspace/scripts/resolve-squad-workspace-readiness.cjs --squad=brand --business={{brand_name}} --context-type=brand
+  context_task: load-workspace-context
+  canonical_template_namespace: brand
+  canonical_output_policy: template-first
+phases:
+  - id: workspace_context
+    name: Workspace preflight and context load
+    executor: brand-chief
+    tasks:
+      - task: load-workspace-context.md
+        inputs:
+          - brand_name
+  - id: naming
+    name: Naming generation (SNP)
+    executor: naming-strategist
+    objective: Gerar shortlist de nomes com score
+    tasks:
+      - task: naming-generation.md
+        inputs:
+          - brand_name
+          - context_type
+          - business_context
+          - target_market
+          - constraints
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/naming/naming-shortlist.md
+  - id: domain
+    name: Domain + legal pre-check
+    executor: domain-scout
+    objective: Validar disponibilidade .com.br/.com e risco legal preliminar
+    tasks:
+      - task: domain-check.md
+        inputs:
+          - brand_name
+          - names
+          - budget
+    inputs_from_previous:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/naming/naming-shortlist.md
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/naming/domain-legal-report.md
+  - id: consolidation
+    name: Final recommendation
+    executor: brand-chief
+    objective: Consolidar nome recomendado e próximos passos
+    inputs_from_previous:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/naming/naming-shortlist.md
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/naming/domain-legal-report.md
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/naming/naming-domain-recommendation.md
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/domain-decision.yaml
+outputs:
+  base_path: workspace/businesses/{{brand_name}}/L2-tactical/brand/naming/
+  artifacts:
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/naming/naming-shortlist.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/naming/domain-legal-report.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/naming/naming-domain-recommendation.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/domain-decision.yaml
+final_output:
+  format: markdown
+  includes:
+    - selected_name
+    - selected_domain
+    - inpi_risk_level
+    - fallback_options
+    - next_steps
+workflow:
+  id: wf-naming-to-domain
+  name: Naming to Domain Workflow
+  version: 1.1.0
+  description: SNP naming + validação de domínio e risco legal básico
+  type: legacy
+  sequence:
+    - step: workspace-context
+      id: workspace-context
+      phase: 1
+      phase_name: Workspace preflight and context load
+      agent: brand-chief
+      action: execute_workspace-preflight-and-context-load
+      next: naming
+    - step: naming
+      id: naming
+      phase: 2
+      phase_name: Naming generation (SNP)
+      agent: naming-strategist
+      action: execute_naming-generation-snp
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/naming/naming-shortlist.md
+      next: domain
+    - step: domain
+      id: domain
+      phase: 3
+      phase_name: Domain + legal pre-check
+      agent: domain-scout
+      action: execute_domain-legal-pre-check
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/naming/domain-legal-report.md
+      next: consolidation
+    - step: consolidation
+      id: consolidation
+      phase: 4
+      phase_name: Final recommendation
+      agent: brand-chief
+      action: execute_final-recommendation
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/naming/naming-domain-recommendation.md
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/domain-decision.yaml
+    - workflow_end:
+        id: complete
+        action: workflow_complete
+  handoff_prompts:
+    brand-chief_to_naming-strategist: Handoff context from brand-chief to naming-strategist. Preserve outputs, risks, and open decisions.
+    naming-strategist_to_domain-scout: Handoff context from naming-strategist to domain-scout. Preserve outputs, risks, and open decisions.
+    domain-scout_to_brand-chief: Handoff context from domain-scout to brand-chief. Preserve outputs, risks, and open decisions.

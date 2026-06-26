@@ -1,0 +1,92 @@
+version: 1
+policy:
+  fail_fast: true
+  unidirectional_flow: true
+  allow_manual_override: false
+
+thresholds:
+  min_extract_chars: 100
+  min_transform_fidelity_ratio: 0.70
+  min_chunk_count_for_rag: 1
+  min_book_chapter_count: 1
+  min_context_pack_chars: 50
+
+phases:
+  diagnose:
+    required_checks:
+      - "source kind detected"
+      - "routing profile selected"
+    veto_conditions:
+      - "unknown source kind"
+      - "no routing profile matched"
+
+  validate:
+    required_checks:
+      - "input schema valid"
+      - "prerequisites verified (file/url/env)"
+    veto_conditions:
+      - "schema invalid"
+      - "missing file"
+      - "invalid url format"
+      - "required env var missing"
+
+  extract:
+    required_checks:
+      - "execution exit status is success"
+      - "output is non-empty"
+      - "output format is parseable when structured"
+      - "no whisper loop detected"
+    veto_conditions:
+      - "tool/api execution failed"
+      - "output chars < min_extract_chars"
+      - "whisper loop detected (same phrase repeated 3+ times consecutively)"
+
+    # WHISPER LOOP DETECTION (from acquisition_training learnings):
+    # Bug: Whisper enters infinite loop repeating phrases when:
+    # - Background music present
+    # - Extended silence
+    # - Low audio quality
+    # Detection: Check for 3+ consecutive identical segments
+    # Mitigation: Use --max-len or --split-on-word flags
+    whisper_loop_detection:
+      enabled: true
+      consecutive_threshold: 3
+      similarity_threshold: 0.95
+
+  structure:
+    required_checks:
+      - "heading tree extracted when source is structured markdown"
+      - "book manifest generated when document_strategy=book_progressive"
+      - "chapter_count >= min_book_chapter_count when summarizing books"
+    veto_conditions:
+      - "book manifest missing"
+      - "chapter_count below threshold"
+
+  context_pack:
+    required_checks:
+      - "book_context exists before chapter summarization"
+      - "context pack chars >= min_context_pack_chars or deterministic fallback emitted"
+    veto_conditions:
+      - "book_context missing"
+
+  transform:
+    required_checks:
+      - "operation matches desired_output"
+      - "post-transform metrics computed"
+      - "fidelity ratio >= min_transform_fidelity_ratio (for clean/chunks)"
+      - "speaker filter integrity verified (for filtered)"
+      - "chapter summaries generated sequentially (for book_summary)"
+    veto_conditions:
+      - "transform execution failed"
+      - "fidelity ratio below threshold (for clean/chunks)"
+      - "rag mode produced zero chunks"
+      - "book_summary missing chapter artifacts"
+
+  deliver:
+    required_checks:
+      - "output envelope contract valid"
+      - "artifact paths exist when persisted"
+      - "checkpoint log complete"
+    veto_conditions:
+      - "output contract invalid"
+      - "persist requested but artifact missing"

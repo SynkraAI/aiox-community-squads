@@ -1,0 +1,203 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# DISPATCH HEURISTICS — Decision patterns from Deming + Pedro Valério
+# Source: PRD Section 9.2 (Pedro Valério patterns) + Deming PDSA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# GATE CLASSIFICATION (Human vs Automatic)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+gate_classification:
+  human_in_loop:
+    gates: ["Sufficiency Gate (Phase 0)"]
+    agents: ["dispatch-chief"]
+    latency: "< 30s"
+    behavior: "Soft block — redirect with recommendation"
+
+  automatic:
+    gates: ["Pre-execution Gate (Phase 4.5)", "Post-execution Gate (Phase 5.5)"]
+    agents: ["quality-gate"]
+    latency: "< 60s"
+    behavior: "Hard block — script exit non-zero = BLOCK"
+
+  principle: |
+    "Humano aprova ANTES (strategy, story approval).
+    Máquina valida DURANTE (runtime checks).
+    Gates runtime DEVEM ser automáticos < 60s." — Pedro Valério IDS005
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SELF-HEALING (Failure Handling)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+self_healing:
+  simple_failures:
+    - problem: "Single task failed in wave"
+      action: "Retry with same prompt (max 2 attempts)"
+    - problem: "Output slightly under word count"
+      action: "Retry with explicit 'minimum X words' added"
+    - problem: "File created in wrong path"
+      action: "Move to correct path (script)"
+    - problem: "Missing section in output"
+      action: "Retry with section explicitly listed"
+
+  complex_failures:
+    - problem: "3+ tasks in same wave failed"
+      action: "HALT wave, show failures, ask user"
+    - problem: "Quality gate fails after 2 fix iterations"
+      action: "HALT, show what failed, present options"
+    - problem: "Cost exceeded 5x estimate for run"
+      action: "HALT, show cost breakdown, ask to continue"
+    - problem: "Rate limit hit"
+      action: "Pause wave, wait 60s, retry"
+
+  circuit_breaker:
+    trigger: "5 consecutive task failures in a run"
+    action: "HALT entire dispatch, preserve state, notify user"
+    resume: "*resume continues from last good wave"
+
+  principle: |
+    "Problemas simples: auto-cura. Complexos: escala humano.
+    Sem zona cinza." — Pedro Valério Self-Healing Pattern
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# IDS ENFORCEMENT (REUSE > ADAPT > CREATE)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+ids_enforcement:
+  before_creating_subagent:
+    - "ALWAYS consult command-registry.yaml first"
+    - "If matching command exists (relevance >= 60%) → ROUTE to it"
+    - "If no match → check domain-registry.yaml for alternative"
+    - "If still no match → ONLY THEN create ad-hoc subagent"
+    - "If CREATE → log justification in run state"
+
+  create_rate_tracking:
+    metric: "% of tasks that required ad-hoc subagent"
+    target: "< 15% after 3 months of operation"
+    alert: "If > 40% → registry needs expansion"
+
+  principle: |
+    "IA cria do zero por default. Forçar consulta evita duplicação.
+    REUSE > ADAPT > CREATE. CREATE só com justificativa." — Pedro Valério IDS001-003
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DEMING PDSA (Predict-Do-Study-Act)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+pdsa:
+  predict:
+    when: "Before each wave execution"
+    what: "Record expected outputs and quality for each task"
+    where: "wave.prediction field in state.json"
+    example: "Wave 1: expect 4 files created, 0 failures, ~$0.028 cost"
+
+  do:
+    when: "Wave execution"
+    what: "Execute tasks in parallel via subagents"
+
+  study:
+    when: "After each wave"
+    what: "Compare actual vs predicted"
+    metrics:
+      - "Predicted file count vs actual"
+      - "Predicted cost vs actual"
+      - "Predicted failures vs actual"
+    action: "Log study results in events.jsonl"
+
+  act:
+    when: "After study phase"
+    what: "Adjust parameters for next wave based on learnings"
+    examples:
+      - "If Haiku tasks failing → add more context (STANDARD→FULL)"
+      - "If cost too high → reduce wave size"
+      - "If quality low → enable feedback loop"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DISPATCH HEALTH SCORE (12-Point)
+# Source: PRD Section 9.2 Pattern 5
+# ═══════════════════════════════════════════════════════════════════════════════
+
+health_score:
+  items:
+    - id: 1
+      name: "Story-Driven Input"
+      check: "Input came from story/PRD (not free text)"
+      legacy_if: "Free text without acceptance criteria"
+    - id: 2
+      name: "DAG Wave Optimization"
+      check: "wave-optimizer.py produced fewer waves than task count"
+      legacy_if: "Fixed order execution"
+    - id: 3
+      name: "Pre-Execution Gate Passed"
+      check: "All veto conditions checked (0 errors)"
+      legacy_if: "No pre-execution validation"
+    - id: 4
+      name: "Model Selection Applied"
+      check: "Every task has explicit model (haiku/sonnet)"
+      legacy_if: "Default model for all"
+    - id: 5
+      name: "CODE > LLM Enforced"
+      check: "Deterministic tasks used scripts, not LLM"
+      legacy_if: "LLM doing mkdir, mv, template fill"
+    - id: 6
+      name: "Enrichment Levels Applied"
+      check: "Tasks have MINIMAL/STANDARD/FULL based on domain"
+      legacy_if: "Same context for all tasks"
+    - id: 7
+      name: "State Persisted"
+      check: "state.json saved after every wave"
+      legacy_if: "No persistence"
+    - id: 8
+      name: "Acceptance Criteria Verified"
+      check: "Post-execution checked real criteria"
+      legacy_if: "Task said 'done' without verification"
+    - id: 9
+      name: "Cost Tracked"
+      check: "Actual token cost recorded per task"
+      legacy_if: "Only estimates"
+    - id: 10
+      name: "Zero Main Context Execution"
+      check: "Opus terminal used 0 tokens for content work"
+      legacy_if: "Content processed in main context"
+    - id: 11
+      name: "Handoff Saved"
+      check: "Run state can be resumed via *resume"
+      legacy_if: "No resume capability"
+    - id: 12
+      name: "Feedback Loop Active"
+      check: "Failed tasks got feedback + retry"
+      legacy_if: "Fail = dead"
+
+  scoring:
+    "12/12": "Exemplary run — all patterns applied"
+    "9-11/12": "Good run — minor improvements"
+    "5-8/12": "Needs work — significant patterns missing"
+    "1-4/12": "Poor run — most patterns absent"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# AXIOMA ASSESSMENT (Per-Run Score)
+# Source: PRD Section 9.2 Pattern 6 (Pedro Valério 10-dimension)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+axioma_assessment:
+  dimensions:
+    - name: "Truthfulness"
+      weight: 1.0
+      veto_power: true
+      check: "Outputs actually match acceptance criteria (verified, not declared)"
+    - name: "Coherence"
+      weight: 0.9
+      check: "Routing matched domain correctly. Model selection followed rules."
+    - name: "Operational Excellence"
+      weight: 0.8
+      check: "Wave count (fewer = better). Retry count (fewer = better)."
+    - name: "Resource Optimization"
+      weight: 0.8
+      check: "Actual cost vs estimate. CODE > LLM ratio."
+    - name: "Risk Management"
+      weight: 0.8
+      check: "Pre-execution gate caught issues. Circuit breaker not triggered."
+    - name: "Adaptability"
+      weight: 0.6
+      check: "Self-healing handled failures. Feedback loop improved quality."
+  pass_threshold: 7.0

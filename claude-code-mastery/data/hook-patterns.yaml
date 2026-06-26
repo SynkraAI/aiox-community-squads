@@ -1,0 +1,799 @@
+# Hook Patterns — Common Automation Recipes for Claude Code
+# Squad: claude-code-mastery
+# Last updated: 2026-04-03
+
+version: "1.2.0"
+
+# Each pattern provides a complete, copy-paste-ready hook configuration
+# with explanation and settings.json integration.
+
+patterns:
+
+  # ---------------------------------------------------------------------------
+  # 1. DAMAGE CONTROL — Block destructive commands
+  # ---------------------------------------------------------------------------
+  - name: damage-control
+    event: PreToolUse
+    description: |
+      Intercept Bash tool calls and block dangerous commands before execution.
+      Prevents accidental rm -rf, git push --force, DROP TABLE, etc.
+    matcher: "Bash"
+    severity: critical
+    settings_json_snippet: |
+      {
+        "hooks": {
+          "PreToolUse": [
+            {
+              "matcher": "Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "python3 ~/.claude/hooks/damage-control.py"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    code_example:
+      language: python
+      filename: "~/.claude/hooks/damage-control.py"
+      code: |
+        #!/usr/bin/env python3
+        """Damage control hook — block destructive Bash commands."""
+        import json
+        import sys
+        import re
+
+        BLOCKED_PATTERNS = [
+            r'\brm\s+(-[rRf]+\s+|--recursive)',       # rm -rf
+            r'\bgit\s+push\s+--force',                 # git push --force
+            r'\bgit\s+reset\s+--hard',                 # git reset --hard
+            r'\bgit\s+clean\s+-[fd]',                  # git clean -f/-d
+            r'\bDROP\s+(TABLE|DATABASE|SCHEMA)',        # SQL destructive
+            r'\bTRUNCATE\s+TABLE',                     # SQL truncate
+            r'\bchmod\s+777',                           # Insecure perms
+            r'\bcurl\b.*\|\s*(sudo\s+)?bash',          # Pipe curl to bash
+            r'\bsudo\s+rm\b',                           # sudo rm
+        ]
+
+        def main():
+            input_data = json.loads(sys.stdin.read())
+            tool_input = input_data.get("tool_input", {})
+            command = tool_input.get("command", "")
+
+            for pattern in BLOCKED_PATTERNS:
+                if re.search(pattern, command, re.IGNORECASE):
+                    result = {
+                        "decision": "block",
+                        "reason": f"Blocked by damage-control: matches '{pattern}'"
+                    }
+                    print(json.dumps(result))
+                    return
+
+            print(json.dumps({"decision": "approve"}))
+
+        if __name__ == "__main__":
+            main()
+
+  # ---------------------------------------------------------------------------
+  # 2. AUTO-LINT — Run linter after file modifications
+  # ---------------------------------------------------------------------------
+  - name: auto-lint
+    event: PostToolUse
+    description: |
+      Automatically run linter/formatter after Write or Edit tool calls.
+      Catches style issues immediately, maintaining code quality.
+    matcher: "Write|Edit"
+    severity: low
+    settings_json_snippet: |
+      {
+        "hooks": {
+          "PostToolUse": [
+            {
+              "matcher": "Write|Edit",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "python3 ~/.claude/hooks/auto-lint.py"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    code_example:
+      language: python
+      filename: "~/.claude/hooks/auto-lint.py"
+      code: |
+        #!/usr/bin/env python3
+        """Auto-lint hook — run appropriate linter after file changes."""
+        import json
+        import subprocess
+        import sys
+        import os
+
+        LINTERS = {
+            ".ts": "npx eslint --fix {file}",
+            ".tsx": "npx eslint --fix {file}",
+            ".js": "npx eslint --fix {file}",
+            ".jsx": "npx eslint --fix {file}",
+            ".py": "ruff check --fix {file}",
+            ".rs": "rustfmt {file}",
+            ".go": "gofmt -w {file}",
+            ".css": "npx prettier --write {file}",
+            ".json": "npx prettier --write {file}",
+        }
+
+        def main():
+            input_data = json.loads(sys.stdin.read())
+            tool_input = input_data.get("tool_input", {})
+            file_path = tool_input.get("file_path", "")
+
+            if not file_path or not os.path.exists(file_path):
+                return
+
+            _, ext = os.path.splitext(file_path)
+            lint_cmd = LINTERS.get(ext)
+
+            if lint_cmd:
+                cmd = lint_cmd.format(file=file_path)
+                try:
+                    subprocess.run(
+                        cmd, shell=True, capture_output=True,
+                        timeout=30, cwd=os.getcwd()
+                    )
+                except (subprocess.TimeoutExpired, Exception):
+                    pass  # Non-blocking — lint failure should not stop work
+
+        if __name__ == "__main__":
+            main()
+
+  # ---------------------------------------------------------------------------
+  # 3. NOTIFICATION — Send alerts to Slack/Discord
+  # ---------------------------------------------------------------------------
+  - name: notification
+    event: Notification
+    description: |
+      Forward Claude Code notifications to external channels.
+      Useful for team awareness of agent activity.
+    matcher: ""
+    severity: low
+    settings_json_snippet: |
+      {
+        "hooks": {
+          "Notification": [
+            {
+              "matcher": "",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "python3 ~/.claude/hooks/notify.py"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    code_example:
+      language: python
+      filename: "~/.claude/hooks/notify.py"
+      code: |
+        #!/usr/bin/env python3
+        """Notification hook — forward to Slack webhook."""
+        import json
+        import sys
+        import urllib.request
+
+        SLACK_WEBHOOK = os.environ.get("SLACK_WEBHOOK_URL", "")
+
+        def main():
+            if not SLACK_WEBHOOK:
+                return
+
+            input_data = json.loads(sys.stdin.read())
+            message = input_data.get("message", "Claude Code notification")
+            title = input_data.get("title", "Notification")
+
+            payload = {
+                "text": f"*{title}*\n{message}",
+                "username": "Claude Code",
+                "icon_emoji": ":robot_face:"
+            }
+
+            req = urllib.request.Request(
+                SLACK_WEBHOOK,
+                data=json.dumps(payload).encode(),
+                headers={"Content-Type": "application/json"}
+            )
+
+            try:
+                urllib.request.urlopen(req, timeout=5)
+            except Exception:
+                pass  # Non-blocking
+
+        if __name__ == "__main__":
+            import os
+            main()
+
+  # ---------------------------------------------------------------------------
+  # 4. CONTEXT PRESERVATION — Save state before compaction
+  # ---------------------------------------------------------------------------
+  - name: context-preservation
+    event: PreCompact
+    description: |
+      Before context window compaction, save critical state to disk.
+      Preserves important decisions, file lists, and progress that
+      would otherwise be lost during compaction.
+    matcher: ""
+    severity: medium
+    settings_json_snippet: |
+      {
+        "hooks": {
+          "PreCompact": [
+            {
+              "matcher": "",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "python3 ~/.claude/hooks/preserve-context.py"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    code_example:
+      language: python
+      filename: "~/.claude/hooks/preserve-context.py"
+      code: |
+        #!/usr/bin/env python3
+        """PreCompact hook — preserve critical context before compaction."""
+        import json
+        import sys
+        import os
+        from datetime import datetime
+
+        PRESERVE_DIR = os.path.join(os.getcwd(), ".claude", "preserved-context")
+
+        def main():
+            input_data = json.loads(sys.stdin.read())
+            session_id = input_data.get("session_id", "unknown")
+            conversation = input_data.get("conversation_summary", "")
+
+            os.makedirs(PRESERVE_DIR, exist_ok=True)
+
+            timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+            filename = f"context-{session_id[:8]}-{timestamp}.json"
+            filepath = os.path.join(PRESERVE_DIR, filename)
+
+            preserved = {
+                "timestamp": timestamp,
+                "session_id": session_id,
+                "summary": conversation,
+                "cwd": os.getcwd(),
+            }
+
+            with open(filepath, "w") as f:
+                json.dump(preserved, f, indent=2)
+
+        if __name__ == "__main__":
+            main()
+
+  # ---------------------------------------------------------------------------
+  # 5. COST TRACKING — Log token usage on session end
+  # ---------------------------------------------------------------------------
+  - name: cost-tracking
+    event: Stop
+    description: |
+      Track token usage and estimated cost at the end of each agent turn.
+      Writes to a JSONL log for analysis and budgeting.
+    matcher: ""
+    severity: low
+    settings_json_snippet: |
+      {
+        "hooks": {
+          "Stop": [
+            {
+              "matcher": "",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "python3 ~/.claude/hooks/cost-tracker.py"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    code_example:
+      language: python
+      filename: "~/.claude/hooks/cost-tracker.py"
+      code: |
+        #!/usr/bin/env python3
+        """Stop hook — log token usage and estimated cost."""
+        import json
+        import sys
+        import os
+        from datetime import datetime
+
+        LOG_FILE = os.path.expanduser("~/.claude/logs/cost-tracking.jsonl")
+
+        # Approximate pricing per 1M tokens (Claude Sonnet 4)
+        INPUT_COST_PER_M = 3.0
+        OUTPUT_COST_PER_M = 15.0
+
+        def main():
+            input_data = json.loads(sys.stdin.read())
+
+            input_tokens = input_data.get("input_tokens", 0)
+            output_tokens = input_data.get("output_tokens", 0)
+            session_id = input_data.get("session_id", "unknown")
+
+            cost_input = (input_tokens / 1_000_000) * INPUT_COST_PER_M
+            cost_output = (output_tokens / 1_000_000) * OUTPUT_COST_PER_M
+            total_cost = cost_input + cost_output
+
+            entry = {
+                "timestamp": datetime.now().isoformat(),
+                "session_id": session_id,
+                "input_tokens": input_tokens,
+                "output_tokens": output_tokens,
+                "estimated_cost_usd": round(total_cost, 4),
+                "project": os.path.basename(os.getcwd()),
+            }
+
+            os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
+            with open(LOG_FILE, "a") as f:
+                f.write(json.dumps(entry) + "\n")
+
+        if __name__ == "__main__":
+            main()
+
+  # ---------------------------------------------------------------------------
+  # 6. SECURITY GATE — Validate no secrets exposure
+  # ---------------------------------------------------------------------------
+  - name: security-gate
+    event: PreToolUse
+    description: |
+      Scan tool inputs for secrets, API keys, and credentials before execution.
+      Blocks Write/Edit calls that would commit sensitive data.
+    matcher: "Write|Edit|Bash"
+    severity: critical
+    settings_json_snippet: |
+      {
+        "hooks": {
+          "PreToolUse": [
+            {
+              "matcher": "Write|Edit|Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "python3 ~/.claude/hooks/security-gate.py"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    code_example:
+      language: python
+      filename: "~/.claude/hooks/security-gate.py"
+      code: |
+        #!/usr/bin/env python3
+        """Security gate — detect secrets in tool inputs."""
+        import json
+        import sys
+        import re
+
+        SECRET_PATTERNS = [
+            (r'(?:api[_-]?key|apikey)\s*[:=]\s*["\']?[a-zA-Z0-9_\-]{20,}', "API Key"),
+            (r'(?:secret|password|passwd|pwd)\s*[:=]\s*["\']?[^\s"\']{8,}', "Password/Secret"),
+            (r'(?:token)\s*[:=]\s*["\']?[a-zA-Z0-9_\-\.]{20,}', "Token"),
+            (r'sk-[a-zA-Z0-9]{32,}', "OpenAI API Key"),
+            (r'ghp_[a-zA-Z0-9]{36}', "GitHub Personal Access Token"),
+            (r'-----BEGIN (?:RSA |EC )?PRIVATE KEY-----', "Private Key"),
+            (r'AKIA[0-9A-Z]{16}', "AWS Access Key"),
+            (r'mongodb\+srv://[^\s]+', "MongoDB Connection String"),
+            (r'postgres(?:ql)?://[^\s]+@[^\s]+', "PostgreSQL Connection String"),
+        ]
+
+        SAFE_FILES = [".env.example", ".env.template", ".env.sample"]
+
+        def main():
+            input_data = json.loads(sys.stdin.read())
+            tool_name = input_data.get("tool_name", "")
+            tool_input = input_data.get("tool_input", {})
+
+            content = ""
+            file_path = tool_input.get("file_path", "")
+
+            if tool_name in ("Write", "Edit"):
+                content = tool_input.get("content", "") + tool_input.get("new_string", "")
+            elif tool_name == "Bash":
+                content = tool_input.get("command", "")
+
+            # Skip safe files
+            if any(file_path.endswith(sf) for sf in SAFE_FILES):
+                print(json.dumps({"decision": "approve"}))
+                return
+
+            for pattern, label in SECRET_PATTERNS:
+                if re.search(pattern, content, re.IGNORECASE):
+                    result = {
+                        "decision": "block",
+                        "reason": f"Security gate: potential {label} detected in {tool_name} input"
+                    }
+                    print(json.dumps(result))
+                    return
+
+            print(json.dumps({"decision": "approve"}))
+
+        if __name__ == "__main__":
+            main()
+
+  # ---------------------------------------------------------------------------
+  # 7. TIMING LOGGER — Performance instrumentation
+  # ---------------------------------------------------------------------------
+  - name: timing-logger
+    event: PreToolUse
+    paired_event: PostToolUse
+    description: |
+      Log timestamps for every tool call to enable performance analysis.
+      Paired PreToolUse/PostToolUse hooks create a complete timeline.
+    matcher: ""
+    severity: low
+    settings_json_snippet: |
+      {
+        "hooks": {
+          "PreToolUse": [
+            {
+              "matcher": "",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "node ~/.claude/hooks/timing-logger.js pre"
+                }
+              ]
+            }
+          ],
+          "PostToolUse": [
+            {
+              "matcher": "",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "node ~/.claude/hooks/timing-logger.js post"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    code_example:
+      language: javascript
+      filename: "~/.claude/hooks/timing-logger.js"
+      code: |
+        #!/usr/bin/env node
+        /**
+         * Timing logger hook - records PreToolUse/PostToolUse timestamps.
+         * Usage: node timing-logger.js pre|post
+         * Reads tool data from stdin, writes JSONL to ~/.claude/logs/timing-YYYY-MM-DD.jsonl
+         */
+        const fs = require('fs');
+        const path = require('path');
+        const os = require('os');
+
+        const phase = process.argv[2]; // 'pre' or 'post'
+        const LOG_DIR = path.join(os.homedir(), '.claude', 'logs');
+        const today = new Date().toISOString().slice(0, 10);
+        const logFile = path.join(LOG_DIR, `timing-${today}.jsonl`);
+
+        let input = '';
+        process.stdin.on('data', chunk => { input += chunk; });
+        process.stdin.on('end', () => {
+          try {
+            const data = JSON.parse(input);
+            const entry = {
+              timestamp: new Date().toISOString(),
+              epochMs: Date.now(),
+              event: phase === 'pre' ? 'PreToolUse' : 'PostToolUse',
+              tool: data.tool_name || 'unknown',
+              session: data.session_id || 'unknown',
+            };
+            if (phase === 'post' && data.duration_ms) {
+              entry.durationMs = data.duration_ms;
+            }
+            fs.mkdirSync(LOG_DIR, { recursive: true });
+            fs.appendFileSync(logFile, JSON.stringify(entry) + '\n');
+          } catch (e) {
+            // Non-blocking — do not fail the tool call
+          }
+        });
+
+  # ---------------------------------------------------------------------------
+  # 8. SESSION START CONTEXT LOADER — Inject project context
+  # ---------------------------------------------------------------------------
+  - name: session-context-loader
+    event: SessionStart
+    description: |
+      Inject AIOX project context (agent, story, task, git state) at session start.
+      Ensures Claude has full context even in new sessions or after /compact.
+    matcher: "startup|resume|compact"
+    severity: medium
+    settings_json_snippet: |
+      {
+        "hooks": {
+          "SessionStart": [
+            {
+              "matcher": "startup|resume",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "python3 .claude/hooks/session-context-loader.py"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    notes: "stdout is injected into Claude's context for SessionStart. Use for AIOX agent/story/task context injection."
+
+  # ---------------------------------------------------------------------------
+  # 9. USER PROMPT FILTER — Pre-filter dangerous requests
+  # ---------------------------------------------------------------------------
+  - name: prompt-filter
+    event: UserPromptSubmit
+    description: |
+      Filter user prompts before Claude processes them. Block prohibited patterns,
+      inject additional context, or redirect requests to appropriate agents.
+    matcher: ""
+    severity: high
+    settings_json_snippet: |
+      {
+        "hooks": {
+          "UserPromptSubmit": [
+            {
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "python3 .claude/hooks/prompt-filter.py"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    notes: |
+      UserPromptSubmit fires before Claude processes. Exit 2 blocks the prompt.
+      stdout content is injected into Claude's context alongside the prompt.
+      No matcher support — fires on every user prompt.
+
+  # ---------------------------------------------------------------------------
+  # 10. TEAMMATE IDLE HANDLER — Keep agents productive
+  # ---------------------------------------------------------------------------
+  - name: teammate-idle-handler
+    event: TeammateIdle
+    description: |
+      Prevent teammates from going idle in agent teams. When a teammate
+      is about to idle, inject a new task or redirect to claim from the shared task list.
+    matcher: ""
+    severity: medium
+    settings_json_snippet: |
+      {
+        "hooks": {
+          "TeammateIdle": [
+            {
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "python3 .claude/hooks/teammate-idle-handler.py"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    notes: |
+      Exit 2 sends feedback to idle teammate and keeps them working.
+      Exit 0 allows teammate to go idle (team lead decides when to shut down).
+      Use for self-organizing swarm patterns where teammates claim tasks from pool.
+
+  # ---------------------------------------------------------------------------
+  # 11. TASK COMPLETED GATE — Validate before marking done
+  # ---------------------------------------------------------------------------
+  - name: task-completion-gate
+    event: TaskCompleted
+    description: |
+      Quality gate on task completion. Validates that all acceptance criteria
+      are met before allowing a task to be marked as completed.
+    matcher: ""
+    severity: high
+    settings_json_snippet: |
+      {
+        "hooks": {
+          "TaskCompleted": [
+            {
+              "hooks": [
+                {
+                  "type": "agent",
+                  "prompt": "A task is about to be marked completed. Review the task description and verify all acceptance criteria are satisfied. Check related files modified in this session. If criteria are met, respond {\"ok\": true}. If not, respond {\"ok\": false, \"reason\": \"specific unmet criteria\"}.",
+                  "timeout": 60
+                }
+              ]
+            }
+          ]
+        }
+      }
+    notes: |
+      Uses agent handler (multi-turn with tool access) for thorough verification.
+      Exit code behavior: ok=true proceeds, ok=false prevents completion and sends feedback.
+      Best paired with teammate_idle_handler in agent team workflows.
+
+  # ---------------------------------------------------------------------------
+  # 12. CONFIG CHANGE GUARD — Audit settings modifications
+  # ---------------------------------------------------------------------------
+  - name: config-change-guard
+    event: ConfigChange
+    description: |
+      Audit and optionally block configuration changes during a session.
+      Logs all config modifications and blocks unauthorized settings drift.
+    matcher: "project_settings|local_settings|policy_settings|user_settings|skills"
+    severity: high
+    settings_json_snippet: |
+      {
+        "hooks": {
+          "ConfigChange": [
+            {
+              "matcher": "project_settings",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "python3 .claude/hooks/config-change-guard.py"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    notes: |
+      ConfigChange fires when Claude mutates settings surfaces during a session.
+      matcher_values: user_settings, project_settings, local_settings, policy_settings, skills
+      Exit 2 blocks the config change. Use for preventing unauthorized permission escalation,
+      hook rewrites, or keybinding drift in managed environments.
+      MCP note: project server registries typically live in `.mcp.json`, and enterprise MCP
+      policy can live in `managed-mcp.json`. ConfigChange alone does not watch those files,
+      so pair this pattern with repo/file guards when MCP ownership matters.
+
+  # ---------------------------------------------------------------------------
+  # 13. SUBAGENT TRACKER — Monitor subagent lifecycle
+  # ---------------------------------------------------------------------------
+  - name: subagent-tracker
+    event: SubagentStop
+    description: |
+      Track subagent completion, capture results summary, and trigger
+      downstream workflows when subagents finish.
+    matcher: ""
+    severity: low
+    settings_json_snippet: |
+      {
+        "hooks": {
+          "SubagentStop": [
+            {
+              "hooks": [
+                {
+                  "type": "http",
+                  "url": "http://localhost:4001/events",
+                  "headers": {"Content-Type": "application/json"}
+                }
+              ]
+            }
+          ]
+        }
+      }
+    notes: |
+      SubagentStop fires when a subagent finishes (success or timeout).
+      The event includes agent_id, result, and session metadata.
+      Uses HTTP handler to dispatch to AIOX Monitor — same pattern as AIOX existing hooks.
+      Pair with SubagentStart for full lifecycle tracking.
+
+  # ---------------------------------------------------------------------------
+  # 14. PERMISSION REQUEST HANDLER — Auto-approve safe operations
+  # ---------------------------------------------------------------------------
+  - name: permission-auto-approver
+    event: PermissionRequest
+    description: |
+      Resolve promptable permission requests with explicit allow/deny decisions.
+      Best for narrow, deny-first allowlists where prompts are the only remaining friction.
+    matcher: "Bash|Edit"
+    severity: medium
+    settings_json_snippet: |
+      {
+        "hooks": {
+          "PermissionRequest": [
+            {
+              "matcher": "Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "python3 .claude/hooks/permission-auto-approver.py"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    notes: |
+      PermissionRequest fires when a permission dialog would appear.
+      Does NOT fire in headless mode (-p flag).
+      Does NOT bypass safety checks, enterprise policy, or launch-gated runtime constraints.
+      In `dontAsk`, the final prompt path becomes deny, so this hook never sees those requests.
+      hookSpecificOutput.decision.behavior: "allow" | "deny" auto-resolves the prompt.
+      Cannot block — only approve or deny. Use command handler with JSON output.
+      Do not market this as blanket "safe auto-approval"; scope it to explicit allowlists only.
+
+  # ---------------------------------------------------------------------------
+  # 15. BACKGROUND OR MONITOR GUARD — Block foreground sleep/poll loops
+  # ---------------------------------------------------------------------------
+  - name: background-or-monitor-guard
+    event: PreToolUse
+    description: |
+      Block foreground Bash commands that use long sleep or polling loops.
+      Forces the workflow toward run_in_background or Monitor for long-running checks.
+    matcher: "Bash"
+    severity: medium
+    settings_json_snippet: |
+      {
+        "hooks": {
+          "PreToolUse": [
+            {
+              "matcher": "Bash",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "python3 .claude/hooks/background-or-monitor-guard.py"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    code_example:
+      language: python
+      filename: ".claude/hooks/background-or-monitor-guard.py"
+      code: |
+        #!/usr/bin/env python3
+        """Block long foreground sleep/poll loops; prefer background or Monitor."""
+        import json
+        import re
+        import sys
+
+        SLEEP_RE = re.compile(r'(^|&&|;)\s*sleep\s+(\d+)(?:\s*($|&&|;))')
+
+        def main():
+            payload = json.loads(sys.stdin.read() or '{}')
+            tool_input = payload.get("tool_input", {})
+            command = tool_input.get("command", "")
+            run_in_background = tool_input.get("run_in_background")
+
+            if run_in_background is True:
+                print(json.dumps({"decision": "approve"}))
+                return
+
+            match = SLEEP_RE.search(command)
+            if match and int(match.group(2)) >= 2:
+                print(json.dumps({
+                    "decision": "block",
+                    "reason": "Foreground sleep/poll detected. Use run_in_background: true for blocking commands or Monitor for streaming checks."
+                }))
+                return
+
+            print(json.dumps({"decision": "approve"}))
+
+        if __name__ == "__main__":
+            main()
+    notes: |
+      Mirrors the BashTool runtime: foreground `sleep >= 2` and `sleep N && check`
+      patterns are treated as blocking/polling work and should move to background
+      execution or Monitor. Keep deliberate pacing under 2 seconds in foreground.
+      Especially useful for deploy/test waits, log tails, and polling APIs.

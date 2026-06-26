@@ -1,0 +1,912 @@
+# Workshop & Launch Swipefile - Hormozi Method
+# Extracted from $100M Workshop Playbook and Launch materials
+version: "1.0"
+extraction_date: "2026-02-23"
+source_files:
+  - "$ 100M Workshop Playbook.md"
+  - "FRAMEWORK WORKSHOP HORMOZI.md"
+  - "CHECKLIST COMPLETO WORKSHOP.md"
+  - "CHECKLIST PREENCHIDO - WORKSHOP ALEX HORMOZI.md"
+  - "ANÁLISE DO FRAMEWORK DO WORKSHOP.md"
+  - "PLAYBOOK DE CONTEÚDO E SLIDES - WORKSHOP DE ALTO IMPACTO.md"
+  - "$ 100M Playbook Lauch.md"
+  - "$ 100M Playbook Lauch - Replicável.md"
+  - "10 PAPÉIS CRÍTICOS DO LANÇAMENTO.md"
+  - "Transcrição Workshop $ 100M Money Leads.md"
+
+# =============================================================================
+# WORKSHOP FRAMEWORK
+# =============================================================================
+workshop:
+  framework_7_blocos:
+    bloco_1_hook_impossivel:
+      duracao: "10 min"
+      elementos:
+        - "Promessa especifica e mensuravel"
+        - "Elemento de prova ao vivo"
+        - "Stakes estabelecidos"
+      script_abertura: |
+        "Nos proximos [TEMPO], vou mostrar exatamente como [RESULTADO ESPECIFICO]
+        sem [OBJECAO 1], sem [OBJECAO 2], mesmo que [LIMITACAO COMUM].
+
+        E vou provar isso ao vivo, na sua frente, fazendo [DEMONSTRACAO].
+
+        Se ao final voce nao tiver pelo menos [PEQUENO RESULTADO GARANTIDO],
+        eu [PENALIDADE PARA VOCE]."
+
+    bloco_2_origem_conexao:
+      duracao: "15 min"
+      elementos:
+        - "Ponto de partida pior que a audiencia"
+        - "Momento de descoberta"
+        - "Primeira transformacao"
+
+    bloco_3_educacao_profunda:
+      duracao: "60 min"
+      elementos:
+        - "Framework proprietario"
+        - "3 insights contra-intuitivos"
+        - "Demonstracao pratica"
+
+    bloco_4_casos_cascata:
+      duracao: "30 min"
+      elementos:
+        - "Caso pessoal detalhado"
+        - "3-5 casos de clientes"
+        - "Caso ao vivo se possivel"
+
+    bloco_5_stack_valor:
+      duracao: "20 min"
+      elementos:
+        - "Ancora alta com reducoes"
+        - "Minimo 5 componentes"
+        - "Comparacoes externas"
+      script_reducao_preco: |
+        "O valor normal disso seria [ANCORA ALTA] porque [JUSTIFICATIVA].
+
+        Mas nao vou cobrar [ANCORA].
+        Nem mesmo [50% DA ANCORA].
+        Nem [25% DA ANCORA].
+
+        Hoje, apenas para quem esta ao vivo, o investimento e [PRECO FINAL].
+
+        Mas tem um detalhe..."
+        [REVELAR CONDICAO OU BONUS SURPRESA]
+
+    bloco_6_inversao_risco:
+      duracao: "10 min"
+      elementos:
+        - "Garantia expandida"
+        - "Bonus de acao rapida"
+        - "Penalidade por nao agir"
+      formula_garantia: "Garantia = Resultado Prometido + Prazo + Condicao + Consequencia"
+      exemplo: |
+        "Se em 90 dias voce nao tiver [RESULTADO],
+        mesmo aplicando [CONDICAO MINIMA],
+        eu [CONSEQUENCIA FAVORAVEL AO CLIENTE]"
+
+    bloco_7_demonstracao_final:
+      duracao: "30 min"
+      elementos:
+        - "Q&A ao vivo"
+        - "Consultoria demonstrativa"
+        - "Urgencia real criada"
+
+  framework_10_fases_hormozi:
+    fase_1:
+      nome: "Gancho de Abertura e Prova Social"
+      duracao: "10-15 min"
+      elementos:
+        - "Promessa de quebrar recordes mundiais"
+        - "Introducao com juiza do Guinness Book"
+        - "Estabelecimento de stakes elevados"
+      citacao: "I'm Alex Ramosi, and welcome to my $100 million Money Models book launch event. And we're going to try and break not one, but two world records together here live"
+
+    fase_2:
+      nome: "Disclaimer e Frame Setting"
+      duracao: "5 min"
+      objetivo: "Protecao legal + aumentar credibilidade atraves de transparencia"
+      citacao: "But I want to warn you, this isn't a promise to become rich... Everyone is different"
+
+    fase_3:
+      nome: "Historia de Origem e Credibilidade"
+      duracao: "15-20 min"
+      elementos:
+        - "Trajetoria pessoal do zero aos $250M"
+        - "Demonstracao de resultados especificos"
+        - "Conexao emocional com a audiencia"
+      citacao: "I sold three companies I started as a kid, two of them at $46.2 million in an all-cash deal"
+
+    fase_4:
+      nome: "Conteudo Educacional Core"
+      duracao: "60-90 min"
+      elementos:
+        - "Conceito de Money Models"
+        - "Os 4 mecanismos principais"
+        - "Demonstracao com casos reais"
+      formula: "30-day gross profit is greater than two times cost of acquiring a customer plus cost of goods sold"
+      mecanismos:
+        - nome: "Attraction offers"
+          funcao: "get people to buy"
+        - nome: "Upsell offers"
+          funcao: "get them to spend more"
+        - nome: "Downsell offers"
+          funcao: "get them to buy something if they say no"
+        - nome: "Continuity offers"
+          funcao: "get them to buy repeatedly"
+
+    fase_5:
+      nome: "Casos de Estudo Sequenciais"
+      duracao: "45-60 min"
+      casos:
+        - nome: "Gym Launch"
+          resultado: "$380,000 to $1.76 million in six months"
+        - nome: "Prestige Labs"
+          resultado: "$270,000 a month to 1.6 million a month in two months"
+        - nome: "ALLEN"
+          resultado: "$50,000 to $1.3M/month in six months"
+        - nome: "School"
+          resultado: "1M to 15M+ users in 18 months"
+
+    fase_6:
+      nome: "Stack de Ofertas"
+      duracao: "30-45 min"
+      estrutura_stack:
+        - item: "Lead System"
+          valor: "$15,999"
+        - item: "Sales System"
+          valor: "$5,999"
+        - item: "Delivery System"
+          valor: "$6,499"
+        - item: "Profit System"
+          valor: "$41,458"
+      total_valor: "$69,955"
+      reducao_sequencial:
+        - "$69,955"
+        - "$29,997"
+        - "$9,997"
+        - "$5,997"
+      plot_twist: "three interest-free payments of zero dollars. Yes, it's 100% free"
+
+    fase_7:
+      nome: "Decisoes e Frameworks"
+      duracao: "20-30 min"
+      elementos:
+        - "10 decisoes que mudaram sua vida"
+        - "Criacao de urgencia psicologica"
+      citacao: "If I put my last $1,000 in the S&P 500 in 2016... I'd have $2,400 today. But instead, I invested my last $1,000 in skills..."
+
+    fase_8:
+      nome: "Reveal do Recorde Mundial"
+      duracao: "5-10 min"
+      elementos:
+        - "Confirmacao ao vivo do recorde"
+        - "Celebracao coletiva"
+
+    fase_9:
+      nome: "Premios e Social Proof"
+      duracao: "15-20 min"
+      elementos:
+        - "Sorteio de premios"
+        - "Demonstracao de comunidade"
+
+    fase_10:
+      nome: "Hotline ao Vivo"
+      duracao: "2+ horas"
+      elementos:
+        - "Consultoria ao vivo"
+        - "Demonstracao de expertise"
+        - "Criacao de FOMO"
+
+  scripts:
+    transicao_educacao_oferta: |
+      "Voce viu como [RECAPITULAR INSIGHT PRINCIPAL].
+
+      Agora voce tem duas opcoes:
+      Opcao 1: Pegar tudo que mostrei e tentar implementar sozinho.
+      Vai funcionar? Talvez. Em quanto tempo? Nao sei.
+
+      Opcao 2: Deixar eu instalar isso para voce, junto com
+      [BENEFICIO EXTRA NAO MENCIONADO ANTES].
+
+      Deixe-me mostrar exatamente o que voce recebe..."
+
+    transicao_bloco_1_2: "Agora que voce viu o que e possivel, deixe-me mostrar o que esta impedindo 99% das pessoas..."
+    transicao_bloco_2_3: "Mas existe uma saida. E ela e mais simples do que voce imagina..."
+    transicao_bloco_3_4: "Conhecimento sem acao e apenas entretenimento. Veja como implementar..."
+    transicao_bloco_4_5: "Voce tem duas opcoes: fazer sozinho ou deixar que eu facilite o caminho..."
+    transicao_bloco_5_6: "A decisao e sua, mas o tempo nao espera..."
+
+    script_high_ticket: |
+      ABERTURA QUE QUEBRA PADRAO:
+      "Joao, vi que voce ficou ate o final da apresentacao...
+      isso me diz MUITO sobre voce. Voce nao e do tipo
+      que so consome conteudo, voce IMPLEMENTA, certo?"
+
+      QUALIFICACAO PROFUNDA:
+      "Numa escala de 1 a 10, qual seu nivel de frustracao
+      com [problema especifico]?"
+      - Se menor que 7: "O que precisaria mudar pra ser 10?"
+      - Se 7 ou mais: "O que te impede de resolver HOJE?"
+
+      TRANSICAO NATURAL:
+      "Pelo que voce me contou, vejo dois caminhos:
+      1) Continuar sozinho e talvez conseguir em 2 anos
+      2) Pegar nosso atalho e fazer em 90 dias
+      Qual faz mais sentido pra voce?"
+
+      FECHAMENTO:
+      "Perfeito! Vou liberar seu acesso agora mesmo...
+      Prefere parcelar em 12x ou a vista com desconto?"
+
+  slides_content:
+    total_slides: 1600
+    slide_rate: "6-10 slides/minuto"
+    proporcao:
+      texto: "40% (640 slides)"
+      dados: "20% (320 slides)"
+      imagem: "20% (320 slides)"
+      transicao: "10% (160 slides)"
+      mistos: "10% (160 slides)"
+
+    estrutura_macro:
+      bloco_1_abertura:
+        slides: "1-150"
+        tempo: "15-20 min"
+        conteudo:
+          - "Cold Open (1-30)"
+          - "Prova de Conceito (31-80)"
+          - "Historia de Origem (81-150)"
+
+      bloco_2_problema:
+        slides: "151-350"
+        tempo: "20-25 min"
+        conteudo:
+          - "O Problema Real (151-200)"
+          - "Tentativas Comuns (201-250)"
+          - "Consequencias (251-350)"
+
+      bloco_3_solucao:
+        slides: "351-800"
+        tempo: "45-60 min"
+        conteudo:
+          - "Introducao do Framework (351-450)"
+          - "Componentes Detalhados (451-600)"
+          - "Demonstracao Pratica (601-700)"
+          - "Casos de Estudo (701-800)"
+
+      bloco_4_implementacao:
+        slides: "801-1000"
+        tempo: "20-30 min"
+        conteudo:
+          - "Roadmap de Implementacao (801-850)"
+          - "Ferramentas e Recursos (851-900)"
+          - "Prevencao de Erros (901-1000)"
+
+      bloco_5_oferta:
+        slides: "1001-1400"
+        tempo: "30-40 min"
+        conteudo:
+          - "Construcao de Valor (1001-1100)"
+          - "Stack de Ofertas (1101-1250)"
+          - "Garantias e Reducao de Risco (1251-1350)"
+          - "Preco e Justificativa (1351-1400)"
+
+      bloco_6_fechamento:
+        slides: "1401-1600"
+        tempo: "15-20 min"
+        conteudo:
+          - "Urgencia e Escassez (1401-1450)"
+          - "Call to Action (1451-1500)"
+          - "FAQ Rapido (1501-1550)"
+          - "Grand Finale (1551-1600)"
+
+    design_specs:
+      proporcao: "16:9 (1920x1080 minimo)"
+      fonte_principal: "Sans-serif bold (Impact/Bebas/Montserrat)"
+      tamanho_minimo: "32pt"
+      cores_max: 3
+      regra_texto: "Maximo 7 palavras por slide"
+
+  kpis:
+    durante_evento:
+      retencao_1h:
+        ruim: "<40%"
+        ok: "40-60%"
+        otimo: ">60%"
+      retencao_2h:
+        ruim: "<25%"
+        ok: "25-40%"
+        otimo: ">40%"
+      pico_audiencia:
+        ruim: "Inicio"
+        ok: "Meio"
+        otimo: "Oferta"
+      engajamento_chat:
+        ruim: "<10%"
+        ok: "10-20%"
+        otimo: ">20%"
+      taxa_clique:
+        ruim: "<5%"
+        ok: "5-15%"
+        otimo: ">15%"
+
+    conversao_por_fase:
+      registrados_presentes: "Meta 25%+"
+      presentes_clique: "Meta 30%+"
+      clique_compra: "Meta 30%+"
+      overall_registrados: "Meta 2.5%+"
+
+  checklists:
+    provas_sociais:
+      numeros_pessoais:
+        - "Faturamento comprovavel do negocio"
+        - "Numero de empresas vendidas"
+        - "Evolucao temporal (de X para Y em Z tempo)"
+        - "Capturas de tela de dashboards/relatorios"
+        - "Prints de transferencias bancarias"
+
+      resultados_clientes:
+        - "Minimo 10 casos de sucesso documentados"
+        - "Screenshots de depoimentos em texto"
+        - "Videos de 30-60 segundos de clientes"
+        - "Prints de conversas no WhatsApp/email"
+        - "Antes/depois com numeros especificos"
+        - "Diversidade de nichos/industrias"
+
+      validacoes_externas:
+        - "Certificacoes relevantes"
+        - "Aparicoes em midia"
+        - "Parcerias com empresas conhecidas"
+        - "Numero de seguidores/inscritos"
+        - "Reviews em plataformas publicas"
+        - "Premiacoes ou reconhecimentos"
+
+    estrutura_ofertas:
+      oferta_principal:
+        - "Produto/servico principal claramente definido"
+        - "Preco ancora estabelecido (alto)"
+        - "Preco final"
+        - "Mecanismo de entrega definido"
+        - "Garantia estruturada"
+
+      stack_bonus:
+        - "Bonus 1: Sistema/template pratico (valor 3-5x o preco)"
+        - "Bonus 2: Treinamento complementar"
+        - "Bonus 3: Comunidade ou suporte"
+        - "Bonus 4: Ferramentas/software"
+        - "Bonus 5: Sessoes ao vivo/consultoria"
+        - "Bonus 6: Conteudo exclusivo futuro"
+
+    producao:
+      config_tecnica:
+        - "Streaming em multiplas plataformas"
+        - "Backup de internet (minimo 2)"
+        - "Backup de energia"
+        - "Multiplas cameras"
+        - "Microfone profissional"
+        - "Iluminacao adequada"
+        - "Cenario preparado"
+
+      slides_visuais:
+        - "100+ slides preparados"
+        - "Graficos de dados"
+        - "Screenshots de prova"
+        - "Mockups do produto"
+        - "Comparativos visuais"
+        - "Animacoes de transicao"
+
+    go_live:
+      60_min_antes:
+        - "Todos os links testados"
+        - "Slides carregados"
+        - "Equipe posicionada"
+        - "Backup stream rodando"
+
+      30_min_antes:
+        - "Camera e audio ok"
+        - "Chat moderado ativo"
+        - "Gateway funcionando"
+        - "Warmup slides on"
+
+      10_min_antes:
+        - "Musica de entrada"
+        - "Contador regressivo"
+        - "Mensagens automaticas"
+        - "Respirar fundo 3x"
+
+  elementos_criticos_hormozi:
+    - "Doacao/Causa: Elemento altruista que justifica a acao"
+    - "Recordes/Marcos: Algo memoravel e compartilhavel"
+    - "Plot Twist: Oferta gratis ou inesperada"
+    - "Demonstracao ao Vivo: Prova de competencia em tempo real"
+    - "Multiplas Cameras: Producao de alto valor"
+    - "Equipe Visivel: Mostra estrutura e credibilidade"
+    - "Tempo Estendido: 3+ horas mostra comprometimento"
+
+  gatilhos_mentais:
+    reciprocidade:
+      - "Sistema completo gratuito primeiro"
+      - "90 dias de School gratis"
+      - "Audiobook e Lost Chapters gratis"
+
+    prova_social:
+      - "Juiza do Guinness presente"
+      - "113,000 pessoas assistindo"
+      - "26,000 reviews 5 estrelas"
+
+    autoridade:
+      - "Portfolio de $250M"
+      - "Vendeu empresas por $46.2M"
+      - "Casos documentados com numeros"
+
+    escassez:
+      - "Apenas 25,000 sistemas"
+      - "Launch Blackbook so ao vivo"
+      - "Preco especial so no lancamento"
+
+    urgencia:
+      - "Timer de 3 minutos"
+      - "Bonus desaparece ao vivo"
+      - "Recorde sendo quebrado agora"
+
+    contraste:
+      - "$69,955 para $5,997 para GRATIS"
+      - "Politico vs Empreendedor"
+      - "Teoria vs Pratica comprovada"
+
+    identidade:
+      - "'Um de nos' (empreendedores)"
+      - "Missao compartilhada"
+      - "Contra o sistema (politicos)"
+
+# =============================================================================
+# LAUNCH FRAMEWORK
+# =============================================================================
+launch:
+  framework_evento:
+    acronimo: "E.V.E.N.T.O"
+    significado:
+      E: "ESCASSEZ ARTIFICIAL - Crie um momento unico e irrepetivel no tempo"
+      V: "VALOR EMPILHADO - Stack de ofertas que supera o preco em 10X"
+      E2: "ESCADA DE COMPROMISSO - Micro-compromissos ate a grande conversao"
+      N: "NETWORK EFFECT - Transforme clientes em promotores instantaneos"
+      T: "TENSAO NARRATIVA - Historia com inicio, meio e climax emocional"
+      O: "OFERTA IRRECUSAVEL - Inversao de risco + garantias impossiveis"
+
+  8_fases:
+    fase_1:
+      nome: "PREPARACAO"
+      timing: "6 semanas antes"
+      duracao: "2-3 semanas"
+      objetivo: "Construir toda infraestrutura e ativos"
+      acoes:
+        - "Produzir 1000+ variacoes de ads + 2 hero ads"
+        - "Construir 7 paginas de funil no Shopify"
+        - "Configurar infraestrutura (LED Wall, estudio virtual)"
+        - "Preparar sequencias de 30+ emails"
+        - "Load testing para 1M+ acessos simultaneos"
+      recursos: "10+ pessoas dedicadas, $500K em setup"
+
+    fase_2:
+      nome: "KICKOFF AFILIADOS"
+      timing: "6 semanas antes"
+      duracao: "Continua ate o lancamento"
+      objetivo: "Ativar exercito de promotores com gamificacao"
+      sistema_incentivos:
+        top_10:
+          requisito: "Mais sign-ups que aparecem"
+          premio: "Jantar privado + Fireside chat + Workshop presencial"
+        top_50:
+          requisito: "Top 50 por sign-ups"
+          premio: "Workshop presencial + Q&A grupo"
+        10_plus_signups:
+          requisito: "Minimo 10 registros"
+          premio: "Sorteio para workshop + Audiobook exclusivo"
+        todos:
+          requisito: "Apenas registrar"
+          premio: "$100M Ads Folder + Blackbook + Gravacao HD"
+
+    fase_3:
+      nome: "ANUNCIO PUBLICO"
+      timing: "4 semanas antes"
+      duracao: "1 semana"
+      objetivo: "Criar buzz e iniciar registros"
+      acoes:
+        - "Lancar video announcement no YouTube"
+        - "Iniciar ads com $50K/dia escalando para $250K/dia"
+
+    fase_4:
+      nome: "AQUECIMENTO"
+      timing: "3 semanas antes do evento"
+      duracao: "3 semanas"
+      objetivo: "Escalar registros para 1M+ pessoas"
+      acoes:
+        - "5 videos organicos com conceitos do livro"
+        - "4-5 podcasts estrategicos na semana do launch"
+      metricas: "1M+ registros, CAC < $3"
+      recursos: "$3M budget de ads, 2 agencias (80/20 split)"
+
+    fase_5:
+      nome: "EVENTO AO VIVO"
+      timing: "Dia D"
+      duracao: "4+ horas"
+      objetivo: "Converter massa em compradores"
+      estrutura:
+        bloco_1:
+          duracao: "90 min"
+          conteudo: "Webinar principal do Alex"
+        bloco_2:
+          duracao: "60-90 min"
+          conteudo: "6 Guest speakers surpresa"
+        bloco_3:
+          duracao: "30+ min"
+          conteudo: "Giveaways e FAQ"
+
+    fase_6:
+      nome: "FACILITACAO DE VENDAS"
+      timing: "Durante evento"
+      duracao: "24 horas"
+      objetivo: "Maximizar conversao com suporte"
+
+    fase_7:
+      nome: "CART CLOSE"
+      timing: "3 dias apos"
+      duracao: "72 horas"
+      objetivo: "Urgencia final e recuperacao"
+
+    fase_8:
+      nome: "PR & MAXIMIZACAO"
+      timing: "Pos-lancamento"
+      duracao: "2-4 semanas"
+      objetivo: "Capitalizar em autoridade e recordes"
+
+  pilares_fundamentais:
+    - nome: "RECORDES COMO ANCORAGEM"
+      descricao: "Guinness World Records para PR massivo"
+    - nome: "LADDER DE VALOR REVERSO"
+      descricao: "Comecar com free, depois revelar paid"
+    - nome: "GAMIFICACAO TOTAL"
+      descricao: "Afiliados + compradores + espectadores"
+    - nome: "EVENTO COMO PRODUTO"
+      descricao: "O show e tao valioso quanto o livro"
+
+  timeline:
+    semana_menos_6:
+      acao: "Kickoff afiliados"
+      budget_ads_dia: "$0"
+      meta: "5K afiliados ativos"
+    semana_menos_5:
+      acao: "Preparacao tech"
+      budget_ads_dia: "$0"
+      meta: "Sistemas prontos"
+    semana_menos_4:
+      acao: "Anuncio publico"
+      budget_ads_dia: "$10K"
+      meta: "50K registros"
+    semana_menos_3:
+      acao: "Escalar ads"
+      budget_ads_dia: "$50K"
+      meta: "200K registros"
+    semana_menos_2:
+      acao: "Momentum"
+      budget_ads_dia: "$150K"
+      meta: "500K registros"
+    semana_menos_1:
+      acao: "Sprint final"
+      budget_ads_dia: "$250K"
+      meta: "1M+ registros"
+    dia_d:
+      acao: "Evento"
+      budget_ads_dia: "$100K"
+      meta: "1.5M livros"
+
+  ladder_valor:
+    free_stack:
+      condicao: "Aparecer no evento"
+      itens:
+        - "Lost Chapters (Bonus show-up)"
+        - "Audiobook completo"
+        - "Curso online gratis"
+        - "3 meses Skool trial"
+
+    core_offer:
+      preco: "$30"
+      itens:
+        - "1 livro fisico"
+        - "Shipping incluido"
+
+    bump_offer:
+      preco: "$450"
+      itens:
+        - "15 livros"
+        - "ACQ Closer Handbook"
+        - "ACQ Advertising Handbook"
+
+    high_ticket:
+      preco: "$5,998"
+      itens:
+        - "200 livros (com codigo resgate)"
+        - "12 Playbooks fisicos"
+        - "Workshop virtual meio-dia"
+        - "ACQ AI Assistant"
+        - "Launch Collateral Blackbook (se comprar durante live)"
+
+  papeis_criticos:
+    papel_1:
+      nome: "DONO DO PROJETO"
+      funcao: "O Maestro do Lancamento"
+      perfil:
+        experiencia: "Minimo 2 lancamentos de 7 digitos"
+        habilidades: "Gestao de projetos complexos, P&L, tomada de decisao rapida"
+      responsabilidades:
+        - "Definir metas do lancamento"
+        - "Aprovar orcamento total e distribuicao por area"
+        - "Contratar e alinhar os 9 lideres de area"
+        - "Criar cronograma master com todos os entregaveis"
+        - "Estabelecer sala de guerra (fisica e virtual)"
+
+    papel_2:
+      nome: "LIDER DE VENDAS"
+      funcao: "Comandante da Conversao"
+      perfil:
+        experiencia: "5+ anos em inside sales, gestao de 50+ vendedores"
+      estrutura_time:
+        closers_senior:
+          quantidade: 10
+          foco: "Vendas high-ticket ($30,000)"
+          remuneracao: "$3K fixo + 10% comissao"
+        closers_pleno:
+          quantidade: 40
+          foco: "Vendas mid-ticket ($2,000)"
+          remuneracao: "$2K fixo + 7% comissao"
+        sdrs_chat:
+          quantidade: 250
+          foco: "Qualificacao e core offer ($150)"
+          remuneracao: "$1.5K fixo + 5% comissao"
+
+    papel_3:
+      nome: "DONO DO E-COMMERCE"
+      funcao: "Arquiteto Digital"
+      capacidade_tecnica:
+        usuarios_simultaneos: "100K"
+        transacoes_segundo: "500"
+        tempo_resposta: "< 2 segundos"
+        taxa_erro: "< 0.1%"
+
+    papel_4:
+      nome: "GERENTE DE MIDIA"
+      funcao: "Diretor Criativo"
+      meta: "1000+ variacoes de anuncios"
+      estrutura:
+        - "10 Headlines diferentes"
+        - "5 Copies principais"
+        - "20 Formatos visuais"
+        - "5 CTAs variados"
+
+    papel_5:
+      nome: "GERENTE DE MARKETING"
+      funcao: "Estrategista de Trafego"
+      missao: "1 milhao de registros"
+      distribuicao_orcamento:
+        meta_40_porcento: "$6M"
+        google_25_porcento: "$3.75M"
+        tiktok_20_porcento: "$3M"
+        linkedin_10_porcento: "$1.5M"
+        nativos_5_porcento: "$750K"
+
+    papel_6:
+      nome: "GERENTE DE LOGISTICA"
+      funcao: "Mestre da Distribuicao"
+      previsao: "1.5M unidades + 10% buffer"
+
+    papel_7:
+      nome: "LIDER DE SUPORTE"
+      funcao: "Guardiao da Experiencia"
+      piramide:
+        nivel_1: "AUTOATENDIMENTO (70% dos casos)"
+        nivel_2: "CHAT/EMAIL (25% dos casos)"
+        nivel_3: "TELEFONE/CRISE (5% dos casos)"
+
+    papel_8:
+      nome: "MONTAGEM DO ESTUDIO"
+      funcao: "Engenheiros do Palco"
+      especificacoes:
+        - "Painel LED 6m x 4m (4K)"
+        - "Iluminacao profissional"
+        - "Sistema de som redundante"
+        - "4 cameras"
+        - "Streaming em 3 plataformas"
+        - "Gerador de backup"
+
+    papel_9:
+      nome: "FACILITIES DO EVENTO"
+      funcao: "Producao Executiva"
+      areas:
+        - "PALCO PRINCIPAL (200m2)"
+        - "GREEN ROOM (50m2)"
+        - "SALA DE GUERRA (40m2)"
+        - "AREAS DE APOIO (100m2)"
+        - "AREA TECNICA (60m2)"
+
+    papel_10:
+      nome: "INFRAESTRUTURA TECH"
+      funcao: "Guardioes do Sistema"
+      stack:
+        - "CDN/Protecao DDoS (CloudFlare)"
+        - "Balanceador de carga"
+        - "Servidores web (auto-scaling)"
+        - "Banco de dados (cluster)"
+        - "Cache (Redis)"
+        - "Filas de processamento"
+
+  hacks_nao_obvios:
+    - "LED Wall no estudio: Criar sensacao de mega-evento sem venue"
+    - "200 livros com codigo resgate: Evita problema logistico de shipping em massa"
+    - "Duas agencias competindo: 80/20 split com realocacao por performance"
+    - "VIP no YouTube separado: Cria exclusividade dentro do gratis"
+    - "Zoom faces ao fundo: Simula multidao sem custos de evento presencial"
+    - "Affirm no checkout: Remove objecao de preco no high-ticket"
+    - "Lost chapters como show-up bonus: Nao no registro, mas no aparecer"
+    - "Mystery guests nao revelados: Mantem pessoas ate o final"
+    - "Guinness ao vivo: PR instantaneo e viral"
+    - "3 platforms simultaneos: YouTube regular + VIP + Zoom"
+
+  formulas:
+    sucesso_lancamento: "(Recordes x Urgencia x Stack Gratis) + (Afiliados^2 x Ad Spend) / Friccao no Checkout"
+    equacao_mental: "(Historia Irresistivel x Escassez Real x Oferta Incomparavel) ^ Energia do Evento / Friccao de Compra"
+
+  calculadora_roi:
+    investimento:
+      ad_spend: "$3,000,000"
+      equipe_tech: "$500,000"
+      producao: "$200,000"
+      total: "$3,700,000"
+    receita_projetada:
+      livro_unitario: "10K x $30 = $300,000"
+      pacote_15: "5K x $450 = $2,250,000"
+      pacote_200: "1K x $5,998 = $5,998,000"
+      total: "$8,548,000"
+    roi: "131% (2.3X)"
+    breakeven: "617 vendas do high-ticket"
+
+  sequencias_email:
+    pre_evento:
+      d_menos_7: "1 semana para o maior lancamento"
+      d_menos_3: "Revelando os guest speakers"
+      d_menos_1: "Amanha fazemos historia"
+      d_day_am: "Comecamos em 2 horas"
+    durante_evento:
+      h_mais_1: "30K pessoas assistindo agora"
+      h_mais_2: "Oferta revelada - link aqui"
+      h_mais_3: "Ultima hora para bonus"
+    pos_evento:
+      d_mais_1: "Replay disponivel por 48h"
+      d_mais_2: "Cart fecha amanha meia-noite"
+      d_mais_3_am: "Ultimas 12 horas"
+      d_mais_3_pm: "FECHANDO EM 1 HORA"
+
+# =============================================================================
+# TRANSCRICOES - KEY INSIGHTS
+# =============================================================================
+transcricoes:
+  money_leads_workshop:
+    key_insights:
+      - insight: "82% of businesses fail due to poor cash flow"
+        fonte: "US Bank study"
+
+      - insight: "54% of businesses lose money or break even every year"
+        fonte: "Federal Reserve"
+
+      - insight: "Median income for business owners is $48,000/year"
+        fonte: "2024 Census Bureau"
+
+      - insight: "A $100 million money model gets customers to spend 2x on you in 30 days or less"
+
+      - insight: "There's only 4 ways to sell: salesman in person, salesman online, self-checkout in person, self-checkout online"
+
+      - insight: "One money model mechanism is all you need to get amazing results"
+
+      - insight: "The launch spent $4M+ on ads and got $6.6M back"
+
+      - insight: "Skills are always the best investment - compound faster than S&P 500"
+
+    mecanismos_money_model:
+      attraction_offers:
+        - "Win your money back"
+        - "Giveaways (7-day formula)"
+        - "Dummy offer"
+        - "Buy X, get Y free"
+        - "Pay less now or pay more later"
+
+      upsell_offers:
+        - "Classic upsells (problem reveal)"
+        - "Menu upsells (helpful consultant)"
+        - "Anchor upsells (sticker shock)"
+        - "Rollover upsells (pay it forward)"
+
+      downsell_offers:
+        - "Payment plan downsells"
+        - "Trial downsells"
+        - "Feature downsells"
+
+      continuity_offers:
+        - "Bonus continuity"
+        - "Discount continuity"
+        - "Waive fee continuity"
+
+# =============================================================================
+# AGENT USAGE INSTRUCTIONS
+# =============================================================================
+agent_usage:
+  hormozi_workshop:
+    quando_usar:
+      - "Criar estrutura de workshop de conversao"
+      - "Desenvolver scripts de vendas para eventos ao vivo"
+      - "Montar stack de ofertas com ancoragem"
+      - "Criar slides e conteudo educacional"
+      - "Definir KPIs e metricas de evento"
+
+    instrucoes:
+      - "Usar framework 7 blocos para estrutura basica"
+      - "Aplicar framework 10 fases para eventos maiores"
+      - "Scripts sao templates - adaptar para nicho"
+      - "Manter proporcao 60%+ educacao antes de oferta"
+      - "Sempre incluir prova social e demonstracao ao vivo"
+      - "Usar gatilhos mentais de forma etica"
+
+  hormozi_launch:
+    quando_usar:
+      - "Planejar lancamento de produto/servico"
+      - "Estruturar campanha de afiliados"
+      - "Criar timeline de pre-lancamento"
+      - "Definir ladder de valor e ofertas"
+      - "Montar equipe de lancamento"
+
+    instrucoes:
+      - "Seguir 8 fases cronologicas"
+      - "Adaptar timeline conforme tamanho do lancamento"
+      - "Usar template de escalonamento por tamanho"
+      - "Sempre ter plano de contingencia"
+      - "Manter comunicacao intensa com sequencias de email"
+      - "Usar hacks nao-obvios para diferenciar"
+
+    templates_escalonamento:
+      micro:
+        registros: "10K"
+        budget: "$10K"
+        equipe: "3 pessoas"
+        duracao: "2 semanas"
+      small:
+        registros: "50K"
+        budget: "$50K"
+        equipe: "5 pessoas"
+        duracao: "3 semanas"
+      medium:
+        registros: "250K"
+        budget: "$250K"
+        equipe: "10 pessoas"
+        duracao: "4 semanas"
+      large:
+        registros: "500K"
+        budget: "$1M"
+        equipe: "20 pessoas"
+        duracao: "5 semanas"
+      mega:
+        registros: "1M+"
+        budget: "$3M+"
+        equipe: "30+ pessoas"
+        duracao: "6 semanas"
+
+  formulas_core:
+    workshop: "PROMESSA AUDACIOSA -> EDUCACAO PROFUNDA -> CASOS REAIS -> STACK DE VALOR -> REDUCAO DE PRECO -> SURPRESA -> URGENCIA REAL -> DEMONSTRACAO AO VIVO"
+    launch: "Trafego Frio -> Registro (Free) -> Show Up -> Free Stack -> Paid Reveal -> Urgencia -> Cart Close"
+    modelo_mental: "De tudo gratis para 99%, monetize 1% a 600X o valor"
+    regra_ouro: "Faca as pessoas sentirem que perderam algo especial se nao participarem, nao que ganharam algo se comprarem"
+
+  principios_inegociaveis:
+    - "MOVIMENTO > PERFEICAO: Lance com 70% pronto"
+    - "EMOCAO > LOGICA: Venda o sentimento, justifique com logica"
+    - "ESPECIFICO > GENERICO: Melhor ser amado por 100 que ok para 10.000"
+    - "EXPERIENCIA > PRODUTO: O evento E o produto"
+    - "COMUNIDADE > CLIENTE: Construa um movimento, nao uma lista"

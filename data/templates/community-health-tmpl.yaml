@@ -1,0 +1,106 @@
+# Community Health Template
+# Clone: @david-spinks (Tier 1)
+# Output format for community metrics and SPACES assessment
+
+metadata:
+  template_id: community-health-tmpl
+  version: "1.0"
+  clone: david-spinks
+  tier: 1
+  assessment_date: "{{date}}"
+
+# Core Engagement Metrics
+engagement_metrics:
+  mau: 0  # Monthly Active Users
+  dau: 0  # Daily Active Users
+  stickiness: 0.0  # DAU/MAU ratio (target: 0.15-0.30)
+
+  # Activity breakdown
+  activity:
+    posts_30d: 0
+    comments_30d: 0
+    reactions_30d: 0
+    members_posting_pct: 0.0  # % who posted at least once
+    lurker_pct: 0.0  # % who only read
+
+# SPACES Model Assessment (David Spinks framework)
+spaces:
+  support:
+    score: 0  # 0-100
+    description: "Members helping members"
+    metrics:
+      questions_answered_by_community_pct: 0.0
+      avg_response_time_hours: 0
+      resolution_rate: 0.0
+
+  product:
+    score: 0
+    description: "Product feedback and co-creation"
+    metrics:
+      feature_requests_submitted: 0
+      beta_testers_active: 0
+      product_surveys_completed: 0
+
+  acquisition:
+    score: 0
+    description: "Community driving new members"
+    metrics:
+      referrals_from_members: 0
+      viral_coefficient: 0.0
+      word_of_mouth_nps: 0
+
+  contribution:
+    score: 0
+    description: "User-generated content and value"
+    metrics:
+      ugc_pieces_30d: 0
+      active_contributors_pct: 0.0
+      content_quality_score: 0
+
+  engagement:
+    score: 0
+    description: "Participation and connection"
+    metrics:
+      event_attendance_rate: 0.0
+      discussions_per_member: 0.0
+      avg_session_duration_min: 0
+
+  success:
+    score: 0
+    description: "Members achieving outcomes"
+    metrics:
+      goal_completion_rate: 0.0
+      nps_score: 0
+      testimonials_collected: 0
+
+  overall_score: 0  # Weighted average
+
+# Health Status
+health_status:
+  overall: "healthy"  # healthy|needs_attention|critical
+  trend: "improving"  # improving|stable|declining
+  comparison_to_benchmark: "+10%"
+
+# Three-Level Strategy Assessment
+strategy:
+  level_1_tactics:
+    description: "What we're doing (events, content, programs)"
+    current: []
+    gaps: []
+
+  level_2_strategy:
+    description: "Why we're doing it (business objectives)"
+    objectives: []
+    alignment_score: 0
+
+  level_3_culture:
+    description: "Who we are (values, identity)"
+    values: []
+    culture_health: "strong"
+
+# Recommendations
+recommendations:
+  - priority: "HIGH"
+    area: "{{spaces_area}}"
+    action: "{{specific_action}}"
+    expected_impact: "{{impact}}"

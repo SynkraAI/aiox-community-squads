@@ -1,0 +1,15 @@
+version: "1.0.0"
+artifact_id: cross-domain-handoff
+lifecycle: draft
+
+handoff:
+  source_domain:
+  target_domain:
+  source_agent:
+  target_agent:
+  context_summary:
+  artifacts:
+    - artifact_id:
+      path:
+  open_risks: []
+  next_action:

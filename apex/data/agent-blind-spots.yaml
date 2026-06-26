@@ -1,0 +1,205 @@
+# ==============================================================================
+# APEX SQUAD — Agent Blind Spots Registry
+# data/agent-blind-spots.yaml
+# ==============================================================================
+# Purpose:  Defines what each agent should NOT be trusted for — domains where
+#           their expertise creates bias or where they lack the perspective to
+#           judge correctly. Blind spots are not weaknesses; they are calibration
+#           data for the orchestrator to know when to seek a second opinion.
+#
+# Philosophy: "Saber o que você NÃO sabe é mais valioso do que saber tudo."
+#             Every expert has edges where their lens distorts reality.
+#
+# Owner:    apex-lead
+# Version:  1.0.0
+# ==============================================================================
+
+version: "1.0.0"
+
+# ==============================================================================
+# BLIND SPOTS PER AGENT
+# ==============================================================================
+agents:
+
+  apex-lead:
+    id: apex-lead
+    name: Emil
+    blind_spots:
+      - domain: "Backend performance impact on perceived UI speed"
+        description: "May attribute slow feel to animation timing when the real cause is server response latency"
+        mitigation: "Check network tab / API response times before adjusting frontend timing"
+      - domain: "Over-polishing at the expense of shipping"
+        description: "Tendency to request one more round of polish when the feature is already above quality bar"
+        mitigation: "Set explicit time-boxes for polish phases; trust the quality gates"
+
+  frontend-arch:
+    id: frontend-arch
+    name: Arch
+    blind_spots:
+      - domain: "Visual design quality"
+        description: "Focuses on component architecture and patterns but may miss visual inconsistencies"
+        mitigation: "Always route visual review through @qa-visual or @apex-lead"
+      - domain: "Mobile-first patterns"
+        description: "Tends to think in desktop-first component trees; mobile constraints may be afterthought"
+        mitigation: "Require mobile viewport check in architecture review"
+
+  interaction-dsgn:
+    id: interaction-dsgn
+    name: Ahmad
+    blind_spots:
+      - domain: "Technical implementation cost"
+        description: "May design interactions that are theoretically perfect but extremely expensive to implement"
+        mitigation: "Validate implementation feasibility with @react-eng before finalizing"
+      - domain: "Performance impact of complex interactions"
+        description: "Rich interaction patterns may cause jank on low-end devices"
+        mitigation: "Require performance budget check for interactions with 3+ animated properties"
+
+  design-sys-eng:
+    id: design-sys-eng
+    name: Diana
+    blind_spots:
+      - domain: "One-off design needs"
+        description: "Tendency to systematize everything — sometimes a custom value IS the right answer"
+        mitigation: "Allow documented exceptions for intentional one-offs with explicit reasoning"
+      - domain: "Token adoption friction"
+        description: "May create overly granular token hierarchies that developers resist adopting"
+        mitigation: "Limit token depth to 3 levels; test adoption with @react-eng"
+
+  css-eng:
+    id: css-eng
+    name: Josh
+    blind_spots:
+      - domain: "JavaScript-driven layout"
+        description: "Prefers pure CSS solutions even when JS-based layout would be simpler and more maintainable"
+        mitigation: "When CSS solution exceeds 30 lines for a layout problem, consider JS alternative"
+      - domain: "Animation orchestration"
+        description: "CSS transitions are limited for multi-step, physics-based, or gesture-driven animations"
+        mitigation: "Route complex motion to @motion-eng; CSS handles only simple state transitions"
+
+  react-eng:
+    id: react-eng
+    name: Kent
+    blind_spots:
+      - domain: "Visual design fidelity"
+        description: "Focuses on component correctness and React patterns but may not notice 2px misalignment"
+        mitigation: "Pair with @qa-visual for pixel-level review"
+      - domain: "CSS architecture"
+        description: "May use inline styles or utility classes where proper CSS architecture is needed"
+        mitigation: "Route CSS-heavy implementations through @css-eng"
+
+  motion-eng:
+    id: motion-eng
+    name: Matt
+    blind_spots:
+      - domain: "Over-animation"
+        description: "Every element feels like it should animate — but some things should just appear"
+        mitigation: "Apply motion only when it communicates intent (enter/exit/feedback/transform)"
+      - domain: "Low-end device reality"
+        description: "Designs for 120fps displays; may not test on 60fps budget devices"
+        mitigation: "Test all motion on Moto G Power or equivalent budget device"
+
+  a11y-eng:
+    id: a11y-eng
+    name: Sara
+    blind_spots:
+      - domain: "Visual aesthetics trade-offs"
+        description: "May push for maximum contrast/size at the expense of design cohesion"
+        mitigation: "Find the balance: meet WCAG AA, not necessarily AAA, unless user requires it"
+      - domain: "Over-announcing to screen readers"
+        description: "Adding too many aria-live regions or announcements can overwhelm SR users"
+        mitigation: "Test with real SR users; less is often more for announcements"
+
+  perf-eng:
+    id: perf-eng
+    name: Addy
+    blind_spots:
+      - domain: "DX trade-offs"
+        description: "May optimize bundle at cost of developer experience (removing useful abstractions)"
+        mitigation: "Measure actual user impact before removing DX-friendly patterns"
+      - domain: "Premature optimization"
+        description: "Tendency to optimize things that aren't bottlenecks"
+        mitigation: "Always measure BEFORE optimizing; require data-driven optimization justification"
+
+  qa-visual:
+    id: qa-visual
+    name: Andy
+    blind_spots:
+      - domain: "Intentional visual differences"
+        description: "May flag intentional design variations as bugs (e.g., different card sizes for emphasis)"
+        mitigation: "Check design spec before flagging; ask 'is this intentional?' before reporting"
+      - domain: "Dynamic content edge cases"
+        description: "Visual tests with static data miss layout breaks from real content lengths"
+        mitigation: "Test with min/max content lengths, not just lorem ipsum"
+
+  qa-xplatform:
+    id: qa-xplatform
+    name: Michal
+    blind_spots:
+      - domain: "Platform-specific best practices"
+        description: "Tests cross-platform parity but may not know each platform's native patterns deeply"
+        mitigation: "Consult @mobile-eng for iOS/Android native patterns, @spatial-eng for VR/AR"
+      - domain: "Automated test coverage gaps"
+        description: "Automated cross-platform tests catch regressions but miss new interaction patterns"
+        mitigation: "Supplement automated tests with manual exploratory testing on real devices"
+
+  mobile-eng:
+    id: mobile-eng
+    name: Krzysztof
+    blind_spots:
+      - domain: "Web CSS capabilities"
+        description: "May underestimate what CSS can do on web and over-engineer native solutions"
+        mitigation: "Check if web equivalent exists before building custom native component"
+      - domain: "Desktop interaction patterns"
+        description: "Designs for touch-first; may not consider hover states, right-click, keyboard shortcuts"
+        mitigation: "Route desktop-specific interactions to @css-eng or @react-eng"
+
+  cross-plat-eng:
+    id: cross-plat-eng
+    name: Fernando
+    blind_spots:
+      - domain: "Platform-specific excellence"
+        description: "Shared components may feel 'good enough' on all platforms but excellent on none"
+        mitigation: "Allow platform-specific overrides for interactions that differ fundamentally"
+      - domain: "Abstraction overhead"
+        description: "Cross-platform abstractions add complexity that single-platform code doesn't need"
+        mitigation: "Only abstract when 3+ platforms share the same pattern; 2 platforms may just duplicate"
+
+  spatial-eng:
+    id: spatial-eng
+    name: Paul
+    blind_spots:
+      - domain: "2D fallback quality"
+        description: "Focuses on 3D/spatial experience but the 2D fallback may feel like an afterthought"
+        mitigation: "Design 2D experience FIRST, then enhance for spatial"
+      - domain: "Performance on mobile WebXR"
+        description: "Tests on high-end headsets; mobile WebXR has much tighter performance budgets"
+        mitigation: "Set separate performance budgets for mobile WebXR (50% of desktop)"
+
+  web-intel:
+    id: web-intel
+    name: Kilian
+    blind_spots:
+      - domain: "Context behind design decisions"
+        description: "Can extract WHAT a site uses but not WHY — may adopt tokens that serve a different brand purpose"
+        mitigation: "Always validate extracted tokens against project brand before fusing"
+      - domain: "Dynamic/JS-rendered content"
+        description: "Static extraction misses design tokens applied via JavaScript runtime"
+        mitigation: "Use browser-based extraction (Playwright) for JS-heavy sites"
+      - domain: "Copyright and licensing nuance"
+        description: "Can detect obvious license types but may miss custom or ambiguous licensing"
+        mitigation: "Flag all 'Unknown' licenses for manual legal review"
+
+# ==============================================================================
+# USAGE
+# ==============================================================================
+usage:
+  orchestrator_rules:
+    - "When agent A recommends something in agent B's blind spot domain, seek B's input"
+    - "When routing, prefer the agent WITHOUT a blind spot in the task's primary domain"
+    - "During *apex-review, cross-check findings against blind spots of the reviewing agent"
+    - "In *apex-vision sweep, weight findings lower if they fall in the agent's blind spot"
+
+  display:
+    in_agent_activation: false  # Don't show blind spots during greeting
+    in_review: true             # Show relevant blind spots during code review
+    in_routing: true            # Consider blind spots when routing requests

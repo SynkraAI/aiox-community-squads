@@ -1,0 +1,1085 @@
+# Copy & Sales Swipefile - Hormozi Method
+# Extracted from: 02 Playbooks/Copy/, Launch/, Ofertas/
+version: "1.0"
+extraction_date: "2026-02-23"
+source_files:
+  - "02 Playbooks/Copy/BLUEPRINT PV.md"
+  - "02 Playbooks/Copy/BLUEPRINT UPSELL.md"
+  - "02 Playbooks/Copy/Checklist LP.md"
+  - "02 Playbooks/CheckList Oferta.md"
+  - "02 Playbooks/Ofertas/Checklist de Oferta.md"
+  - "02 Playbooks/Launch/Prompts Launch.md"
+  - "02 Playbooks/Launch/$ 100M Playbook Lauch.md"
+  - "02 Playbooks/Launch/$ 100M Playbook Lauch - Replicavel.md"
+  - "02 Playbooks/Launch/10 PAPEIS CRITICOS DO LANCAMENTO.md"
+
+# ==============================================================================
+# LANDING PAGE FRAMEWORKS
+# ==============================================================================
+landing_page:
+  blueprint_17_elementos:
+    description: "Os 17 elementos da pagina de vendas matadora"
+
+    secao_a_above_fold:
+      headline_principal:
+        template: "Como [RESULTADO ESPECIFICO] em [TIMEFRAME] Sem [DOR #1] ou [DOR #2]"
+        exemplos:
+          ruim: "Curso de Marketing Digital"
+          bom: "Aprenda Marketing Digital"
+          matador: "Como Conseguir 30 Clientes High-Ticket em 90 Dias Sem Gastar Fortuna em Ads ou Virar Escravo do Instagram"
+        teste_ab:
+          versao_dor: "Pare de Perder 87% dos Seus Leads"
+          versao_desejo: "Converta 10x Mais com o Mesmo Trafego"
+        funcao: "Maximiza Dream Outcome na Value Equation"
+
+      subheadline:
+        template: "O [MECANISMO UNICO] usado por [NUMERO] [AVATAR ESPECIFICO] para [RESULTADO COMPROVADO] - Agora disponivel para [QUALIFICACAO]"
+        exemplo: "O Sistema de 3 Fases usado por 4.500+ Donos de Academia para encher suas unidades em 30 dias - Agora disponivel para quem esta cansado de sala vazia"
+        posicionamento: "Diretamente abaixo da headline, fonte 60% do tamanho"
+        funcao: "Aumenta Probabilidade Percebida com especificidade e mecanismo"
+
+      cta_principal:
+        especificacoes:
+          cor: "Contraste minimo de 3:1 com fundo"
+          tamanho: "Minimo 200px largura no mobile"
+          texto: "Orientado a beneficio, nao acao"
+        exemplos:
+          ruim: "Comprar Agora"
+          bom: "Quero Meu Acesso"
+          matador: "Sim! Quero 30 Clientes em 90 Dias ->"
+        hack: "Use seta (->) no botao. Aumenta CTR em 12-26%"
+
+      prova_social_imediata:
+        formato: "[ESTRELAS] [NUMERO]+ Alunos | [PERCENTUAL]% Satisfacao | Resultados em [DIAS] Dias ou Dinheiro de Volta"
+        exemplo: "5 estrelas 2.847+ Alunos | 98% Satisfacao | Resultados em 14 Dias ou Dinheiro de Volta"
+        posicao: "Logo abaixo do CTA ou integrado ao header"
+
+      indicador_urgencia:
+        tipos:
+          timer: "Oferta Expira em 23:47:32"
+          vagas: "7 de 25 Vagas Restantes"
+          bonus: "Bonus de R$2000 Apenas Hoje"
+        alerta: "DEVE ser REAL. Falsa escassez = destruicao de trust de longo prazo"
+
+    secao_b_corpo:
+      vsl_ou_hero:
+        duracao_vsl:
+          cold_traffic: "8-15 minutos"
+          warm_traffic: "15-45 minutos"
+        thumbnail: "Play button obvio + texto de beneficio"
+        alternativa: "Mockup do produto/resultado ou foto do 'depois'"
+
+      bullets_beneficios:
+        formula: "[CHECK] [RESULTADO] para que voce possa [BENEFICIO EMOCIONAL]"
+        exemplos:
+          ruim: "10 Modulos de Conteudo"
+          bom: "Aprenda Facebook Ads"
+          matador: "[CHECK] Domine o Pixel do Facebook em 48h para que voce pare de desperdicar 73% do seu budget com publico errado"
+        quantidade_ideal: "5-7 bullets. Mais que isso dilui impacto"
+
+      secao_para_quem_e:
+        template: |
+          Este [PRODUTO] e PERFEITO para voce se:
+          [CHECK] [SITUACAO ESPECIFICA #1]
+          [CHECK] [DOR ESPECIFICA #2]
+          [CHECK] [DESEJO ESPECIFICO #3]
+        exemplo: |
+          Este sistema e PERFEITO para voce se:
+          [CHECK] Voce tem uma academia com menos de 150 membros ativos
+          [CHECK] Esta cansado de dar desconto para competir
+          [CHECK] Quer um sistema que funciona em cidades pequenas
+        funcao: "Aumenta Probabilidade Percebida - 'isso foi feito para mim'"
+
+      secao_para_quem_nao_e:
+        template: |
+          ATENCAO: Isso NAO e para voce se:
+          [X] [DESQUALIFICADOR #1]
+          [X] [DESQUALIFICADOR #2]
+        exemplo: |
+          ATENCAO: Isso NAO e para voce se:
+          [X] Voce procura uma "pilula magica" sem trabalho
+          [X] Nao tem pelo menos 2h/semana para implementar
+          [X] Sua academia tem menos de 6 meses de operacao
+        funcao: "Exclusividade aumenta desejo + qualifica melhor cliente"
+
+      stack_valor_visual:
+        estrutura: |
+          COMPONENTE #1 ........................ Valor R$ 2.000
+          COMPONENTE #2 ........................ Valor R$ 1.500
+          BONUS #1 ............................. Valor R$ 997
+          BONUS #2 ............................. Valor R$ 500
+          BONUS #3 ............................. Valor R$ 2.000
+                              VALOR TOTAL: R$ 6.997
+                              SEU INVESTIMENTO: R$ 997
+                              VOCE ECONOMIZA: R$ 6.000
+        design: "Use tabela ou cards. Risque valores individuais. Destaque economia"
+
+      comparacao_preco:
+        matriz: |
+          ALTERNATIVA A (Agencia): R$ 5.000/mes = R$ 60.000/ano
+          ALTERNATIVA B (Consultor): R$ 10.000 + 20% resultados
+          ALTERNATIVA C (Fazer Sozinho): 2 anos de tentativa e erro
+          NOSSA SOLUCAO: R$ 997 uma vez - Para sempre
+
+      faq_5_objecoes:
+        objecoes_universais:
+          - "Funciona para [minha situacao especifica]?"
+          - "Quanto tempo leva para ver resultados?"
+          - "E se nao funcionar para mim?"
+          - "Preciso de [recurso/habilidade] para funcionar?"
+          - "Como funciona o suporte?"
+        formato: "Pergunta em bold, resposta que termina reforcando beneficio"
+
+      garantia:
+        template: |
+          GARANTIA TRIPLA DE 30 DIAS
+          [CHECK] Garantia #1: Resultados em 14 dias ou dinheiro de volta
+          [CHECK] Garantia #2: Se implementar e nao funcionar, devolvemos 2X
+          [CHECK] Garantia #3: Pode cancelar por qualquer motivo em 30 dias
+        design: "Box destacado, selo ou badge, cor contrastante"
+
+      sobre_criador:
+        elementos:
+          - "Foto profissional"
+          - "2-3 credenciais quantificaveis"
+          - "1 vulnerabilidade estrategica"
+          - "Missao clara"
+        script: "Depois de quebrar 3 academias e quase declarar falencia, descobri o sistema que salvou meu negocio. Hoje, apos ajudar 4.500+ academias, minha missao e..."
+
+    secao_c_conversao:
+      barra_progresso:
+        passos:
+          - "Passo 1: Informacoes Basicas"
+          - "Passo 2: Pagamento"
+          - "Passo 3: Confirmacao"
+        impacto: "Reduz abandono de carrinho em 18-30%"
+
+      selos_seguranca:
+        essenciais:
+          - "SSL/Cadeado"
+          - "Bandeiras de cartao"
+          - "Compra Segura"
+          - "Garantia de privacidade"
+        posicao: "No checkout E proximo aos CTAs principais"
+
+      chat_suporte:
+        opcoes:
+          - "WhatsApp flutuante"
+          - "Chat integrado"
+          - "Duvidas? (11) 9XXXX-XXXX"
+        script_chat: "Oi! Vi que esta na pagina ha X minutos. Posso tirar alguma duvida sobre o programa?"
+
+  metricas_sucesso:
+    above_fold: ">40% scroll rate"
+    pagina_completa: ">3% conversao em cold traffic"
+    checkout: "<25% abandono"
+
+  checklists:
+    fase_1_above_fold:
+      - "Headline magnetica - estrutura Como [RESULTADO] em [TIMEFRAME] sem [DOR]"
+      - "Subheadline de credibilidade"
+      - "CTA principal impossivel de ignorar"
+      - "Prova social imediata"
+      - "Indicador de urgencia real"
+
+    fase_2_mobile:
+      - "Velocidade < 3 segundos no mobile 3G"
+      - "PageSpeed score >90"
+      - "Texto legivel sem zoom, minimo 16px"
+      - "Botoes minimo 44px altura"
+      - "Formularios otimizados com autopreenchimento"
+
+    fase_3_persuasao:
+      - "Hierarquia visual clara"
+      - "VSL ou imagem hero"
+      - "Bullets de beneficios (5-7)"
+      - "Secao para quem e"
+      - "Secao para quem nao e"
+      - "FAQ das 5 maiores objecoes"
+
+    fase_4_valor:
+      - "Stack de valor visual"
+      - "Comparacao de preco (ancoragem)"
+      - "Garantia destacada"
+
+    fase_5_autoridade:
+      - "Sobre o criador com foto e credenciais"
+      - "3-5 cases com resultados numericos"
+      - "Logos e certificacoes"
+
+    fase_6_conversao:
+      - "Multiplos CTAs a cada 2-3 secoes"
+      - "Barra de progresso no checkout"
+      - "Selos de seguranca"
+
+    fase_7_otimizacao:
+      - "Google Analytics 4 + Facebook Pixel"
+      - "Heatmaps (Hotjar/Clarity)"
+      - "A/B Testing configurado"
+
+    fase_8_suporte:
+      - "Chat/Suporte visivel"
+      - "Exit-intent popup"
+      - "Retargeting setup"
+
+    fase_9_compliance:
+      - "Disclaimers obrigatorios"
+      - "Politicas legais LGPD"
+      - "Backup e recuperacao"
+
+  erros_fatais:
+    erro_1:
+      nome: "Vender recursos em vez de resultados"
+      problema: "10 modulos + 50 templates + grupo no Facebook"
+      correcao: "Para cada feature, complete: '...para que voce possa [RESULTADO EMOCIONAL]'"
+      exemplo:
+        ruim: "Acesso ao grupo VIP no Facebook"
+        bom: "Rede de networking com outros donos de agencia faturando 6-7 digitos para que voce nunca mais se sinta isolado construindo seu imperio"
+
+    erro_2:
+      nome: "Multiplas ofertas na mesma pagina"
+      problema: "Paradoxo da escolha - quanto mais opcoes, menor conversao"
+      correcao: "Uma landing page = uma oferta = uma decisao"
+      regra: "Confused mind says no. Excited mind says yes."
+
+    erro_3:
+      nome: "Garantia fraca ou inexistente"
+      template_matador: |
+        GARANTIA TRIPLA "VITORIA CERTA":
+        [CHECK] Implemente por 21 dias. Sem resultados? Dinheiro de volta.
+        [CHECK] Nao ficar satisfeito por qualquer motivo? Dinheiro de volta.
+        [CHECK] Aplicar tudo e nao ter ROI positivo? Devolvemos 2X seu investimento.
+
+    erro_4:
+      nome: "Preco sem contexto"
+      correcao: "Preco DEPOIS do valor, JUNTO com comparacoes, ACOMPANHADO de garantia"
+      sequencia:
+        - "Mostre o stack de valor (R$15.000 total)"
+        - "Compare com alternativas (consultor cobra R$10k)"
+        - "Apresente seu preco (apenas R$1.997)"
+        - "Reforce com garantia (sem risco)"
+        - "Adicione urgencia (apenas hoje)"
+
+    erro_5:
+      nome: "Copy generico de nicho"
+      correcao: "Use linguagem EXATA que seu avatar usa"
+      exemplo:
+        ruim: "Aumente sua receita"
+        bom: "Pare de brigar por socio com mensalidade de R$49 quando voce pode ter lista de espera cobrando R$149"
+
+# ==============================================================================
+# UPSELL FRAMEWORKS
+# ==============================================================================
+upsell:
+  fundamento_psicologico:
+    estado_pos_compra:
+      - "Dopamina elevada: Cerebro recompensando a decisao"
+      - "Consistencia cognitiva: Tendencia a manter o padrao de 'sim'"
+      - "Cartao na mao: Barreira de pagamento ja superada"
+      - "Momento de maxima confianca: Acabou de confiar em voce"
+    janela_ouro: "3-7 segundos antes da dopamina comecar a cair"
+
+  blueprint_upsell:
+    secao_a_topo:
+      headline_continuidade:
+        templates:
+          - "ESPERE! Sua compra foi confirmada, mas..."
+          - "[Nome], voce desbloqueou uma oferta exclusiva"
+          - "Parabens! Antes de acessar seu [produto], veja isso..."
+        exemplo_matador: "Joao, Sua Inscricao Foi Confirmada! Mas 87% dos Alunos Que Pegaram Este Upgrade Tiveram Resultados 3x Mais Rapidos..."
+        evitar:
+          - "Questionar a compra anterior"
+          - "Criar nova ansiedade"
+          - "Parecer que a compra inicial e insuficiente"
+
+      subheadline_complementaridade:
+        formula: "Adicione [RESULTADO ESPECIFICO] ao que voce acabou de comprar e [BENEFICIO MULTIPLICADOR] - Oferta valida apenas agora"
+        exemplo: "Adicione nosso Sistema de Ads Automatizados ao seu programa e comece a receber leads no piloto automatico enquanto implementa o curso principal"
+
+      barra_progresso:
+        visual: |
+          [CHECK] Passo 1: Programa Principal Garantido
+          [?] Passo 2: Acelerar Resultados (Voce esta aqui)
+          [ ] Passo 3: Acessar Area de Membros
+        hack: "O checkmark verde do passo 1 reforca a decisao positiva anterior"
+
+      timer_decisao:
+        duracao: "10 minutos (nao 24h)"
+        mensagem: "Oferta expira quando sair desta pagina"
+        script: "Esta oferta aparece APENAS uma vez. Quando sair desta pagina, o preco volta para R$ [preco cheio]"
+
+    secao_b_corpo:
+      video_upsell:
+        duracao: "2-4 minutos maximo"
+        estrutura:
+          "0-10s": "Parabenizar e validar compra"
+          "10-30s": "Revelar o 'gap' que o upsell preenche"
+          "30-90s": "Demonstrar o resultado adicional"
+          "90-180s": "Stack de valor rapido"
+          "180-240s": "CTA com urgencia"
+        script_abertura: "Parabens! Voce acabou de tomar a melhor decisao para [resultado]. Mas descobri que alunos que tambem pegam [upsell] conseguem [resultado 3x maior]. Deixe-me mostrar rapidamente..."
+
+      grafico_com_vs_sem:
+        formato: |
+          SEM O UPGRADE:          COM O UPGRADE:
+          [CHECK] Resultado em 90 dias  [CHECK] Resultado em 30 dias
+          [CHECK] Suporte por email     [CHECK] Suporte 1-on-1 semanal
+          [CHECK] 10 Templates          [CHECK] 147 Templates prontos
+          [X] Implementacao manual  [CHECK] Done-for-you setup
+          [X] Teste e erro          [CHECK] Roadmap personalizado
+          Velocidade: 1x          Velocidade: 3-5x
+
+      mini_stack:
+        estrutura: |
+          COMPONENTE PRINCIPAL .............. Valor R$ 2.997
+          BONUS RAPIDO #1 .................. Valor R$ 997
+          BONUS RAPIDO #2 .................. Valor R$ 500
+                      TOTAL: R$ 4.494
+                      HOJE APENAS: R$ 497
+        regra: "Valor percebido deve ser 5-10x o preco do upsell"
+
+      prova_social_upsell:
+        formato: |
+          "93% dos alunos que pegaram o [Upsell] dizem que
+          foi a melhor decisao que tomaram..."
+
+          [Foto] "O [upsell] cortou meu tempo de implementacao
+          em 75%. Resultados na primeira semana!" - Maria Silva
+        quantidade: "2-3 depoimentos curtos e especificos sobre o upsell"
+
+      garantia_empilhada:
+        script: |
+          "Sua garantia original CONTINUA VALENDO, e ainda adiciono:
+          Se o [Upsell] nao acelerar seus resultados em pelo menos 2x,
+          devolvemos 100% do valor do upgrade - e voce fica com tudo."
+
+    secao_c_conversao:
+      dois_botoes:
+        botao_sim:
+          cor: "Verde, Grande"
+          texto: "SIM! Quero Resultados 3x Mais Rapidos ->"
+        botao_nao:
+          cor: "Cinza, Menor"
+          texto: "Nao, prefiro ir mais devagar"
+        posicionamento: "Fixos no rodape em mobile"
+
+      micro_comparacao:
+        script: |
+          Voce acabou de investir R$ 997 no programa principal.
+          Por apenas R$ 297 a mais (menos de 30% extra),
+          voce multiplica seus resultados por 3.
+          E como comprar um carro e deixar de pegar o seguro.
+
+      faq_ultra_especifica:
+        objecoes:
+          - pergunta: "Preciso disso agora ou posso pegar depois?"
+            resposta: "Este preco e exclusivo para agora. Depois volta para R$ 997"
+          - pergunta: "Isso nao deveria estar incluido no principal?"
+            resposta: "O principal resolve [problema A]. Isso acelera e automatiza"
+          - pergunta: "E se eu me arrepender?"
+            resposta: "Mesma garantia do principal + 30 dias extras so pro upgrade"
+
+      exit_intent_downsell:
+        gatilho: "Mouse indo para X ou botao voltar"
+        script: |
+          "ULTIMA CHANCE!
+          Ok, entendo que R$ 497 pode ser demais agora...
+          Que tal levar o mesmo upgrade por 3x de R$ 197?"
+          [SIM, QUERO PARCELADO] [Nao, obrigado]
+
+  sequencia_multiplos_upsells:
+    upsell_1:
+      tipo: "Complemento Direto"
+      valor: "30-50% do valor principal"
+      funcao: "Acelera resultado principal"
+      target_conversao: "30%"
+
+    upsell_2:
+      tipo: "Versao lite (se recusou #1)"
+      valor: "15-25% do valor principal"
+      target_conversao: "20%"
+
+    upsell_3:
+      tipo: "Complemento premium (se aceitou #1)"
+      valor: "50-100% do valor principal"
+      target_conversao: "15% dos que compraram #1"
+
+  thank_you_page:
+    elementos:
+      - "Confirmacao visual da compra total"
+      - "Proximos passos numerados"
+      - "Link direto para area de membros"
+      - "Video de onboarding (2 min)"
+      - "Oferta de 'Refer a Friend' com incentivo"
+
+  one_click_upsell:
+    beneficio: "Remove TODA friccao de pagamento"
+    implementacao:
+      - "Usa token do cartao da primeira compra"
+      - "Um clique = processamento instantaneo"
+      - "Sem re-digitacao de dados"
+    aumento_conversao: "40-60% comparado a re-checkout"
+
+  metricas:
+    upsell_1_take_rate: ">25%"
+    aov_total: "1.8-2.5x valor do produto principal"
+    tempo_medio_pagina: "<90 segundos"
+
+  matematica_upsell:
+    exemplo: |
+      100 compradores x R$997 = R$99.700
+      30 aceitam upsell de R$497 = R$14.910
+      15 aceitam downsell de R$197 = R$2.955
+      TOTAL: R$117.565 (AOV aumenta 17.8%)
+
+  regra_ouro: "O upsell nao e sobre ganhar mais dinheiro do mesmo cliente. E sobre dar a ele as ferramentas para ter sucesso mais rapido."
+
+# ==============================================================================
+# OFERTA FRAMEWORKS
+# ==============================================================================
+oferta:
+  equacao_valor:
+    formula: "VALOR = (Sonho x Certeza) / (Tempo x Esforco)"
+    meta: "Fazer denominador tender a zero"
+    aumentar_numerador:
+      - "Resultado sonhado definido (especifico + mensuravel)"
+      - "Certeza de sucesso >80% (com garantia)"
+    zerar_denominador:
+      - "Tempo para resultado <30 dias"
+      - "Esforco do cliente minimizado"
+
+  diagnostico_pre_oferta:
+    reality_check:
+      - "Custo de entrega calculado (exato, nao chute)"
+      - "Margem minima: 80% (menos = commodity)"
+      - "CAC atual documentado"
+      - "LTGP atual medido"
+      - "Churn rate conhecido"
+
+    pesquisa_dor:
+      - "100 comentarios de clientes lidos"
+      - "10 ligacoes de vendas ouvidas"
+      - "Top 3 objecoes mapeadas"
+      - "Linguagem exata do cliente coletada"
+      - "Momento de compra identificado"
+
+  construcao_grand_slam:
+    nome_oferta:
+      requisitos:
+        - "Resultado no nome"
+        - "Tempo especificado"
+        - "Avatar identificado"
+        - "Diferente de TUDO no mercado"
+      exemplos:
+        ruim: "Curso de Marketing"
+        bom: "Sistema 10 Clientes em 30 Dias para Dentistas"
+
+    core_offer:
+      checklist:
+        - "Solucao principal clara"
+        - "Entrega em <7 dias"
+        - "Resultado em <30 dias"
+        - "Preco 10x custo de entrega"
+
+    bonus_stack:
+      estrutura:
+        bonus_1: "Resolve objecao #1 (velocidade)"
+        bonus_2: "Resolve objecao #2 (dificuldade)"
+        bonus_3: "Resolve objecao #3 (suporte)"
+        bonus_4: "Acelera resultado 2x"
+        bonus_5: "Insurance policy"
+      regra: "Valor dos bonus = 5-10x preco total"
+      exemplos:
+        - "Templates prontos (economiza 40h)"
+        - "Suporte 1-1 por 90 dias (vale $5k)"
+        - "Comunidade vitalicia (vale $2k/ano)"
+        - "Calls semanais ao vivo (vale $500/mes)"
+        - "Garantia estendida (remove risco)"
+
+  pricing:
+    estrutura:
+      - "Preco ancora mostrado (3x seu preco)"
+      - "Seu preco (10x custo)"
+      - "Pagamento facilitado (3-12x)"
+      - "Desconto a vista (10-20%)"
+      - "Penalidade por parcela"
+
+    teste_preco:
+      - "Teste 1: Preco atual"
+      - "Teste 2: 2x o preco"
+      - "Teste 3: 5x o preco"
+      - "Teste 4: 10x o preco"
+    descoberta: "Preco alto AUMENTA conversao se valor justifica"
+
+  garantias:
+    tipos_do_fraco_ao_forte:
+      fraco: "Garantia de 7 dias"
+      ok: "Garantia de 30 dias"
+      bom: "Garantia de resultado"
+      otimo: "Garantia condicional"
+      insano: "Garantia 'Melhor que Gratis'"
+
+    exemplo_matador: "Teste por 90 dias. Se nao tiver 10 clientes novos, devolvemos 100% + pagamos suas ads dos proximos 30 dias."
+    principio: "Risco ZERO pro cliente. VOCE assume tudo."
+
+  urgencia_escassez:
+    urgencia_temporal:
+      - "Bonus expira em data X"
+      - "Preco sobe em data Y"
+      - "Vagas fecham dia Z"
+      - "Condicao especial ate hora H"
+
+    escassez_legitima:
+      - "Limite de atendimento real"
+      - "Capacidade operacional maxima"
+      - "Recurso finito (tempo do expert)"
+      - "Exclusividade geografica"
+    alerta: "Fake urgency = trust morto. Urgencia real = conversao 3x"
+
+  script_pitch:
+    estrutura:
+      problema_agitado: "2 min"
+      solucao_apresentada: "1 min"
+      resultado_prometido: "30s"
+      metodo_explicado: "2 min"
+      prova_social: "1 min"
+      oferta_revelada: "2 min"
+      garantia_explicada: "30s"
+      cta_urgencia: "30s"
+
+    power_phrases:
+      - "Voce literalmente nao pode perder"
+      - "O risco e 100% meu"
+      - "Funciona especialmente se voce..."
+      - "Inclusive, se nao funcionar..."
+      - "O pior que acontece e..."
+
+  teste_validacao:
+    mvp:
+      - "10 prospects apresentados"
+      - "3+ vendas fechadas (30% conversao)"
+      - "Feedback coletado"
+      - "Objecoes documentadas"
+      - "Ajustes implementados"
+
+    metricas_sucesso:
+      conversao_frio: ">10%"
+      conversao_morno: ">30%"
+      conversao_quente: ">50%"
+      ticket_medio: "subindo"
+      refund: "<5%"
+
+  red_flags:
+    indicadores:
+      - "'Preciso pensar' >50% = Valor baixo"
+      - "'Muito caro' frequente = Valor nao comunicado"
+      - "Comparacao com concorrente = Commodity"
+      - "'Nao e pra mim' = Avatar errado"
+      - "Ghost apos proposta = Trust quebrado"
+
+  exemplos_transformacao:
+    academia:
+      de: "Mensalidade de R$99"
+      para: "6 Semanas pra Verao: Perca 5kg ou nao paga. Inclui personal, nutricao e suplementos. R$997."
+
+    agencia:
+      de: "Gerenciamos suas redes por R$2k/mes"
+      para: "10 Clientes Qualificados em 30 dias ou trabalhamos de graca ate conseguir. Setup + ads inclusos. R$8k."
+
+    consultoria:
+      de: "Consultoria de vendas R$5k"
+      para: "Dobre seu close rate em 21 dias com nosso sistema. Se nao dobrar, devolvemos + pagamos R$2k pelo seu tempo. R$15k."
+
+  framework_criacao_rapida:
+    passos:
+      1_resultado: "O que o cliente REALMENTE quer?"
+      2_timeframe: "Qual o menor tempo possivel?"
+      3_friccao: "Como fazer com zero esforco dele?"
+      4_garantia: "Como inverter 100% do risco?"
+      5_valor: "Como fazer valer 10x o preco?"
+
+  checklist_pre_lancamento:
+    perguntas:
+      - "Oferta passa no 'teste da mae'?"
+      - "Voce compraria por 2x o preco?"
+      - "Garantia te da frio na barriga?"
+      - "Resultado e especifico e mensuravel?"
+      - "Stack value >10x preco?"
+      - "Nome comunica transformacao?"
+      - "Urgencia e real e etica?"
+      - "Cliente nao pode perder?"
+    regra: "Cada 'nao' = -20% de conversao"
+
+  verdade_brutal: "Oferta boa vende com copy ruim. Oferta ruim nao vende nem com copy do Ogilvy."
+
+# ==============================================================================
+# LAUNCH FRAMEWORKS
+# ==============================================================================
+launch:
+  framework_evento:
+    acronimo: "E.V.E.N.T.O"
+    elementos:
+      E: "ESCASSEZ ARTIFICIAL - Crie um momento unico e irrepetivel no tempo"
+      V: "VALOR EMPILHADO - Stack de ofertas que supera o preco em 10X"
+      E2: "ESCADA DE COMPROMISSO - Micro-compromissos ate a grande conversao"
+      N: "NETWORK EFFECT - Transforme clientes em promotores instantaneos"
+      T: "TENSAO NARRATIVA - Historia com inicio, meio e climax emocional"
+      O: "OFERTA IRRECUSAVEL - Inversao de risco + garantias impossiveis"
+
+  fases_cronologicas:
+    fase_1_preparacao:
+      duracao: "2-3 semanas (6 semanas antes)"
+      objetivo: "Construir toda infraestrutura e ativos"
+      acoes:
+        - "Produzir 1000+ variacoes de ads + 2 hero ads"
+        - "Construir 7 paginas de funil no Shopify"
+        - "Configurar infraestrutura (LED Wall, estudio virtual)"
+        - "Preparar sequencias de 30+ emails"
+        - "Load testing para 1M+ acessos simultaneos"
+
+    fase_2_kickoff_afiliados:
+      duracao: "6 semanas antes, continua ate lancamento"
+      objetivo: "Ativar exercito de promotores com gamificacao"
+      sistema_incentivos:
+        top_10:
+          requisito: "Mais sign-ups que aparecem"
+          premio: "Jantar privado + Fireside chat + Workshop presencial"
+        top_50:
+          requisito: "Top 50 por sign-ups"
+          premio: "Workshop presencial + Q&A grupo"
+        minimo_10:
+          requisito: "Minimo 10 registros"
+          premio: "Sorteio para workshop + Audiobook exclusivo"
+        todos:
+          requisito: "Apenas registrar"
+          premio: "$100M Ads Folder + Blackbook + Gravacao HD"
+
+    fase_3_anuncio:
+      duracao: "4 semanas antes"
+      objetivo: "Criar buzz e iniciar registros"
+      acoes:
+        - "Lancar video announcement no YouTube"
+        - "5 videos organicos com conceitos do livro"
+        - "4-5 podcasts estrategicos na semana do launch"
+
+    fase_4_aquecimento:
+      duracao: "3 semanas antes"
+      objetivo: "Escalar registros para 1M+ pessoas"
+      budget_diario:
+        semana_3: "$50K"
+        semana_2: "$150K"
+        semana_1: "$250K"
+
+    fase_5_evento:
+      duracao: "Dia D - 4+ horas"
+      objetivo: "Converter massa em compradores"
+      estrutura:
+        bloco_1:
+          duracao: "90 min"
+          conteudo: "Webinar principal"
+        bloco_2:
+          duracao: "60-90 min"
+          conteudo: "6 Guest speakers surpresa"
+        bloco_3:
+          duracao: "30+ min"
+          conteudo: "Giveaways e FAQ"
+
+    fase_6_facilitacao:
+      duracao: "24 horas"
+      objetivo: "Maximizar conversao com suporte"
+
+    fase_7_cart_close:
+      duracao: "72 horas"
+      objetivo: "Urgencia final e recuperacao"
+
+    fase_8_pr:
+      duracao: "2-4 semanas pos-lancamento"
+      objetivo: "Capitalizar em autoridade e recordes"
+
+  ladder_valor:
+    free_stack:
+      trigger: "Aparecer no evento"
+      conteudo:
+        - "Lost Chapters (Bonus show-up)"
+        - "Audiobook completo"
+        - "Curso online gratis"
+        - "3 meses Skool trial"
+
+    core_offer:
+      preco: "$30"
+      conteudo:
+        - "1 livro fisico"
+        - "Shipping incluido"
+
+    bump_offer:
+      preco: "$450"
+      conteudo:
+        - "15 livros"
+        - "ACQ Closer Handbook"
+        - "ACQ Advertising Handbook"
+
+    high_ticket:
+      preco: "$5,998"
+      conteudo:
+        - "200 livros (com codigo resgate)"
+        - "12 Playbooks fisicos"
+        - "Workshop virtual meio-dia"
+        - "ACQ AI Assistant"
+        - "Launch Collateral Blackbook (se comprar durante live)"
+      justificativa:
+        valor_unitario: "$30 x 200 = $6,000 (ja break even)"
+        valor_bonus: "$10,197"
+        desconto: "41%"
+        psicologia: "Abaixo de $6K (barreira psicologica)"
+
+  funil_paginas:
+    registration_opt_in:
+      funcao: "Captura com promessa"
+      gatilho: "Curiosidade + Free"
+    vip_sales_page:
+      funcao: "Ascensao imediata"
+      gatilho: "Exclusividade"
+    checkout_page:
+      funcao: "Conversao com upsells"
+      gatilho: "Conveniencia (Affirm)"
+    thank_you_vsl:
+      funcao: "Maximizar LTV"
+      gatilho: "Reciprocidade"
+    countdown_page:
+      funcao: "Manter engagement"
+      gatilho: "Urgencia temporal"
+
+  sequencias_followup:
+    pre_evento:
+      "D-7": "1 semana para o maior lancamento"
+      "D-3": "Revelando os guest speakers"
+      "D-1": "Amanha fazemos historia"
+      "D-Day AM": "Comecamos em 2 horas"
+
+    durante_evento:
+      "H+1": "30K pessoas assistindo agora"
+      "H+2": "Oferta revelada - link aqui"
+      "H+3": "Ultima hora para bonus"
+
+    pos_evento:
+      "D+1": "Replay disponivel por 48h"
+      "D+2": "Cart fecha amanha meia-noite"
+      "D+3 AM": "Ultimas 12 horas"
+      "D+3 PM": "FECHANDO EM 1 HORA"
+
+  top_10_hacks:
+    - "LED Wall no estudio: Criar sensacao de mega-evento sem venue"
+    - "200 livros com codigo resgate: Evita problema logistico de shipping em massa"
+    - "Duas agencias competindo: 80/20 split com realocacao por performance"
+    - "VIP no YouTube separado: Cria exclusividade dentro do gratis"
+    - "Zoom faces ao fundo: Simula multidao sem custos de evento presencial"
+    - "Affirm no checkout: Remove objecao de preco no high-ticket"
+    - "Lost chapters como show-up bonus: Nao no registro, mas no aparecer"
+    - "Mystery guests nao revelados: Mantem pessoas ate o final"
+    - "Guinness ao vivo: PR instantaneo e viral"
+    - "3 platforms simultaneos: YouTube regular + VIP + Zoom"
+
+  formula_lancamento: "SUCESSO = (Recordes x Urgencia x Stack Gratis) + (Afiliados^2 x Ad Spend) / Friccao no Checkout"
+
+  modelo_mental: "De tudo gratis para 99%, monetize 1% a 600X o valor."
+
+  calculadora_roi:
+    investimento:
+      ad_spend: "$3,000,000"
+      equipe_tech: "$500,000"
+      producao: "$200,000"
+      total: "$3,700,000"
+
+    receita_projetada:
+      "1% compra 1 livro (10K x $30)": "$300,000"
+      "0.5% compra 15 livros (5K x $450)": "$2,250,000"
+      "0.1% compra 200 livros (1K x $5,998)": "$5,998,000"
+      total: "$8,548,000"
+
+    roi: "131% (2.3X)"
+    breakeven: "617 vendas do high-ticket"
+
+# ==============================================================================
+# PROMPTS DE EXTRACAO
+# ==============================================================================
+launch_prompts:
+  prompt_framework_lancamento:
+    descricao: "Prompt para extrair framework de lancamento de documentos"
+    tarefas:
+      tarefa_1:
+        nome: "Framework Estrategico"
+        extrair:
+          - "Fases Cronologicas: Nome, duracao, objetivo principal"
+          - "Pilares Fundamentais: Elementos que sustentam todo o lancamento"
+          - "Mecanica de Conversao: Como cada fase alimenta a proxima"
+
+      tarefa_2:
+        nome: "Blueprint Operacional"
+        para_cada_fase:
+          - "Gatilhos Psicologicos: Principios de persuasao aplicados"
+          - "Acoes Criticas: Lista de execucao com responsaveis"
+          - "Metricas de Sucesso: KPIs e checkpoints"
+          - "Recursos Necessarios: Equipe, tech stack, budget allocation"
+
+      tarefa_3:
+        nome: "Sistema de Ofertas"
+        mapear:
+          - "Ladder de Valor: Free -> Low ticket -> High ticket"
+          - "Mecanica de Upsell: Como cada oferta ascende para a proxima"
+          - "Justificativa de Preco: Por que o preco funciona"
+          - "Bonus e Urgencia: Stack de valor e gatilhos temporais"
+
+      tarefa_4:
+        nome: "Maquina de Trafego"
+        detalhar:
+          - "Funil Completo: Cada pagina e sua funcao psicologica"
+          - "Mix de Trafego: Proporcao organico vs pago vs afiliados"
+          - "Sistema de Afiliados: Estrutura de incentivos e gamificacao"
+          - "Sequencias de Follow-up: Email/SMS timing e copy angles"
+
+      tarefa_5:
+        nome: "Playbook Final"
+        sintetizar:
+          - "Checklist Pre-Lancamento (90-60-30 dias antes)"
+          - "Cronograma Detalhado (6 semanas -> Dia D -> Pos-venda)"
+          - "SOPs Criticos (Standard Operating Procedures)"
+          - "Plano de Contingencia (O que fazer se X acontecer)"
+          - "Template de Escalonamento (Como adaptar para diferentes tamanhos)"
+
+      output_especial:
+        - "Formula do Lancamento: Equacao/modelo mental simples"
+        - "Top 10 Hacks: Elementos nao-obvios que multiplicaram resultados"
+        - "Calculadora de ROI: Framework para projetar resultados"
+
+# ==============================================================================
+# SALES SCRIPTS
+# ==============================================================================
+sales_scripts:
+  script_high_ticket:
+    abertura:
+      script: |
+        "[Nome], vi que voce ficou ate o final da apresentacao...
+        isso me diz MUITO sobre voce. Voce nao e do tipo
+        que so consome conteudo, voce IMPLEMENTA, certo?"
+
+    qualificacao:
+      script: |
+        "Numa escala de 1 a 10, qual seu nivel de frustracao
+        com [problema especifico]?"
+        -> Se menor que 7: "O que precisaria mudar pra ser 10?"
+        -> Se 7 ou mais: "O que te impede de resolver HOJE?"
+
+    transicao:
+      script: |
+        "Pelo que voce me contou, vejo dois caminhos:
+        1) Continuar sozinho e talvez conseguir em 2 anos
+        2) Pegar nosso atalho e fazer em 90 dias
+        Qual faz mais sentido pra voce?"
+
+    fechamento:
+      script: |
+        "Perfeito! Vou liberar seu acesso agora mesmo...
+        Prefere parcelar em 12x ou a vista com desconto?"
+
+  framework_objecoes:
+    metodo: "VACA - Validar, Aprofundar, Contornar, Avancar"
+    respostas:
+      muito_caro: "Quanto custa NAO resolver [problema]?"
+      preciso_pensar: "O que especificamente precisa avaliar?"
+      nao_e_pra_mim: "Quem voce conhece que precisa disso?"
+      ja_tentei: "O que foi diferente do que mostrei hoje?"
+
+  estrutura_pitch:
+    abertura:
+      duracao: "15 seg"
+      script: |
+        "Vi que voce estava no evento sobre [topico].
+        Conseguiu assistir a parte sobre [beneficio especifico]?"
+
+    qualificacao:
+      duracao: "30 seg"
+      script: |
+        "So para eu entender melhor...
+        - Qual sua situacao atual com [problema]?
+        - O que mais te chamou atencao na apresentacao?
+        - Qual sua maior duvida sobre [produto]?"
+
+    transicao:
+      duracao: "15 seg"
+      script: |
+        "Perfeito! Baseado no que voce me disse,
+        [produto] pode te ajudar especificamente com..."
+
+    oferta:
+      duracao: "45 seg"
+      instrucao: "Repetir stack do evento personalizado para a dor"
+
+    fechamento:
+      duracao: "30 seg"
+      script: |
+        "Consigo liberar seu acesso agora mesmo.
+        Voce prefere [forma de pagamento A ou B]?"
+
+# ==============================================================================
+# TEAM STRUCTURE (10 PAPEIS CRITICOS)
+# ==============================================================================
+team_structure:
+  organograma:
+    comando:
+      - "PROJECT OWNER"
+      - "CRISIS MANAGER"
+    execucao:
+      - "LIDER DE VENDAS"
+      - "DONO DO E-COMMERCE"
+      - "GERENTE DE MIDIA"
+      - "GERENTE DE MARKETING"
+      - "GERENTE DE LOGISTICA"
+    suporte:
+      - "LIDER DE SUPORTE"
+      - "MONTAGEM DO ESTUDIO"
+      - "FACILITIES DO EVENTO"
+      - "INFRAESTRUTURA TECH"
+
+  papel_1_project_owner:
+    titulo: "CEO do Lancamento"
+    perfil:
+      experiencia: "Minimo 2 lancamentos de 7 digitos"
+      skills: "Gestao de projetos complexos, P&L, tomada de decisao rapida"
+      diferencial: "Lideranca sob pressao extrema, visao sistemica"
+    kpis:
+      hit_meta: ">=100%"
+      timeline_compliance: ">=95%"
+      budget_variance: "<=10%"
+      team_nps: ">=8"
+
+  papel_2_lider_vendas:
+    missao: "Montar e gerenciar exercito de 300 vendedores"
+    meta: "Conversao minima de 15% no dia do lancamento"
+    estrutura_time:
+      closers_senior:
+        quantidade: 10
+        foco: "Vendas high-ticket (R$ 30.000)"
+        remuneracao: "R$ 3K fixo + 10% comissao"
+      closers_pleno:
+        quantidade: 40
+        foco: "Vendas mid-ticket (R$ 2.000)"
+        remuneracao: "R$ 2K fixo + 7% comissao"
+      sdrs_chat:
+        quantidade: 250
+        foco: "Qualificacao e core offer (R$ 150)"
+        remuneracao: "R$ 1.5K fixo + 5% comissao"
+
+  metricas_vendas:
+    fila_espera: "<30 chamadas"
+    taxa_conversao: ">15%"
+    tempo_medio_ligacao: "7 min"
+    taxa_abandono: "<5%"
+    faturamento_hora: "R$ 250K+"
+
+# ==============================================================================
+# AGENT USAGE INSTRUCTIONS
+# ==============================================================================
+agent_usage:
+  hormozi_copy:
+    descricao: "Agente especializado em copywriting e landing pages"
+    quando_usar:
+      - "Criacao de headlines e subheadlines"
+      - "Estruturacao de paginas de vendas"
+      - "Bullets de beneficios"
+      - "CTAs e botoes"
+      - "FAQs e tratamento de objecoes"
+      - "Garantias e risk reversal"
+    frameworks_primarios:
+      - "Blueprint 17 Elementos PV"
+      - "Erros Fatais"
+      - "Checklist LP"
+    instrucoes: |
+      Use a equacao de valor como base:
+      VALOR = (Dream Outcome x Probabilidade) / (Tempo x Esforco)
+
+      Para cada elemento:
+      1. Identifique qual variavel da equacao ele afeta
+      2. Otimize para maximizar numerador ou minimizar denominador
+      3. Teste variantes usando estruturas do swipefile
+
+  hormozi_upsell:
+    descricao: "Agente especializado em sequencias de upsell"
+    quando_usar:
+      - "Paginas de upsell pos-compra"
+      - "Sequencias de multiplos upsells"
+      - "Downsells e exit-intent"
+      - "Thank you pages"
+    frameworks_primarios:
+      - "Blueprint Upsell"
+      - "Sequencia Multiplos Upsells"
+      - "One-Click Upsell"
+    instrucoes: |
+      Aproveite a janela de ouro de 3-7 segundos pos-compra.
+
+      Principios:
+      1. Continuidade, nao interrupcao
+      2. Complemento, nao substituto
+      3. Acelera resultado, nao adiciona complexidade
+      4. Valor 5-10x do preco do upsell
+
+  hormozi_oferta:
+    descricao: "Agente especializado em criacao de ofertas"
+    quando_usar:
+      - "Criacao de ofertas irresistiveis"
+      - "Estruturacao de pricing"
+      - "Definicao de garantias"
+      - "Construcao de bonus stack"
+    frameworks_primarios:
+      - "Equacao de Valor"
+      - "Grand Slam Offer"
+      - "Framework Criacao Rapida"
+    instrucoes: |
+      Siga o framework de criacao rapida:
+      1. RESULTADO ESPECIFICO - O que o cliente REALMENTE quer?
+      2. TIMEFRAME AGRESSIVO - Qual o menor tempo possivel?
+      3. REMOVER FRICCAO - Como fazer com zero esforco dele?
+      4. GARANTIA INSANA - Como inverter 100% do risco?
+      5. STACK DE VALOR - Como fazer valer 10x o preco?
+
+  hormozi_launch:
+    descricao: "Agente especializado em lancamentos"
+    quando_usar:
+      - "Planejamento de lancamentos"
+      - "Estruturacao de eventos ao vivo"
+      - "Sequencias de email/sms"
+      - "Sistema de afiliados"
+      - "Funis de conversao"
+    frameworks_primarios:
+      - "Framework E.V.E.N.T.O"
+      - "Fases Cronologicas"
+      - "Ladder de Valor"
+    instrucoes: |
+      Use o framework E.V.E.N.T.O:
+      E - Escassez Artificial
+      V - Valor Empilhado
+      E - Escada de Compromisso
+      N - Network Effect
+      T - Tensao Narrativa
+      O - Oferta Irrecusavel
+
+      Formula: SUCESSO = (Recordes x Urgencia x Stack Gratis) + (Afiliados^2 x Ad Spend) / Friccao
+
+  hormozi_sales:
+    descricao: "Agente especializado em scripts de vendas"
+    quando_usar:
+      - "Scripts de ligacao"
+      - "Tratamento de objecoes"
+      - "Fechamento de vendas"
+      - "Estrutura de pitch"
+    frameworks_primarios:
+      - "Script High-Ticket"
+      - "Framework VACA (objecoes)"
+      - "Estrutura Pitch"
+    instrucoes: |
+      Use o framework VACA para objecoes:
+      V - Validar a objecao
+      A - Aprofundar para entender raiz
+      C - Contornar com reframe
+      A - Avancar para fechamento
+
+      Sempre termine perguntas com opcao binaria para facilitar decisao.

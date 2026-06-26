@@ -1,0 +1,387 @@
+# Structure Detection Patterns — Apex Vision
+# SSoT for page region detection from screenshots and live sites
+# Used by: visual-intelligence-sweep.md (Fase 1)
+# Version: 1.0.0
+
+# ═══════════════════════════════════════════════════════════════
+# INPUT TYPES — How Apex detects and handles different inputs
+# ═══════════════════════════════════════════════════════════════
+
+input_detection:
+  patterns:
+    screenshot:
+      detect: "Image file attached to message (png, jpg, webp, gif)"
+      action: "Read image → structure detection → multi-agent sweep"
+      priority: 1
+
+    url:
+      detect: "http:// or https:// pattern in user message"
+      action: "Navigate → capture at 3 viewports → structure detection → sweep"
+      priority: 1
+      capture_viewports:
+        desktop: { width: 1920, height: 1080, dpr: 1 }
+        tablet: { width: 768, height: 1024, dpr: 2 }
+        mobile: { width: 375, height: 812, dpr: 3 }
+      capture_method: "Scroll in 100vh increments, capture each fold"
+
+    url_plus_screenshot:
+      detect: "Both URL and image in same message"
+      action: "Capture URL → compare with screenshot → drift report → sweep both"
+      priority: 1
+      cross_reference: true
+
+    multiple_screenshots:
+      detect: "2+ images in same message"
+      action: "Individual sweep per image → cross-page consistency audit"
+      priority: 1
+      consistency_check: true
+
+    text_only:
+      detect: "No image, no URL — only text description"
+      action: "Prompt for print/URL, or offer code-only sweep (*apex-full)"
+      prompt: >
+        Para análise visual completa, manda um print ou URL.
+        1. Mando um print agora
+        2. Cola uma URL do site
+        3. Sweep só por código (*apex-full)
+
+    natural_language_triggers:
+      - pattern: "como ta meu (app|site|projeto|pagina)"
+        action: "prompt_for_input"
+      - pattern: "analisa (isso|esse|essa|o site|a pagina)"
+        action: "prompt_for_input"
+      - pattern: "faz uma varredura"
+        action: "prompt_for_input"
+      - pattern: "olha (esse|essa|isso)"
+        action: "expect_attachment"
+      - pattern: "quero (melhorar|otimizar|redesenhar)"
+        action: "prompt_for_input"
+
+# ═══════════════════════════════════════════════════════════════
+# PAGE REGIONS — Semantic regions detected in screenshots/pages
+# ═══════════════════════════════════════════════════════════════
+
+regions:
+  header:
+    type: "navigation"
+    visual_cues:
+      - "Horizontal bar at top of page"
+      - "Logo/brand mark on left"
+      - "Navigation links horizontal (desktop) or hamburger (mobile)"
+      - "CTA button on right"
+      - "Fixed/sticky behavior"
+    common_elements:
+      - logo
+      - nav-links
+      - cta-button
+      - hamburger-menu
+      - search-icon
+      - user-avatar
+    agents_responsible:
+      - "@css-eng"        # layout, responsive, sticky behavior
+      - "@a11y-eng"       # keyboard nav, skip links, landmarks
+      - "@perf-eng"       # lazy load logo, CLS from sticky
+
+  hero:
+    type: "hero-section"
+    visual_cues:
+      - "Large heading text (h1)"
+      - "Subheading/description below heading"
+      - "Primary CTA button"
+      - "Background image, gradient, or animated effect"
+      - "Above the fold, full-width"
+      - "Badge or label above heading"
+    common_elements:
+      - badge
+      - heading-h1
+      - subtitle
+      - cta-primary
+      - cta-secondary
+      - background-image
+      - background-effect
+      - scroll-indicator
+    agents_responsible:
+      - "@css-eng"        # layout, typography, responsive
+      - "@motion-eng"     # entrance animations, scroll effects, CTA glow
+      - "@a11y-eng"       # contrast, heading hierarchy, CTA target size
+      - "@interaction-dsgn"  # CTA placement, user flow
+      - "@perf-eng"       # LCP (hero image), CLS
+
+  feature_cards:
+    type: "content-grid"
+    visual_cues:
+      - "Grid of 2-4 similar items"
+      - "Each with icon + title + description"
+      - "Equal height cards"
+      - "Section heading above grid"
+    common_elements:
+      - section-title
+      - card-grid
+      - card-icon
+      - card-title
+      - card-description
+      - card-link
+    agents_responsible:
+      - "@css-eng"        # grid layout, card styles, responsive breakpoints
+      - "@react-eng"      # component patterns, mapping, keys
+      - "@a11y-eng"       # card semantics, link purpose
+      - "@design-sys-eng" # token consistency across cards
+
+  testimonials:
+    type: "social-proof"
+    visual_cues:
+      - "Quote marks or italic text"
+      - "Person name + avatar/photo"
+      - "Star ratings"
+      - "Carousel or grid"
+    common_elements:
+      - quote-text
+      - author-name
+      - author-avatar
+      - rating-stars
+      - carousel-controls
+    agents_responsible:
+      - "@css-eng"        # layout, typography
+      - "@motion-eng"     # carousel transitions
+      - "@a11y-eng"       # carousel keyboard nav, live regions
+
+  pricing:
+    type: "pricing-table"
+    visual_cues:
+      - "2-4 cards with prices"
+      - "Feature comparison lists"
+      - "Highlighted 'popular' or 'recommended' tier"
+      - "CTA per tier"
+    common_elements:
+      - tier-card
+      - price-amount
+      - feature-list
+      - cta-button
+      - popular-badge
+    agents_responsible:
+      - "@css-eng"        # card layout, highlight styles
+      - "@a11y-eng"       # comparison table semantics, screen reader
+      - "@interaction-dsgn"  # CTA hierarchy, decision flow
+
+  cta_section:
+    type: "call-to-action"
+    visual_cues:
+      - "Full-width band"
+      - "Contrasting background"
+      - "Large CTA button"
+      - "Urgency copy"
+    common_elements:
+      - heading
+      - description
+      - cta-button
+      - background
+    agents_responsible:
+      - "@css-eng"        # background, spacing
+      - "@a11y-eng"       # contrast, button target
+      - "@interaction-dsgn"  # urgency patterns, CTA effectiveness
+      - "@motion-eng"     # attention-drawing animation
+
+  form_section:
+    type: "form"
+    visual_cues:
+      - "Input fields with labels"
+      - "Submit button"
+      - "Grouped fields"
+      - "Validation indicators"
+    common_elements:
+      - form-title
+      - input-fields
+      - labels
+      - submit-button
+      - validation-messages
+      - required-indicators
+    agents_responsible:
+      - "@css-eng"        # input styles, layout
+      - "@react-eng"      # form state, validation
+      - "@a11y-eng"       # labels, error messages, focus
+      - "@interaction-dsgn"  # flow, progressive disclosure
+
+  about_section:
+    type: "about-bio"
+    visual_cues:
+      - "Photo + text side by side"
+      - "Credentials, certifications"
+      - "Narrative/story copy"
+    common_elements:
+      - photo
+      - bio-text
+      - credentials
+      - social-links
+    agents_responsible:
+      - "@css-eng"        # split layout, image sizing
+      - "@a11y-eng"       # alt text, reading order
+      - "@perf-eng"       # image optimization
+
+  stats_section:
+    type: "statistics"
+    visual_cues:
+      - "Large numbers"
+      - "Labels below numbers"
+      - "Grid or inline row"
+      - "Counter animation"
+    common_elements:
+      - stat-number
+      - stat-label
+      - stat-icon
+    agents_responsible:
+      - "@css-eng"        # layout, typography
+      - "@motion-eng"     # counter animation, scroll trigger
+      - "@a11y-eng"       # number semantics, aria-label
+
+  footer:
+    type: "footer"
+    visual_cues:
+      - "Bottom of page"
+      - "Dark/contrasting background"
+      - "Multi-column links"
+      - "Copyright text"
+      - "Social icons"
+    common_elements:
+      - logo
+      - nav-columns
+      - contact-info
+      - social-icons
+      - copyright
+    agents_responsible:
+      - "@css-eng"        # grid, responsive
+      - "@a11y-eng"       # navigation landmark, link purpose
+
+  sidebar:
+    type: "sidebar"
+    visual_cues:
+      - "Vertical panel"
+      - "Left or right of main content"
+      - "Navigation or filters"
+      - "Collapsible on mobile"
+    common_elements:
+      - nav-items
+      - filter-controls
+      - collapse-toggle
+    agents_responsible:
+      - "@css-eng"        # responsive collapse
+      - "@a11y-eng"       # navigation landmark
+      - "@react-eng"      # state management
+
+  modal:
+    type: "overlay"
+    visual_cues:
+      - "Centered panel"
+      - "Backdrop/overlay behind"
+      - "Close button (×)"
+      - "Glass or card effect"
+    common_elements:
+      - modal-header
+      - modal-body
+      - close-button
+      - backdrop
+      - action-buttons
+    agents_responsible:
+      - "@css-eng"        # glass effect, centering, z-index
+      - "@motion-eng"     # entrance/exit animation
+      - "@a11y-eng"       # focus trap, escape, aria-modal
+      - "@react-eng"      # portal, state management
+
+  floating_element:
+    type: "floating"
+    visual_cues:
+      - "Fixed position (corner)"
+      - "Always visible on scroll"
+      - "Chat bubble, back-to-top, or CTA"
+    common_elements:
+      - floating-button
+      - tooltip
+      - badge
+    agents_responsible:
+      - "@css-eng"        # positioning, z-index
+      - "@a11y-eng"       # keyboard access, announcement
+      - "@motion-eng"     # entrance animation
+
+# ═══════════════════════════════════════════════════════════════
+# ELEMENT DETECTION — Fine-grained element analysis
+# ═══════════════════════════════════════════════════════════════
+
+elements:
+  typography:
+    detect:
+      - "Heading hierarchy (h1 → h6)"
+      - "Body text size and weight"
+      - "Font family (serif, sans-serif, mono)"
+      - "Line height and letter spacing"
+    agents: ["@css-eng", "@a11y-eng", "@design-sys-eng"]
+
+  colors:
+    detect:
+      - "Primary accent color"
+      - "Background colors (light/dark)"
+      - "Text colors"
+      - "Border/separator colors"
+      - "Status colors (success, error, warning)"
+    agents: ["@css-eng", "@a11y-eng", "@design-sys-eng"]
+
+  spacing:
+    detect:
+      - "Section padding"
+      - "Card gaps"
+      - "Element margins"
+      - "Consistent scale (4px, 8px, 12px, 16px...)"
+    agents: ["@css-eng", "@design-sys-eng", "@qa-visual"]
+
+  effects:
+    detect:
+      - "Glass morphism / backdrop-blur"
+      - "Shadows (box-shadow, drop-shadow)"
+      - "Gradients (linear, radial)"
+      - "Border radius (rounded corners)"
+      - "Animations on scroll"
+      - "Hover effects"
+    agents: ["@css-eng", "@motion-eng", "@design-sys-eng"]
+
+  interactions:
+    detect:
+      - "CTA buttons (primary, secondary)"
+      - "Links and navigation"
+      - "Form inputs"
+      - "Toggle/switch controls"
+      - "Drag handles"
+    agents: ["@interaction-dsgn", "@a11y-eng", "@motion-eng"]
+
+  media:
+    detect:
+      - "Images (hero, product, avatar)"
+      - "Videos (embedded, background)"
+      - "Icons (SVG, icon font)"
+      - "Illustrations"
+    agents: ["@perf-eng", "@a11y-eng", "@design-sys-eng"]
+
+# ═══════════════════════════════════════════════════════════════
+# PROFILE-BASED AGENT SELECTION
+# ═══════════════════════════════════════════════════════════════
+
+# Not all agents run for all projects.
+# Profile determines which agents participate in sweep.
+
+profile_agents:
+  full:
+    agents: ["@css-eng", "@react-eng", "@motion-eng", "@a11y-eng", "@perf-eng",
+             "@design-sys-eng", "@interaction-dsgn", "@qa-visual", "@frontend-arch",
+             "@spatial-eng", "@mobile-eng", "@cross-plat-eng", "@i18n-eng", "@error-eng"]
+    count: 14
+
+  web-next:
+    agents: ["@css-eng", "@react-eng", "@motion-eng", "@a11y-eng", "@perf-eng",
+             "@design-sys-eng", "@interaction-dsgn", "@qa-visual", "@frontend-arch"]
+    count: 9
+
+  web-spa:
+    agents: ["@css-eng", "@react-eng", "@motion-eng", "@a11y-eng", "@perf-eng",
+             "@interaction-dsgn", "@qa-visual"]
+    count: 7
+
+  minimal:
+    agents: ["@css-eng", "@react-eng", "@a11y-eng", "@qa-visual"]
+    count: 4

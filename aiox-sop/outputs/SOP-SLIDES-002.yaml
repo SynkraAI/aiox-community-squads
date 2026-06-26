@@ -1,0 +1,431 @@
+# ============================================================
+# SOP-SLIDES-002: AIOX Slide Creation — LLM Execution Reference
+# Machine-readable companion with embedded code patterns
+# ============================================================
+
+sop:
+  id: "SOP-SLIDES-002"
+  version: "1.1.0"
+  title: "AIOX Slide Creation — LLM Execution Reference"
+  purpose: "Provide LLM agents with executable code patterns, decision trees, and validation rules for generating AIOX slides"
+  companion_to: "SOP-SLIDES-001"
+  consumer: "llm_agent"
+
+  classification:
+    domain: "design-system"
+    category: "slide-creation-llm"
+    risk_level: "medium"
+    compliance_tags: ["WCAG-2.2-AA", "AIOX-DS-v2.1"]
+  status: "DRAFT"
+  effective_date: "2026-03-16"
+  review_date: "2026-09-16"
+
+  # --- Codebase Source of Truth ---------------------------------------------
+  codebase:
+    shared_module: "apps/ds/src/components/brandbook/slides/shared.tsx"
+    registry: "apps/ds/src/components/brandbook/slides/registry.ts"
+    template_files:
+      - "templates-abertura.tsx"
+      - "templates-conteudo.tsx"
+      - "templates-dados.tsx"
+      - "templates-visual.tsx"
+      - "templates-social.tsx"
+      - "templates-brand.tsx"
+      - "templates-fechamento.tsx"
+    import_path: "@/components/brandbook/slides/shared"
+
+  # --- Import Block ---------------------------------------------------------
+  import_block: |
+    "use client"
+
+    import { motion, type Transition } from "framer-motion"
+
+    import {
+      CornerMarks, EASE_SMOOTH, EASE_SPRING,
+      fadeIn, fadeUp, FONT_MONO, FONT_SANS,
+      growHeight, growWidth, ImagePlaceholder, MetaBar,
+      scaleIn, SectionTag, slideLeft, slideRight,
+      SlideLayout, stagger, TechFrame, Watermark, WatermarkNumber,
+    } from "@/components/brandbook/slides/shared"
+
+  # --- Component API --------------------------------------------------------
+  api:
+    SlideLayout:
+      signature: "SlideLayout({ children, className? })"
+      renders: "motion.div 1920x1080 overflow-hidden"
+      defaults: "bg: --bb-dark, color: --bb-cream, font: FONT_SANS"
+      lime_override: '!bg-[var(--bb-lime)]'
+
+    font_constants:
+      FONT_SANS: "{ fontFamily: \"var(--font-bb-sans, 'Geist', system-ui, sans-serif)\" }"
+      FONT_MONO: "{ fontFamily: \"var(--font-bb-mono, 'Geist Mono', monospace)\" }"
+      rule: "EVERY text element MUST have style={FONT_SANS} or style={FONT_MONO} inline"
+
+    animations:
+      fadeUp: { initial: "opacity:0, y:20", animate: "opacity:1, y:0", duration: 0.5, ease: "EASE_SMOOTH", use: "titles, text" }
+      fadeIn: { initial: "opacity:0", animate: "opacity:1", duration: 0.4, ease: "EASE_SMOOTH", use: "backgrounds, subtle" }
+      slideRight: { initial: "opacity:0, x:-40", animate: "opacity:1, x:0", duration: 0.6, ease: "EASE_SMOOTH", use: "from left" }
+      slideLeft: { initial: "opacity:0, x:40", animate: "opacity:1, x:0", duration: 0.6, ease: "EASE_SMOOTH", use: "from right" }
+      scaleIn: { initial: "opacity:0, scale:0.88", animate: "opacity:1, scale:1", duration: 0.45, ease: "EASE_SPRING", use: "cards, metrics" }
+      growWidth: { initial: "scaleX:0", animate: "scaleX:1", duration: 0.7, ease: "EASE_SMOOTH", use: "horizontal lines" }
+      growHeight: { initial: "scaleY:0", animate: "scaleY:1", duration: 0.7, ease: "EASE_SMOOTH", use: "vertical lines, bars" }
+      stagger: { formula: "base + i * 0.08", default_base: 0.1, use: "lists, grids" }
+      usage: "<motion.h1 {...fadeUp(0.3)}>"
+
+    easing:
+      EASE_SMOOTH: [0.25, 0.1, 0.25, 1]
+      EASE_SPRING: [0.34, 1.56, 0.64, 1]
+
+    decoratives:
+      CornerMarks: { props: "color?, opacity?", default_color: "var(--bb-lime)", default_opacity: 0.3, constraint: "max 2 per deck section" }
+      WatermarkNumber: { props: "n, className?", renders: "16rem, opacity 4%", use: "section breaks" }
+      MetaBar: { props: "left, center?, right", renders: "56px bar", use: "TITLE, brand slides" }
+      SectionTag: { props: "label, delay?", renders: "mono, uppercase, tracking", use: "content blocks" }
+      TechFrame: { props: "children, className?", renders: "clipped corners 12px", constraint: "max 2 per slide" }
+      Watermark: { props: "none", renders: "bottom-right, 11px, 40% opacity" }
+
+    page_footer_pattern: |
+      <div className="absolute bottom-[40px] left-[200px] right-[200px] flex items-center border-t border-bb-border/20 pt-3" style={FONT_MONO}>
+        <span className="text-[11px] uppercase tracking-[0.15em] text-bb-dim/40">Section</span>
+        <span className="mx-4 h-px flex-1 bg-bb-border/10" />
+        <span className="text-[11px] uppercase tracking-[0.15em] text-bb-dim/40">02</span>
+        <span className="mx-4 h-px flex-1 bg-bb-border/10" />
+        <span className="text-[11px] uppercase tracking-[0.15em] text-bb-dim/40">AIOX SQUAD.</span>
+      </div>
+
+    inline_highlight_pattern: |
+      <span style={{ background: "var(--bb-lime)", color: "var(--bb-dark)", padding: "0.05em 0.2em" }}>KEYWORD</span>
+
+  # --- Tokens ---------------------------------------------------------------
+  tokens:
+    colors:
+      bb_dark: { value: "#050505", use: "default bg 80%" }
+      bb_lime: { value: "#D1FF00", use: "accent, emphasis" }
+      bb_cream: { value: "#FFFDD0", use: "primary text" }
+      bb_dim: { min: "#777777", recommended: "#999999", use: "secondary text" }
+      bb_surface: { value: "theme", use: "cards, panels" }
+      bb_border: { value: "theme", use: "dividers" }
+    contrast:
+      cream_dark: { ratio: 19.62, grade: "AAA" }
+      lime_dark: { ratio: 17.48, grade: "AAA" }
+      dim777_dark: { ratio: 4.55, grade: "AA" }
+      dim999_dark: { ratio: 7.15, grade: "AAA" }
+    typography:
+      title_xl: { value: "clamp(48px, 6.8vw, 130px)", use: "hero" }
+      title_lg: { value: "clamp(40px, 3.3vw, 64px)", use: "slide title" }
+      title_md: { value: "clamp(32px, 2.5vw, 48px)", use: "subtitle" }
+      body: { value: "clamp(24px, 1.9vw, 36px)", use: "keywords" }
+      caption: { value: "clamp(16px, 1.5vw, 28px)", use: "descriptions" }
+      label: { value: "clamp(13px, 0.7vw, 14px)", use: "metadata" }
+      floor: "13px"
+      palco_label_min: "16px"
+    weights:
+      900: "titles, big numbers"
+      700: "subtitles, names"
+      500: "labels, metadata"
+      400: "body (async only)"
+
+  # --- Format Guide (Section 14) -------------------------------------------
+  format_guide:
+    ted_keynote: { mode: "palco", slides: "40-90", bullets: "NEVER", text: "minimal", dominant: ["STATEMENT", "IMAGE", "METRIC"], rule: "slide supports narrator" }
+    pitch_deck: { mode: "palco+async", slides: "10-15", data: "essential", font_min: "30pt", versions: 2, fatal: "We have no competition" }
+    sales_deck: { mode: "palco+async", slides: "8-25", framework: "SCR", leave_behind: "autonomous seller", dominant: ["TITLE", "CONTENT", "COMPARISON", "METRIC"] }
+    technical: { mode: "palco", code: "legitimate", code_font: "20pt", backup: "5-10 slides", test: "step back 2m" }
+    zoom_virtual: { mode: "live", movements_per_min: 2, interaction_every: "3-5 min", slide_is_focus: true }
+    carousel_stories: { mode: "async", ratio: "9:16 or 1:1", slides: "5-10", bullets: "NEVER", first: "hook", last: "CTA" }
+
+  # --- Decision Trees -------------------------------------------------------
+  decisions:
+    format:
+      - { condition: "TED, keynote, inspirational", result: "ted_keynote" }
+      - { condition: "VC, investor, fundraising", result: "pitch_deck" }
+      - { condition: "sales call, B2B, demo", result: "sales_deck" }
+      - { condition: "conference, engineering, technical", result: "technical" }
+      - { condition: "Zoom, Teams, virtual call", result: "zoom_virtual" }
+      - { condition: "Instagram, LinkedIn, TikTok, Stories", result: "carousel_stories" }
+      - { condition: "default", result: "determine mode directly" }
+
+    mode:
+      - condition: "context in [conference, keynote, workshop]"
+        result: { mode: "palco", max_words: 15, min_font: "2.2vw", whitespace: 50, animations: true, speaker_notes: true }
+      - condition: "context in [youtube, twitch, screenshare]"
+        result: { mode: "live", max_words: 15, min_font: "2.2vw", whitespace: 45, animations: true, delay_reduction: 0.3, safe_right: "20%", safe_bottom: "15%", speaker_notes: true }
+      - condition: "context in [post_event, course, onboarding, pdf]"
+        result: { mode: "async", max_words: 30, min_font: "1.6vw", whitespace: 40, animations: false, speaker_notes: false }
+
+    aspect_ratio:
+      - condition: "channel in [projector, monitor, stream]"
+        result: { ratio: "16:9", resolution: "1920x1080" }
+      - condition: "channel in [macbook, mac_projector]"
+        result: { ratio: "16:10", resolution: "1920x1200" }
+      - condition: "channel in [stories, reels, vertical]"
+        result: { ratio: "9:16", resolution: "1080x1920" }
+      - condition: "channel in [instagram, carousel]"
+        result: { ratio: "1:1", resolution: "1080x1080" }
+      - condition: "default"
+        result: { ratio: "16:9", resolution: "1920x1080" }
+
+    slide_type_selection:
+      - content: "opening, title, speaker intro"
+        type: "TITLE"
+      - content: "section transition, thematic break"
+        type: "SECTION_BREAK"
+      - content: "impact phrase, manifesto, single idea"
+        type: "STATEMENT"
+      - content: "third-party quote with attribution"
+        type: "QUOTE"
+      - content: "bullets, keywords, features list"
+        type: "CONTENT"
+      - content: "before/after, A vs B, with/without"
+        type: "COMPARISON"
+      - content: "1-3 big numbers, KPIs"
+        type: "METRIC"
+      - content: "chart, graph, table"
+        type: "DATA_VIZ"
+      - content: "photo, screenshot, illustration"
+        type: "IMAGE"
+      - content: "step-by-step, process, timeline"
+        type: "BUILD"
+      - content: "code snippet, terminal output"
+        type: "CODE"
+      - content: "CTA, thank you, contact"
+        type: "CLOSING"
+
+  # --- Slide Type Rules (compact) -------------------------------------------
+  slide_types:
+    TITLE:
+      position: "first"
+      title: { token: "title_xl", weight: 900, max_words: 5 }
+      subtitle: { token: "title_md", weight: 500, max_words: 10 }
+      decoratives: ["CornerMarks", "MetaBar"]
+      layout: ["full_center", "left_with_visual"]
+      canonical: "SlideTitleHero"
+      screen_time_s: [10, 15]
+
+    SECTION_BREAK:
+      title: { token: "title_lg", weight: 900, max_words: 3 }
+      watermark: { element: "WatermarkNumber", opacity: 0.04 }
+      layout: "full_center"
+      footer: false
+      backgrounds: ["bb_dark", "bb_lime"]
+      canonical: "SlideSectionBreak"
+      screen_time_s: [3, 5]
+
+    STATEMENT:
+      text: { token: ["title_xl", "title_lg"], weight: 900 }
+      max_words: 10
+      max_highlights: 2
+      background: "bb_dark_only"
+      layout: "full_center"
+      min_whitespace: 60
+      canonical: "SlideStatementBold"
+      screen_time_s: [5, 10]
+
+    QUOTE:
+      extends: "STATEMENT"
+      has_attribution: true
+      visual_quotes: true
+      font: "mono for quote text"
+      canonical: "SlideQuote"
+
+    CONTENT:
+      section_tag: true
+      title: { token: "title_lg", weight: 900 }
+      items: { token: "body", count: [3, 4], format: "keywords" }
+      footer: "PageFooter"
+      layout: "left_aligned"
+      min_whitespace: 50
+      canonical: "SlideBulletList"
+      screen_time_s: [20, 40]
+
+    COMPARISON:
+      sides: 2
+      items_per_side: [2, 3]
+      split: ["50_50", "60_40"]
+      differentiation: "color + form (never color alone)"
+      layout_16_9: "horizontal"
+      layout_9_16: "vertical_stack"
+      canonical: "SlideComparison"
+      screen_time_s: [20, 40]
+
+    METRIC:
+      count: [1, 3]
+      value: { token: "title_xl", weight: 900, font: "mono" }
+      label: { token: "caption", weight: 500 }
+      animation: { preset: "scaleIn", stagger: 0.15 }
+      layout: ["grid_1x1", "grid_1x2", "grid_1x3"]
+      canonical: "SlideBigNumber"
+      screen_time_s: [10, 20]
+
+    DATA_VIZ:
+      title_rule: "conclusion not description"
+      chart_min_area: "60%"
+      max_series: 3
+      differentiation: "color + pattern"
+      colors: { primary: "bb_lime", secondary: "bb_cream@60%", tertiary: "bb_dim", grid: "bb_dim@20%" }
+      allowed_charts:
+        bar_vertical: { max: 6 }
+        bar_horizontal: { max: 8 }
+        line: { max_points: 12, max_lines: 2 }
+        donut: { max_slices: 4 }
+        big_number_sparkline: { max: 1 }
+        table: { max_cols: 4, max_rows: 5 }
+      prohibited: ["scatter", "heatmap", "treemap", "sankey"]
+      label_sizes:
+        values: { token: "caption", font: "mono", weight: 700 }
+        axis: { token: "label", font: "mono", weight: 500 }
+        legend: { token: "label", font: "sans", weight: 500 }
+        source: { token: "label", font: "mono", weight: 400 }
+      canonical: "SlideBarChart"
+      screen_time_s: [30, 60]
+
+    IMAGE:
+      min_area: "60%"
+      caption: { token: "caption", max_words: 8 }
+      overlay: { color: "bb_dark", opacity: [0.6, 0.8], when: "text_over_image" }
+      min_resolution: "1920px"
+      max_file_size: "500KB"
+      preferred_format: "webp"
+      screenshot_rule: "TechFrame or 1px border"
+      light_bg: "must have border/frame"
+      anti_patterns: ["stock_generic", "no_context_screenshot", "pixelated", "watermark", "decorative_unrelated"]
+      media_types:
+        video: { format: "mp4", mode: "palco_only", max_s: 30 }
+        gif: { max_loop_s: 5, never_main: true }
+      canonical: "SlideFullImage"
+      screen_time_s: [5, 15]
+
+    BUILD:
+      steps: [2, 5]
+      active_opacity: 1.0
+      future_opacity: 0.15
+      layout: ["horizontal_timeline", "vertical_list"]
+      async_mode: "all_visible"
+      canonical: "SlideTimeline"
+      screen_time_s_per_step: [15, 30]
+
+    CODE:
+      font: "mono"
+      min_size: "body"
+      language_label: { token: "label", position: "top" }
+      highlight: { color: "bb_lime@15%", as: "background" }
+      max_lines: 12
+      overflow: "split into 2 slides"
+      rule: "NEVER screenshot code"
+      canonical: "SlideCode (pattern only)"
+      screen_time_s: [30, 60]
+
+    CLOSING:
+      position: "last"
+      message: { token: "title_lg", weight: 900, max_words: 5 }
+      contact: { token: "caption" }
+      decoratives: ["CornerMarks"]
+      layout: "full_center"
+      rule: "text CTA only, no clickable buttons"
+      canonical: "SlideCTA"
+      screen_time_s: [10, 20]
+
+  # --- Sequence Rules -------------------------------------------------------
+  sequence:
+    first_slide: "TITLE"
+    last_slide: "CLOSING"
+    section_breaks: "between thematic blocks"
+    max_consecutive_same_type: 3
+    max_slide_duration_s: 120
+    rhythm_patterns:
+      - ["STATEMENT", "CONTENT", "CONTENT"]
+      - ["METRIC", "DATA_VIZ", "CONTENT"]
+      - ["IMAGE", "STATEMENT"]
+      - ["BUILD"]
+      - ["COMPARISON", "STATEMENT"]
+    rhythm_reset: "Insert SECTION_BREAK, IMAGE, or STATEMENT to reset attention in long sequences"
+
+  # --- Animation Rules ------------------------------------------------------
+  animation_rules:
+    async_mode: "skip all animations"
+    live_mode: "reduce delays by 30%"
+    palco_mode: "normal"
+    max_types_per_slide: 3
+    max_total_delay_s: 1.5
+    max_flash_per_second: 3
+    animate_when: ["sequential_steps", "impact_data_reveal", "build_progressive", "comparative_charts"]
+    do_not_animate: ["decorative_bg", "slide_title", "all_at_once_content", "async_mode"]
+    reduced_motion:
+      css: |
+        @media (prefers-reduced-motion: reduce) {
+          *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+          }
+        }
+      framer_motion: |
+        import { useReducedMotion } from "framer-motion"
+        const shouldReduceMotion = useReducedMotion()
+
+  # --- Validation -----------------------------------------------------------
+  validation:
+    per_slide:
+      - "single idea"
+      - "comprehensible in 3 seconds"
+      - "type from taxonomy"
+      - "style={FONT_SANS} or style={FONT_MONO} on every text"
+      - "zero hardcoded px (except 1920x1080 canvas)"
+      - "whitespace >= mode minimum"
+      - "zero paragraphs (except async max 1)"
+      - "zero clickable buttons"
+      - "prefers-reduced-motion respected"
+      - "alt text on images"
+      - "unique accessible title"
+    killer_items:
+      - "contrast < WCAG AA"
+      - "missing font inline style"
+      - "> 15 words palco/live"
+      - "paragraph in palco/live"
+      - "code as screenshot"
+      - "--bb-dim below #777777"
+    per_sequence:
+      - "first = TITLE"
+      - "last = CLOSING"
+      - "section breaks between blocks"
+      - "no slide > 2 min"
+      - "never > 3 consecutive same type"
+      - "lint + typecheck = 0 errors"
+
+  # --- Anti-Patterns --------------------------------------------------------
+  anti_patterns:
+    - { pattern: "text paragraphs", reason: "slides not documents" }
+    - { pattern: "font < body in palco", reason: "illegible on projector" }
+    - { pattern: "> 4 bullets palco/live", reason: "cognitive overload" }
+    - { pattern: "clickable buttons", reason: "no mouse on stage" }
+    - { pattern: "hover effects", reason: "no mouse on stage" }
+    - { pattern: "fill all space", reason: "whitespace = focus" }
+    - { pattern: "> 3 colors per slide", reason: "visual pollution" }
+    - { pattern: "animations > 1.5s", reason: "audience patience" }
+    - { pattern: "hardcoded px", reason: "breaks responsiveness" }
+    - { pattern: "code screenshot", reason: "inaccessible, pixelates" }
+    - { pattern: "generic stock photo", reason: "destroys credibility" }
+    - { pattern: "> 1 chart per slide", reason: "visual competition" }
+    - { pattern: "color-only differentiation", reason: "colorblind inaccessible" }
+    - { pattern: "self-explanatory palco slide", reason: "is a document" }
+    - { pattern: "narrator-dependent async slide", reason: "missing info" }
+    - { pattern: "no accessible title", reason: "invisible to screen readers" }
+    - { pattern: "--bb-dim < #777777", reason: "fails WCAG AA" }
+
+  # --- Metadata -------------------------------------------------------------
+  metadata:
+    created_by: "Gerber (SOP Creator Agent)"
+    created_at: "2026-03-16T00:00:00Z"
+    owner: "design-system-team"
+    tags: ["slides", "llm", "code-patterns", "design-system"]
+    review_cycle: "P180D"
+    change_log:
+      - version: "1.1.0"
+        date: "2026-03-16"
+        author: "Gerber (SOP Creator Agent)"
+        summary: "svh (not dvh), Format Guide (TED/Pitch/Sales/Technical/Zoom/Carousel), format decision tree, PEAT 2017 note."
+      - version: "1.0.0"
+        date: "2026-03-16"
+        author: "Gerber (SOP Creator Agent)"
+        summary: "Initial version. Code patterns extracted from real codebase (56 templates). API contracts from shared.tsx. Decision trees, validation rules, anti-patterns."

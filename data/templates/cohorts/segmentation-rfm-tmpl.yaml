@@ -1,0 +1,48 @@
+template_metadata:
+  schema_version: "analytics-template-v1"
+  template_id: "segmentation-rfm-tmpl"
+  artifact: "segmentation-rfm"
+  artifact_family: "cohorts"
+  owner_agent: "peter-fader"
+  governance_owners:
+    - "marketing-lead"
+    - "narrative-strategist"
+    - "data-chief"
+  output_path: "workspace/businesses/{slug}/analytics/cohorts/segmentation-rfm.yaml"
+  custom_fallback_path: "docs/data/{slug}/segmentation-rfm-{date}.md"
+  contains_real_data: false
+  pii_allowed: false
+
+context:
+  business_slug: "{slug}"
+  product_slug: "{product_slug}"
+  cohort_slug: "{cohort_slug}"
+  period_start: "{yyyy-mm-dd}"
+  period_end: "{yyyy-mm-dd}"
+  generated_at: "{iso_datetime}"
+  generated_by: "{agent_or_workflow}"
+
+analysis:
+  rfm_model:
+    recency_window_days: null
+    frequency_window_days: null
+    monetary_currency: "{currency}"
+    scoring_method: "{quintile|percentile|custom}"
+  segment_rules: []
+  segment_distribution: []
+  high_value_signals: []
+  risk_signals: []
+
+insights: []
+
+recommendations:
+  actions_by_segment: []
+  retention_priorities: []
+  upsell_priorities: []
+
+quality:
+  completeness_score: null
+  confidence_score: null
+  validation:
+    sources_linked: false
+    assumptions_listed: false

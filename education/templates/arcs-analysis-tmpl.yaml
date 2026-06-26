@@ -1,0 +1,150 @@
+# ARCS Motivational Design Analysis Template
+# Purpose: Apply Keller's ARCS model to module/lesson design
+# Output: Motivational strategy specification for Attention, Relevance, Confidence, Satisfaction
+
+metadata:
+  analysis_id: "{ANALYSIS_ID}"  # e.g., "arcs-001-module-intro"
+  module_id: "{MODULE_ID}"  # Parent module
+  lesson_id: "{LESSON_ID}"  # Optional (if analyzing specific lesson)
+  created_date: "{CREATED_DATE}"
+  version: "{VERSION}"
+
+context:
+  # What is being designed
+  target: "{TARGET}"  # e.g., "Module 1: Email Marketing Basics"
+  learner_profile: "{PROFILE}"  # e.g., "Entrepreneurs, no marketing background"
+  known_motivations: "{MOTIVATIONS}"  # e.g., "Grow business, save time"
+  known_demotivators: "{DEMOTIVATORS}"  # e.g., "Tech overwhelm, jargon"
+
+attention_strategies:
+  # A - Attention: Capture and sustain interest
+  perceptual_arousal:
+    # Sensory stimulation (surprise, novelty)
+    strategy: "{STRATEGY}"  # e.g., "Start with surprising statistic"
+    implementation: |
+      {IMPLEMENTATION}
+      # Exact tactic: "Show: '73% of email revenue comes from automated sequences'"
+    timing: "{TIMING}"  # When in lesson: "First 30 seconds"
+
+  inquiry_arousal:
+    # Intellectual curiosity (problem, mystery)
+    strategy: "{STRATEGY}"  # e.g., "Pose problem learner has experienced"
+    implementation: |
+      {IMPLEMENTATION}
+      # E.g., "Ask: Have you ever sent an email to 1000 people and got 3 replies?"
+    timing: "{TIMING}"
+
+  variability:
+    # Format changes to prevent monotony
+    strategy: "{STRATEGY}"  # e.g., "Alternate video, text, interactive exercise"
+    implementation: |
+      {IMPLEMENTATION}
+      # E.g., "10min video → 5min reading → 10min practice → 5min recap"
+    timing: "{TIMING}"  # Throughout lesson
+
+relevance_strategies:
+  # R - Relevance: Connect to learner goals and experience
+  goal_orientation:
+    # How lesson serves learner's goals
+    strategy: "{STRATEGY}"  # e.g., "Show how automation saves 10h/week"
+    implementation: |
+      {IMPLEMENTATION}
+      # E.g., "Map each concept to business outcome (more revenue, less effort)"
+    timing: "{TIMING}"  # "Within first 5 minutes + before each section"
+
+  motive_matching:
+    # Align with intrinsic motivations
+    strategy: "{STRATEGY}"  # e.g., "Appeal to autonomy (control over marketing)"
+    implementation: |
+      {IMPLEMENTATION}
+      # E.g., "Frame as 'marketing on autopilot while you focus on your genius'"
+    timing: "{TIMING}"
+
+  familiarity:
+    # Use known contexts/examples
+    strategy: "{STRATEGY}"  # e.g., "Use examples from learner's industry"
+    implementation: |
+      {IMPLEMENTATION}
+      # E.g., "If targeting coaches, show coaching funnel examples"
+    timing: "{TIMING}"
+
+confidence_strategies:
+  # C - Confidence: Build expectation of success
+  learning_requirements:
+    # Clear success criteria
+    strategy: "{STRATEGY}"  # e.g., "State exactly what 'done' looks like"
+    implementation: |
+      {IMPLEMENTATION}
+      # E.g., "By end of lesson, you'll have a 3-email sequence (template provided)"
+    timing: "{TIMING}"  # "Start of lesson"
+
+  success_opportunities:
+    # Low-stakes practice before assessment
+    strategy: "{STRATEGY}"  # e.g., "Guided example before independent task"
+    implementation: |
+      {IMPLEMENTATION}
+      # E.g., "Work through first email together, then learner does emails 2-3 alone"
+    timing: "{TIMING}"  # "Mid-lesson"
+
+  personal_control:
+    # Learner agency
+    strategy: "{STRATEGY}"  # e.g., "Let learner choose template or build from scratch"
+    implementation: |
+      {IMPLEMENTATION}
+      # E.g., "Offer 3 templates OR blank canvas with checklist"
+    timing: "{TIMING}"  # "During practice phase"
+
+satisfaction_strategies:
+  # S - Satisfaction: Reward and reinforce achievement
+  natural_consequences:
+    # Real results from application
+    strategy: "{STRATEGY}"  # e.g., "Learner sees working automation they built"
+    implementation: |
+      {IMPLEMENTATION}
+      # E.g., "End lesson with: 'Send yourself a test email. You just automated marketing.'"
+    timing: "{TIMING}"  # "End of lesson"
+
+  positive_consequences:
+    # Recognition, celebration
+    strategy: "{STRATEGY}"  # e.g., "Acknowledge completion milestone"
+    implementation: |
+      {IMPLEMENTATION}
+      # E.g., "Certificate pop-up: 'You've completed Email Automation Foundations'"
+    timing: "{TIMING}"  # "After passing assessment"
+
+  equity:
+    # Fair, consistent standards
+    strategy: "{STRATEGY}"  # e.g., "Rubric-based grading, not subjective"
+    implementation: |
+      {IMPLEMENTATION}
+      # E.g., "Project assessed on checklist: [x] 3 emails [x] CTA in each [x] segmentation logic"
+    timing: "{TIMING}"  # "During assessment"
+
+overall_motivational_flow:
+  # How ARCS elements sequence through lesson
+  opening:
+    arcs_focus: "Attention + Relevance"
+    tactics: ["{TACTIC_1}", "{TACTIC_2}"]
+
+  middle:
+    arcs_focus: "Confidence"
+    tactics: ["{TACTIC_1}", "{TACTIC_2}"]
+
+  closing:
+    arcs_focus: "Satisfaction + Relevance (what's next)"
+    tactics: ["{TACTIC_1}", "{TACTIC_2}"]
+
+validation:
+  # How motivational effectiveness is measured
+  metrics:
+    - metric: "{METRIC}"  # e.g., "Completion rate"
+      target: "{TARGET}"  # e.g., ">85%"
+
+    - metric: "{METRIC}"  # e.g., "Learner self-reported confidence"
+      target: "{TARGET}"  # e.g., "Avg >4/5"
+
+  feedback_mechanism: "{MECHANISM}"  # How learner feedback is collected
+
+notes: |
+  {ADDITIONAL_NOTES}
+  # Known demotivators addressed, iteration based on learner feedback

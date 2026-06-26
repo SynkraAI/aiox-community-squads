@@ -1,0 +1,116 @@
+# Module Design Template
+# Purpose: Design a single module following CLT, ARCS, and Bloom principles
+# Output: Complete module specification ready for lesson creation
+
+metadata:
+  module_id: "{MODULE_ID}"  # e.g., "mod-001-intro-marketing"
+  module_name: "{MODULE_NAME}"
+  curriculum_id: "{CURRICULUM_ID}"  # Parent curriculum
+  level: {LEVEL}  # Integer (1, 2, 3...)
+  estimated_hours: {HOURS}  # Float
+  created_date: "{CREATED_DATE}"  # YYYY-MM-DD
+  version: "{VERSION}"
+
+objective:
+  # Clear, measurable objective using Bloom verb
+  bloom_level: "{BLOOM_LEVEL}"  # Remember, Understand, Apply, Analyze, Evaluate, Create
+  statement: "{OBJECTIVE_STATEMENT}"  # e.g., "Learner will be able to CREATE a 7-day email sequence"
+
+problem_it_solves:
+  # Why this module exists (ARCS: Relevance)
+  learner_problem: "{PROBLEM}"  # e.g., "Can't convert leads into customers"
+  before_state: "{BEFORE}"  # What learner can't do before this module
+  after_state: "{AFTER}"  # What learner can do after this module
+
+key_concepts:
+  # Core concepts taught in this module (from knowledge map)
+  - concept: "{CONCEPT_1}"
+    definition: "{DEFINITION}"
+    prerequisite_concepts: ["{CONCEPT_A}", "{CONCEPT_B}"]  # Or empty list
+
+  - concept: "{CONCEPT_2}"
+    definition: "{DEFINITION}"
+    prerequisite_concepts: []
+
+logical_sequence:
+  # Order in which concepts are introduced (respects CLT element interactivity)
+  - step: 1
+    concept: "{CONCEPT}"
+    rationale: "{WHY_FIRST}"  # e.g., "Foundation for understanding X"
+
+  - step: 2
+    concept: "{CONCEPT}"
+    rationale: "{WHY_SECOND}"
+
+connections:
+  # How this module connects to others (scaffolding)
+  previous_module:
+    module_id: "{PREVIOUS_MODULE_ID}"
+    connection: "{CONNECTION}"  # What was built in previous module that this depends on
+
+  next_module:
+    module_id: "{NEXT_MODULE_ID}"
+    connection: "{CONNECTION}"  # What this module prepares for
+
+cognitive_analysis:
+  # Cognitive Load Theory analysis
+  intrinsic_load:
+    element_count: {COUNT}  # How many concepts must be held in working memory
+    interactivity: "{LOW|MEDIUM|HIGH}"  # How much concepts interact
+    justification: "{JUSTIFICATION}"
+
+  extraneous_load:
+    sources: []  # List of potential distractions/irrelevant info to avoid
+    mitigation: "{STRATEGY}"  # How to minimize extraneous load
+
+  germane_load:
+    strategies:
+      - "{STRATEGY_1}"  # e.g., "Use worked examples before practice"
+      - "{STRATEGY_2}"  # e.g., "Interleave concept A and B to build schema"
+
+  clt_strategy: "{OVERALL_STRATEGY}"  # Summary of cognitive load management
+
+arcs_design:
+  # Motivational design per ARCS model
+  attention:
+    perceptual_arousal: "{STRATEGY}"  # e.g., "Start with surprising statistic"
+    inquiry_arousal: "{STRATEGY}"  # e.g., "Pose problem learner has faced"
+    variability: "{STRATEGY}"  # e.g., "Mix video, text, exercise"
+
+  relevance:
+    goal_orientation: "{STRATEGY}"  # How module connects to learner's goals
+    motive_matching: "{STRATEGY}"  # How it matches intrinsic motivations
+    familiarity: "{STRATEGY}"  # Use of familiar examples/contexts
+
+  confidence:
+    learning_requirements: "{STRATEGY}"  # Clear success criteria
+    success_opportunities: "{STRATEGY}"  # Low-stakes practice before assessment
+    personal_control: "{STRATEGY}"  # Learner agency (pacing, paths)
+
+  satisfaction:
+    natural_consequences: "{STRATEGY}"  # Real results from applying knowledge
+    positive_consequences: "{STRATEGY}"  # Celebration, recognition
+    equity: "{STRATEGY}"  # Fair assessment, consistent standards
+
+assessment:
+  # How mastery is measured
+  ltem_tier_target: "{LTEM_TIER}"  # TIER_0, TIER_1, TIER_2, TIER_3, TIER_4
+  method: "{METHOD}"  # e.g., "Project-based", "Multiple choice + practical"
+
+  assessments:
+    - type: "{TYPE}"  # e.g., "Formative", "Summative"
+      description: "{DESCRIPTION}"
+      ltem_tier: "{TIER}"
+      passing_criteria: "{CRITERIA}"
+
+lessons:
+  # List of lessons in this module (each uses lesson-tmpl.yaml)
+  - lesson_id: "{LESSON_ID}"
+    name: "{LESSON_NAME}"
+    concepts_covered: ["{CONCEPT_1}", "{CONCEPT_2}"]
+    format: "{FORMAT}"  # Video, Text, Interactive, Live
+    duration_minutes: {MINUTES}
+
+notes: |
+  {ADDITIONAL_NOTES}
+  # Design rationale, known challenges, iteration history

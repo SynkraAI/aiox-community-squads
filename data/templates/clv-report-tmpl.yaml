@@ -1,0 +1,818 @@
+# CLV Report Template
+# Data Intelligence Pack - Template para Relatório de Customer Lifetime Value
+# Based on: Peter Fader (Wharton) Customer Centricity Methodology
+
+template:
+  id: clv-report-v1
+  name: "CLV Report Template"
+  version: "1.0"
+  primary_agent: peter-fader
+  secondary_agents:
+    - nick-mehta  # Health Score correlation
+    - sean-ellis  # Growth metrics integration
+  output:
+    format: markdown
+    filename: "clv-report-{{period}}.md"
+
+# ============================================================================
+# VARIÁVEIS DE INPUT
+# ============================================================================
+
+variables:
+  required:
+    - period: "Período do relatório (ex: 2026-Q1, 2026-01)"
+    - total_customers: "Número total de clientes na análise"
+    - clv_data: "Array de CLV por cliente [{ customer_id, clv, segment, prob_alive }]"
+
+  optional:
+    - previous_period: "Período anterior para comparação"
+    - cohort_breakdown: "Breakdown por cohort de aquisição"
+    - segment_breakdown: "Breakdown por segmento (Champions, Gold, Silver, Bronze)"
+    - methodology: "Método usado (historical, contractual, probabilistic)"
+    - time_horizon_months: "Horizonte de projeção em meses (default: 12)"
+    - discount_rate: "Taxa de desconto aplicada (default: 12% anual)"
+    - margin: "Margem bruta aplicada (default: 100%)"
+    - include_pareto: "Incluir análise Pareto (true/false)"
+    - include_probabilistic: "Incluir métricas BG/NBD (true/false)"
+    - cac_current: "CAC atual para cálculo de ratio"
+
+# ============================================================================
+# METODOLOGIA CLV (Fader/Hardie)
+# ============================================================================
+
+clv_methodology:
+  methods:
+    historical:
+      name: "CLV Histórico"
+      description: "Soma de todas transações do cliente"
+      formula: "CLV = Σ (Transações do cliente)"
+      use_when: "Baseline, análise retroativa"
+
+    contractual:
+      name: "CLV Contratual"
+      description: "Para SaaS/Subscription"
+      formula: "CLV = ARPU × Margin / (Churn Rate + Discount Rate)"
+      use_when: "Modelos de assinatura"
+
+    probabilistic:
+      name: "CLV Probabilístico"
+      description: "BG/NBD + Gamma-Gamma (Fader/Hardie)"
+      formula: "CLV = E[Purchases] × E[AOV] × Margin"
+      use_when: "E-commerce, varejo, não-contratual"
+
+  segment_definitions:
+    champions:
+      range: "Top 10% (maior CLV)"
+      typical_clv: ">= $5,000"
+      strategy: "Retenção máxima, tratamento VIP"
+      color: "diamond"
+
+    gold:
+      range: "Top 10-30%"
+      typical_clv: "$1,000-$5,000"
+      strategy: "Desenvolvimento, upsell"
+      color: "gold"
+
+    silver:
+      range: "30-60%"
+      typical_clv: "$200-$1,000"
+      strategy: "Eficiência, automação"
+      color: "silver"
+
+    bronze:
+      range: "Bottom 40%"
+      typical_clv: "< $200"
+      strategy: "Mínimo viável, self-service"
+      color: "bronze"
+
+  key_ratios:
+    clv_cac:
+      name: "CLV:CAC Ratio"
+      healthy: ">= 3:1"
+      minimum: ">= 1:1"
+      formula: "CLV / CAC"
+
+    payback_period:
+      name: "Payback Period"
+      healthy: "<= 12 meses"
+      formula: "CAC / (ARPU × Margin)"
+
+# ============================================================================
+# ESTRUTURA DO RELATÓRIO
+# ============================================================================
+
+sections:
+
+  # --------------------------------------------------------------------------
+  # 1. EXECUTIVE SUMMARY
+  # --------------------------------------------------------------------------
+  - id: executive_summary
+    name: "Executive Summary"
+    required: true
+    template: |
+      # Customer Lifetime Value Report - {{period}}
+
+      **Gerado em:** {{generated_at}}
+      **Período de Análise:** {{analysis_start}} a {{analysis_end}}
+      **Total de Clientes:** {{total_customers}}
+      **Metodologia:** {{methodology}}
+
+      ---
+
+      ## Executive Summary
+
+      | Métrica | Atual | Anterior | Variação |
+      |---------|-------|----------|----------|
+      | **Customer Equity Total** | {{total_clv_formatted}} | {{prev_total_clv}} | {{total_clv_delta}} |
+      | **CLV Médio** | {{avg_clv_formatted}} | {{prev_avg_clv}} | {{avg_clv_delta}} |
+      | **CLV Mediano** | {{median_clv_formatted}} | {{prev_median_clv}} | {{median_clv_delta}} |
+      | **CLV:CAC Ratio** | {{clv_cac_ratio}} | {{prev_clv_cac_ratio}} | {{ratio_delta}} |
+      | **Payback Period** | {{payback_months}} meses | {{prev_payback}} | {{payback_delta}} |
+
+      ### Key Findings
+
+      {{#if key_findings}}
+      {{#each key_findings}}
+      - {{icon}} {{description}}
+      {{/each}}
+      {{else}}
+      - Análise de findings pendente
+      {{/if}}
+
+      ### Strategic Implications
+
+      {{#if strategic_implications}}
+      {{#each strategic_implications}}
+      1. **{{title}}:** {{description}}
+      {{/each}}
+      {{else}}
+      - Implicações estratégicas a serem definidas
+      {{/if}}
+
+  # --------------------------------------------------------------------------
+  # 2. CLV BY SEGMENT
+  # --------------------------------------------------------------------------
+  - id: clv_by_segment
+    name: "CLV by Segment"
+    required: true
+    template: |
+      ---
+
+      ## CLV by Segment
+
+      ### Distribuição por Segmento de Valor
+
+      ```
+      ┌─────────────────────────────────────────────────────────────────┐
+      │                   CLV SEGMENT DISTRIBUTION                      │
+      ├─────────────────────────────────────────────────────────────────┤
+      │                                                                 │
+      │  💎 Champions (Top 10%):   {{champions_count}} clientes ({{champions_pct}}%)
+      │     CLV Total: {{champions_clv_total}} ({{champions_clv_pct}}% do total)
+      │     {{champions_bar}}
+      │                                                                 │
+      │  🥇 Gold (10-30%):         {{gold_count}} clientes ({{gold_pct}}%)
+      │     CLV Total: {{gold_clv_total}} ({{gold_clv_pct}}% do total)
+      │     {{gold_bar}}
+      │                                                                 │
+      │  🥈 Silver (30-60%):       {{silver_count}} clientes ({{silver_pct}}%)
+      │     CLV Total: {{silver_clv_total}} ({{silver_clv_pct}}% do total)
+      │     {{silver_bar}}
+      │                                                                 │
+      │  🥉 Bronze (Bottom 40%):   {{bronze_count}} clientes ({{bronze_pct}}%)
+      │     CLV Total: {{bronze_clv_total}} ({{bronze_clv_pct}}% do total)
+      │     {{bronze_bar}}
+      │                                                                 │
+      └─────────────────────────────────────────────────────────────────┘
+      ```
+
+      ### Detalhamento por Segmento
+
+      | Segmento | Clientes | % Base | CLV Total | % CLV | CLV Médio | CLV Mediano | Freq Média | AOV Médio |
+      |----------|----------|--------|-----------|-------|-----------|-------------|------------|-----------|
+      {{#each segments}}
+      | {{icon}} {{name}} | {{customer_count}} | {{pct_base}}% | {{clv_total}} | {{pct_clv}}% | {{clv_avg}} | {{clv_median}} | {{avg_frequency}} | {{avg_aov}} |
+      {{/each}}
+
+      ### Estratégias Recomendadas por Segmento
+
+      {{#each segments}}
+      #### {{icon}} {{name}} ({{customer_count}} clientes)
+
+      **Características:**
+      - CLV Médio: {{clv_avg}}
+      - Frequência média: {{avg_frequency}} transações
+      - Ticket médio: {{avg_aov}}
+      {{#if include_probabilistic}}
+      - Prob. Alive média: {{avg_prob_alive}}%
+      {{/if}}
+
+      **Estratégia Recomendada:**
+      {{strategy_description}}
+
+      **Táticas:**
+      {{#each tactics}}
+      - {{this}}
+      {{/each}}
+
+      {{/each}}
+
+  # --------------------------------------------------------------------------
+  # 3. COHORT COMPARISON
+  # --------------------------------------------------------------------------
+  - id: cohort_comparison
+    name: "Cohort Comparison"
+    required: true
+    template: |
+      ---
+
+      ## Cohort Comparison
+
+      ### CLV por Cohort de Aquisição
+
+      | Cohort | Clientes | CLV Médio | CLV Total | % do Total | Trend |
+      |--------|----------|-----------|-----------|------------|-------|
+      {{#each cohorts}}
+      | {{cohort_id}} | {{customer_count}} | {{clv_avg}} | {{clv_total}} | {{pct_total}}% | {{trend_icon}} |
+      {{/each}}
+
+      ### Evolução de CLV por Meses de Vida
+
+      ```
+      Cohort    | M0      | M3      | M6      | M9      | M12     | M18     | M24     |
+      ----------|---------|---------|---------|---------|---------|---------|---------|
+      {{#each cohort_evolution}}
+      {{cohort}} | {{m0}} | {{m3}} | {{m6}} | {{m9}} | {{m12}} | {{m18}} | {{m24}} |
+      {{/each}}
+      ```
+
+      ### Cohort Analysis Insights
+
+      #### Best Performing Cohort
+      - **Cohort:** {{best_cohort_id}}
+      - **CLV Médio:** {{best_cohort_clv}}
+      - **Diferenciadores:** {{best_cohort_factors}}
+
+      #### Worst Performing Cohort
+      - **Cohort:** {{worst_cohort_id}}
+      - **CLV Médio:** {{worst_cohort_clv}}
+      - **Possíveis Causas:** {{worst_cohort_factors}}
+
+      #### Trend Analysis
+      {{cohort_trend_analysis}}
+
+      {{#if cohort_recommendations}}
+      ### Recomendações Baseadas em Cohorts
+
+      {{#each cohort_recommendations}}
+      - {{this}}
+      {{/each}}
+      {{/if}}
+
+  # --------------------------------------------------------------------------
+  # 4. PARETO ANALYSIS
+  # --------------------------------------------------------------------------
+  - id: pareto_analysis
+    name: "Pareto Analysis"
+    required: true
+    template: |
+      ---
+
+      ## Pareto Analysis (Concentração de Valor)
+
+      > "Not all customers are created equal. Treat them unequally
+      > (proportionally to their value)." - Peter Fader
+
+      ### Distribuição de Valor
+
+      | Top % de Clientes | Número de Clientes | % do CLV Total |
+      |-------------------|--------------------|--------------------|
+      | Top 1% | {{top_1_count}} | {{top_1_pct}}% |
+      | Top 5% | {{top_5_count}} | {{top_5_pct}}% |
+      | Top 10% | {{top_10_count}} | {{top_10_pct}}% |
+      | Top 20% | {{top_20_count}} | {{top_20_pct}}% |
+      | Top 50% | {{top_50_count}} | {{top_50_pct}}% |
+      | Bottom 50% | {{bottom_50_count}} | {{bottom_50_pct}}% |
+
+      ### Lorenz Curve Interpretation
+
+      ```
+      100% |                                    ___----
+           |                              __---
+      CLV  |                         __--
+      Cum. |                     _--
+       %   |                 _--
+           |             _--
+           |         _--        <- Linha de igualdade perfeita (45°)
+           |     _--
+           | _--____________________________________________
+        0% |________________________________________________
+           0%                                           100%
+                          % de Clientes (ordenados por CLV)
+
+      Área entre curva e diagonal = Coeficiente de Gini = {{gini_coefficient}}
+      ```
+
+      ### Implicações do Pareto
+
+      {{#if pareto_high_concentration}}
+      **Alta Concentração Detectada**
+
+      Com {{top_20_pct}}% do valor concentrado em 20% dos clientes:
+      - Priorize retenção absoluta dos top 20%
+      - Investimento em aquisição deve mirar perfil similar aos Champions
+      - Risco: Perder poucos clientes = grande impacto em receita
+
+      {{else}}
+      **Concentração Moderada**
+
+      Distribuição mais equilibrada permite:
+      - Estratégias mais amplas de retenção
+      - Menor dependência de poucos clientes
+      - Oportunidade de elevar muitos clientes a segmentos superiores
+      {{/if}}
+
+      ### Top 10 Clientes por CLV
+
+      | # | Cliente | CLV | % do Total | Segment | Freq | AOV | Prob Alive |
+      |---|---------|-----|------------|---------|------|-----|------------|
+      {{#each top_10_customers}}
+      | {{@index}} | {{customer_id}} | {{clv}} | {{pct_total}}% | {{segment}} | {{frequency}} | {{aov}} | {{prob_alive}}% |
+      {{/each}}
+
+  # --------------------------------------------------------------------------
+  # 5. CLV DISTRIBUTION
+  # --------------------------------------------------------------------------
+  - id: clv_distribution
+    name: "CLV Distribution"
+    required: true
+    template: |
+      ---
+
+      ## CLV Distribution Analysis
+
+      ### Estatísticas Descritivas
+
+      | Estatística | Valor |
+      |-------------|-------|
+      | Média | {{clv_mean}} |
+      | Mediana | {{clv_median}} |
+      | Desvio Padrão | {{clv_std}} |
+      | Coeficiente de Variação | {{clv_cv}} |
+      | Mínimo | {{clv_min}} |
+      | Máximo | {{clv_max}} |
+
+      ### Distribuição por Percentis
+
+      | Percentil | CLV |
+      |-----------|-----|
+      | P10 | {{p10}} |
+      | P25 (Q1) | {{p25}} |
+      | P50 (Mediana) | {{p50}} |
+      | P75 (Q3) | {{p75}} |
+      | P90 | {{p90}} |
+      | P95 | {{p95}} |
+      | P99 | {{p99}} |
+
+      ### Distribuição por Faixa de Valor
+
+      | Faixa de CLV | Clientes | % Base | CLV Acumulado |
+      |--------------|----------|--------|---------------|
+      {{#each clv_ranges}}
+      | {{range}} | {{count}} | {{pct}}% | {{cumulative_clv}} |
+      {{/each}}
+
+      ### Skewness Analysis
+
+      {{#if high_skewness}}
+      **Distribuição Altamente Assimétrica (Skew = {{skewness}})**
+
+      - Média >> Mediana indica poucos clientes de alto valor puxando a média
+      - Use MEDIANA para decisões sobre "cliente típico"
+      - Use MÉDIA para projeções de receita total
+      {{else}}
+      **Distribuição Moderadamente Simétrica (Skew = {{skewness}})**
+
+      - Média e Mediana próximas
+      - Cliente médio é representativo da base
+      {{/if}}
+
+  # --------------------------------------------------------------------------
+  # 6. PROBABILISTIC METRICS (BG/NBD)
+  # --------------------------------------------------------------------------
+  - id: probabilistic_metrics
+    name: "Probabilistic Metrics"
+    required: false
+    condition: "include_probabilistic == true"
+    template: |
+      ---
+
+      ## Probabilistic Metrics (BG/NBD + Gamma-Gamma)
+
+      ### Probability Alive Distribution
+
+      > "Em negócios não-contratuais, não sabemos quando um cliente 'morre'.
+      > Devemos modelar probabilisticamente se ele ainda está 'vivo'." - Peter Fader
+
+      | Faixa Prob Alive | Clientes | % Base | Interpretação |
+      |------------------|----------|--------|---------------|
+      | > 80% | {{prob_high_count}} | {{prob_high_pct}}% | Provavelmente ativos |
+      | 50-80% | {{prob_medium_count}} | {{prob_medium_pct}}% | Em risco, reativação possível |
+      | 20-50% | {{prob_low_count}} | {{prob_low_pct}}% | Provavelmente churned, win-back |
+      | < 20% | {{prob_very_low_count}} | {{prob_very_low_pct}}% | Quase certamente churned |
+
+      ### Model Parameters (BG/NBD)
+
+      ```
+      Parâmetros Fitted:
+      ├── r (Gamma shape - frequência):     {{bgf_r}}
+      ├── alpha (Gamma scale - frequência): {{bgf_alpha}}
+      ├── a (Beta shape - dropout):         {{bgf_a}}
+      └── b (Beta shape - dropout):         {{bgf_b}}
+
+      Interpretação:
+      - Taxa média de transação: {{avg_transaction_rate}} por período
+      - Probabilidade média de dropout: {{avg_dropout_prob}}
+      ```
+
+      ### Expected Purchases (Próximo Período)
+
+      | Segmento | E[Purchases 30d] | E[Purchases 90d] | E[Purchases 12m] |
+      |----------|------------------|------------------|------------------|
+      {{#each segments}}
+      | {{name}} | {{expected_30d}} | {{expected_90d}} | {{expected_12m}} |
+      {{/each}}
+
+      **Total Expected Transactions (12m):** {{total_expected_12m}}
+      **Total Expected Revenue (12m):** {{total_expected_revenue_12m}}
+
+      ### Model Validation
+
+      {{#if model_validated}}
+      | Métrica | Valor |
+      |---------|-------|
+      | MAPE (Mean Absolute Percentage Error) | {{mape}}% |
+      | Calibration Period | {{calibration_start}} - {{calibration_end}} |
+      | Holdout Period | {{holdout_start}} - {{holdout_end}} |
+      | Confidence Level | {{confidence_level}} |
+
+      {{#if mape_acceptable}}
+      Modelo validado - MAPE < 20% indica predições confiáveis.
+      {{else}}
+      **Atenção:** MAPE > 20% - Revise pressupostos ou período de calibração.
+      {{/if}}
+      {{else}}
+      *Validação holdout não realizada neste período.*
+      {{/if}}
+
+  # --------------------------------------------------------------------------
+  # 7. RECOMMENDATIONS
+  # --------------------------------------------------------------------------
+  - id: recommendations
+    name: "Recommendations"
+    required: true
+    template: |
+      ---
+
+      ## Strategic Recommendations
+
+      ### Immediate Actions (Esta Semana)
+
+      | # | Ação | Segmento Alvo | Impacto Esperado | Owner | Due Date |
+      |---|------|---------------|------------------|-------|----------|
+      {{#each immediate_actions}}
+      | {{@index}} | {{action}} | {{segment}} | {{expected_impact}} | {{owner}} | {{due_date}} |
+      {{/each}}
+
+      ### Short-Term Initiatives (Este Mês)
+
+      {{#each short_term_initiatives}}
+      #### {{@index}}. {{title}}
+
+      - **Objetivo:** {{objective}}
+      - **Segmento Alvo:** {{target_segment}}
+      - **CLV Impactado:** {{clv_impact}}
+      - **Métrica de Sucesso:** {{success_metric}}
+      - **Owner:** {{owner}}
+
+      {{/each}}
+
+      ### Strategic Initiatives (Este Trimestre)
+
+      {{#each strategic_initiatives}}
+      #### {{title}}
+
+      - **Descrição:** {{description}}
+      - **Clientes Impactados:** {{customer_count}}
+      - **CLV Potencial:** {{clv_potential}}
+      - **Investimento Requerido:** {{investment}}
+      - **ROI Esperado:** {{expected_roi}}
+      - **Timeline:** {{timeline}}
+
+      {{/each}}
+
+      ### Segment-Specific Playbooks
+
+      | Segmento | Objetivo Principal | Playbook | KPI Primário |
+      |----------|-------------------|----------|--------------|
+      | Champions | Retenção absoluta | White-glove service | Churn = 0% |
+      | Gold | Upgrade para Champions | Upsell sistemático | % migração |
+      | Silver | Eficiência | Automação + ofertas | ROI de campanhas |
+      | Bronze | Identificar potenciais | Teste de reativação | Response rate |
+
+  # --------------------------------------------------------------------------
+  # 8. NEXT STEPS
+  # --------------------------------------------------------------------------
+  - id: next_steps
+    name: "Next Steps"
+    required: true
+    template: |
+      ---
+
+      ## Next Steps & Monitoring
+
+      ### Métricas para Acompanhamento Contínuo
+
+      | Métrica | Frequência | Fonte | Owner | Target |
+      |---------|------------|-------|-------|--------|
+      | CLV Médio por Cohort | Mensal | {{data_source}} | {{analytics_owner}} | +{{target_clv_growth}}% |
+      | CLV:CAC Ratio | Mensal | {{data_source}} | {{finance_owner}} | >= 3:1 |
+      | Payback Period | Mensal | {{data_source}} | {{finance_owner}} | <= 12 meses |
+      | Segment Distribution | Trimestral | {{data_source}} | {{analytics_owner}} | Champions >= 15% |
+      | Pareto Concentration | Trimestral | {{data_source}} | {{analytics_owner}} | Top 20% = ~80% |
+
+      ### Alertas Configurados
+
+      | Alerta | Trigger | Ação | Responsável |
+      |--------|---------|------|-------------|
+      | CLV Drop | CLV médio cai > 10% MoM | Investigar causa | {{analytics_owner}} |
+      | Champion Churn | Qualquer Champion churn risk | Intervenção imediata | {{cs_owner}} |
+      | Ratio Alert | CLV:CAC < 2:1 | Revisar CAC ou estratégia | {{finance_owner}} |
+      | Cohort Degradation | Novo cohort -20% vs anterior | Analisar qualidade aquisição | {{marketing_owner}} |
+
+      ### Próximo Review
+
+      - **Data:** {{next_review_date}}
+      - **Frequência:** {{review_frequency}}
+      - **Participantes:** {{review_participants}}
+      - **Foco:** {{review_focus}}
+
+      ### Data Quality Improvements Needed
+
+      {{#if data_improvements}}
+      {{#each data_improvements}}
+      - [ ] {{description}} - Impacto: {{impact}} - Owner: {{owner}}
+      {{/each}}
+      {{else}}
+      - Nenhuma melhoria de dados pendente
+      {{/if}}
+
+      ### Model Refinements Planned
+
+      {{#if model_refinements}}
+      {{#each model_refinements}}
+      - {{description}}
+      {{/each}}
+      {{else}}
+      - Modelo estável, sem refinamentos planejados
+      {{/if}}
+
+  # --------------------------------------------------------------------------
+  # 9. APPENDIX - METHODOLOGY
+  # --------------------------------------------------------------------------
+  - id: appendix_methodology
+    name: "Appendix - Methodology"
+    required: false
+    template: |
+      ---
+
+      ## Appendix A: Metodologia
+
+      ### Método de Cálculo Utilizado
+
+      **{{methodology}}**
+
+      {{#if methodology_historical}}
+      #### CLV Histórico
+
+      ```
+      CLV = Σ (Transações do cliente no período)
+
+      - Simples e direto
+      - Não projeta futuro
+      - Útil como baseline
+      ```
+      {{/if}}
+
+      {{#if methodology_contractual}}
+      #### CLV Contratual (SaaS)
+
+      ```
+      CLV = ARPU × Gross Margin × (1 / (Churn Rate + Discount Rate))
+
+      Parâmetros usados:
+      - ARPU: {{arpu}}
+      - Gross Margin: {{margin}}%
+      - Churn Rate: {{churn_rate}}%
+      - Discount Rate: {{discount_rate}}%
+      ```
+      {{/if}}
+
+      {{#if methodology_probabilistic}}
+      #### CLV Probabilístico (BG/NBD + Gamma-Gamma)
+
+      ```
+      CLV = E[Purchases in period] × E[Average Order Value] × Margin
+
+      Onde:
+      - E[Purchases] calculado pelo modelo BG/NBD
+      - E[AOV] calculado pelo modelo Gamma-Gamma
+      - Margin aplicada: {{margin}}%
+      - Discount rate: {{discount_rate}}%
+      - Time horizon: {{time_horizon}} meses
+      ```
+
+      **BG/NBD Assumptions:**
+      1. Enquanto ativo, cliente transaciona conforme Poisson com taxa λ
+      2. Taxa λ varia entre clientes seguindo distribuição Gamma
+      3. Após cada transação, cliente "morre" com probabilidade p
+      4. Probabilidade p varia entre clientes seguindo distribuição Beta
+
+      **Gamma-Gamma Assumptions:**
+      1. Valor monetário varia por cliente seguindo Gamma
+      2. Frequência e valor são independentes (verificado: correlação = {{freq_monetary_corr}})
+      {{/if}}
+
+      ### Período de Análise
+
+      | Parâmetro | Valor |
+      |-----------|-------|
+      | Data Início | {{analysis_start}} |
+      | Data Fim | {{analysis_end}} |
+      | Duração | {{analysis_duration}} |
+      | Total Transações | {{total_transactions}} |
+      | Total Clientes | {{total_customers}} |
+
+      ### Critérios de Segmentação
+
+      | Segmento | Critério | Percentil |
+      |----------|----------|-----------|
+      | Champions | Top CLV | 90-100% |
+      | Gold | High CLV | 70-90% |
+      | Silver | Medium CLV | 40-70% |
+      | Bronze | Low CLV | 0-40% |
+
+  # --------------------------------------------------------------------------
+  # 10. APPENDIX - GLOSSARY
+  # --------------------------------------------------------------------------
+  - id: appendix_glossary
+    name: "Appendix - Glossary"
+    required: false
+    template: |
+      ---
+
+      ## Appendix B: Glossário
+
+      | Termo | Definição |
+      |-------|-----------|
+      | **CLV** | Customer Lifetime Value - valor presente de todos os lucros futuros esperados de um cliente |
+      | **Customer Equity** | Soma dos CLVs de todos os clientes - valor total da base de clientes |
+      | **CAC** | Customer Acquisition Cost - custo para adquirir um novo cliente |
+      | **CLV:CAC Ratio** | Proporção entre valor do cliente e custo de aquisição (healthy >= 3:1) |
+      | **Payback Period** | Tempo para recuperar o CAC através da margem do cliente |
+      | **ARPU** | Average Revenue Per User - receita média por cliente |
+      | **AOV** | Average Order Value - valor médio por pedido/transação |
+      | **Churn Rate** | Taxa de perda de clientes em um período |
+      | **Retention Rate** | Taxa de retenção de clientes (1 - Churn Rate) |
+      | **BG/NBD** | Beta-Geometric/Negative Binomial Distribution - modelo para frequência de compra |
+      | **Gamma-Gamma** | Modelo para valor monetário das transações |
+      | **Prob Alive** | Probabilidade de um cliente ainda estar "ativo" (não churned) |
+      | **Cohort** | Grupo de clientes que compartilham característica comum (ex: mês de aquisição) |
+      | **RFM** | Recency, Frequency, Monetary - framework de segmentação por comportamento |
+      | **Pareto** | Princípio 80/20 - pequena % de clientes representa grande % do valor |
+      | **Gini Coefficient** | Medida de desigualdade na distribuição (0 = igual, 1 = totalmente desigual) |
+      | **NPV** | Net Present Value - valor presente líquido considerando taxa de desconto |
+      | **Discount Rate** | Taxa usada para trazer valores futuros ao presente |
+
+      ### Fórmulas Rápidas
+
+      ```
+      CLV Simples (Contratual):
+      CLV = ARPU × Margin / Churn
+
+      CLV com Desconto:
+      CLV = ARPU × Margin / (Churn + Discount)
+
+      CLV:CAC Ratio:
+      Ratio = CLV / CAC
+
+      Payback Period:
+      Payback = CAC / (ARPU × Margin)
+
+      Customer Equity:
+      CE = Σ CLV(i) para todos os clientes i
+      ```
+
+# ============================================================================
+# VALIDAÇÃO
+# ============================================================================
+
+validation:
+  required_sections:
+    - executive_summary
+    - clv_by_segment
+    - cohort_comparison
+    - pareto_analysis
+    - clv_distribution
+    - recommendations
+    - next_steps
+
+  recommended_sections:
+    - probabilistic_metrics
+    - appendix_methodology
+    - appendix_glossary
+
+  data_requirements:
+    - "CLV calculado para todos os clientes"
+    - "Segmentação definida"
+    - "Dados de cohort disponíveis"
+    - "CAC atual para ratio"
+    - "Período anterior para comparação"
+
+  quality_checklist:
+    - "Metodologia de CLV documentada?"
+    - "Segmentos têm estratégias claras?"
+    - "Pareto analysis calculado corretamente?"
+    - "Cohort trends identificados?"
+    - "Recomendações são acionáveis?"
+    - "KPIs têm owners definidos?"
+    - "Próximo review agendado?"
+
+# ============================================================================
+# EXEMPLOS DE USO
+# ============================================================================
+
+examples:
+  basic_usage: |
+    Para gerar relatório básico:
+
+    ```yaml
+    period: "2026-Q1"
+    total_customers: 5000
+    methodology: "probabilistic"
+    clv_data:
+      - customer_id: "ACME-001"
+        clv: 2500
+        segment: "champions"
+        prob_alive: 0.92
+      - customer_id: "BETA-002"
+        clv: 450
+        segment: "silver"
+        prob_alive: 0.65
+      # ...
+    ```
+
+  full_usage: |
+    Para relatório completo com métricas probabilísticas:
+
+    ```yaml
+    period: "2026-Q1"
+    previous_period: "2025-Q4"
+    total_customers: 5000
+    methodology: "probabilistic"
+    time_horizon_months: 12
+    discount_rate: 0.12
+    margin: 0.70
+    cac_current: 150
+    include_pareto: true
+    include_probabilistic: true
+    cohort_breakdown: true
+    segment_breakdown: true
+    clv_data: [...]
+    ```
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  created: "2026-01-23"
+  author: "Data Intelligence Pack"
+  methodology: "Peter Fader Customer Centricity (Wharton)"
+  references:
+    - "Customer Centricity: Focus on the Right Customers for Strategic Advantage (Fader, 2012)"
+    - "The Customer Centricity Playbook (Fader & Toms, 2018)"
+    - "Counting Your Customers the Easy Way: BG/NBD (Fader, Hardie, Lee, 2005)"
+    - "Probability Models for Customer-Base Analysis (Fader & Hardie, 2009)"
+    - "brucehardie.com - Papers e tutoriais"
+    - "petefader.com - Recursos adicionais"
+  related_tasks:
+    - "calculate-clv.md"
+    - "segment-rfm.md"
+    - "analyze-cohort.md"
+  related_checklists:
+    - "customer-360-checklist.md"
+  related_agents:
+    - "peter-fader.md"
+    - "nick-mehta.md"
+    - "sean-ellis.md"

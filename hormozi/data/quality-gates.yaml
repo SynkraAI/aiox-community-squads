@@ -1,0 +1,76 @@
+quality_gates:
+  version: "1.0.0"
+  squad: hormozi
+  veto_policy: "qualquer gate crítico abaixo do threshold bloqueia publish"
+
+  thresholds:
+    threshold: 1
+    threshold_offer_math: 0.80
+    threshold_value_equation: 0.80
+    threshold_market_validation: 0.75
+    threshold_cac_payback_days: 30
+    threshold_ltgp_cac_ratio: 3.0
+    threshold_show_rate: 0.70
+    threshold_close_rate: 0.25
+    threshold_hook_volume: 50
+    threshold_ad_volume: 150
+    threshold_copy_readiness: 0.90
+    threshold_handoff_completeness: 0.95
+    threshold_launch_timeline_days_min: 7
+    threshold_launch_timeline_days_max: 14
+    threshold_churn_monthly_max: 0.05
+    threshold_l30_positive: 1
+    threshold_ppd_months_max: 2
+    threshold_bonus_stack_min: 3
+    threshold_guarantee_strength: 0.75
+    threshold_dream_outcome_clarity: 0.85
+    threshold_domain_classification: 1
+    threshold_review_sla_hours: 24
+    threshold_asset_pack_completeness: 0.95
+    threshold_offer_naming_options_min: 10
+    threshold_core_four_channels_min: 2
+    threshold_rule_of_100_daily_actions: 100
+
+  gates:
+    HZ-GATE-001:
+      phase: discovery
+      threshold: 0.75
+      rule: "market_validation_score >= 0.75"
+      veto: true
+    HZ-GATE-002:
+      phase: offer-engineering
+      threshold: 0.80
+      rule: "value_equation_score >= 0.80"
+    HZ-GATE-003:
+      phase: offer-engineering
+      threshold: 3
+      rule: "bonus_stack_count >= 3"
+    HZ-GATE-004:
+      phase: pricing
+      threshold: 3.0
+      rule: "ltgp_cac_ratio >= 3.0"
+      veto: true
+    HZ-GATE-005:
+      phase: pricing
+      threshold: 30
+      rule: "payback_period_days <= 30"
+    HZ-GATE-006:
+      phase: paid-ads
+      threshold: 50
+      rule: "hook_variations >= 50"
+    HZ-GATE-007:
+      phase: paid-ads
+      threshold: 150
+      rule: "ad_variations >= 150"
+    HZ-GATE-008:
+      phase: launch
+      threshold: 0.70
+      rule: "show_rate >= 0.70"
+    HZ-GATE-009:
+      phase: launch
+      threshold: 0.25
+      rule: "close_rate >= 0.25"
+    HZ-GATE-010:
+      phase: handoff
+      threshold: 0.95
+      rule: "handoff_completeness >= 0.95"

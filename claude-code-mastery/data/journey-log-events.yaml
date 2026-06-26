@@ -1,0 +1,115 @@
+# Journey Log Events — claude-code-mastery
+# SINKRA-native: event triggers por transição de fase/task
+# Version: 1.0.0
+# Created: 2026-04-03
+
+events:
+  # ─── Workflow: wf-audit-complete ─────────────────────────────────────────
+  - id: JLOG-CCM-001
+    workflow: wf-audit-complete
+    trigger: phase_transition
+    from: phase_0
+    to: phase_1
+    event: "baseline_scan_complete"
+    payload: [baseline_score, areas_needing_review]
+    token_ref: TK-CCM-THR-001
+
+  - id: JLOG-CCM-002
+    workflow: wf-audit-complete
+    trigger: phase_transition
+    from: phase_1
+    to: phase_2
+    event: "domain_audits_complete"
+    payload: [config_score, rot_score, mcp_score]
+    token_ref: TK-CCM-THR-001
+
+  - id: JLOG-CCM-003
+    workflow: wf-audit-complete
+    trigger: veto
+    phase: phase_2
+    event: "audit_veto_triggered"
+    payload: [veto_condition_id, domain_score, threshold]
+    token_ref: TK-CCM-BEH-001
+
+  # ─── Workflow: wf-project-setup ──────────────────────────────────────────
+  - id: JLOG-CCM-004
+    workflow: wf-project-setup
+    trigger: phase_transition
+    from: phase_0
+    to: phase_1
+    event: "project_detected"
+    payload: [project_type, setup_scope]
+
+  - id: JLOG-CCM-005
+    workflow: wf-project-setup
+    trigger: phase_transition
+    from: phase_5
+    to: phase_6
+    event: "setup_components_complete"
+    payload: [hooks_configured, mcp_servers, rules_count]
+
+  - id: JLOG-CCM-006
+    workflow: wf-project-setup
+    trigger: gate_pass
+    phase: phase_6
+    event: "setup_validated"
+    payload: [audit_score, grade]
+    token_ref: TK-CCM-THR-001
+
+  - id: JLOG-CCM-007
+    workflow: wf-project-setup
+    trigger: veto
+    phase: phase_6
+    event: "setup_veto_low_score"
+    payload: [audit_score, threshold]
+    token_ref: TK-CCM-BEH-001
+
+  # ─── Workflow: wf-knowledge-update ───────────────────────────────────────
+  - id: JLOG-CCM-008
+    workflow: wf-knowledge-update
+    trigger: phase_transition
+    from: phase_0
+    to: phase_1
+    event: "ecosystem_sources_collected"
+    payload: [products_checked, sources_fetched]
+    token_ref: TK-CCM-TIME-001
+
+  - id: JLOG-CCM-009
+    workflow: wf-knowledge-update
+    trigger: phase_transition
+    from: phase_1
+    to: phase_2
+    event: "delta_analysis_complete"
+    payload: [products_with_changes, update_priority]
+
+  - id: JLOG-CCM-010
+    workflow: wf-knowledge-update
+    trigger: phase_transition
+    from: phase_3
+    to: phase_4
+    event: "agent_impact_assessed"
+    payload: [agents_affected, critical_updates]
+    token_ref: TK-CCM-ACC-001
+
+  - id: JLOG-CCM-011
+    workflow: wf-knowledge-update
+    trigger: gate_pass
+    phase: phase_4
+    event: "agents_updated_and_synced"
+    payload: [agents_updated, files_synced]
+
+  - id: JLOG-CCM-012
+    workflow: wf-knowledge-update
+    trigger: skip
+    phase: phase_1
+    event: "no_delta_detected"
+    payload: [products_checked]
+    condition: "update_priority == 'none'"
+
+  # ─── Cross-workflow events ───────────────────────────────────────────────
+  - id: JLOG-CCM-013
+    workflow: any
+    trigger: handoff
+    event: "cross_domain_handoff_emitted"
+    payload: [source_squad, target_squad, artifact_id]
+    token_ref: TK-CCM-ACC-001

@@ -1,0 +1,644 @@
+# Health Score Report Template
+# Data Intelligence Pack - Template para Relatório de Health Score
+# Based on: Nick Mehta (Gainsight) Health Score Methodology
+
+template:
+  id: health-score-report-v1
+  name: "Health Score Report Template"
+  version: "1.0"
+  primary_agent: nick-mehta
+  secondary_agents:
+    - peter-fader
+    - david-spinks
+  output:
+    format: markdown
+    filename: "health-score-report-{{period}}.md"
+
+# ============================================================================
+# VARIÁVEIS DE INPUT
+# ============================================================================
+
+variables:
+  required:
+    - period: "Período do relatório (ex: 2026-Q1, 2026-01)"
+    - total_customers: "Número total de clientes ativos"
+    - health_scores: "Array de scores por cliente [{ customer_id, score, trend }]"
+
+  optional:
+    - previous_period: "Período anterior para comparação"
+    - segment_breakdown: "Breakdown por segmento (Enterprise, SMB, etc.)"
+    - component_weights: "Pesos customizados por componente"
+    - alert_threshold_warning: "Threshold para amarelo (default: 40)"
+    - alert_threshold_critical: "Threshold para vermelho (default: 25)"
+    - include_dear_analysis: "Incluir análise DEAR (true/false)"
+    - include_churn_signals: "Incluir sinais de churn (true/false)"
+
+# ============================================================================
+# COMPONENTES DO HEALTH SCORE (Gainsight Default)
+# ============================================================================
+
+health_score_components:
+  default_weights:
+    product_usage: 0.30
+    support_sentiment: 0.20
+    marketing_engagement: 0.15
+    community_participation: 0.10
+    contract_growth: 0.15
+    relationship_health: 0.10
+
+  score_thresholds:
+    healthy:
+      min: 70
+      max: 100
+      color: "green"
+      label: "Saudável"
+      action: "Candidato a upsell/advocacy"
+
+    at_risk:
+      min: 40
+      max: 69
+      color: "yellow"
+      label: "Em Risco"
+      action: "Intervenção proativa necessária"
+
+    critical:
+      min: 0
+      max: 39
+      color: "red"
+      label: "Crítico"
+      action: "Resgate imediato"
+
+# ============================================================================
+# ESTRUTURA DO RELATÓRIO
+# ============================================================================
+
+sections:
+
+  # --------------------------------------------------------------------------
+  # 1. EXECUTIVE SUMMARY
+  # --------------------------------------------------------------------------
+  - id: executive_summary
+    name: "Executive Summary"
+    required: true
+    template: |
+      # 📊 Health Score Report - {{period}}
+
+      **Gerado em:** {{generated_at}}
+      **Período de Análise:** {{period_start}} a {{period_end}}
+      **Total de Clientes:** {{total_customers}}
+
+      ---
+
+      ## 🎯 Executive Summary
+
+      | Métrica | Atual | Anterior | Δ |
+      |---------|-------|----------|---|
+      | **Score Médio** | {{avg_score}} | {{prev_avg_score}} | {{score_delta}}{{score_trend_icon}} |
+      | **% Saudáveis** | {{pct_healthy}}% | {{prev_pct_healthy}}% | {{healthy_delta}} |
+      | **% Em Risco** | {{pct_at_risk}}% | {{prev_pct_at_risk}}% | {{at_risk_delta}} |
+      | **% Críticos** | {{pct_critical}}% | {{prev_pct_critical}}% | {{critical_delta}} |
+
+      ### Destaques do Período
+
+      {{#if highlights}}
+      {{#each highlights}}
+      - {{icon}} {{description}}
+      {{/each}}
+      {{else}}
+      - Análise de destaques pendente
+      {{/if}}
+
+      ### ⚠️ Alertas Críticos
+
+      {{#if critical_alerts_count}}
+      **{{critical_alerts_count}} clientes requerem atenção imediata** (score < {{critical_threshold}})
+      {{else}}
+      ✅ Nenhum cliente em estado crítico
+      {{/if}}
+
+  # --------------------------------------------------------------------------
+  # 2. OVERALL HEALTH DISTRIBUTION
+  # --------------------------------------------------------------------------
+  - id: health_distribution
+    name: "Overall Health Distribution"
+    required: true
+    template: |
+      ---
+
+      ## 📈 Distribuição Geral de Health Score
+
+      ### Visão por Categoria
+
+      ```
+      ┌─────────────────────────────────────────────────────────────────┐
+      │                   HEALTH SCORE DISTRIBUTION                     │
+      ├─────────────────────────────────────────────────────────────────┤
+      │                                                                 │
+      │  🟢 Saudáveis (70-100):  {{healthy_count}} clientes ({{pct_healthy}}%)
+      │     {{healthy_bar}}
+      │                                                                 │
+      │  🟡 Em Risco (40-69):    {{at_risk_count}} clientes ({{pct_at_risk}}%)
+      │     {{at_risk_bar}}
+      │                                                                 │
+      │  🔴 Críticos (0-39):     {{critical_count}} clientes ({{pct_critical}}%)
+      │     {{critical_bar}}
+      │                                                                 │
+      └─────────────────────────────────────────────────────────────────┘
+      ```
+
+      ### Distribuição por Faixa de Score
+
+      | Faixa | Clientes | % do Total | Tendência |
+      |-------|----------|------------|-----------|
+      | 90-100 (Excelente) | {{excellent_count}} | {{pct_excellent}}% | {{excellent_trend}} |
+      | 70-89 (Bom) | {{good_count}} | {{pct_good}}% | {{good_trend}} |
+      | 50-69 (Atenção) | {{attention_count}} | {{pct_attention}}% | {{attention_trend}} |
+      | 30-49 (Risco) | {{risk_count}} | {{pct_risk}}% | {{risk_trend}} |
+      | 0-29 (Crítico) | {{critical_low_count}} | {{pct_critical_low}}% | {{critical_low_trend}} |
+
+      ### Por Segmento
+
+      {{#if segment_breakdown}}
+      | Segmento | Média | Saudáveis | Em Risco | Críticos |
+      |----------|-------|-----------|----------|----------|
+      {{#each segments}}
+      | {{name}} | {{avg_score}} | {{healthy}}% | {{at_risk}}% | {{critical}}% |
+      {{/each}}
+      {{/if}}
+
+  # --------------------------------------------------------------------------
+  # 3. AT-RISK CUSTOMERS
+  # --------------------------------------------------------------------------
+  - id: at_risk_customers
+    name: "At-Risk Customers"
+    required: true
+    template: |
+      ---
+
+      ## 🟡 Clientes Em Risco (Score 40-69)
+
+      **Total:** {{at_risk_count}} clientes ({{pct_at_risk}}% da base)
+
+      ### Top 10 Prioridades (ordenados por ARR)
+
+      | # | Cliente | Score | Trend | ARR | Dias no Status | Principal Causa |
+      |---|---------|-------|-------|-----|----------------|-----------------|
+      {{#each at_risk_top10}}
+      | {{@index}} | {{customer_name}} | {{score}} | {{trend_icon}} | {{arr_formatted}} | {{days_in_status}} | {{primary_cause}} |
+      {{/each}}
+
+      ### Análise de Causas (Em Risco)
+
+      | Causa | Clientes Afetados | % do Grupo |
+      |-------|-------------------|------------|
+      {{#each at_risk_causes}}
+      | {{cause}} | {{count}} | {{percentage}}% |
+      {{/each}}
+
+      ### DEAR Analysis - Em Risco
+
+      {{#if include_dear_analysis}}
+      ```
+      ┌────────────────────────────────────────────────────┐
+      │           DEAR BREAKDOWN - AT RISK                 │
+      ├────────────────────────────────────────────────────┤
+      │  D - Deployment:  {{dear_d_score}}/100 ({{dear_d_status}})
+      │      {{dear_d_detail}}
+      │                                                    │
+      │  E - Engagement:  {{dear_e_score}}/100 ({{dear_e_status}})
+      │      {{dear_e_detail}}
+      │                                                    │
+      │  A - Adoption:    {{dear_a_score}}/100 ({{dear_a_status}})
+      │      {{dear_a_detail}}
+      │                                                    │
+      │  R - ROI:         {{dear_r_score}}/100 ({{dear_r_status}})
+      │      {{dear_r_detail}}
+      └────────────────────────────────────────────────────┘
+      ```
+      {{/if}}
+
+  # --------------------------------------------------------------------------
+  # 4. CRITICAL CUSTOMERS
+  # --------------------------------------------------------------------------
+  - id: critical_customers
+    name: "Critical Customers"
+    required: true
+    template: |
+      ---
+
+      ## 🔴 Clientes Críticos (Score < 40)
+
+      **Total:** {{critical_count}} clientes ({{pct_critical}}% da base)
+      **ARR em Risco:** {{critical_arr_total}}
+
+      ### Lista Completa - Ação Imediata Necessária
+
+      | # | Cliente | Score | Trend | ARR | Renewal Em | Sinais de Churn | Owner |
+      |---|---------|-------|-------|-----|------------|-----------------|-------|
+      {{#each critical_customers}}
+      | {{@index}} | **{{customer_name}}** | 🔴 {{score}} | {{trend_icon}} | {{arr_formatted}} | {{renewal_date}} | {{churn_signals_summary}} | {{cs_owner}} |
+      {{/each}}
+
+      ### Sinais de Churn Detectados
+
+      {{#if include_churn_signals}}
+      #### Leading Indicators (Agir Agora)
+
+      | Sinal | Clientes | Urgência |
+      |-------|----------|----------|
+      {{#each leading_indicators}}
+      | ⚠️ {{signal}} | {{affected_count}} | {{urgency}} |
+      {{/each}}
+
+      #### Lagging Indicators (Já é tarde)
+
+      {{#if lagging_indicators}}
+      | Sinal | Clientes |
+      |-------|----------|
+      {{#each lagging_indicators}}
+      | 🚨 {{signal}} | {{affected_count}} |
+      {{/each}}
+      {{else}}
+      Nenhum lagging indicator detectado.
+      {{/if}}
+      {{/if}}
+
+      ### Playbook de Resgate Recomendado
+
+      Para cada cliente crítico, executar:
+
+      1. **Imediato (24h):** Contato do CS Manager
+      2. **Curto prazo (7 dias):** Executive Sponsor outreach
+      3. **Médio prazo (30 dias):** Value realization workshop
+      4. **Acompanhamento:** Weekly check-ins até score > 50
+
+  # --------------------------------------------------------------------------
+  # 5. TREND ANALYSIS
+  # --------------------------------------------------------------------------
+  - id: trend_analysis
+    name: "Trend Analysis"
+    required: true
+    template: |
+      ---
+
+      ## 📉 Análise de Tendências
+
+      ### Evolução do Health Score (Últimos 6 Períodos)
+
+      | Período | Score Médio | % Saudáveis | % Em Risco | % Críticos |
+      |---------|-------------|-------------|------------|------------|
+      {{#each trend_history}}
+      | {{period}} | {{avg_score}} | {{healthy}}% | {{at_risk}}% | {{critical}}% |
+      {{/each}}
+
+      ### Movimento de Clientes
+
+      #### Melhoria (↗️)
+
+      | De → Para | Clientes | Principais Fatores |
+      |-----------|----------|-------------------|
+      {{#each improvements}}
+      | {{from}} → {{to}} | {{count}} | {{factors}} |
+      {{/each}}
+
+      #### Deterioração (↘️)
+
+      | De → Para | Clientes | Principais Fatores |
+      |-----------|----------|-------------------|
+      {{#each deteriorations}}
+      | {{from}} → {{to}} | {{count}} | {{factors}} |
+      {{/each}}
+
+      ### Clientes com Maior Variação
+
+      #### Top 5 Melhoria
+
+      | Cliente | Score Anterior | Score Atual | Δ | Motivo |
+      |---------|----------------|-------------|---|--------|
+      {{#each top_improvers}}
+      | {{customer_name}} | {{prev_score}} | {{current_score}} | +{{delta}} | {{reason}} |
+      {{/each}}
+
+      #### Top 5 Deterioração
+
+      | Cliente | Score Anterior | Score Atual | Δ | Motivo |
+      |---------|----------------|-------------|---|--------|
+      {{#each top_deteriorators}}
+      | {{customer_name}} | {{prev_score}} | {{current_score}} | {{delta}} | {{reason}} |
+      {{/each}}
+
+      ### Projeção Próximo Período
+
+      {{#if projections}}
+      Baseado nas tendências atuais:
+
+      | Cenário | Score Médio Projetado | Clientes em Risco |
+      |---------|----------------------|-------------------|
+      | Pessimista | {{proj_pessimistic_score}} | {{proj_pessimistic_risk}} |
+      | Base | {{proj_base_score}} | {{proj_base_risk}} |
+      | Otimista | {{proj_optimistic_score}} | {{proj_optimistic_risk}} |
+      {{/if}}
+
+  # --------------------------------------------------------------------------
+  # 6. ALERT SUMMARY
+  # --------------------------------------------------------------------------
+  - id: alert_summary
+    name: "Alert Summary"
+    required: true
+    template: |
+      ---
+
+      ## 🚨 Resumo de Alertas
+
+      ### Alertas Ativos por Severidade
+
+      | Severidade | Quantidade | ARR Impactado | SLA Resposta |
+      |------------|------------|---------------|--------------|
+      | 🔴 Crítico | {{critical_alerts}} | {{critical_arr}} | < 24h |
+      | 🟠 Alto | {{high_alerts}} | {{high_arr}} | < 48h |
+      | 🟡 Médio | {{medium_alerts}} | {{medium_arr}} | < 7 dias |
+      | 🔵 Baixo | {{low_alerts}} | {{low_arr}} | < 14 dias |
+
+      ### Top Alertas Críticos (Ação Imediata)
+
+      {{#each critical_alert_list}}
+      #### Alert #{{@index}}: {{customer_name}}
+
+      - **Score:** {{score}}
+      - **Tipo:** {{alert_type}}
+      - **Trigger:** {{trigger_description}}
+      - **Dias Sem Ação:** {{days_open}}
+      - **Owner:** {{owner}}
+      - **Ação Recomendada:** {{recommended_action}}
+
+      {{/each}}
+
+      ### Alertas por Tipo
+
+      | Tipo de Alerta | Total | Críticos | Altos | Médios | Baixos |
+      |----------------|-------|----------|-------|--------|--------|
+      {{#each alert_types}}
+      | {{type}} | {{total}} | {{critical}} | {{high}} | {{medium}} | {{low}} |
+      {{/each}}
+
+      ### Alertas Resolvidos no Período
+
+      | Métrica | Valor |
+      |---------|-------|
+      | Total Resolvidos | {{resolved_count}} |
+      | Tempo Médio de Resolução | {{avg_resolution_time}} |
+      | % Resolvidos no SLA | {{sla_compliance}}% |
+
+      ### Triggers de Alerta Mais Frequentes
+
+      | Trigger | Frequência | % do Total |
+      |---------|------------|------------|
+      {{#each top_triggers}}
+      | {{trigger}} | {{count}} | {{percentage}}% |
+      {{/each}}
+
+  # --------------------------------------------------------------------------
+  # 7. ACTION ITEMS
+  # --------------------------------------------------------------------------
+  - id: action_items
+    name: "Action Items"
+    required: true
+    template: |
+      ---
+
+      ## ✅ Action Items
+
+      ### Ações Imediatas (Esta Semana)
+
+      | # | Ação | Cliente(s) | Owner | Due Date | Impacto ARR |
+      |---|------|------------|-------|----------|-------------|
+      {{#each immediate_actions}}
+      | {{@index}} | {{action}} | {{customers}} | {{owner}} | {{due_date}} | {{arr_impact}} |
+      {{/each}}
+
+      ### Ações de Curto Prazo (Este Mês)
+
+      | # | Ação | Objetivo | Owner | Due Date | KPI |
+      |---|------|----------|-------|----------|-----|
+      {{#each short_term_actions}}
+      | {{@index}} | {{action}} | {{objective}} | {{owner}} | {{due_date}} | {{kpi}} |
+      {{/each}}
+
+      ### Iniciativas Estratégicas (Este Trimestre)
+
+      {{#each strategic_initiatives}}
+      #### {{name}}
+
+      - **Objetivo:** {{objective}}
+      - **Clientes Impactados:** {{customer_count}}
+      - **ARR Potencial:** {{arr_potential}}
+      - **Owner:** {{owner}}
+      - **Timeline:** {{timeline}}
+      - **Status:** {{status}}
+
+      {{/each}}
+
+      ### Playbooks Recomendados por Cenário
+
+      | Cenário | Playbook | Aplicar Em |
+      |---------|----------|------------|
+      | Score caiu >20 pontos | Rescue Intervention | {{rescue_candidates}} clientes |
+      | Usage drop >50% | Re-engagement Campaign | {{reengagement_candidates}} clientes |
+      | Champion left | Executive Sponsor Outreach | {{sponsor_outreach_candidates}} clientes |
+      | Renewal em <90 dias + At Risk | Early Renewal | {{early_renewal_candidates}} clientes |
+
+      ### Acompanhamento
+
+      - **Próximo Review:** {{next_review_date}}
+      - **Frequência de Atualização:** {{update_frequency}}
+      - **Escalation Path:** {{escalation_path}}
+
+  # --------------------------------------------------------------------------
+  # 8. APPENDIX - COMPONENT BREAKDOWN
+  # --------------------------------------------------------------------------
+  - id: appendix_components
+    name: "Appendix - Health Score Components"
+    required: false
+    template: |
+      ---
+
+      ## 📎 Apêndice: Breakdown por Componente
+
+      ### Metodologia de Cálculo
+
+      ```
+      Health Score = Σ (Component Score × Weight)
+
+      Componentes Default:
+      ├── Product Usage (30%)
+      ├── Support Sentiment (20%)
+      ├── Marketing Engagement (15%)
+      ├── Community Participation (10%)
+      ├── Contract Growth (15%)
+      └── Relationship Health (10%)
+      ```
+
+      ### Performance por Componente
+
+      | Componente | Peso | Score Médio | Contribuição | Trend |
+      |------------|------|-------------|--------------|-------|
+      {{#each component_scores}}
+      | {{name}} | {{weight}}% | {{avg_score}} | {{contribution}} pts | {{trend}} |
+      {{/each}}
+
+      ### Componentes Mais Problemáticos
+
+      | Componente | Clientes com Score < 40 | % da Base |
+      |------------|-------------------------|-----------|
+      {{#each problematic_components}}
+      | {{name}} | {{low_score_count}} | {{percentage}}% |
+      {{/each}}
+
+      ### Correlação com Outcomes
+
+      | Componente | Correlação com Churn | Correlação com Expansion |
+      |------------|---------------------|--------------------------|
+      {{#each component_correlations}}
+      | {{name}} | {{churn_correlation}} | {{expansion_correlation}} |
+      {{/each}}
+
+  # --------------------------------------------------------------------------
+  # 9. APPENDIX - DEFINITIONS
+  # --------------------------------------------------------------------------
+  - id: appendix_definitions
+    name: "Appendix - Definições"
+    required: false
+    template: |
+      ---
+
+      ## 📖 Definições e Metodologia
+
+      ### Health Score Categories
+
+      | Categoria | Range | Definição |
+      |-----------|-------|-----------|
+      | 🟢 Saudável | 70-100 | Cliente engajado, obtendo valor, baixo risco de churn |
+      | 🟡 Em Risco | 40-69 | Sinais de desengajamento, requer intervenção proativa |
+      | 🔴 Crítico | 0-39 | Alto risco de churn, ação imediata necessária |
+
+      ### DEAR Framework (Gainsight)
+
+      | Dimensão | O que mede | Indicadores |
+      |----------|------------|-------------|
+      | **D**eployment | Implementação completa? | Setup, config, integrations |
+      | **E**ngagement | Cliente está ativo? | Logins, usage frequency |
+      | **A**doption | Usa features avançadas? | Feature breadth, expansion |
+      | **R**OI | Vê valor? | NPS, renewals, referrals |
+
+      ### Churn Signals (Mehta)
+
+      #### Leading Indicators (Precoces)
+      - Login decrease >50% mês-a-mês
+      - Champion deixou a empresa
+      - Ticket crítico sem resolução >7 dias
+      - Não participou de QBR
+      - Solicitou exportação de dados
+
+      #### Lagging Indicators (Tardios)
+      - Pediu cancelamento
+      - Contratou concorrente
+      - Não renovou
+
+      ### Glossário
+
+      | Termo | Definição |
+      |-------|-----------|
+      | ARR | Annual Recurring Revenue |
+      | Churn | Perda de cliente/receita |
+      | NRR | Net Revenue Retention |
+      | Champion | Principal sponsor interno do cliente |
+      | QBR | Quarterly Business Review |
+
+# ============================================================================
+# VALIDAÇÃO
+# ============================================================================
+
+validation:
+  required_sections:
+    - executive_summary
+    - health_distribution
+    - at_risk_customers
+    - critical_customers
+    - trend_analysis
+    - alert_summary
+    - action_items
+
+  recommended_sections:
+    - appendix_components
+    - appendix_definitions
+
+  data_requirements:
+    - "Health scores para todos os clientes"
+    - "Dados do período anterior para comparação"
+    - "ARR por cliente"
+    - "Datas de renewal"
+    - "CS Owner assignments"
+
+  quality_checklist:
+    - "Todos os clientes críticos listados com owner?"
+    - "Action items têm due dates específicas?"
+    - "Tendências calculadas corretamente?"
+    - "ARR em risco calculado?"
+    - "Alertas priorizados por severidade?"
+    - "Projeções baseadas em dados reais?"
+
+# ============================================================================
+# EXEMPLOS DE USO
+# ============================================================================
+
+examples:
+  basic_usage: |
+    Para gerar relatório básico:
+
+    ```yaml
+    period: "2026-Q1"
+    total_customers: 150
+    health_scores:
+      - customer_id: "ACME-001"
+        score: 85
+        trend: "up"
+      - customer_id: "BETA-002"
+        score: 42
+        trend: "down"
+      # ...
+    ```
+
+  full_usage: |
+    Para relatório completo com DEAR analysis:
+
+    ```yaml
+    period: "2026-Q1"
+    previous_period: "2025-Q4"
+    total_customers: 150
+    include_dear_analysis: true
+    include_churn_signals: true
+    segment_breakdown: true
+    health_scores: [...]
+    component_weights:
+      product_usage: 0.35
+      support_sentiment: 0.25
+      # ...
+    ```
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  created: "2026-01-23"
+  author: "Data Intelligence Pack"
+  methodology: "Gainsight Customer Success (Nick Mehta)"
+  references:
+    - "Customer Success (Mehta, Steinman, Murphy, 2016)"
+    - "The Customer Success Economy (Mehta, 2020)"
+    - "Gainsight Health Score Methodology"
+  related_tasks:
+    - "design-health-score.md"
+    - "predict-churn.md"
+  related_checklists:
+    - "health-score-checklist.md"

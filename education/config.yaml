@@ -1,0 +1,94 @@
+# Education Engineer Squad Configuration
+# Version: 1.0.0
+# Created: 2026-02-14
+
+squad:
+  name: education
+  icon: "🧠"
+  title: "Education Engineer Squad"
+  version: "1.0.0"
+  status: "production"
+  description: "Replicable system for transforming complex knowledge into mastery journeys using cognitive science + legal compliance"
+
+  domain: "educational curriculum engineering"
+  keywords:
+    - education
+    - curriculum
+    - instructional design
+    - cognitive science
+    - learning engineering
+    - MEC compliance
+
+  target_user: "Educational institutions, training companies, courseware creators"
+
+  use_cases:
+    - "Design domain-agnostic curricula (any subject)"
+    - "Validate compliance with MEC regulations (Brazil)"
+    - "Adapt learning paths to student cognitive level"
+    - "Apply evidence-based instructional design"
+    - "Validate transfer of learning (LTEM tier 5+)"
+
+  architecture:
+    layers:
+      permanent: "Educational Engineering (methodology, science, validation)"
+      variable: "Thematic Absorption (grows per domain via minds/)"
+    tiers:
+      tier_0:
+        name: "Diagnostic"
+        agents:
+          - bloom-diagnostician
+          - sweller-analyst
+          - moore-filter
+          - mec-compliance
+      tier_1:
+        name: "Core Engine"
+        agents:
+          - wiggins-architect
+          - merrill-designer
+          - bjork-engineer
+          - mayer-presenter
+          - clark-validator
+      tier_2:
+        name: "Specialists"
+        agents:
+          - novak-mapper
+          - keller-motivator
+          - rosenshine-teacher
+          - fsrs-scheduler
+          - ericsson-coach
+          - thalheimer-assessor
+      orchestrator:
+        agents:
+          - education-chief
+
+  paths:
+    agents: "agents/"
+    tasks: "tasks/"
+    templates: "templates/"
+    checklists: "checklists/"
+    workflows: "workflows/"
+    data: "data/"
+    minds: "minds/"
+    scripts: "scripts/"
+    docs: "docs/"
+    config: "config/"
+
+  model_routing:
+    opus:
+      - "create agents (mind cloning)"
+      - "curriculum architecture design"
+      - "complex pedagogical decisions"
+    sonnet:
+      - "lesson design"
+      - "template generation"
+      - "documentation"
+    haiku:
+      - "validation checklists"
+      - "MEC compliance checks"
+      - "spaced repetition scheduling"
+      - "format decisions"
+
+  dependencies:
+    external_squads: []
+    mcps: []
+    scripts: []

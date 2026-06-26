@@ -1,0 +1,121 @@
+# Cognitive Load Theory (CLT) Analysis Report Template
+# Purpose: Assess and optimize cognitive load in lesson/module design (Sweller)
+# Output: CLT analysis with load classification and reduction strategies
+
+metadata:
+  analysis_id: "{ANALYSIS_ID}"  # e.g., "clt-001-lesson-automation"
+  lesson_id: "{LESSON_ID}"  # Target lesson
+  module_id: "{MODULE_ID}"  # Parent module
+  analyst: "{ANALYST}"  # Who performed analysis
+  analysis_date: "{ANALYSIS_DATE}"
+  version: "{VERSION}"
+
+lesson_context:
+  # What is being analyzed
+  lesson_name: "{LESSON_NAME}"
+  duration_minutes: {MINUTES}
+  target_audience: "{TARGET_AUDIENCE}"
+  prior_knowledge_assumed: "{PRIOR_KNOWLEDGE}"
+
+intrinsic_load:
+  # Load inherent to the material (cannot be eliminated, only managed)
+  element_count: {COUNT}  # How many concepts/steps must be held in working memory
+  element_list:
+    - "{ELEMENT_1}"  # e.g., "Email trigger concept"
+    - "{ELEMENT_2}"  # e.g., "Segmentation logic"
+    - "{ELEMENT_3}"  # e.g., "Workflow builder interface"
+
+  interactivity: "{LOW|MEDIUM|HIGH}"
+  interactivity_justification: |
+    {JUSTIFICATION}
+    # E.g., "HIGH: Understanding automation requires holding trigger + condition + action simultaneously"
+
+  assessment: "{ASSESSMENT}"  # Low/Medium/High intrinsic load
+
+  management_strategy: |
+    {STRATEGY}
+    # How intrinsic load is managed (cannot be reduced, but can be scaffolded)
+    # E.g., "Teach trigger alone → condition alone → combine both → add action"
+
+extraneous_load:
+  # Load that does NOT contribute to learning (must be eliminated)
+  sources:
+    - source: "{SOURCE_1}"  # e.g., "Decorative images in slide"
+      severity: "{LOW|MEDIUM|HIGH}"
+      justification: "{WHY_EXTRANEOUS}"
+
+    - source: "{SOURCE_2}"  # e.g., "Background music in video"
+      severity: "{SEVERITY}"
+      justification: "{WHY_EXTRANEOUS}"
+
+    - source: "{SOURCE_3}"  # e.g., "Redundant text + narration saying same thing"
+      severity: "{SEVERITY}"
+      justification: "{WHY_EXTRANEOUS}"
+
+  total_extraneous_load: "{LOW|MEDIUM|HIGH}"
+
+  fixes:
+    # How extraneous load will be eliminated
+    - source: "{SOURCE}"
+      fix: "{FIX}"  # e.g., "Remove decorative images, keep only diagrams"
+      expected_impact: "{IMPACT}"  # e.g., "Reduce load by 20%"
+
+germane_load:
+  # Load dedicated to schema construction (GOOD load — maximize this)
+  strategies:
+    - strategy: "{STRATEGY_1}"  # e.g., "Use worked examples before problem-solving"
+      justification: |
+        {JUSTIFICATION}
+        # E.g., "Worked examples reduce load during initial learning (Sweller)"
+      implementation: "{IMPLEMENTATION}"  # Where/how in lesson
+
+    - strategy: "{STRATEGY_2}"  # e.g., "Interleave concept A and B to build integrated schema"
+      justification: "{JUSTIFICATION}"
+      implementation: "{IMPLEMENTATION}"
+
+    - strategy: "{STRATEGY_3}"  # e.g., "Use dual coding (visual + verbal)"
+      justification: "{JUSTIFICATION}"
+      implementation: "{IMPLEMENTATION}"
+
+  total_germane_load: "{LOW|MEDIUM|HIGH}"
+  optimization_opportunities: |
+    {OPPORTUNITIES}
+    # How to increase germane load without overloading working memory
+
+overall_assessment:
+  # Summary of cognitive load profile
+  total_load_estimate: "{LOW|MEDIUM|HIGH}"  # Intrinsic + Extraneous + Germane
+  working_memory_capacity_fit: "{UNDER|AT|OVER}"  # Does lesson fit in WM (7±2 chunks)?
+
+  bottlenecks:
+    - "{BOTTLENECK_1}"  # Where cognitive overload is most likely
+    - "{BOTTLENECK_2}"
+
+  verdict: "{VERDICT}"  # e.g., "Needs revision", "Acceptable", "Optimized"
+
+recommendations:
+  # Action items to optimize cognitive load
+  immediate:
+    - priority: "High"
+      action: "{ACTION}"  # e.g., "Remove decorative images from slides 3-7"
+      rationale: "{RATIONALE}"
+
+  iterative:
+    - priority: "Medium"
+      action: "{ACTION}"  # e.g., "A/B test worked example vs direct practice"
+      rationale: "{RATIONALE}"
+
+validation:
+  # How effectiveness will be measured
+  metrics:
+    - metric: "{METRIC}"  # e.g., "Learner self-reported difficulty (1-5)"
+      target: "{TARGET}"  # e.g., "<3 (manageable)"
+
+    - metric: "{METRIC}"  # e.g., "Time to complete practice exercise"
+      target: "{TARGET}"  # e.g., "<15 minutes"
+
+  test_method: "{METHOD}"  # e.g., "Pilot with 10 learners, collect feedback"
+
+notes: |
+  {ADDITIONAL_NOTES}
+  # Iteration history, learner feedback, A/B test results

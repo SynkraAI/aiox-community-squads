@@ -1,0 +1,596 @@
+# Brazilian Naming Swipefile
+# 400+ Analyses of Brazilian Brands That Dominated Their Markets
+# Total documented market value: R$ 2.3+ trillion
+# Source: SWIPE FILE BRASIL A PSICOLOGIA DOS NOMES BILIONÁRIOS BRASILEIROS.md
+
+version: "1.0"
+extraction_date: "2026-02-23"
+source: "SWIPE FILE BRASIL A PSICOLOGIA DOS NOMES BILIONÁRIOS BRASILEIROS.md"
+total_cases: "400+"
+total_market_value: "R$ 2.3+ trillion"
+cultural_context: "Brazilian market specific patterns and psychology"
+
+# =============================================================================
+# CATEGORY 1: BRAZILIAN UNICORNS - Names That Defined New Brazil
+# =============================================================================
+category_unicorns_br:
+  description: "Brazilian unicorn names and their psychology"
+
+  cases:
+    - name: "Nubank"
+      valuation: "R$ 250 billion (US$ 50B market cap)"
+      etymology: "Nu (new, naked, essential) + Bank"
+      why_works: "Radical simplicity against banking complexity"
+      icp_original: "Millennials denied cards by big banks"
+      icp_current: "90+ million Brazilians, from CLT to MEI"
+      brazilian_psychology: "'Nu' suggests transparency in country traumatized by hidden fees"
+      color_strategy: "Purple differentiated in sector dominated by blue/yellow"
+      positioning: "End of complexity - name suggests stripping the unnecessary"
+      lesson: "Extreme simplicity in complex market = dominance"
+
+    - name: "iFood"
+      valuation: "R$ 28 billion (US$ 5.4B)"
+      etymology: "'i' (personal, digital) + Food"
+      why_works: "Personalized food"
+      icp_original: "Urban middle class without time to cook"
+      icp_evolved: "Any Brazilian with smartphone and hunger"
+      psychology: "'i' was Apple-inspired in 2011, suggested innovation"
+      market_share: "80% - became synonym for delivery"
+      pandemic_shift: "From convenience to essential"
+      lesson: "Simple name + timing + execution = cultural monopoly"
+
+    - name: "PicPay"
+      valuation: "R$ 15 billion (US$ 3B)"
+      etymology: "Pic (photo sound/quick) + Pay"
+      why_works: "Playful and memorable"
+      icp: "Young people wanting Brazilian Venmo"
+      psychology: "Fun sound removes seriousness of financial transaction"
+      strategy: "QR code payment pioneer in Brazil"
+      lesson: "Playful name in serious category = differentiation"
+
+    - name: "QuintoAndar"
+      valuation: "R$ 27 billion (US$ 5.5B)"
+      etymology: "Brazilian expression 'como se fosse o quinto andar' (as if it were the 5th floor - nonexistent in 4-floor building)"
+      why_works: "Brazilian joke understood instantly"
+      icp: "Millennials fleeing real estate bureaucracy"
+      brazilian_psychology: "Brazilian understands the joke immediately"
+      revolution: "Eliminated 'fiador' (guarantor) - specific Brazilian problem"
+      lesson: "Local expression can become billion-dollar brand"
+
+    - name: "Stone"
+      valuation: "R$ 75 billion (NYSE: STNE)"
+      etymology: "Stone = solidity, trust, durability"
+      why_works: "Single word that transmits reliability"
+      icp: "Small merchants abandoned by big banks"
+      psychology: "Sounds tech in English, but concept is solid"
+      color: "Green differentiation at point of sale"
+      brazilian_touch: "'Tripulação Stone' (Stone Crew) - human service"
+      lesson: "Name transmitting solidity in fintech = instant trust"
+
+    - name: "Creditas"
+      valuation: "R$ 13 billion (US$ 2.5B)"
+      etymology: "Credit + as (plural) - multiple forms of credit"
+      why_works: "Technical but accessible"
+      icp: "Middle class with assets but no cheap credit"
+      psychology: "Descriptive name for new category"
+      innovation: "Collateral credit (home, car) in Brazil"
+      positioning: "'Fair credit' in country of abusive rates"
+      lesson: "Descriptive name works when creating category"
+
+    - name: "Loggi"
+      valuation: "R$ 5 billion (US$ 1B)"
+      etymology: "Logistics simplified to 'Loggi' - informal, fast"
+      why_works: "Agile, modern, tech sound"
+      icp: "E-commerce and people needing fast delivery"
+      model: "Uber of logistics - independent motoboys"
+      expansion: "From documents to e-commerce"
+      lesson: "Simplifying technical name = democratization"
+
+    - name: "Gympass"
+      valuation: "R$ 11 billion (US$ 2.2B)"
+      etymology: "Gym + Pass = multiple access, innovative model"
+      why_works: "Literal name of new model"
+      icp: "Companies wanting differentiated benefit"
+      global_pivot: "Became Wellhub globally, kept Gympass in Brazil"
+      b2b2c_psychology: "Company pays, employee uses"
+      lesson: "Literal name of new model can educate market"
+
+    - name: "Hotmart"
+      valuation: "R$ 10 billion (US$ 2B)"
+      etymology: "Hot (trending) + Mart (market)"
+      why_works: "'Hot' suggests desired, trending product"
+      icp: "Content creators wanting to sell digital"
+      pioneering: "Created infoproduct market in Brazil"
+      ecosystem: "Marketplace + tools + payment"
+      lesson: "Name suggesting trend can create industry"
+
+# =============================================================================
+# CATEGORY 2: BRAZILIAN INFOPRODUCTS - The Digital Million Machine
+# =============================================================================
+category_infoproducts_br:
+  description: "Brazilian infoproduct names that generated millions"
+
+  cases:
+    - name: "Método Emagrecer de Vez"
+      creator: "Rodrigo Polesso"
+      revenue: "R$ 100+ million total"
+      why_works: "'De Vez' = definitive promise, end of yo-yo effect"
+      icp: "Women 35-55 who've tried everything"
+      brazilian_psychology: "Brazilian wants definitive solution, not another diet"
+      controversy_used: "Low-carb when nobody talked about it"
+      community: "300k+ active members"
+      lesson: "Definitiveness promise converts in Brazil"
+
+    - name: "Fórmula de Lançamento"
+      creator: "Erico Rocha"
+      revenue: "R$ 500+ million generated by students"
+      why_works: "'Fórmula' = exact recipe, removes mystery"
+      icp: "Beginner digital entrepreneurs"
+      brazilian_psychology: "Brazilian wants step-by-step, not theory"
+      leads_captured: "2+ million educated leads"
+      technique: "6 em 7 (6 figures in 7 days) became market standard"
+      lesson: "'Fórmula' is magic word in Brazil"
+
+    - name: "Jornada da Heroína"
+      creator: "Marianna Moreno"
+      revenue: "R$ 35 million in 7 days launch"
+      why_works: "Feminine archetype, transformation journey"
+      icp: "Women entrepreneurs seeking purpose"
+      psychology: "Heroine > Entrepreneur (emotion > logic)"
+      storytelling: "Personal story from R$ 50 to millions"
+      lesson: "Mythological archetype resonates deeply"
+
+    - name: "Protocolo Zero Barriga"
+      creator: "Dr. Rocha"
+      revenue: "R$ 200+ million"
+      why_works: "'Protocolo' = medical/scientific, 'Zero Barriga' = visual result"
+      icp: "Men 40+ with beer belly"
+      psychology: "'Protocol' gives medical authority"
+      calculated_controversy: "Attacks pharmaceutical industry"
+      multi_product: "Diabetes, cholesterol, etc."
+      lesson: "Medical authority + specific result = trust"
+
+    - name: "A Fórmula Negócio Online"
+      creator: "Alex Vargas"
+      revenue: "R$ 100+ million, 60k+ students"
+      acronym: "FNO became brand"
+      why_works: "'Fórmula' again"
+      icp: "People wanting to leave CLT (formal employment)"
+      structure: "3F - Find, Engage, Scale"
+      affiliate_army: "Created promoter army"
+      lesson: "Memorable acronym can become movement"
+
+    - name: "Desafio 19 Dias"
+      creator: "Natalia Beauty"
+      revenue: "R$ 30 million/year"
+      why_works: "19 = broken number, creates curiosity"
+      icp: "Women class C/D wanting profession"
+      psychology: "Challenge = gamification + commitment"
+      story: "From favela to Dubai - Brazilian overcoming"
+      model: "In-person + online hybrid"
+      lesson: "Specific number + challenge = urgency"
+
+    - name: "Nômade Milionário"
+      creator: "Thiago Finch"
+      revenue: "R$ 128 million in 50 days (~$23.7M USD)"
+      why_works: "'Nômade' = geographic freedom, 'Milionário' = financial freedom"
+      icp: "Young 20-35 stuck in jobs, dreaming Instagram lifestyle"
+      psychology: "Sells lifestyle before method"
+      vsl: "2-hour video, compelling personal story"
+      scarcity: "Closed cart and disappeared for months"
+      lesson: "Aspirational lifestyle > specific method for Gen Z"
+
+# =============================================================================
+# CATEGORY 3: TRADITIONAL BRANDS THAT BECAME EMPIRES
+# =============================================================================
+category_traditional_br:
+  description: "Traditional Brazilian brands that became billions"
+
+  cases:
+    - name: "Havaianas"
+      revenue: "R$ 3.5 billion annual"
+      etymology: "Hawaii = tropical paradise, aspirational"
+      icp_original: "Classes D/E, construction worker sandal"
+      icp_current: "Global, all classes"
+      turnaround: "1994 - from monochrome to colorful"
+      psychology: "Aspirational name elevated commodity product"
+      price_evolution: "From R$ 2 to R$ 200 (premium versions)"
+      lesson: "Aspirational name can completely reposition"
+
+    - name: "Natura"
+      valuation: "R$ 40 billion market cap (with Avon)"
+      etymology: "Natural, authentic, Brazilian"
+      why_works: "Connection with Brazilian nature"
+      icp: "Middle class women valuing sustainability"
+      sales_model: "Consultant creates relationship"
+      expansion: "Bought Body Shop and Avon"
+      lesson: "Name aligned with deep values endures"
+
+    - name: "O Boticário"
+      revenue: "R$ 20 billion, 4000+ stores"
+      etymology: "Boticário = old compounding pharmacy"
+      why_works: "Suggests artisanal, careful products"
+      icp: "Women all classes wanting good perfume"
+      franchising: "Model that democratized perfumery"
+      dominance: "Dominates Mother's Day, Valentine's Day"
+      lesson: "Nostalgic name with artisanal touch creates trust"
+
+    - name: "Cacau Show"
+      revenue: "R$ 4.5 billion, 4000+ stores"
+      etymology: "Cacau (ingredient) + Show (experience)"
+      why_works: "'Show' promises experience, not just product"
+      icp: "Class C wanting 'fine' chocolate"
+      model: "Low investment franchising"
+      easter: "Largest egg seller in Brazil"
+      lesson: "Premium product with popular name = scale"
+
+    - name: "Arezzo"
+      revenue: "R$ 2.5 billion (Arezzo&Co)"
+      etymology: "Italian city, suggests design/fashion"
+      why_works: "Italian = superior design (in BR imagination)"
+      icp: "Women class B/C wanting fashionista shoes"
+      multi_brand: "Schutz, Anacapri, Alexandre Birman"
+      franchises: "700+ stores in Brazil"
+      lesson: "International geographic name elevates perception"
+
+    - name: "Kopenhagen"
+      revenue: "R$ 800 million (CRM Group)"
+      etymology: "European city = sophistication"
+      why_works: "European = superior quality for Brazilian"
+      icp: "Premium gift, special occasions"
+      psychology: "Gift positioning, not personal consumption"
+      icon: "Língua de Gato for 90 years"
+      lesson: "European city name justifies premium price"
+
+# =============================================================================
+# CATEGORY 4: FINTECHS - The Financial Revolution
+# =============================================================================
+category_fintech_br:
+  description: "Brazilian fintech names and their trust-building"
+
+  cases:
+    - name: "PagSeguro"
+      valuation: "R$ 30 billion market cap (NYSE: PAGS)"
+      etymology: "Pague (Pay) + Seguro (Safe) = double clear promise"
+      why_works: "Resolves merchant's biggest fear"
+      icp: "Small merchants afraid of fraud"
+      psychology: "'Seguro' calms main merchant fear"
+      product: "'Moderninha' democratized payment"
+      lesson: "Resolving main fear in name = conversion"
+
+    - name: "Neon"
+      valuation: "15 million clients"
+      etymology: "Modern, technological, vibrant light"
+      why_works: "Suggests future, youth, tech"
+      icp: "Young people rejected by traditional banks"
+      psychology: "Neon = modern, young, tech"
+      identity: "Neon blue unique visual"
+      lesson: "Name suggesting future attracts youth"
+
+    - name: "Inter"
+      valuation: "R$ 10 billion market cap, 30M clients"
+      etymology: "International? Intermediary? Multiple interpretations"
+      why_works: "Short, tech, professional"
+      icp: "Middle class wanting to invest"
+      super_app: "Bank + shopping + investments"
+      expansion: "Global account for USA"
+      lesson: "Ambiguous name allows multiple expansions"
+
+    - name: "C6 Bank"
+      valuation: "20 million clients"
+      etymology: "C6 = carbon (element 6), base of life"
+      why_works: "Scientific, sophisticated, minimal"
+      icp: "Class A/B wanting boutique bank at scale"
+      psychology: "Black = premium in Brazil"
+      tagline: "'Feito de Gente' (Made of People) humanizes tech brand"
+      lesson: "Conceptual name allows deep storytelling"
+
+# =============================================================================
+# CATEGORY 5: EDTECH - Education Reinvented
+# =============================================================================
+category_edtech_br:
+  description: "Brazilian edtech names and learning psychology"
+
+  cases:
+    - name: "Descomplica"
+      valuation: "R$ 500 million, 5M+ students"
+      etymology: "Verb that IS value promise"
+      why_works: "Traditional education is 'complicated'"
+      icp: "ENEM students class C/D"
+      psychology: "Removes barrier of understanding"
+      celebrity_teachers: "Teachers became influencers"
+      lesson: "Verb solving problem becomes mission"
+
+    - name: "Alura"
+      valuation: "R$ 300M, 1 million+ students"
+      etymology: "Tech sound but Brazilian (mix Altura + Lura)"
+      why_works: "Invented tech-friendly"
+      icp: "Professionals wanting to migrate to tech"
+      model: "Netflix of tech education"
+      community: "Active developer forum"
+      lesson: "Invented name can sound tech and local"
+
+    - name: "Rocketseat"
+      valuation: "R$ 100M+, 500k+ students"
+      etymology: "Rocket (speed/height) + Seat (place) = fast journey"
+      why_works: "Promises accelerated career"
+      icp: "Young people wanting to be programmers"
+      community: "100k+ active Discord members"
+      event: "NLW (Next Level Week) became phenomenon"
+      lesson: "Speed/height metaphor works for career"
+
+    - name: "StartSe"
+      valuation: "R$ 100 million"
+      etymology: "Start (begin) + Se (reflexive)"
+      why_works: "Call-to-action in the name itself"
+      icp: "Professionals wanting to entrepreneur"
+      psychology: "Imperative verb creates urgency"
+      events: "StartSe Summit largest innovation event"
+      lesson: "Imperative verb in name creates urgency"
+
+# =============================================================================
+# THE 7 ARCHETYPES OF WINNING NAMES IN BRAZIL
+# =============================================================================
+archetypes_brazil:
+  - archetype: "O BRASILEIRO RAIZ (The Root Brazilian)"
+    examples: ["Havaianas", "Riachuelo", "QuintoAndar"]
+    works_when: "Want to create deep cultural connection"
+    psychology: "Brazilian likes to see themselves"
+    icp: "Masses wanting belonging"
+    power: "Becomes cultural patrimony"
+
+  - archetype: "O SIMPLIFICADOR RADICAL (The Radical Simplifier)"
+    examples: ["Nubank", "PicPay", "99"]
+    works_when: "Category is complex/bureaucratic"
+    psychology: "Brazilian hates complication"
+    icp: "People traumatized by old system"
+    result: "Fast dominance"
+
+  - archetype: "O ASPIRACIONAL INTERNACIONAL (The International Aspirational)"
+    examples: ["Arezzo", "Kopenhagen", "Stone"]
+    works_when: "Want to charge premium"
+    psychology: "Brazilian values 'gringo'"
+    icp: "Classes B/C wanting to seem A"
+    risk: "Can seem snobbish"
+
+  - archetype: "O EXPLICATIVO LITERAL (The Literal Explainer)"
+    examples: ["PagSeguro", "Dr. Consulta", "Descomplica"]
+    works_when: "Concept is new"
+    psychology: "Removes understanding barrier"
+    icp: "Technically non-educated masses"
+    benefit: "Educates while selling"
+
+  - archetype: "O PERSONIFICADO AMIGO (The Personified Friend)"
+    examples: ["Zé Delivery", "James", "Magazine Luiza"]
+    works_when: "Want to create relationship"
+    psychology: "Brazilian buys from who they trust"
+    icp: "People wanting humanized service"
+    strength: "Natural loyalty"
+
+  - archetype: "A PROMESSA DEFINITIVA (The Definitive Promise)"
+    examples: ["Emagrecer de Vez", "Definitivo", "Sem Volta"]
+    works_when: "Market has many weak solutions"
+    psychology: "Brazilian tired of trying"
+    icp: "People with multiple frustrations"
+    conversion: "Very high in launches"
+
+  - archetype: "O NÚMERO MÁGICO (The Magic Number)"
+    examples: ["99", "Desafio 19 Dias", "P90X Brasil"]
+    works_when: "Time/quantity is differentiator"
+    psychology: "Specific seems scientific"
+    icp: "People wanting predictability"
+    hack: "Broken numbers convert more in Brazil"
+
+# =============================================================================
+# FORMULAS BY BRAZILIAN CATEGORY
+# =============================================================================
+formulas_by_category_br:
+  fintech:
+    patterns:
+      - "[Action] + Seguro"
+      - "[Color] + [Tech Word]"
+      - "Banco [Adjective]"
+    psychology: "Trust is everything"
+
+  ecommerce:
+    patterns:
+      - "[Category] + [Channel]"
+      - "Mercado [Adjective]"
+      - "Colloquial Verb"
+    examples: ["Netshoes", "Mercado Livre", "Enjoei"]
+
+  education:
+    patterns:
+      - "Des[problem]"
+      - "[Result] + [Time]"
+      - "Método [Proper Name]"
+    examples: ["Descomplica", "Aprovação Garantida"]
+
+  health:
+    patterns:
+      - "Dr. [Service]"
+      - "[Action] + Saúde"
+      - "Clínica [Benefit]"
+    examples: ["Dr. Consulta", "Conexa Saúde"]
+
+  delivery:
+    patterns:
+      - "Easy Number"
+      - "Person Name"
+      - "[Speed] + [Category]"
+    examples: ["99", "Zé", "James", "Rappi"]
+
+# =============================================================================
+# MAGIC WORDS IN BRAZIL
+# =============================================================================
+magic_words_brazil:
+  increase_conversion_3_to_5x:
+    - word: "Método"
+      reason: "Recognized structure"
+    - word: "Fórmula"
+      reason: "Guaranteed recipe"
+    - word: "Definitivo"
+      reason: "Final solution"
+    - word: "Completo"
+      reason: "Nothing else needed"
+    - word: "Garantido"
+      reason: "Removes risk"
+    - word: "Aprovado"
+      reason: "Social validation"
+    - word: "Revelado"
+      reason: "Secret discovered"
+    - word: "Grátis"
+      reason: "Most powerful word"
+
+  create_trust:
+    - word: "Seguro"
+      reason: "Fundamental in fintech"
+    - word: "Original"
+      reason: "Authenticity"
+    - word: "Brasileiro"
+      reason: "Nationalism"
+    - word: "Natural"
+      reason: "Strong trend"
+    - word: "Dr./Dra."
+      reason: "Authority"
+
+  generate_urgency:
+    - word: "Últimas"
+      reason: "Scarcity"
+    - word: "Hoje"
+      reason: "Immediacy"
+    - word: "Agora"
+      reason: "Call-to-action"
+    - word: "Limitado"
+      reason: "Exclusivity"
+
+# =============================================================================
+# BRAZILIAN CULTURE IN NAMES
+# =============================================================================
+cultural_patterns:
+  what_works:
+    jeitinho_brasileiro:
+      description: "Names suggesting 'dar um jeito' (find a way)"
+      examples: ["Desenrola", "Descomplica"]
+      psychology: "Facilitate, de-bureaucratize"
+
+    international_aspiration:
+      description: "Brazilian wants to seem global"
+      examples: ["Stone", "Smart Fit"]
+      psychology: "English names for premium"
+
+    personalization:
+      description: "Brazilian likes to be recognized"
+      examples: ["Magazine Luiza", "Casas Bahia"]
+      psychology: "Personal names create bond"
+
+    humor:
+      description: "Brazilian buys from who makes them laugh"
+      examples: ["Enjoei", "QuintoAndar"]
+      psychology: "Names with double meaning"
+
+  what_doesnt_work:
+    complexity:
+      - "Hard to pronounce names"
+      - "Too abstract concepts"
+      - "Excessive technicality"
+
+    coldness:
+      - "Too corporate"
+      - "Without Brazilian soul"
+      - "Too distant"
+
+    blatant_copy:
+      - "Brazilian perceives imitation"
+      - "Prefers original or adapted"
+      - "99 worked, '88' wouldn't"
+
+# =============================================================================
+# BIGGEST BRAZILIAN FAILURES
+# =============================================================================
+failures_brazil:
+  - name: "Americanas"
+    loss: "R$ 100B destroyed"
+    problem: "Fraud destroyed centenary name"
+    lesson: "Reputation takes decades, destruction is instant"
+
+  - name: "123i"
+    loss: "R$ 100M+"
+    problem: "Confusing number, no meaning"
+    lesson: "Confusing name in new model = death"
+
+  - name: "Walmart Brasil"
+    loss: "R$ 10B"
+    problem: "Name too American for Brazil"
+    lesson: "Global name may not have cultural fit"
+
+# =============================================================================
+# THE BRAZILIAN BILLION TEST (15 Questions)
+# =============================================================================
+billion_test_brazil:
+  questions:
+    - "Average Brazilian understands in 3 seconds?"
+    - "Works on WhatsApp? (supreme BR channel)"
+    - "Can make catchy jingle?"
+    - "Class C can speak/write it?"
+    - "Suggests clear benefit for Brazilian?"
+    - "Has story Brazilian tells?"
+    - "Allows 'zoeira' (banter) on social?"
+    - "Differentiates from 3 biggest competitors?"
+    - "Works on highway billboard?"
+    - "Allows creating mascot/character?"
+    - "Resonates with real Brazilian problem?"
+    - "Scales from interior to capital?"
+    - "Allows expansion to Latam?"
+    - "Survives scandal? (there's always one)"
+    - "Becomes Brazilian cultural patrimony?"
+
+  scoring:
+    15_of_15: "Next unicorn"
+    12_to_14: "Giant potential"
+    9_to_11: "Needs adjustments"
+    under_9: "Rethink everything"
+
+# =============================================================================
+# THE 5 LAWS OF BRAZILIAN BILLION-DOLLAR NAMES
+# =============================================================================
+laws_brazil:
+  - law: "BRAZILIAN SIMPLICITY"
+    explanation: "Name must work at bar, on WhatsApp, and on billboard"
+
+  - law: "EMOTION > REASON"
+    explanation: "Brazilian buys with heart, justifies with reason"
+
+  - law: "TRUST IS EVERYTHING"
+    explanation: "In country of scams, name must transmit security"
+
+  - law: "ASPIRATION WORKS"
+    explanation: "Brazilian wants to rise in life, name must promise that"
+
+  - law: "BRAZILIANNESS PAYS"
+    explanation: "Brazilian cultural elements create instant connection"
+
+# =============================================================================
+# AGENT USAGE GUIDELINES
+# =============================================================================
+agent_usage:
+  naming_strategist:
+    - "Use BR archetypes as primary framework for Brazilian clients"
+    - "Apply magic words for conversion"
+    - "Run 15-question Brazilian test"
+    - "Consider cultural patterns"
+
+  hormozi_offers:
+    - "Use 'Método', 'Fórmula', 'Definitivo' in offer names"
+    - "Study infoproduct naming patterns"
+    - "Apply number magic (broken numbers)"
+
+  hormozi_copy:
+    - "Reference Brazilian case studies"
+    - "Use trust-building words"
+    - "Apply cultural humor when appropriate"
+
+  brand_chief:
+    - "Validate against Brazilian billion test"
+    - "Match cultural timing"
+    - "Consider class C accessibility"

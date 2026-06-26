@@ -1,0 +1,109 @@
+# Competency Matrix Template (SABER/ENTENDER/FAZER)
+# Purpose: Map curriculum competencies across knowledge/comprehension/application
+# Output: Complete competency breakdown with Bloom levels and mastery thresholds
+
+metadata:
+  matrix_id: "{MATRIX_ID}"  # e.g., "comp-matrix-001-marketing"
+  domain: "{DOMAIN}"
+  curriculum_id: "{CURRICULUM_ID}"  # Parent curriculum
+  created_date: "{CREATED_DATE}"
+  version: "{VERSION}"
+
+framework:
+  # The three competency dimensions
+  saber:
+    description: "Knowledge acquisition (Remember, Understand)"
+    bloom_levels: ["Remember", "Understand"]
+    focus: "What learner KNOWS"
+
+  entender:
+    description: "Comprehension and analysis (Understand, Apply, Analyze)"
+    bloom_levels: ["Understand", "Apply", "Analyze"]
+    focus: "What learner COMPREHENDS"
+
+  fazer:
+    description: "Application and creation (Apply, Analyze, Evaluate, Create)"
+    bloom_levels: ["Apply", "Analyze", "Evaluate", "Create"]
+    focus: "What learner CAN DO"
+
+modules:
+  # Breakdown per module
+  - module_id: "{MODULE_ID}"
+    module_name: "{MODULE_NAME}"
+
+    saber_items:
+      # Knowledge items (facts, terms, concepts)
+      - item: "{SABER_ITEM_1}"  # e.g., "Define email automation"
+        bloom_level: "Remember"
+        assessment_method: "{METHOD}"  # e.g., "Multiple choice", "Fill-in-blank"
+
+      - item: "{SABER_ITEM_2}"  # e.g., "Explain the difference between triggers and workflows"
+        bloom_level: "Understand"
+        assessment_method: "{METHOD}"
+
+    entender_items:
+      # Comprehension items (relationships, patterns, principles)
+      - item: "{ENTENDER_ITEM_1}"  # e.g., "Classify email types by funnel stage"
+        bloom_level: "Analyze"
+        assessment_method: "{METHOD}"  # e.g., "Case study analysis"
+
+      - item: "{ENTENDER_ITEM_2}"  # e.g., "Apply segmentation logic to subscriber base"
+        bloom_level: "Apply"
+        assessment_method: "{METHOD}"
+
+    fazer_items:
+      # Application items (skills, creation, execution)
+      - item: "{FAZER_ITEM_1}"  # e.g., "Create a 7-day nurture sequence"
+        bloom_level: "Create"
+        assessment_method: "{METHOD}"  # e.g., "Project submission"
+        ltem_tier: "{TIER}"  # Minimum LTEM tier for this item
+
+      - item: "{FAZER_ITEM_2}"  # e.g., "Evaluate email sequence performance and recommend improvements"
+        bloom_level: "Evaluate"
+        assessment_method: "{METHOD}"
+        ltem_tier: "{TIER}"
+
+bloom_levels_per_item:
+  # Summary table: Item → Bloom Level → SABER/ENTENDER/FAZER
+  # Helps verify competency distribution
+  - item: "{ITEM}"
+    bloom_level: "{BLOOM_LEVEL}"
+    competency_type: "{SABER|ENTENDER|FAZER}"
+    module: "{MODULE_ID}"
+
+mastery_thresholds:
+  # What constitutes "mastery" for each competency type
+  saber:
+    minimum_percentage: {PERCENTAGE}  # e.g., 80
+    method: "{METHOD}"  # e.g., "80% correct on knowledge assessments"
+
+  entender:
+    minimum_percentage: {PERCENTAGE}  # e.g., 70
+    method: "{METHOD}"  # e.g., "70% correct on analysis tasks"
+
+  fazer:
+    minimum_ltem_tier: "{LTEM_TIER}"  # e.g., "TIER_1"
+    method: "{METHOD}"  # e.g., "Complete at least 1 TIER_1 project per module"
+
+overall_competency:
+  # How module competencies combine into curriculum competency
+  passing_criteria:
+    - "{CRITERION_1}"  # e.g., "Pass all SABER assessments"
+    - "{CRITERION_2}"  # e.g., "Complete 80% of ENTENDER tasks"
+    - "{CRITERION_3}"  # e.g., "Deliver minimum 1 TIER_1 FAZER project per module"
+
+  certification_criteria:
+    - "{CRITERION_1}"  # Higher bar (e.g., "TIER_2 projects")
+
+progression_dependencies:
+  # Which competencies unlock which modules
+  - target_module: "{MODULE_ID}"
+    required_competencies:
+      - competency: "{COMPETENCY}"
+        type: "{SABER|ENTENDER|FAZER}"
+        from_module: "{SOURCE_MODULE_ID}"
+        reason: "{REASON}"  # Why this is prerequisite
+
+notes: |
+  {ADDITIONAL_NOTES}
+  # Design rationale, competency distribution analysis, gaps identified

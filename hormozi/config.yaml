@@ -1,0 +1,617 @@
+# Hormozi Squad — The $100M Mind System v1.0
+# One mind, multiple specialties. Methodology consistency with brutal depth.
+
+pack:
+  name: hormozi
+  title: "Hormozi Squad — The $100M Mind System"
+  version: "1.0.0"
+  author: "AIOX Team"
+  description: "15 specialized Alex Hormozi agents, each mastering one aspect of his methodology"
+  icon: "💰"
+  slash_prefix: "hormozi"
+  entry_agent: hormozi-chief
+
+metadata:
+  version: "1.0.0"
+  score: 10.0
+  created: 2026-02-09
+  source_mind: alex_hormozi
+  fidelity_target: 0.90
+  total_source_files: 165
+  total_source_size_mb: 165
+  mmos_artifacts: 70
+  mental_models: 8
+
+entry_agent: hormozi-chief
+
+domain_model:
+  Strategic:
+    label: "Estratégico"
+    scope: "Diagnóstico de mercado, arquitetura de oferta e decisões de crescimento"
+  Tactical:
+    label: "Tático"
+    scope: "Desenho de campanhas, lead gen, pricing e sequencing"
+  Operational:
+    label: "Operacional"
+    scope: "Produção de copy, scripts, assets e automações de entrega"
+
+logging:
+  runtime_audit: true
+  error_behavior: fail_loud
+  error_handling:
+    on_validation_fail: block_publish
+    on_handoff_fail: emit_recovery_handoff
+    on_calculation_fail: preserve_partial_artifact
+
+settings:
+  activation:
+    show_context_report: true
+    show_preload_report: true
+    show_quick_commands: true
+    quick_commands_limit: 6
+  preload:
+    max_shared_files: 3
+    max_product_files: 4
+
+workspace_integration:
+  level: none
+  rationale: >-
+    Hormozi depende de contexto canônico de produto, oferta, prova e pricing
+    no workspace, mas não define seus próprios gates. O COO resolve readiness
+    e o squad consome esse contrato antes de output final.
+  read_paths:
+    - workspace/_system/config.yaml
+    - workspace/businesses/
+  write_paths: []
+  readiness_owner: workspace-chief
+  readiness_resolver: squads/hormozi/scripts/resolve-readiness.cjs
+
+# MMOS Integration
+mmos_integration:
+  enabled: true
+  log_source: true
+  fallback_behavior: "graceful"
+  mind_mapping:
+    hormozi-chief: alex_hormozi
+    hormozi-offers: alex_hormozi
+    hormozi-leads: alex_hormozi
+    hormozi-models: alex_hormozi
+    hormozi-hooks: alex_hormozi
+    hormozi-ads: alex_hormozi
+    hormozi-pricing: alex_hormozi
+    hormozi-copy: alex_hormozi
+    hormozi-launch: alex_hormozi
+    hormozi-retention: alex_hormozi
+    hormozi-advisor: alex_hormozi
+    hormozi-audit: alex_hormozi
+    hormozi-closer: alex_hormozi
+    hormozi-scale: alex_hormozi
+    hormozi-workshop: alex_hormozi
+    hormozi-content: alex_hormozi
+
+# Agents — Organized by Tier
+agents:
+  - id: hormozi-operator
+    name: "Hormozi Operator"
+    role: "Human approval, business context and final go/no-go"
+    tier: human
+    executor_profile:
+      sinkra_type: Human
+      human_in_the_loop: true
+      output_schema: hormozi-approval-brief
+
+  - id: hormozi-strategist
+    name: "Hormozi Strategist"
+    role: "Agent runtime for orchestration and non-clone decision glue"
+    tier: agent
+    executor_profile:
+      sinkra_type: Agent
+      human_in_the_loop: true
+      output_schema: hormozi-strategy-decision
+
+  - id: hormozi-runtime
+    name: "Hormozi Runtime"
+    role: "Worker for deterministic validation, calculations and packaging"
+    tier: worker
+    executor_profile:
+      sinkra_type: Worker
+      human_in_the_loop: true
+      output_schema: hormozi-runtime-report
+
+  # Tier 0: Orchestrator
+  - id: hormozi-chief
+    name: "Hormozi Chief"
+    role: "Master orchestrator — routing, strategy, coordination"
+    tier: 0
+    primary_sources:
+      - prompts/Hormozi/00_COGNITIVE_OS.md
+      - prompts/Hormozi/08_INDUSTRY_ADAPTATION.md
+      - artifacts/mental_models.yaml
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: clone-structured-output
+      story_role: reviewer
+      can_execute: false
+      core_replaces: null
+      work_contexts: ["orchestration", "Hormozi methodology", "strategy coordination", "offer routing", "business diagnosis"]
+      can_review: ["offer-quality", "methodology-fidelity", "business-strategy"]
+
+  # Tier 1: Core Specialists (Books)
+  - id: hormozi-offers
+    name: "Hormozi Offers"
+    role: "Grand Slam Offers, Value Equation, offer engineering"
+    tier: 1
+    primary_sources:
+      - prompts/offers.md
+      - prompts/Hormozi/02_VALUE_EQUATION_ENGINE.md
+      - prompts/Hormozi/03_OFFER_CREATION_SYSTEM.md
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: clone-structured-output
+      story_role: executor
+      can_execute: true
+      core_replaces: "@dev"
+      work_contexts: ["grand slam offer", "value equation", "offer engineering", "dream outcome", "perceived likelihood", "offer creation"]
+      can_review: ["offer-structure", "value-equation"]
+
+  - id: hormozi-leads
+    name: "Hormozi Leads"
+    role: "Core Four, lead magnets, content strategy"
+    tier: 1
+    primary_sources:
+      - prompts/leads.md
+      - sources/01 Livros/Livro 100M Leads/
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: clone-structured-output
+      story_role: executor
+      can_execute: true
+      core_replaces: "@dev"
+      work_contexts: ["core four", "lead magnets", "lead generation", "content strategy", "warm outreach", "cold outreach"]
+      can_review: ["lead-strategy", "lead-magnet-quality"]
+
+  - id: hormozi-models
+    name: "Hormozi Models"
+    role: "Money Models, upsells, downsells, continuity"
+    tier: 1
+    primary_sources:
+      - prompts/money.md
+      - sources/01 Livros/Livro 100m Modelos/
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: clone-structured-output
+      story_role: executor
+      can_execute: true
+      core_replaces: "@dev"
+      work_contexts: ["money models", "upsells", "downsells", "continuity", "revenue structure", "unit economics"]
+      can_review: ["revenue-model", "pricing-structure"]
+
+  # Tier 2: Execution Specialists (Playbooks)
+  - id: hormozi-hooks
+    name: "Hormozi Hooks"
+    role: "Hook creation, 121 formulas, first 5 seconds"
+    tier: 2
+    primary_sources:
+      - prompts/hooks.md
+      - sources/02 Playbooks/Hooks/
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: clone-structured-output
+      story_role: executor
+      can_execute: true
+      core_replaces: "@dev"
+      work_contexts: ["hook creation", "121 formulas", "first 5 seconds", "attention capture", "scroll-stopping", "hook frameworks"]
+      can_review: ["hook-quality", "attention-capture"]
+
+  - id: hormozi-ads
+    name: "Hormozi Ads"
+    role: "GOATed ads, scripts, angles"
+    tier: 2
+    primary_sources:
+      - prompts/ads.md
+      - sources/02 Playbooks/Ads/
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: clone-structured-output
+      story_role: executor
+      can_execute: true
+      core_replaces: "@dev"
+      work_contexts: ["GOATed ads", "ad scripts", "ad angles", "creative strategy", "paid media copy", "video ads"]
+      can_review: ["ad-script-quality", "creative-angles"]
+
+  - id: hormozi-pricing
+    name: "Hormozi Pricing"
+    role: "Pricing strategy, anchoring, raises"
+    tier: 2
+    primary_sources:
+      - sources/02 Playbooks/Pricing/
+      - sources/02 Playbooks/Price Raise/
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: clone-structured-output
+      story_role: executor
+      can_execute: true
+      core_replaces: "@dev"
+      work_contexts: ["pricing strategy", "price anchoring", "price raises", "value-based pricing", "offer pricing", "margin optimization"]
+      can_review: ["pricing-strategy", "price-positioning"]
+
+  - id: hormozi-copy
+    name: "Hormozi Copy"
+    role: "Sales copy, LPs, VSLs"
+    tier: 2
+    primary_sources:
+      - sources/02 Playbooks/Copy/
+      - sources/03 Programas/Blueprint $100M Money Models/
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: clone-structured-output
+      story_role: executor
+      can_execute: true
+      core_replaces: "@dev"
+      work_contexts: ["sales copy", "landing pages", "VSL scripts", "conversion copy", "direct response", "sales pages"]
+      can_review: ["copy-quality", "conversion-copy"]
+
+  - id: hormozi-launch
+    name: "Hormozi Launch"
+    role: "Launch sequences, timelines"
+    tier: 2
+    primary_sources:
+      - sources/02 Playbooks/Launch/
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: clone-structured-output
+      story_role: executor
+      can_execute: true
+      core_replaces: "@dev"
+      work_contexts: ["launch sequences", "launch timelines", "launch strategy", "pre-launch", "launch day", "post-launch"]
+      can_review: ["launch-sequence", "launch-timeline"]
+
+  - id: hormozi-retention
+    name: "Hormozi Retention"
+    role: "LTV, retention, nurture, continuity"
+    tier: 2
+    primary_sources:
+      - sources/02 Playbooks/Retention/
+      - sources/02 Playbooks/Lead Nurture/
+      - sources/02 Playbooks/Lifetime Value/
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: clone-structured-output
+      story_role: executor
+      can_execute: true
+      core_replaces: "@dev"
+      work_contexts: ["LTV optimization", "retention strategy", "lead nurture", "continuity programs", "churn reduction", "lifetime value"]
+      can_review: ["retention-strategy", "LTV-metrics"]
+
+  # Tier 3: Strategic Specialists
+  - id: hormozi-advisor
+    name: "Hormozi Advisor"
+    role: "Strategic counsel, Q&A"
+    tier: 3
+    primary_sources:
+      - artifacts/cognitive_architecture.yaml
+      - artifacts/belief-system.yaml
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: clone-structured-output
+      story_role: consultant
+      can_execute: false
+      core_replaces: null
+      work_contexts: ["strategic counsel", "business Q&A", "Hormozi philosophy", "decision frameworks", "business mindset"]
+      can_review: ["strategic-alignment", "methodology-fidelity"]
+
+  - id: hormozi-audit
+    name: "Hormozi Audit"
+    role: "Offer/LP audits, diagnostics"
+    tier: 3
+    primary_sources:
+      - prompts/Hormozi/05_ANTIPATTERN_SHIELDS.md
+      - sources/02 Playbooks/Ofertas/
+      - sources/02 Playbooks/Prova/
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: clone-structured-output
+      story_role: executor
+      can_execute: true
+      core_replaces: "@analyst"
+      work_contexts: ["offer audit", "LP diagnostics", "antipattern detection", "proof stack", "conversion audit", "offer validation"]
+      can_review: ["offer-quality", "landing-page-audit"]
+
+  - id: hormozi-closer
+    name: "Hormozi Closer"
+    role: "Sales scripts, objection handling"
+    tier: 3
+    primary_sources:
+      - sources/02 Playbooks/Fechamento/
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: clone-structured-output
+      story_role: executor
+      can_execute: true
+      core_replaces: "@dev"
+      work_contexts: ["sales scripts", "objection handling", "fechamento", "closing techniques", "sales conversation", "rebuttals"]
+      can_review: ["sales-script-quality", "objection-handling"]
+
+  - id: hormozi-scale
+    name: "Hormozi Scale"
+    role: "Scaling strategy, 9-stage roadmap"
+    tier: 3
+    primary_sources:
+      - sources/02 Playbooks/Scaling Roadmap/
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: clone-structured-output
+      story_role: executor
+      can_execute: true
+      core_replaces: "@dev"
+      work_contexts: ["scaling strategy", "9-stage roadmap", "growth scaling", "business scaling", "operational leverage"]
+      can_review: ["scaling-readiness", "growth-strategy"]
+
+  - id: hormozi-workshop
+    name: "Hormozi Workshop"
+    role: "Workshop design, frameworks"
+    tier: 3
+    primary_sources:
+      - sources/02 Playbooks/Workshops/
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: clone-structured-output
+      story_role: executor
+      can_execute: true
+      core_replaces: "@dev"
+      work_contexts: ["workshop design", "framework creation", "group facilitation", "workshop structure", "interactive sessions"]
+      can_review: ["workshop-quality", "framework-design"]
+
+  - id: hormozi-content
+    name: "Hormozi Content"
+    role: "Content strategy, creation"
+    tier: 3
+    primary_sources:
+      - sources/01 Livros/Livro 100M Leads/Postar Conteudo Gratuito Parte I.md
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: clone-structured-output
+      story_role: executor
+      can_execute: true
+      core_replaces: "@dev"
+      work_contexts: ["content strategy", "content creation", "free content", "content pillars", "distribution strategy", "conteúdo gratuito"]
+      can_review: ["content-strategy", "content-quality"]
+
+# Sources
+sources:
+  minds_path: outputs/minds/alex_hormozi
+  prompts_path: docs/projects/hormozi-squad/prompts
+  artifacts_path: outputs/minds/alex_hormozi/artifacts
+
+# Mental Models (8 confirmed)
+mental_models:
+  - id: MM_001
+    name: "Value Equation"
+    formula: "Value = (Dream Outcome x Likelihood) / (Time + Effort)"
+    type: universal
+    transferability: 0.95
+
+  - id: MM_002
+    name: "Grand Slam Offer"
+    insight: "Offer so good people feel stupid saying no"
+    type: domain
+    transferability: 0.85
+
+  - id: MM_003
+    name: "Framework-First Reasoning"
+    insight: "Convert all problems to systematic frameworks"
+    type: universal
+    transferability: 0.60
+
+  - id: MM_004
+    name: "External Metrics as Reality Anchor"
+    insight: "If unmeasurable, doesn't exist"
+    type: universal
+
+  - id: MM_005
+    name: "Core Four Lead Generation"
+    insight: "Warm, Content, Cold, Paid"
+    type: domain
+
+  - id: MM_006
+    name: "Rule of 100"
+    insight: "Daily volume commitment"
+    type: domain
+
+  - id: MM_007
+    name: "More, Better, New"
+    insight: "Growth prioritization sequence"
+    type: domain
+
+  - id: MM_008
+    name: "LTV:CAC 3:1"
+    insight: "Unit economics benchmark"
+    type: domain
+
+# Workflows
+workflows:
+  - id: wf-grand-slam-offer
+    name: "Grand Slam Offer Creation"
+    version: "1.0.0"
+    duration: "3-5 days"
+    phases: 5
+    description: "Create irresistible offers using Hormozi methodology"
+    agents_involved:
+      - hormozi-chief
+      - hormozi-offers
+      - hormozi-pricing
+      - hormozi-copy
+      - hormozi-audit
+    source_frameworks:
+      - "OFFER_CREATION_SYSTEM"
+      - "VALUE_EQUATION_ENGINE"
+    quality_score: "PASS"
+    lines: 1135
+
+# Shared Data Files (DNA Extracted from Sources)
+shared_data:
+  voice_dna: data/minds/hormozi-voice-dna.yaml
+  thinking_dna: data/minds/hormozi-thinking-dna.yaml
+  case_library: data/hormozi-case-library.yaml
+
+  # Per-agent DNA (specialized extractions)
+  agent_dna:
+    hormozi-offers: data/minds/hormozi-offers_dna.yaml
+    hormozi-leads: data/minds/hormozi-leads_dna.yaml
+    hormozi-models: data/minds/hormozi-models_dna.yaml
+    hormozi-hooks: data/minds/hormozi-hooks_dna.yaml
+    hormozi-ads: data/minds/hormozi-ads_dna.yaml
+    hormozi-pricing: data/minds/hormozi-pricing_dna.yaml
+    hormozi-copy: data/minds/hormozi-copy_dna.yaml
+    hormozi-launch: data/minds/hormozi-launch_dna.yaml
+    hormozi-retention: data/minds/hormozi-retention_dna.yaml
+    hormozi-advisor: data/minds/hormozi-advisor_dna.yaml
+    hormozi-audit: data/minds/hormozi-audit_dna.yaml
+    hormozi-closer: data/minds/hormozi-closer_dna.yaml
+    hormozi-scale: data/minds/hormozi-scale_dna.yaml
+    hormozi-workshop: data/minds/hormozi-workshop_dna.yaml
+    hormozi-content: data/minds/hormozi-content_dna.yaml
+
+# Veto Conditions (Centralized)
+veto_conditions:
+  config_file: config/veto-conditions.yaml
+  enforcement: strict
+  tiers:
+    tier_0_universal: 3   # Apply to ALL agents
+    tier_1_workflow: 8    # Apply to wf-grand-slam-offer
+    tier_2_agent_specific: 6  # Per-agent rules
+    tier_3_handoff: 1     # Specialist-to-specialist
+  handoff_template: templates/handoff-context-tmpl.yaml
+  mandatory_checklists:
+    antipattern: checklists/antipattern-screening.md
+    market_validation: checklists/market-validation-veto.md
+    golden_ratios: checklists/golden-ratios-veto.md
+
+# Validation Scripts (Tools for Agents)
+validation_scripts:
+  mvn_validator:
+    path: scripts/validate-mvn.py
+    usage: "python squads/hormozi/scripts/validate-mvn.py --inline 'ticket:X,cac:X,...'"
+    trigger: "Before any calculation involving price, ROI, LTV, CAC"
+    returns: "PASS (exit 0) or FAIL (exit 1)"
+
+  handoff_validator:
+    path: scripts/validate-handoff.py
+    usage: "python squads/hormozi/scripts/validate-handoff.py <file.yaml>"
+    trigger: "Before any specialist-to-specialist handoff"
+    returns: "PASS (exit 0) or FAIL (exit 1)"
+
+  antipattern_validator:
+    path: scripts/validate-antipattern.py
+    usage: "python squads/hormozi/scripts/validate-antipattern.py --interactive"
+    trigger: "Before approving offer for launch"
+    returns: "PASS (exit 0) or VETO (exit 1)"
+
+# Dependencies
+dependencies:
+  - aiox-core
+
+tags:
+  - hormozi
+  - offers
+  - leads
+  - money-models
+  - business-strategy
+  - scaling
+  - direct-response
+
+process_token_contract:
+  path: "data/token-registry.yaml"
+  scope: "hormozi-core"
+  tokens_declared: 14
+
+composition_mapping:
+  tokens:
+    source: "data/token-registry.yaml"
+    count: 14
+    description: "Tokens de oferta, growth e governança da metodologia Hormozi"
+  atoms:
+    description: "Tasks unitárias de diagnóstico, criação, cálculo e execução"
+    mapping:
+      - pattern: "tasks/diagnose-*.md"
+        role: diagnosis
+      - pattern: "tasks/create-*.md"
+        role: creation
+      - pattern: "tasks/design-*.md"
+        role: design
+      - pattern: "tasks/calculate-*.md"
+        role: calculation
+      - pattern: "tasks/execute-*.md"
+        role: execution
+    count: 57
+  molecules:
+    description: "Padrões recorrentes compostos por múltiplos atoms"
+    declared:
+      - id: mol-offer-engineering
+        atoms: [diagnose-value-equation, architect-offer-stack, create-grand-slam-offer, create-guarantee-stack, create-bonus-stack]
+      - id: mol-launch-sequence
+        atoms: [create-launch-timeline, create-launch-narrative, plan-launch-evento, setup-war-room, run-launch-post-mortem]
+      - id: mol-money-model
+        atoms: [design-money-model, design-subscription-model, calculate-30-day-profit, optimize-ltv-cac-ratio]
+  organisms:
+    description: "Workflows completos de aplicação da metodologia"
+    mapping:
+      - id: org-grand-slam-offer
+        workflow: wf-grand-slam-offer
+        molecules: [mol-offer-engineering]
+        state_machine: true
+        phases: 5
+      - id: org-money-model-design
+        workflow: wf-money-model-design
+        molecules: [mol-money-model]
+        state_machine: true
+        phases: 4
+      - id: org-full-launch-sequence
+        workflow: wf-full-launch-sequence
+        molecules: [mol-launch-sequence]
+        state_machine: true
+        phases: 6
+  templates:
+    description: "Templates de outputs Hormozi"
+    source: "templates/"
+  instances:
+    description: "Execuções persistidas em outputs e artefatos de campanha"
+    persistence: "outputs/sinkra-squad/hormozi/"
+    lifecycle: [draft, validated, approved, delivered, archived]
+
+
+# Criado com Squad Creator do AIOXPRO por @oalanicolas e @pedrovalerio | 2026-02-10
+
+# SINKRA v3.1 (Story 54.11)
+bu_mapping: "hub-framework"
+artifact_contracts:
+  - artifact_id: "offer-analysis"
+    template_path: "templates/offer-analysis-tmpl.md"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "grand-slam-offer"
+    template_path: "templates/grand-slam-offer-tmpl.md"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "money-model-architecture"
+    template_path: "templates/money-model-tmpl.md"
+    lifecycle_states: [draft, validated, approved]
+supported_modes:
+  - CRIAR
+  - PLANEJAR
+  - ENTENDER
+  - VALIDAR

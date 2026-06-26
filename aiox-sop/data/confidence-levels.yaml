@@ -1,0 +1,133 @@
+# =============================================================================
+# Confidence Levels for SOP Process Extraction
+# =============================================================================
+# Data: confidence-levels.yaml | SOP Factory | Synkra AIOX
+# Used by: sop-extractor, extract-sop.md, extract-from-video.md,
+# structured-interview.md, extraction-output-template.md
+#
+# Canonical contract:
+# - markers and scores used in extraction artifacts
+# - item-level verification threshold
+# - handoff readiness threshold
+# =============================================================================
+
+schema_version: "1.1.0"
+
+levels:
+  - id: "observed"
+    score: 1.0
+    label: "Directly Observed"
+    marker: "[OBS]"
+    description: "Direct observation, screen recording, or auditable system trace."
+    examples:
+      - "Gemba walk observing the work being performed"
+      - "Screen recording of the process execution"
+      - "System audit log or execution trace"
+
+  - id: "documented"
+    score: 0.9
+    label: "Documented"
+    marker: "[DOC]"
+    description: "Explicitly documented in a durable source artifact."
+    examples:
+      - "Existing SOP or work instruction"
+      - "Knowledge base article with date/version"
+      - "Transcript segment with direct procedural statement"
+
+  - id: "reported"
+    score: 0.8
+    label: "Reported by Practitioner"
+    marker: "[REP]"
+    description: "Described by someone who performs the process."
+    examples:
+      - "Structured interview with process performer"
+      - "Walkthrough narration"
+      - "Direct description from SME"
+
+  - id: "corroborated"
+    score: 0.7
+    label: "Corroborated"
+    marker: "[COR]"
+    description: "Supported by multiple weak signals, but not yet durable enough to classify as documented."
+    examples:
+      - "Multiple partial sources converge on the same step"
+      - "Demonstration implies a step and a second source confirms it"
+      - "Repeated mention across fragmented notes"
+
+  - id: "inferred"
+    score: 0.5
+    label: "Inferred"
+    marker: "[INF]"
+    description: "Logically necessary or strongly suggested, but not explicitly stated."
+    examples:
+      - "Transition step implied between two confirmed actions"
+      - "Derived from surrounding documented evidence"
+      - "Partial documentation with clear logical gap"
+
+  - id: "assumed"
+    score: 0.3
+    label: "Assumed"
+    marker: "[ASM]"
+    description: "Best guess based on norms or domain experience, not process-specific evidence."
+    examples:
+      - "Industry standard practice applied by analogy"
+      - "Common-sense filler for a missing operational detail"
+
+  - id: "unknown"
+    score: 0.1
+    label: "Unknown"
+    marker: "[UNK]"
+    description: "A known gap. The step or fact likely exists, but the available evidence is insufficient."
+    examples:
+      - "Contradictory information with no resolution"
+      - "Cut in video or missing transcript segment"
+      - "Practitioner confirms existence but not the exact mechanics"
+
+rules:
+  upgrade:
+    - condition: "Direct observation or system trace confirms the step"
+      effect: "Upgrade to [OBS] 1.0"
+    - condition: "Durable source artifact explicitly states the step"
+      effect: "Upgrade to [DOC] 0.9"
+    - condition: "Second independent source confirms a reported or inferred step"
+      effect: "Promote one level, capped at [DOC] 0.9 without direct observation"
+
+  downgrade:
+    - condition: "Contradictory sources remain unresolved"
+      effect: "Downgrade to [UNK] 0.1 and log in Conflicts"
+    - condition: "Supposed documentation is outdated or unverifiable"
+      effect: "Downgrade [DOC] to [COR] or [INF], depending on supporting evidence"
+    - condition: "Critical step is supported only by one weak source"
+      effect: "Cap at [REP] 0.8 and require verification"
+
+thresholds:
+  flag_for_verification: 0.8
+  minimum_handoff_average: 0.7
+  minimum_for_critical_step: 0.8
+  recommend_additional_extraction_if_low_confidence_share_gt: 0.30
+
+aggregation:
+  method: "weighted_average"
+  weight_by: "step_criticality"
+  weights:
+    critical_step: 2.0
+    standard_step: 1.0
+    informational_step: 0.5
+
+verification_methods:
+  observation:
+    - "Observe the process live or via recording"
+    - "Review audit logs or execution traces"
+
+  documentation:
+    - "Locate current SOP or durable reference artifact"
+    - "Confirm author, date, or version on the source"
+
+  interview:
+    - "Run structured interview with actual performer"
+    - "Perform read-back confirmation on captured sequence"
+
+  conflict_resolution:
+    - "Interview both conflicting sources with the exact contradiction"
+    - "Escalate to the process owner for tie-break decision"
+    - "Run a direct observation pass when conflict touches a critical step"

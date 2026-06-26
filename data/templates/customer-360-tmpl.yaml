@@ -1,0 +1,80 @@
+# Customer 360 Template
+# Clone: @peter-fader (Tier 0)
+# Output format for unified customer view
+
+metadata:
+  template_id: customer-360-tmpl
+  version: "1.0"
+  clone: peter-fader
+  tier: 0
+
+customer_profile:
+  id: "{{customer_id}}"
+  name: "{{customer_name}}"
+  created_at: "{{signup_date}}"
+  status: "{{active|churned|at_risk}}"
+
+# RFM Analysis (Peter Fader core)
+rfm_analysis:
+  recency:
+    days_since_last_activity: 0
+    score: 5  # 1-5
+  frequency:
+    actions_per_month: 0
+    score: 5  # 1-5
+  monetary:
+    total_revenue: 0
+    score: 5  # 1-5
+  rfm_segment: "Champions"  # Champions, Loyal, At Risk, etc.
+
+# CLV Projection
+clv:
+  historical_value: 0
+  projected_12m: 0
+  projected_lifetime: 0
+  confidence: "high"  # high|medium|low
+
+# Health Score (Nick Mehta)
+health_score:
+  overall: 85  # 0-100
+  components:
+    - name: "Product Usage"
+      weight: 0.3
+      score: 90
+    - name: "Engagement"
+      weight: 0.25
+      score: 80
+    - name: "Support Tickets"
+      weight: 0.15
+      score: 100
+    - name: "NPS Response"
+      weight: 0.15
+      score: 75
+    - name: "Payment History"
+      weight: 0.15
+      score: 100
+  status: "green"  # green|yellow|red
+
+# Engagement Timeline
+engagement:
+  last_login: "{{date}}"
+  sessions_30d: 0
+  features_used: []
+  key_actions:
+    - action: "{{action_name}}"
+      date: "{{date}}"
+      value: "{{impact}}"
+
+# Attribution (Avinash Kaushik)
+acquisition:
+  source: "{{source}}"
+  medium: "{{medium}}"
+  campaign: "{{campaign}}"
+  referrer: "{{referrer_customer_id}}"
+
+# Actions & Recommendations
+recommendations:
+  - priority: "HIGH"
+    action: "{{recommended_action}}"
+    reason: "{{data_driven_reason}}"
+    owner: "{{team|person}}"

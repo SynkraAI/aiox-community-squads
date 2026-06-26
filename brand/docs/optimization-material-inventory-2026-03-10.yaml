@@ -1,0 +1,40 @@
+material_inventory:
+  squad: brand
+  generated_at: "2026-03-10T17:05:00Z"
+  summary:
+    active: 8
+    integrate_next: 0
+    archive: 0
+  items:
+    - path: squads/brand/README.md
+      type: documentation
+      classification: active
+      rationale: Core squad operating guide and workspace contract.
+    - path: squads/brand/ARCHITECTURE.md
+      type: documentation
+      classification: active
+      rationale: Canonical topology and dependency map for the squad.
+    - path: squads/brand/CHANGELOG.md
+      type: documentation
+      classification: active
+      rationale: Release history for structural and workflow changes.
+    - path: squads/brand/checklists/brand-naming-checklist.md
+      type: checklist
+      classification: active
+      rationale: Operational checklist used by naming workflow execution.
+    - path: squads/brand/data/logo-style-library.yaml
+      type: data
+      classification: active
+      rationale: Referenced by visual generation workflows.
+    - path: squads/brand/data/logo-scds-templates.yaml
+      type: data
+      classification: active
+      rationale: Referenced by logo prompt engineering.
+    - path: squads/brand/data/swipe-file.yaml
+      type: data
+      classification: active
+      rationale: Reusable support material for brand ideation.
+    - path: squads/brand/agents/nano-banana-generator.md
+      type: bridge
+      classification: active
+      rationale: Local validation bridge for cross-squad Design executor.

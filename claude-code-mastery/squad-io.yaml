@@ -1,0 +1,151 @@
+schema_version: "2.0.0"
+squad: claude-code-mastery
+description: "Squad especialista em Claude Code, MCP, hooks, skills e setup de projetos"
+owner: claude-mastery-chief
+last_audited: "2026-03-28"
+audited_by: sinkra-squad
+
+artifacts_produced:
+  - hook-implementation
+  - mcp-config
+  - skill-definition
+  - cross-domain-handoff
+
+inputs:
+  workspace:
+    - path: ".claude/CLAUDE.md"
+      usage: [reference]
+      optional: true
+      consumed_by_tasks: [audit-setup, context-rot-audit, generate-claude-md]
+    - path: ".claude/settings.json"
+      usage: [reference]
+      optional: true
+      consumed_by_tasks: [audit-settings, configure-claude-code, validate-setup]
+  squad_data:
+    - path: "squads/claude-code-mastery/data/claude-code-quick-ref.yaml"
+      usage: [reference]
+      consumed_by_tasks: [diagnose, refresh-runtime-contract, align-memory-context]
+    - path: "squads/claude-code-mastery/data/cc-permission-rules.yaml"
+      usage: [reference]
+      consumed_by_tasks: [refresh-runtime-contract, rebuild-runtime-validator]
+    - path: "squads/claude-code-mastery/data/cc-architecture-map.yaml"
+      usage: [reference]
+      consumed_by_tasks: [refresh-runtime-contract, align-memory-context]
+    - path: "squads/claude-code-mastery/data/hook-patterns.yaml"
+      usage: [reference]
+      consumed_by_tasks: [hook-designer, update-hooks]
+    - path: "squads/claude-code-mastery/data/mcp-integration-catalog.yaml"
+      usage: [reference]
+      consumed_by_tasks: [mcp-workflow, setup-mcp, integrate-project]
+    - path: "outputs/decoded/claude-code-main/phase-3-modeling/decision-model.yaml"
+      usage: [reference]
+      consumed_by_tasks: [refresh-runtime-contract, rebuild-runtime-validator]
+    - path: "outputs/decoded/claude-code-main/phase-5-validation/final-rule-catalog.md"
+      usage: [reference]
+      consumed_by_tasks: [refresh-runtime-contract, rebuild-runtime-validator, align-memory-context]
+
+outputs:
+  artifacts:
+    - path: "squads/claude-code-mastery/reports/hook-implementation-{date}.md"
+      action: create
+      produced_by_tasks: [hook-designer]
+      produced_by_agents: [hooks-architect]
+      artifact_id: hook-implementation
+      template: templates/hook-implementation-tmpl.md
+      lifecycle_states: [draft, validated, approved]
+    - path: "squads/claude-code-mastery/reports/mcp-config-{date}.yaml"
+      action: create
+      produced_by_tasks: [mcp-workflow, mcp-integration-plan]
+      produced_by_agents: [mcp-integrator]
+      artifact_id: mcp-config
+      template: templates/mcp-config-tmpl.yaml
+      lifecycle_states: [draft, validated, approved]
+    - path: "squads/claude-code-mastery/reports/skill-definition-{date}.md"
+      action: create
+      produced_by_tasks: [create-agent-definition, create-team-topology]
+      produced_by_agents: [swarm-orchestrator]
+      artifact_id: skill-definition
+      template: templates/skill-definition-tmpl.md
+      lifecycle_states: [draft, validated, approved]
+    - path: "squads/claude-code-mastery/reports/handoff-{date}.yaml"
+      action: create
+      produced_by_tasks: [integrate-project, multi-project-setup, update-claude-code-mastery]
+      produced_by_agents: [project-integrator, roadmap-sentinel]
+      artifact_id: cross-domain-handoff
+      template: templates/cross-domain-handoff-tmpl.yaml
+      lifecycle_states: [draft, validated, approved]
+
+agents:
+  - id: claude-mastery-chief
+    tasks: [diagnose, audit-setup, validate-setup]
+  - id: hooks-architect
+    tasks: [hook-designer]
+  - id: mcp-integrator
+    tasks: [mcp-workflow, mcp-integration-plan]
+  - id: swarm-orchestrator
+    tasks: [create-agent-definition, create-team-topology, parallel-decomposition, worktree-strategy]
+  - id: config-engineer
+    tasks: [audit-settings, configure-claude-code, create-rules, permission-strategy, sandbox-setup, enterprise-config, rebuild-runtime-validator]
+  - id: skill-craftsman
+    tasks: [optimize-context, claude-md-engineer, align-memory-context]
+  - id: project-integrator
+    tasks: [integrate-project, ci-cd-setup, brownfield-setup, setup-repository, setup-wizard, multi-project-setup]
+  - id: roadmap-sentinel
+    tasks: [update-claude-code-mastery, refresh-runtime-contract]
+
+tasks:
+  - id: diagnose
+    agent: claude-mastery-chief
+    outputs:
+      - path: "squads/claude-code-mastery/reports/diagnosis-{date}.md"
+        action: create
+  - id: configure-claude-code
+    agent: config-engineer
+    outputs:
+      - path: ".claude/settings.json"
+        action: update
+  - id: hook-designer
+    agent: hooks-architect
+    outputs:
+      - path: "squads/claude-code-mastery/reports/hook-implementation-{date}.md"
+        action: create
+  - id: mcp-workflow
+    agent: mcp-integrator
+    outputs:
+      - path: "squads/claude-code-mastery/reports/mcp-config-{date}.yaml"
+        action: create
+  - id: refresh-runtime-contract
+    agent: roadmap-sentinel
+    outputs:
+      - path: "squads/claude-code-mastery/reports/runtime-contract-refresh-{date}.md"
+        action: create
+  - id: rebuild-runtime-validator
+    agent: config-engineer
+    outputs:
+      - path: "squads/claude-code-mastery/reports/runtime-validator-rebuild-{date}.md"
+        action: create
+  - id: align-memory-context
+    agent: skill-craftsman
+    outputs:
+      - path: "squads/claude-code-mastery/reports/memory-context-alignment-{date}.md"
+        action: create
+
+data_sources:
+  - "squads/claude-code-mastery/data/token-registry.yaml"
+  - "squads/claude-code-mastery/data/quality-gates.yaml"
+  - "squads/claude-code-mastery/data/infrastructure-map.yaml"
+  - "squads/claude-code-mastery/data/cc-permission-rules.yaml"
+  - "squads/claude-code-mastery/data/cc-architecture-map.yaml"
+  - "outputs/decoded/claude-code-main/phase-3-modeling/decision-model.yaml"
+  - "outputs/decoded/claude-code-main/phase-5-validation/final-rule-catalog.md"
+
+integrations:
+  - service: "data/infrastructure-map.yaml"
+    type: infrastructure
+    purpose: "Mapa operacional de Claude Code CLI, Anthropic docs e runtime de projeto"
+  - service: "scripts/prepare-claude-runtime.sh"
+    type: automation
+    purpose: "Preparação mínima de runtime para auditoria e setup"
+  - service: "scripts/publish-mastery-report.sh"
+    type: automation
+    purpose: "Publicação do relatório final de mastery"

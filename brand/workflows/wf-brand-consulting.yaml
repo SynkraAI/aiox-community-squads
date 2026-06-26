@@ -1,0 +1,301 @@
+# Brand Consulting & Audit Workflow
+# Brand Squad — Interactive consulting + systematic audit
+# Adapted from branding squad for sinkra-hub agent IDs
+
+id: wf-brand-consulting
+name: "Brand Consulting & Audit"
+version: "1.1.0"
+duration: "30-90 min"
+description: |
+  Workflow de consultoria e auditoria de marca com especialistas do brand squad.
+  DOIS MODOS: Consulting (interativo) e Audit (sistemático com scoring).
+
+  FILOSOFIA: "O especialista certo para o problema certo."
+
+squad: brand
+entry_agent: brand-chief
+trigger: "user requests brand consulting, audit, or generic brand help"
+
+workspace_contract:
+  required_preflight:
+    - bash squads/brand/scripts/bootstrap-brand-workspace.sh {{brand_name}}
+    - bash squads/brand/scripts/validate-brand-essentials.sh
+    - node workspace/scripts/resolve-squad-workspace-readiness.cjs --squad=brand --business={{brand_name}} --context-type=brand
+  context_task: load-workspace-context
+  canonical_template_namespace: brand
+  canonical_output_policy: template-first
+
+# ─── MODES ───────────────────────────────────────────────────
+modes:
+  consulting:
+    description: "Interativo — brand-chief faz triagem e roteia para especialista"
+    flow: "collect → classify → route → execute → review"
+    elicit: true
+  audit:
+    description: "Sistemático — scoring por dimensão com diagnóstico completo"
+    flow: "collect → audit → score → diagnose → recommend"
+    elicit: true
+
+# ─── PHASES ──────────────────────────────────────────────────
+phases:
+  - id: phase_workspace_context
+    name: "Workspace Preflight & Context Load"
+    executor: brand-chief
+    duration: "2-5 min"
+    elicit: false
+    tasks:
+      - task: load-workspace-context.md
+        inputs:
+          - brand_name
+    output:
+      - workspace_context
+
+  - id: phase_0_intake
+    name: "Intake & Context Collection"
+    agent: brand-chief
+    duration: "5-10 min"
+    elicit: true
+    depends_on: [phase_workspace_context]
+    description: |
+      Coletar contexto do negócio e entender a necessidade.
+      Determinar modo (consulting vs audit).
+    actions:
+      - collect_business_context
+      - determine_mode
+      - classify_demand
+    output:
+      - classification
+      - mode_selected
+      - business_context
+
+  - id: phase_1_routing
+    name: "Specialist Routing"
+    agent: brand-chief
+    duration: "2-5 min"
+    elicit: false
+    depends_on: [phase_0_intake]
+    description: |
+      Selecionar especialista com base na routing matrix.
+      Preparar handoff context.
+    actions:
+      - select_specialist
+      - prepare_handoff
+      - notify_user
+    output:
+      - selected_agent
+      - handoff_context
+
+  - id: phase_2_execution
+    name: "Specialist Execution"
+    agent: "{{selected_agent}}"
+    duration: "20-60 min"
+    elicit: true
+    depends_on: [phase_1_routing]
+    description: |
+      Especialista executa a task correspondente.
+      Interação direta com o usuário.
+    actions:
+      - execute_task
+      - collect_feedback
+      - iterate_if_needed
+    output:
+      - task_output
+      - specialist_report
+
+  - id: phase_3_review
+    name: "Quality Review & Delivery"
+    agent: brand-chief
+    duration: "5-10 min"
+    elicit: false
+    depends_on: [phase_2_execution]
+    description: |
+      brand-chief revisa output do especialista.
+      Aplica quality gate e entrega ao usuário.
+    actions:
+      - apply_quality_gate
+      - consolidate_output
+      - deliver_to_user
+    output:
+      - final_deliverable
+      - quality_score
+
+# ─── ROUTING MATRIX ─────────────────────────────────────────
+routing_matrix:
+  RT_001:
+    demand: "Site/Homepage"
+    keywords: ["site", "homepage", "website", "página principal", "wireframe"]
+    primary_agent: storybrand-narrator
+    support_agents: [wheeler-brand-design]
+    task: wireframe-brandscript
+    description: "Wireframe de site usando BrandScript como base narrativa"
+
+  RT_002:
+    demand: "Landing Page"
+    keywords: ["landing", "página de vendas", "squeeze", "captura", "conversão"]
+    primary_agent: storybrand-narrator
+    support_agents: [wheeler-brand-design]
+    task: landing-page-brandscript
+    description: "Landing page com estrutura StoryBrand"
+
+  RT_004:
+    demand: "Posicionamento"
+    keywords: ["posicionamento", "diferenciação", "onlyness", "zag", "brand gap"]
+    primary_agent: neumeier-differentiation
+    support_agents: [aaker-brand-identity]
+    task: brand-positioning
+    description: "Posicionamento estratégico e diferenciação"
+
+  RT_005:
+    demand: "Brand Equity"
+    keywords: ["equity", "valor da marca", "brand value", "portfolio", "arquitetura"]
+    primary_agent: aaker-brand-identity
+    support_agents: [neumeier-differentiation]
+    task: brand-equity-audit
+    description: "Auditoria de brand equity e arquitetura de marca"
+
+  RT_006:
+    demand: "Mensagem/Copy"
+    keywords: ["mensagem", "copy", "brandscript", "tagline", "slogan", "one-liner"]
+    primary_agent: storybrand-narrator
+    support_agents: []
+    task: brand-messaging
+    description: "BrandScript e diretrizes de comunicação"
+
+  RT_007:
+    demand: "Identidade Visual"
+    keywords: ["identidade visual", "logo", "cores", "tipografia", "visual identity"]
+    primary_agent: wheeler-brand-design
+    support_agents: [storybrand-narrator]
+    task: brand-identity
+    description: "Sistema de identidade visual completo"
+
+  RT_010:
+    demand: "Brand Book"
+    keywords: ["brand book", "manual", "guidelines", "guia de marca", "brand guide"]
+    primary_agent: wheeler-brand-design
+    support_agents: [storybrand-narrator]
+    task: brand-book
+    description: "Manual de marca completo com 7 seções"
+
+  RT_012:
+    demand: "Storytelling"
+    keywords: ["storytelling", "narrativa", "história da marca", "brand story", "ABT"]
+    primary_agent: storybrand-narrator
+    support_agents: []
+    task: brand-storytelling
+    description: "Narrativa estratégica da marca"
+
+  RT_013:
+    demand: "Estratégia de Conteúdo"
+    keywords: ["conteúdo", "content strategy", "editorial", "pilares de conteúdo"]
+    primary_agent: brand-strategist
+    support_agents: [storybrand-narrator]
+    task: content-strategy
+    description: "Estratégia de conteúdo alinhada à marca"
+
+# ─── AUDIT MODE SCORING ─────────────────────────────────────
+audit:
+  dimensions:
+    - id: positioning
+      name: "Posicionamento"
+      weight: 0.25
+      agent: neumeier-differentiation
+      criteria:
+        - "Onlyness Statement definido"
+        - "Diferenciação clara vs concorrentes"
+        - "Público-alvo específico"
+        - "Proposta de valor articulada"
+
+    - id: messaging
+      name: "Messaging"
+      weight: 0.25
+      agent: storybrand-narrator
+      criteria:
+        - "BrandScript ou framework equivalente"
+        - "One-liner claro"
+        - "Tom de voz documentado"
+        - "Hierarquia de mensagens"
+
+    - id: visual_identity
+      name: "Identidade Visual"
+      weight: 0.25
+      agent: wheeler-brand-design
+      criteria:
+        - "Logo com variações"
+        - "Paleta de cores definida"
+        - "Sistema tipográfico"
+        - "Guidelines de uso"
+
+    - id: consistency
+      name: "Consistência"
+      weight: 0.25
+      agent: brand-chief
+      criteria:
+        - "Visual alinhado ao messaging"
+        - "Touchpoints consistentes"
+        - "Tom de voz aplicado uniformemente"
+        - "Brand book ou guia existente"
+
+  scoring:
+    scale: "0-10 por critério"
+    passing: 7.0
+    formula: "weighted_average(dimensions)"
+
+# ─── CLONE COMBINATIONS ─────────────────────────────────────
+clone_combinations:
+  brand_complete:
+    name: "Brand Completo"
+    agents: [neumeier-differentiation, storybrand-narrator, wheeler-brand-design, aaker-brand-identity]
+    use_case: "Projeto de marca do zero ou rebrand completo"
+
+  brand_messaging:
+    name: "Messaging Focus"
+    agents: [storybrand-narrator, neumeier-differentiation]
+    use_case: "Foco em comunicação e posicionamento"
+
+  brand_visual:
+    name: "Visual Focus"
+    agents: [wheeler-brand-design, storybrand-narrator]
+    use_case: "Foco em identidade visual com alinhamento ao messaging"
+
+  brand_strategy:
+    name: "Strategy Focus"
+    agents: [neumeier-differentiation, aaker-brand-identity, brand-strategist]
+    use_case: "Foco em estratégia, posicionamento e equity"
+
+# ─── QUALITY GATES ───────────────────────────────────────────
+quality_gates:
+  - id: BR-QG-001
+    name: "Diagnosis Quality"
+    applies_to: [phase_0_intake]
+    checks:
+      - "Contexto do negócio coletado"
+      - "Demanda classificada"
+      - "Modo selecionado"
+
+  - id: BR-QG-005
+    name: "Final Approval"
+    applies_to: [phase_3_review]
+    checks:
+      - "Output do especialista revisado"
+      - "Quality gate do especialista passou"
+      - "Artefatos organizados"
+      - "Próximos passos definidos"
+
+# ─── ERROR HANDLING ──────────────────────────────────────────
+error_handling:
+  demand_not_classifiable:
+    action: "Apresentar opções da routing matrix ao usuário"
+    fallback_agent: brand-chief
+
+  specialist_unavailable:
+    action: "Sugerir alternativa mais próxima"
+    fallback_agent: brand-chief
+
+  insufficient_context:
+    action: "Retornar para phase_0_intake com perguntas adicionais"
+    max_retries: 2
+
+  quality_gate_failed:
+    action: "Retornar para phase_2_execution com feedback específico"
+    max_retries: 1

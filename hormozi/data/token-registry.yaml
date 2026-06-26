@@ -1,0 +1,89 @@
+meta:
+  version: "1.0.0"
+  squad: hormozi
+  total_tokens: 12
+  source: "deterministic-remediation"
+
+Accountability:
+  owner_token: hormozi-operator
+Behavior:
+  default_review_policy: human_checkpoint_required
+Capacity:
+  weekly_asset_capacity: 25
+Mode:
+  default_mode: CRIAR
+Permission:
+  publish_permission: hormozi-operator
+Priority:
+  priority_rule: offer_math_before_copy
+Taxonomy:
+  primary_domains: [Strategic, Tactical, Operational]
+Threshold:
+  core_thresholds: [value_score_min, payback_days_max, show_rate_min]
+Time:
+  review_sla_hours: 24
+
+tokens:
+  - token_id: HZ-TOK-001
+    token_type: Accountability
+    family: Accountability
+    token_name: accountability_token
+    token_value: hormozi-operator
+    description: "Humano accountable por aprovação final e veto."
+  - token_id: HZ-TOK-002
+    token_type: Mode
+    family: Mode
+    token_name: mode_token
+    token_value: CRIAR
+    description: "Modo padrão para criação de ofertas e campanhas."
+  - token_id: HZ-TOK-003
+    token_type: Threshold
+    family: Threshold
+    token_name: value_score_min
+    token_value: 0.8
+  - token_id: HZ-TOK-004
+    token_type: Threshold
+    family: Threshold
+    token_name: payback_days_max
+    token_value: 30
+  - token_id: HZ-TOK-005
+    token_type: Time
+    family: Time
+    token_name: review_sla_hours
+    token_value: 24
+  - token_id: HZ-TOK-006
+    token_type: Behavior
+    family: Behavior
+    token_name: handoff_requires_validation
+    token_value: true
+  - token_id: HZ-TOK-007
+    token_type: Permission
+    family: Permission
+    token_name: publish_permission
+    token_value: hormozi-operator
+  - token_id: HZ-TOK-008
+    token_type: Capacity
+    family: Capacity
+    token_name: weekly_offer_capacity
+    token_value: 5
+  - token_id: HZ-TOK-009
+    token_type: Priority
+    family: Priority
+    token_name: strategy_before_execution
+    token_value: true
+  - token_id: HZ-TOK-010
+    token_type: Taxonomy
+    family: Taxonomy
+    token_name: domain_strategy
+    token_value: Strategic
+  - token_id: HZ-TOK-011
+    token_type: Taxonomy
+    family: Taxonomy
+    token_name: domain_execution
+    token_value: Tactical
+  - token_id: HZ-TOK-012
+    token_type: Data
+    family: Data
+    token_name: offer_context_token
+    token_value: required
+    description: "Contexto mínimo de oferta antes de qualquer produção."

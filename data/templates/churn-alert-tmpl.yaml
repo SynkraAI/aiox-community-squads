@@ -1,0 +1,529 @@
+# Churn Alert Template
+# Data Intelligence Pack - Template para Alertas de Churn
+# Based on: Nick Mehta (Gainsight) Churn Signals & Playbooks
+
+template:
+  id: churn-alert-v1
+  name: "Churn Alert Template"
+  version: "1.0"
+  primary_agent: nick-mehta
+  secondary_agents:
+    - peter-fader
+    - david-spinks
+    - wes-kao
+  output:
+    format: markdown
+    filename: "churn-alert-{{alert_id}}.md"
+
+# ============================================================================
+# VARIÁVEIS DE INPUT
+# ============================================================================
+
+variables:
+  required:
+    - alert_id: "ID único do alerta"
+    - customer_id: "ID do cliente (mind_id)"
+    - customer_name: "Nome do cliente"
+    - alert_type: "Tipo do alerta (INACTIVITY, HEALTH_DROP, etc)"
+    - severity: "Severidade (critical, high, medium, low)"
+    - detected_at: "Timestamp de detecção"
+
+  optional:
+    - clv_tier: "Tier de CLV do cliente"
+    - health_score: "Health Score atual"
+    - previous_health_score: "Health Score anterior"
+    - signals: "Array de sinais detectados"
+    - cs_owner: "CS Manager responsável"
+    - days_in_status: "Dias no status atual"
+    - renewal_date: "Data de renewal"
+    - arr_value: "ARR do cliente"
+
+# ============================================================================
+# TIPOS DE ALERTA
+# ============================================================================
+
+alert_types:
+  INACTIVITY:
+    name: "Inactivity Alert"
+    description: "Cliente sem atividade por período prolongado"
+    triggers:
+      - "14+ dias sem login/interação"
+      - "30+ dias sem acesso ao produto"
+    default_severity: "medium"
+    severity_modifiers:
+      - condition: "CLV tier = Platinum/Gold"
+        upgrade_to: "high"
+      - condition: "Renewal em <30 dias"
+        upgrade_to: "critical"
+
+  HEALTH_DROP:
+    name: "Health Score Drop Alert"
+    description: "Queda significativa no Health Score"
+    triggers:
+      - "Health Score caiu >20 pontos em 30 dias"
+      - "Health Score entrou em zona crítica (<40)"
+    default_severity: "high"
+    severity_modifiers:
+      - condition: "CLV tier = Platinum"
+        upgrade_to: "critical"
+
+  MEETING_RISK:
+    name: "Renewal Meeting Risk Alert"
+    description: "Renewal próximo com sinais negativos"
+    triggers:
+      - "Renewal em <30 dias + Health <50"
+      - "Renewal em <60 dias + múltiplos churn signals"
+    default_severity: "critical"
+
+  COMMUNITY_DROP:
+    name: "Community Engagement Drop Alert"
+    description: "Queda na participação da comunidade"
+    triggers:
+      - "Participação caiu >60% mês-a-mês"
+      - "Zero mensagens em 30 dias (era ativo)"
+    default_severity: "medium"
+    agent: "david-spinks"
+
+  LEARNING_STALL:
+    name: "Learning Progress Stall Alert"
+    description: "Parou de progredir no curso"
+    triggers:
+      - "7+ dias sem progresso no curso"
+      - "Assignment atrasado >3 dias"
+    default_severity: "medium"
+    agent: "wes-kao"
+
+  STREAK_BROKEN:
+    name: "Streak Broken Alert"
+    description: "Quebrou streak de engajamento"
+    triggers:
+      - "Streak de 7+ dias quebrado"
+      - "Longest streak quebrado"
+    default_severity: "low"
+
+  CHAMPION_CHURN:
+    name: "Champion Churn Risk Alert"
+    description: "Principal sponsor deixou empresa ou desengajou"
+    triggers:
+      - "Bounce em email do champion"
+      - "Champion não responde há 30+ dias"
+    default_severity: "critical"
+
+# ============================================================================
+# ESTRUTURA DO ALERTA
+# ============================================================================
+
+sections:
+
+  # --------------------------------------------------------------------------
+  # HEADER
+  # --------------------------------------------------------------------------
+  - id: alert_header
+    name: "Alert Header"
+    required: true
+    template: |
+      # 🚨 CHURN ALERT: {{alert_type}}
+
+      | Campo | Valor |
+      |-------|-------|
+      | **Alert ID** | {{alert_id}} |
+      | **Severity** | {{severity_badge}} |
+      | **Customer** | {{customer_name}} ({{customer_id}}) |
+      | **Detected** | {{detected_at}} |
+      | **Status** | {{alert_status}} |
+
+      ---
+
+  # --------------------------------------------------------------------------
+  # CUSTOMER CONTEXT
+  # --------------------------------------------------------------------------
+  - id: customer_context
+    name: "Customer Context"
+    required: true
+    template: |
+      ## 👤 Customer Context
+
+      ### Quick Stats
+
+      | Métrica | Valor |
+      |---------|-------|
+      | **CLV Tier** | {{clv_tier}} |
+      | **ARR** | {{arr_value}} |
+      | **Health Score** | {{health_score}} ({{health_delta_icon}} {{health_delta}}) |
+      | **Renewal Date** | {{renewal_date}} ({{days_to_renewal}} dias) |
+      | **Tenure** | {{tenure_months}} meses |
+      | **CS Owner** | {{cs_owner}} |
+
+      ### Health Score Breakdown (DEAR)
+
+      | Componente | Score | Status |
+      |------------|-------|--------|
+      | **D**eployment | {{dear_d_score}}/100 | {{dear_d_status}} |
+      | **E**ngagement | {{dear_e_score}}/100 | {{dear_e_status}} |
+      | **A**doption | {{dear_a_score}}/100 | {{dear_a_status}} |
+      | **R**OI | {{dear_r_score}}/100 | {{dear_r_status}} |
+
+  # --------------------------------------------------------------------------
+  # SIGNALS DETECTED
+  # --------------------------------------------------------------------------
+  - id: signals_detected
+    name: "Signals Detected"
+    required: true
+    template: |
+      ## ⚠️ Signals Detected
+
+      ### Primary Signal
+
+      **{{primary_signal}}**
+
+      {{primary_signal_detail}}
+
+      ### All Signals
+
+      | # | Signal | Detected At | Severity |
+      |---|--------|-------------|----------|
+      {{#each signals}}
+      | {{@index}} | {{signal_type}} | {{detected_at}} | {{severity}} |
+      {{/each}}
+
+      ### Signal Timeline
+
+      ```
+      {{signal_timeline_ascii}}
+      ```
+
+  # --------------------------------------------------------------------------
+  # RISK ASSESSMENT
+  # --------------------------------------------------------------------------
+  - id: risk_assessment
+    name: "Risk Assessment"
+    required: true
+    template: |
+      ## 📊 Risk Assessment
+
+      ### Churn Probability
+
+      | Timeframe | Probability | Confidence |
+      |-----------|-------------|------------|
+      | 30 days | {{churn_prob_30d}}% | {{confidence_30d}} |
+      | 60 days | {{churn_prob_60d}}% | {{confidence_60d}} |
+      | 90 days | {{churn_prob_90d}}% | {{confidence_90d}} |
+
+      ### Financial Impact
+
+      - **ARR at Risk:** {{arr_value}}
+      - **Expected Loss (prob-weighted):** {{expected_loss}}
+      - **CLV Remaining:** {{clv_remaining}}
+
+      ### Root Cause Analysis (Hypothesis)
+
+      {{#each root_causes}}
+      1. **{{cause}}** - Likelihood: {{likelihood}}
+         - Evidence: {{evidence}}
+      {{/each}}
+
+  # --------------------------------------------------------------------------
+  # PLAYBOOK
+  # --------------------------------------------------------------------------
+  - id: playbook
+    name: "Recommended Playbook"
+    required: true
+    template: |
+      ## 📋 Recommended Playbook: {{playbook_name}}
+
+      ### Immediate Actions (24-48h)
+
+      | # | Ação | Owner | Channel | Script |
+      |---|------|-------|---------|--------|
+      {{#each immediate_actions}}
+      | {{@index}} | {{action}} | {{owner}} | {{channel}} | {{script_link}} |
+      {{/each}}
+
+      ### Short-term Actions (Week 1-2)
+
+      {{#each short_term_actions}}
+      #### Day {{day}}: {{action_name}}
+      - **What:** {{description}}
+      - **Who:** {{owner}}
+      - **How:** {{method}}
+      - **Success Criteria:** {{success_criteria}}
+
+      {{/each}}
+
+      ### Escalation Path
+
+      ```
+      {{escalation_path_ascii}}
+      ```
+
+      ### Save Offers (if applicable)
+
+      {{#if save_offers}}
+      | Offer | Condition | Approval Required |
+      |-------|-----------|-------------------|
+      {{#each save_offers}}
+      | {{offer}} | {{condition}} | {{approval}} |
+      {{/each}}
+      {{else}}
+      Nenhuma oferta de save aplicável neste momento.
+      {{/if}}
+
+  # --------------------------------------------------------------------------
+  # COMMUNICATION TEMPLATES
+  # --------------------------------------------------------------------------
+  - id: communication_templates
+    name: "Communication Templates"
+    required: false
+    template: |
+      ## 📧 Communication Templates
+
+      ### Email Template: Initial Outreach
+
+      **Subject:** {{email_subject}}
+
+      ---
+
+      {{email_body}}
+
+      ---
+
+      ### Call Script: Discovery Call
+
+      **Objective:** {{call_objective}}
+
+      **Opening:**
+      > {{call_opening}}
+
+      **Discovery Questions:**
+      {{#each discovery_questions}}
+      1. {{question}}
+      {{/each}}
+
+      **Closing:**
+      > {{call_closing}}
+
+      ### Slack/Chat Template
+
+      > {{chat_template}}
+
+  # --------------------------------------------------------------------------
+  # TRACKING
+  # --------------------------------------------------------------------------
+  - id: tracking
+    name: "Alert Tracking"
+    required: true
+    template: |
+      ## 📈 Alert Tracking
+
+      ### Status Log
+
+      | Timestamp | Status | Action Taken | By |
+      |-----------|--------|--------------|-----|
+      {{#each status_log}}
+      | {{timestamp}} | {{status}} | {{action}} | {{by}} |
+      {{/each}}
+
+      ### SLA Tracking
+
+      | SLA | Target | Actual | Status |
+      |-----|--------|--------|--------|
+      | First Response | {{sla_first_response}} | {{actual_first_response}} | {{sla_status_1}} |
+      | Resolution | {{sla_resolution}} | {{actual_resolution}} | {{sla_status_2}} |
+
+      ### Outcome (when resolved)
+
+      {{#if resolved}}
+      - **Resolution:** {{resolution_type}}
+      - **Outcome:** {{outcome}}
+      - **Learnings:** {{learnings}}
+      {{else}}
+      *Alert ainda em andamento*
+      {{/if}}
+
+# ============================================================================
+# SEVERITY LEVELS
+# ============================================================================
+
+severity_levels:
+  critical:
+    badge: "🔴 CRITICAL"
+    sla_first_response: "4 hours"
+    sla_resolution: "24 hours"
+    notification: ["cs_owner", "cs_manager", "leadership"]
+    escalation_if_no_response: "2 hours"
+
+  high:
+    badge: "🟠 HIGH"
+    sla_first_response: "24 hours"
+    sla_resolution: "48 hours"
+    notification: ["cs_owner", "cs_manager"]
+    escalation_if_no_response: "8 hours"
+
+  medium:
+    badge: "🟡 MEDIUM"
+    sla_first_response: "48 hours"
+    sla_resolution: "7 days"
+    notification: ["cs_owner"]
+    escalation_if_no_response: "24 hours"
+
+  low:
+    badge: "🔵 LOW"
+    sla_first_response: "7 days"
+    sla_resolution: "14 days"
+    notification: ["cs_owner"]
+    escalation_if_no_response: "72 hours"
+
+# ============================================================================
+# PLAYBOOK LIBRARY
+# ============================================================================
+
+playbook_library:
+  inactivity_response:
+    name: "Inactivity Response Playbook"
+    steps:
+      - day: 1
+        action: "Email automático 'Sentimos sua falta'"
+        channel: "email"
+        owner: "automation"
+      - day: 3
+        action: "Task para CS ligar"
+        channel: "phone"
+        owner: "cs_owner"
+      - day: 7
+        action: "Email do founder/CEO"
+        channel: "email"
+        owner: "leadership"
+      - day: 14
+        action: "Escalation para manager"
+        channel: "internal"
+        owner: "cs_manager"
+      - day: 30
+        action: "Oferta especial de reativação"
+        channel: "email"
+        owner: "cs_owner"
+
+  health_drop_response:
+    name: "Health Drop Response Playbook"
+    steps:
+      - day: 0
+        action: "Análise de root cause"
+        channel: "internal"
+        owner: "cs_owner"
+      - day: 1
+        action: "Call do CS Manager"
+        channel: "phone"
+        owner: "cs_owner"
+      - day: 2
+        action: "Plano de ação documentado"
+        channel: "internal"
+        owner: "cs_owner"
+      - day: 7
+        action: "Follow-up de progresso"
+        channel: "email/phone"
+        owner: "cs_owner"
+
+  meeting_risk_prep:
+    name: "Meeting Risk Prep Playbook"
+    steps:
+      - day: -30
+        action: "Review completo da conta"
+        channel: "internal"
+        owner: "cs_owner"
+      - day: -14
+        action: "Call de alignment interno"
+        channel: "internal"
+        owner: "cs_manager"
+      - day: -7
+        action: "Prep de save offers"
+        channel: "internal"
+        owner: "cs_owner"
+      - day: 0
+        action: "Executar save playbook"
+        channel: "meeting"
+        owner: "cs_owner"
+      - day: 1
+        action: "Documentar outcome"
+        channel: "internal"
+        owner: "cs_owner"
+
+  community_reengagement:
+    name: "Community Re-engagement Playbook"
+    steps:
+      - day: 1
+        action: "Personal message do community manager"
+        channel: "dm"
+        owner: "community_manager"
+      - day: 3
+        action: "Invite para próximo evento"
+        channel: "email"
+        owner: "community_manager"
+      - day: 7
+        action: "Highlight de conteúdo relevante"
+        channel: "email"
+        owner: "community_manager"
+      - day: 14
+        action: "1:1 call se alto CLV"
+        channel: "phone"
+        owner: "cs_owner"
+
+  learning_nudge:
+    name: "Learning Nudge Playbook"
+    steps:
+      - day: 1
+        action: "Email com próximo passo claro"
+        channel: "email"
+        owner: "automation"
+      - day: 3
+        action: "Oferta de office hours"
+        channel: "email"
+        owner: "instructor"
+      - day: 7
+        action: "Buddy match (peer support)"
+        channel: "dm"
+        owner: "community_manager"
+      - day: 14
+        action: "Call do success team"
+        channel: "phone"
+        owner: "cs_owner"
+
+# ============================================================================
+# VALIDATION
+# ============================================================================
+
+validation:
+  required_fields:
+    - alert_id
+    - customer_id
+    - alert_type
+    - severity
+    - signals (at least 1)
+    - playbook assignment
+
+  quality_checklist:
+    - "Contexto do cliente está completo?"
+    - "Sinais detectados estão documentados?"
+    - "Root cause tem hipóteses?"
+    - "Playbook está atribuído?"
+    - "Owner está definido?"
+    - "SLAs estão claros?"
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  created: "2026-01-23"
+  author: "Data Intelligence Pack"
+  methodology: "Gainsight Customer Success (Nick Mehta)"
+  references:
+    - "Customer Success (Mehta, Steinman, Murphy)"
+    - "The Customer Success Economy (Mehta)"
+    - "Gainsight Churn Prediction Methodology"
+  related_views:
+    - "v_churn_risk_scores"
+    - "v_churn_leading_indicators"
+    - "v_customer_health_composite"
+  related_workflows:
+    - "create-churn-system.md"
+  related_checklists:
+    - "health-score-checklist.md"

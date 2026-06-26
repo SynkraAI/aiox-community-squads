@@ -1,0 +1,182 @@
+# ==============================================================================
+# APEX SQUAD — Implicit Heuristics Registry
+# data/implicit-heuristics.yaml
+# ==============================================================================
+# Purpose:  Codifies expert knowledge that agents "just know" but was never
+#           formally documented. These heuristics represent instinctive decisions
+#           that experienced design engineers make without conscious deliberation.
+#
+# Philosophy: "Se o conhecimento mora só na cabeça do agente, ele morre com o contexto."
+#             Implicit heuristics become explicit rules so they survive context loss.
+#
+# Owner:    apex-lead
+# Version:  1.0.0
+# ==============================================================================
+
+version: "1.0.0"
+total_heuristics: 8
+
+# ==============================================================================
+# IMPLICIT HEURISTICS
+# ==============================================================================
+heuristics:
+
+  IH-001:
+    name: "URL Wins Over Screenshot"
+    heuristic: "Se o usuário manda print E URL, o URL ganha — print é referência, URL é source of truth"
+    agents: [apex-lead, web-intel]
+    severity: HIGH
+    rationale: >
+      Screenshots are frozen in time and may not reflect current state.
+      A live URL can be navigated, inspected at multiple viewports,
+      and scraped for real tokens. When both inputs exist, the URL
+      is the authoritative source; the screenshot serves as intent reference.
+    when_applies: "*apex-vision with print+URL input"
+    action: "Use URL for data extraction, use print for intent comparison"
+    anti_pattern: "Treating screenshot as ground truth when URL is available"
+
+  IH-002:
+    name: "Fix What Breaks Before What Irritates"
+    heuristic: "Primeiro fix o que quebra, depois o que irrita — funcionalidade antes de estética"
+    agents: [apex-lead, css-eng]
+    severity: HIGH
+    rationale: >
+      A broken layout on mobile that prevents booking is infinitely worse
+      than a color that's slightly off-brand. Triage by impact: functional
+      breaks > usability issues > visual polish > nice-to-haves.
+    when_applies: "Multi-finding triage in *apex-vision or *apex-full"
+    action: "Sort findings by: BROKEN (functional) → UNUSABLE (UX) → UGLY (visual) → MEH (polish)"
+    anti_pattern: "Fixing color inconsistency while a form is broken on mobile"
+
+  IH-003:
+    name: "Unused Token Is Dead Token"
+    heuristic: "Token que ninguém usa não é token, é lixo — se não tem referência, delete"
+    agents: [design-sys-eng, web-intel]
+    severity: MEDIUM
+    rationale: >
+      Design tokens exist to be consumed. An unused token adds cognitive
+      load to the system without providing value. During extraction and
+      fusion, only adopt tokens that will be actively used. During audits,
+      flag tokens with zero references for cleanup.
+    when_applies: "*discover-design, *discover-token-drift, *fuse"
+    action: "Flag tokens with 0 references as DEAD — suggest removal or justify retention"
+    anti_pattern: "Extracting 200 tokens from a site and adopting all of them"
+
+  IH-004:
+    name: "Spring Config Scales With Element Size"
+    heuristic: "Spring config muda com tamanho do elemento — modal != botão != tooltip"
+    agents: [motion-eng]
+    severity: HIGH
+    rationale: >
+      A spring that feels snappy on a small button feels jarring on a
+      full-screen modal. Larger elements need gentler springs (lower stiffness,
+      higher damping) because the visual displacement is greater. The same
+      spring constant produces different perceived speeds at different scales.
+    when_applies: "All motion implementation, *apex-fix with animation"
+    action: |
+      Select spring config by element scale:
+        - Small (buttons, toggles, icons): snappy (stiffness: 500, damping: 25, mass: 0.8)
+        - Medium (cards, drawers, menus): responsive (stiffness: 300, damping: 20, mass: 1)
+        - Large (modals, pages, overlays): gentle (stiffness: 120, damping: 14, mass: 1)
+    anti_pattern: "Using the same spring config for a tooltip and a page transition"
+
+  IH-005:
+    name: "Under Construction Is ABORT"
+    heuristic: "Extração de site em manutenção/under construction é ABORT — não scrape placeholder"
+    agents: [web-intel]
+    severity: CRITICAL
+    rationale: >
+      A site showing "under construction", "coming soon", or maintenance
+      pages will yield garbage tokens — placeholder colors, stock typography,
+      generic spacing. Extracting from these produces false data that
+      contaminates the project's design system if fused.
+    when_applies: "*scrape, *extract-tokens, *analyze-patterns, *compare"
+    action: "ABORT extraction, inform user, suggest retry later or use cached version"
+    detection:
+      - "under construction"
+      - "coming soon"
+      - "maintenance mode"
+      - "parked domain"
+      - "single-page with no navigation"
+      - "default CMS template detected"
+
+  IH-006:
+    name: "Dark Mode Is Not Color Inversion"
+    heuristic: "Dark mode não é inverter cores — é redesenhar a hierarquia de superfícies"
+    agents: [design-sys-eng, css-eng]
+    severity: HIGH
+    rationale: >
+      Inverting colors produces unreadable text, wrong emphasis, and
+      broken shadows. Dark mode requires: elevated surfaces get LIGHTER
+      (not darker), shadows become LESS visible (not inverted), primary
+      colors shift saturation/lightness, and text colors use a different
+      contrast scale. It's a complete re-mapping, not a filter.
+    when_applies: "*apex-dark-mode, *discover-design, theme implementation"
+    action: |
+      Verify dark mode implementation uses:
+        - Surface elevation model (higher = lighter background)
+        - Separate token set for dark (not computed from light)
+        - Reduced shadow intensity (not inverted shadows)
+        - Adjusted primary colors (higher saturation in dark)
+        - Text contrast recalculated (not just white-on-dark)
+    anti_pattern: "CSS filter: invert(1) or simply swapping background/foreground"
+
+  IH-007:
+    name: "Custom Breakpoints Need Custom Viewports"
+    heuristic: "3 viewports não bastam se o site tem breakpoints custom — teste CADA breakpoint"
+    agents: [web-intel]
+    severity: MEDIUM
+    rationale: >
+      Standard extraction at 375/768/1440 misses designs that break at
+      custom breakpoints (e.g., 480px, 1024px, 1920px). If a site uses
+      non-standard breakpoints, the responsive scan must capture at EACH
+      breakpoint, not just the standard 3. Missing a breakpoint means
+      missing an entire layout variant.
+    when_applies: "*responsive-scan, *scrape, *apex-vision with URL"
+    action: |
+      1. First pass: detect breakpoints from CSS media queries
+      2. If custom breakpoints found: capture at EACH detected breakpoint
+      3. Standard 3 viewports are minimum, not maximum
+      4. Report all breakpoints in extraction metadata
+    anti_pattern: "Only testing at 375/768/1440 when site has breakpoint at 1024px"
+
+  IH-008:
+    name: "Accessibility Is Design, Not QA"
+    heuristic: "A11y não é QA gate, é design requirement — começa na Phase 1, não na Phase 7"
+    agents: [interaction-dsgn, a11y-eng]
+    severity: CRITICAL
+    rationale: >
+      Bolting accessibility onto a finished feature is 10x more expensive
+      than designing for it from the start. Color contrast, focus order,
+      semantic HTML, touch targets, and reduced-motion alternatives must
+      be part of the DESIGN spec, not discovered during QA. When a11y is
+      treated as QA, it gets deprioritized under deadline pressure.
+    when_applies: "*apex-design, *apex-go Phase 1, interaction design"
+    action: |
+      In design phase, require:
+        - Color contrast ratios specified in design spec
+        - Focus order defined for all interactive elements
+        - Touch target sizes specified (min 44x44)
+        - Reduced-motion alternatives for all animations
+        - Semantic HTML structure planned (not div soup)
+        - Screen reader flow documented
+    anti_pattern: "Designing a feature without a11y, then 'adding it' before ship"
+
+# ==============================================================================
+# USAGE
+# ==============================================================================
+usage:
+  integration_points:
+    - "apex-intelligence.yaml intent chaining considers heuristics"
+    - "veto-conditions.yaml references heuristics for enforcement"
+    - "Agent activation loads relevant heuristics for their domain"
+    - "*apex-suggest checks heuristic violations in findings"
+
+  how_agents_use:
+    apex-lead: "IH-001, IH-002 — triage and input prioritization"
+    css-eng: "IH-002, IH-006 — fix priority and dark mode"
+    design-sys-eng: "IH-003, IH-006 — token hygiene and dark mode"
+    motion-eng: "IH-004 — spring config selection by element scale"
+    web-intel: "IH-001, IH-003, IH-005, IH-007 — extraction quality"
+    interaction-dsgn: "IH-008 — a11y in design phase"
+    a11y-eng: "IH-008 — enforce a11y as design requirement"

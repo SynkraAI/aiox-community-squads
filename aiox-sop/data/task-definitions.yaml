@@ -1,0 +1,1602 @@
+# Managed by materialize-map.py
+# Source: outputs/sinkra-squad/aiox-sop/map/20260329-190639-claude-opus/task_definitions.yaml
+# Category: workflow
+
+metadata:
+  phase: 5
+  process_slug: aiox-sop
+  process_name: 'Creates, extracts, analyzes, grades and converts SOPs using the world''s
+    best process documentation methodologies. Dual-output: human-readable and AI/ML-consumable
+    formats.'
+  generated_at: '2026-03-29T23:45:00-03:00'
+  agent: composition-engineer
+  version: 1.0.0
+  methodology: SINKRA Task Anatomy — 8-Field Definition per Atom. Derived from workflow_definition.json
+    (Phase 4) + executor_matrix.json (Phase 3). Zero invented fields.
+  validation_status: PASS
+  total_tasks: 27
+  veto_status: NONE — all 27 tasks pass 8-field completeness check
+task_scope: AIOX SOP Transformation Pipeline — full-cycle task definitions for all
+  Atoms across 6 workflow phases plus rework loop. T6.2 (Readability Test) formally
+  ELIMINATED per Phase 4 decision.
+tasks:
+- task: receberSubmissaoSOP
+  task_id: T1.1
+  task_name: Receive SOP submission
+  atomic_layer: Atom
+  responsavel_type: Human
+  executor_role: SOP Owner / Process Requestor
+  workflow: wf_intake_validation
+  domain: Operational
+  automation_decision: KEEP_MANUAL
+  entrada:
+  - campo: raw_sop_document
+    tipo: File (PDF/DOCX/MD/TXT)
+    origem: SOP Owner — direct upload via Google Form portal or Knowledge Hub
+    obrigatorio: true
+  - campo: context_form
+    tipo: JSON
+    origem: 'SOP Owner — form fields: process_name, owner_name, scope, target_audience,
+      version, department'
+    obrigatorio: true
+  saida:
+  - campo: sop_payload_json
+    tipo: JSON
+    destino: T1.2 (Intake Validator) via webhook
+    persistido: true
+    schema: '{ document_url, context_form, submitted_at, owner_email }'
+  - campo: owner_metadata
+    tipo: JSON
+    destino: Supabase sop_submissions table
+    persistido: true
+  pre_conditions:
+  - Google Form portal or Knowledge Hub portal is accessible
+  - SOP document exists in supported format (PDF/DOCX/TXT/MD)
+  - Owner has been onboarded to the platform
+  post_conditions:
+    conditions:
+    - sop_payload_json delivered to webhook endpoint
+    - Owner confirmation email sent
+    - Submission record created in sop_submissions table
+    acceptance_criteria:
+    - 'Form fields: process_name, owner_name, scope, target_audience all non-empty'
+    - Document URL is reachable from storage
+    - Webhook HTTP 200 response received within 5s
+  performance:
+    duration: < 1h (SOP Owner prep time)
+    cost: Human time — variable
+    cacheable: false
+    sla_hours: 1
+    error_handling:
+      strategy: retry
+      max_retries: 1
+      fallback: Documentation Coordinator manual intake via email
+      alert: slack-ops
+      alert_on_failure: true
+- task: validarCompletudeSOP
+  task_id: T1.2
+  task_name: Validate completeness of submission
+  atomic_layer: Atom
+  responsavel_type: Worker
+  executor_role: Intake Validator (Node.js Supabase Edge Function)
+  workflow: wf_intake_validation
+  domain: Operational
+  automation_decision: AUTOMATE
+  entrada:
+  - campo: sop_payload_json
+    tipo: JSON
+    origem: T1.1 via webhook
+    obrigatorio: true
+  saida:
+  - campo: validation_result
+    tipo: JSON
+    destino: T1.3 (if PASS) OR T1.1 (if FAIL with missing fields)
+    persistido: true
+    schema: '{ passed: bool, completeness_score: float, missing_fields: string[],
+      validated_at: ISO8601 }'
+  pre_conditions:
+  - sop_payload_json is valid JSON
+  - SINKRA required fields schema is loaded in Edge Function
+  - Supabase sop_validation_log table is writable
+  post_conditions:
+    conditions:
+    - Validation result logged to Supabase sop_validation_log
+    - completeness_score in range 0-100
+    - 'If FAIL: missing_fields list is non-empty'
+    acceptance_criteria:
+    - completeness_score >= 70 triggers progression to T1.3
+    - completeness_score < 70 triggers notification to SOP Owner with missing fields
+      list
+    - Validation completes within 2 minutes
+    - Worker logs execution in Supabase (Mandamento 3)
+  performance:
+    duration: < 2min
+    cost: < $0.01 per execution
+    cacheable: false
+    sla_minutes: 2
+    error_handling:
+      strategy: fallback
+      max_retries: 0
+      fallback: Route to T1.1 with error payload
+      alert: slack-ops
+      alert_on_failure: true
+- task: catalogarAtribuirID
+  task_id: T1.3
+  task_name: Catalog and assign unique ID
+  atomic_layer: Atom
+  responsavel_type: Worker
+  executor_role: ID Cataloger (Supabase Edge Function)
+  workflow: wf_intake_validation
+  domain: Operational
+  automation_decision: AUTOMATE
+  entrada:
+  - campo: validated_sop_payload
+    tipo: JSON
+    origem: T1.2 (completeness_score >= 70)
+    obrigatorio: true
+  saida:
+  - campo: sop_with_id
+    tipo: JSON
+    destino: T2.1 via event (Supabase realtime)
+    persistido: true
+    schema: '{ sop_id: ''SOP-YYYYMMDD-NNN'', sop_url, storage_path, created_at }'
+  - campo: supabase_record
+    tipo: DB record
+    destino: Supabase sop_catalog table
+    persistido: true
+  pre_conditions:
+  - completeness_score >= 70 (from T1.2)
+  - SOP payload not already cataloged (idempotency check via content hash)
+  - Supabase sop_catalog table is writable
+  - S3/Drive storage is accessible
+  post_conditions:
+    conditions:
+    - 'Unique SOP ID assigned (format: SOP-YYYYMMDD-NNN)'
+    - Record created in sop_catalog table
+    - File stored in S3/Drive at assigned storage_path
+    - Realtime event emitted to trigger T2.1
+    acceptance_criteria:
+    - sop_id is globally unique (DB unique constraint)
+    - storage_path is reachable within 10s of creation
+    - Event delivered to N8N within 5s
+    - 'Idempotency: submitting same SOP twice returns same ID'
+  performance:
+    duration: < 1min
+    cost: < $0.01 per execution
+    cacheable: false
+    sla_minutes: 1
+    error_handling:
+      strategy: retry
+      max_retries: 3
+      fallback: Alert Process Owner + Documentation Coordinator via slack-ops
+      alert: slack-ops
+      alert_on_failure: true
+- task: converterDocumento
+  task_id: T2.1
+  task_name: Document conversion (OCR/parse/normalize)
+  atomic_layer: Atom
+  responsavel_type: Worker
+  executor_role: Document Converter (PyPDF2 / pandoc script)
+  workflow: wf_extraction_grading
+  domain: Operational
+  automation_decision: AUTOMATE
+  entrada:
+  - campo: raw_sop_file
+    tipo: File (PDF/DOCX/TXT/MD/image)
+    origem: T1.3 storage_path via realtime event
+    obrigatorio: true
+  saida:
+  - campo: normalized_markdown
+    tipo: String (UTF-8 Markdown)
+    destino: T2.2 (Schema Mapper)
+    persistido: true
+  - campo: conversion_metadata
+    tipo: JSON
+    destino: Supabase sop_conversion_log
+    persistido: true
+    schema: '{ original_format, encoding, page_count, char_count, converted_at }'
+  pre_conditions:
+  - raw_sop_file exists in storage at given storage_path
+  - File size < 50MB
+  - MIME type in whitelist (application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+    text/plain, text/markdown, image/*)
+  - PyPDF2 and pandoc installed and functional
+  post_conditions:
+    conditions:
+    - Markdown output is valid UTF-8
+    - Minimum 100 characters extracted
+    - Conversion metadata logged to Supabase
+    acceptance_criteria:
+    - Output encoding is UTF-8 (no garbled characters)
+    - char_count >= 100
+    - page_count matches source document
+    - Conversion completes within 10 minutes
+  performance:
+    duration: < 10min
+    cost: < $0.05 per execution
+    cacheable: true
+    sla_minutes: 10
+    error_handling:
+      strategy: retry
+      max_retries: 2
+      fallback: Escalate to Extraction Lead for manual conversion via slack-qa
+      alert: slack-qa
+      alert_on_failure: true
+- task: mapearSchema
+  task_id: T2.2
+  task_name: Schema mapping (structure extraction)
+  atomic_layer: Atom
+  responsavel_type: Agent
+  executor_role: Schema Mapper (Claude API via Gateway AI — OpenClaw)
+  workflow: wf_extraction_grading
+  domain: Operational
+  automation_decision: DELEGATE
+  entrada:
+  - campo: normalized_markdown
+    tipo: String (UTF-8 Markdown)
+    origem: T2.1
+    obrigatorio: true
+  - campo: sinkra_schema_definition
+    tipo: JSON Schema
+    origem: squads/sinkra-squad/data/token-registry.yaml — loaded at runtime
+    obrigatorio: true
+  - campo: validation_errors
+    tipo: JSON (array of strings)
+    origem: T2.3 (only on retry loops)
+    obrigatorio: false
+  saida:
+  - campo: sinkra_schema_json
+    tipo: JSON
+    destino: T2.3 (Schema Validator)
+    persistido: true
+    schema: SINKRA standard schema — all fields from token-registry
+  - campo: extraction_confidence_metadata
+    tipo: JSON
+    destino: T2.4 (Confidence Scorer)
+    persistido: true
+    schema: '{ extracted_fields: int, required_fields: int, null_fields: string[]
+      }'
+  - campo: field_coverage_report
+    tipo: JSON
+    destino: T2.4
+    persistido: true
+  pre_conditions:
+  - normalized_markdown is non-empty (char_count >= 100)
+  - Gateway AI (OpenClaw) is accessible and authenticated
+  - SINKRA schema definition loaded from token-registry
+  - Retry count < 2 (if called from T2.3 feedback loop)
+  post_conditions:
+    conditions:
+    - Output is valid JSON
+    - All mandatory SINKRA fields present (or explicitly null — not omitted)
+    - Output schema validated against SINKRA JSON schema
+    acceptance_criteria:
+    - JSON parses without errors
+    - 'Mandatory fields: sop_id, process_name, scope, steps[] are present'
+    - null fields documented with reason in null_fields array
+    - Extraction completes within 15 minutes
+  performance:
+    duration: < 15min
+    cost: ~$0.10-0.50 per SOP (Claude API tokens)
+    cacheable: false
+    sla_minutes: 15
+    error_handling:
+      strategy: retry
+      max_retries: 2
+      fallback: 'If retry_count >= 2: escalate to Extraction Lead (Human) for manual
+        schema mapping'
+      alert: slack-qa
+      alert_on_failure: true
+- task: validarSchemaSINKRA
+  task_id: T2.3
+  task_name: Validate extracted schema
+  atomic_layer: Atom
+  responsavel_type: Worker
+  executor_role: Schema Validator (ajv/jsonschema library)
+  workflow: wf_extraction_grading
+  domain: Operational
+  automation_decision: AUTOMATE
+  entrada:
+  - campo: sinkra_schema_json
+    tipo: JSON
+    origem: T2.2
+    obrigatorio: true
+  - campo: sinkra_json_schema_definition
+    tipo: JSON Schema (AJV format)
+    origem: squads/sinkra-squad/data/sinkra-schema.json — loaded at runtime
+    obrigatorio: true
+  saida:
+  - campo: schema_validation_result
+    tipo: JSON
+    destino: T2.4 (if PASS) OR T2.2 (if FAIL — retry loop)
+    persistido: true
+    schema: '{ passed: bool, errors: ValidationError[], validated_at: ISO8601, retry_count:
+      int }'
+  pre_conditions:
+  - sinkra_schema_json received from T2.2
+  - SINKRA JSON schema definition loaded
+  - retry_count tracked (max 2)
+  post_conditions:
+    conditions:
+    - Validation result logged
+    - 'If PASS: errors array is empty'
+    - 'If FAIL: errors array is non-empty with field paths and messages'
+    acceptance_criteria:
+    - Validation executes within 1 minute
+    - Error messages include field path (e.g., $.steps[0].actor)
+    - 'If FAIL and retry_count < 2: feed errors back to T2.2 (self-healing loop)'
+    - 'If FAIL and retry_count >= 2: escalate to Extraction Lead'
+  performance:
+    duration: < 1min
+    cost: < $0.001 per execution
+    cacheable: false
+    sla_minutes: 1
+    error_handling:
+      strategy: fallback
+      max_retries: 0
+      fallback: Return to T2.2 with validation errors in prompt context (max 2 loops)
+      alert: slack-qa
+      alert_on_failure: true
+- task: calcularScoreConfianca
+  task_id: T2.4
+  task_name: Generate extraction confidence score
+  atomic_layer: Atom
+  responsavel_type: Worker
+  executor_role: Confidence Scorer (Node.js heuristic script)
+  workflow: wf_extraction_grading
+  domain: Operational
+  automation_decision: AUTOMATE
+  entrada:
+  - campo: validated_sinkra_schema_json
+    tipo: JSON
+    origem: T2.3 (schema_validation_result.passed == true)
+    obrigatorio: true
+  - campo: extraction_confidence_metadata
+    tipo: JSON
+    origem: T2.2 (field_coverage_report)
+    obrigatorio: true
+  saida:
+  - campo: confidence_score
+    tipo: float (0-100)
+    destino: T3.1, T3.2, T3.3, T3.4 (parallel group — if >= 70)
+    persistido: true
+  - campo: routing_decision
+    tipo: JSON
+    destino: N8N workflow router
+    persistido: true
+    schema: '{ route: ''quality_grading'' | ''manual_review'', reason: string }'
+  pre_conditions:
+  - Schema validation PASSED (T2.3)
+  - field_coverage_report is available from T2.2
+  - required_fields count is non-zero
+  post_conditions:
+    conditions:
+    - confidence_score in range 0-100
+    - routing_decision logged to Supabase
+    - 'Formula applied: confidence = (extracted_fields / required_fields) × 100'
+    acceptance_criteria:
+    - confidence_score is a float, not integer
+    - 'If confidence_score < 70: route to manual Agent review queue'
+    - 'If confidence_score >= 70: trigger parallel quality grading group (T3.1, T3.2,
+      T3.3)'
+  performance:
+    duration: < 1min
+    cost: < $0.001 per execution
+    cacheable: false
+    sla_minutes: 1
+    error_handling:
+      strategy: fallback
+      max_retries: 0
+      fallback: Default confidence = 0 → escalate to Extraction Lead via slack-qa
+      alert: slack-qa
+      alert_on_failure: true
+- task: avaliarClareza
+  task_id: T3.1
+  task_name: Evaluate clarity and comprehensibility
+  atomic_layer: Atom
+  responsavel_type: Clone
+  executor_role: Clarity Assessor (Pedro Valerio mind clone — PV_BS_001 methodology)
+  executor_source: squads/squad-creator-pro/minds/oalanicolas/
+  workflow: wf_extraction_grading
+  domain: Operational
+  automation_decision: DELEGATE
+  parallel_group: pg_quality_grading
+  human_in_loop: Quality Analyst validates outlier scores (< 1.5 or > 4.8)
+  human_review_trigger:
+    condition: clarity_score < 1.5 OR clarity_score > 4.8
+    reviewer: Human:Quality_Analyst
+    escalation_sla_minutes: 60
+    action: manual_override_or_reject
+  entrada:
+  - campo: validated_sinkra_schema_json
+    tipo: JSON
+    origem: T2.4 (confidence_score >= 70)
+    obrigatorio: true
+  saida:
+  - campo: clarity_score
+    tipo: float (0-5)
+    destino: T3.4 (Gap Analyzer) and T3.5 (Report Compiler)
+    persistido: true
+  - campo: clarity_rationale
+    tipo: JSON
+    destino: T3.5
+    persistido: true
+    schema: '{ score: float, dimensions: { language_simplicity, ambiguity_absence,
+      instruction_precision, example_adequacy, audience_alignment }, flagged_sections:
+      string[] }'
+  pre_conditions:
+  - confidence_score >= 70 (from T2.4)
+  - validated_sinkra_schema_json available
+  - Pedro Valerio Clone is accessible (Gateway AI)
+  - PV_BS_001 clarity rubric loaded
+  post_conditions:
+    conditions:
+    - clarity_score in range 0-5
+    - clarity_rationale includes dimension scores for all 5 dimensions
+    - Outlier scores (< 1.5 or > 4.8) flagged for Quality Analyst validation
+    acceptance_criteria:
+    - clarity_score is a float with 2 decimal places
+    - All 5 clarity dimensions scored
+    - Flagged sections identified with line references
+    - Completes within 5 minutes
+  performance:
+    duration: < 5min
+    cost: ~$0.05-0.15 per SOP (Clone inference cost)
+    cacheable: false
+    sla_minutes: 5
+    error_handling:
+      strategy: retry
+      max_retries: 2
+      fallback: Escalate to Quality Analyst for manual clarity scoring
+      alert: slack-qa
+      alert_on_failure: true
+- task: avaliarCompletude
+  task_id: T3.2
+  task_name: Evaluate structural completeness
+  atomic_layer: Atom
+  responsavel_type: Worker
+  executor_role: Completeness Checker (Node.js field checklist script)
+  workflow: wf_extraction_grading
+  domain: Operational
+  automation_decision: AUTOMATE
+  parallel_group: pg_quality_grading
+  entrada:
+  - campo: validated_sinkra_schema_json
+    tipo: JSON
+    origem: T2.4 (confidence_score >= 70)
+    obrigatorio: true
+  saida:
+  - campo: completeness_score
+    tipo: float (0-100)
+    destino: T3.4 (Gap Analyzer) and T3.5 (Report Compiler)
+    persistido: true
+  - campo: missing_fields_report
+    tipo: JSON
+    destino: T3.5
+    persistido: true
+    schema: '{ score: float, total_required: int, present: int, missing: string[],
+      partial: string[] }'
+  pre_conditions:
+  - validated_sinkra_schema_json available
+  - SINKRA required fields checklist loaded (from token-registry)
+  - confidence_score >= 70
+  post_conditions:
+    conditions:
+    - completeness_score in range 0-100
+    - 'Formula: score = (fields_present / total_required_fields) × 100'
+    - missing_fields list accounts for all absent required fields
+    acceptance_criteria:
+    - completeness_score calculated from objective field presence, not content quality
+    - Partial fields flagged separately from missing fields
+    - Completes within 2 minutes
+  performance:
+    duration: < 2min
+    cost: < $0.001 per execution
+    cacheable: false
+    sla_minutes: 2
+    error_handling:
+      strategy: fallback
+      max_retries: 0
+      fallback: Escalate to Quality Analyst for manual completeness check
+      alert: slack-qa
+      alert_on_failure: true
+- task: avaliarAderenciaSINKRA
+  task_id: T3.3
+  task_name: Evaluate SINKRA adherence with heuristics
+  atomic_layer: Atom
+  responsavel_type: Clone
+  executor_role: SINKRA Compliance Assessor (Pedro Valerio mind clone)
+  executor_source: squads/squad-creator-pro/minds/oalanicolas/
+  workflow: wf_extraction_grading
+  domain: Operational
+  automation_decision: DELEGATE
+  parallel_group: pg_quality_grading
+  human_in_loop: Quality Analyst validates VETO decisions
+  human_review_trigger:
+    condition: veto_triggered = true OR overall_pass = false
+    reviewer: Human:Quality_Analyst
+    escalation_sla_minutes: 60
+    action: review_violation_and_approve_or_reject
+  entrada:
+  - campo: validated_sinkra_schema_json
+    tipo: JSON
+    origem: T2.4 (confidence_score >= 70)
+    obrigatorio: true
+  saida:
+  - campo: sinkra_adherence_result
+    tipo: JSON
+    destino: T3.4 (Gap Analyzer) and T3.5 (Report Compiler)
+    persistido: true
+    schema: '{ overall_pass: bool, mandamentos_scores: object, violations: string[],
+      veto_triggered: bool }'
+  pre_conditions:
+  - validated_sinkra_schema_json available
+  - Pedro Valerio Clone accessible (Gateway AI)
+  - SINKRA 10 Mandamentos definition loaded
+  post_conditions:
+    conditions:
+    - All 10 Mandamentos evaluated individually
+    - overall_pass = true if 0 critical violations, false otherwise
+    - VETO triggers Human escalation (Quality Analyst) if any critical violation found
+    acceptance_criteria:
+    - All 10 Mandamentos have individual scores
+    - Inter-rater reliability target > 0.85 (enforced by Clone consistency)
+    - VETO decisions documented with specific Mandamento referenced
+    - Completes within 5 minutes
+  performance:
+    duration: < 5min
+    cost: ~$0.05-0.15 per SOP
+    cacheable: false
+    sla_minutes: 5
+    error_handling:
+      strategy: retry
+      max_retries: 2
+      fallback: Escalate to Quality Analyst for manual SINKRA compliance check
+      alert: slack-qa
+      alert_on_failure: true
+- task: identificarLacunasRecomendacoes
+  task_id: T3.4
+  task_name: Identify gaps and generate recommendations
+  atomic_layer: Atom
+  responsavel_type: Agent
+  executor_role: Gap Analyzer (Claude API via Gateway AI — OpenClaw)
+  workflow: wf_extraction_grading
+  domain: Operational
+  automation_decision: DELEGATE
+  entrada:
+  - campo: validated_sinkra_schema_json
+    tipo: JSON
+    origem: T2.4
+    obrigatorio: true
+  - campo: clarity_score
+    tipo: float
+    origem: T3.1
+    obrigatorio: true
+  - campo: completeness_score
+    tipo: float
+    origem: T3.2
+    obrigatorio: true
+  - campo: sinkra_adherence_result
+    tipo: JSON
+    origem: T3.3
+    obrigatorio: true
+  saida:
+  - campo: recommendations_json
+    tipo: JSON (array)
+    destino: T3.5 (Report Compiler)
+    persistido: true
+    schema: '{ recommendations: [{ issue: string, severity: ''critical''|''high''|''medium''|''low'',
+      fix_suggestion: string, affected_field: string }] }'
+  - campo: gap_severity_classification
+    tipo: JSON
+    destino: T3.5
+    persistido: true
+    schema: '{ critical_count: int, high_count: int, medium_count: int, low_count:
+      int }'
+  pre_conditions:
+  - T3.1, T3.2, T3.3 all completed (all scores available)
+  - Gateway AI (OpenClaw) accessible
+  - SINKRA gap taxonomy loaded
+  post_conditions:
+    conditions:
+    - 'Each recommendation has: issue, severity, fix_suggestion, affected_field'
+    - recommendations array is non-null (can be empty if no gaps found)
+    - gap_severity_classification counts match recommendations array
+    acceptance_criteria:
+    - Recommendations are actionable — not vague ('improve clarity' is rejected; 'Step
+      3 lacks success criteria' is accepted)
+    - Each recommendation references a specific SOP field or section
+    - Completes within 5 minutes
+  performance:
+    duration: < 5min
+    cost: ~$0.05-0.20 per SOP (Claude API tokens)
+    cacheable: false
+    sla_minutes: 5
+    error_handling:
+      strategy: retry
+      max_retries: 2
+      fallback: Escalate to Quality Analyst for manual gap analysis
+      alert: slack-qa
+      alert_on_failure: true
+- task: compilarRelatorioQualidade
+  task_id: T3.5
+  task_name: Compile quality analysis report
+  atomic_layer: Atom
+  responsavel_type: Worker
+  executor_role: Report Compiler (Handlebars template engine — Node.js)
+  workflow: wf_extraction_grading
+  domain: Operational
+  automation_decision: AUTOMATE
+  entrada:
+  - campo: clarity_score
+    tipo: float
+    origem: T3.1
+    obrigatorio: true
+  - campo: completeness_score
+    tipo: float
+    origem: T3.2
+    obrigatorio: true
+  - campo: sinkra_adherence_result
+    tipo: JSON
+    origem: T3.3
+    obrigatorio: true
+  - campo: recommendations_json
+    tipo: JSON
+    origem: T3.4
+    obrigatorio: true
+  - campo: gap_severity_classification
+    tipo: JSON
+    origem: T3.4
+    obrigatorio: true
+  saida:
+  - campo: quality_analysis_report_json
+    tipo: JSON
+    destino: T4.1-T4.4, T5.1-T5.3, T6.3 (multiple consumers)
+    persistido: true
+    schema: '{ sop_id, tier: ''A''|''B''|''C''|''D'', scores: { clarity, completeness,
+      sinkra_adherence, composite }, recommendations, generated_at }'
+  - campo: tier_classification
+    tipo: string ('A'|'B'|'C'|'D')
+    destino: N8N routing decision
+    persistido: true
+  - campo: routing_decision
+    tipo: JSON
+    destino: N8N workflow router
+    persistido: true
+    schema: '{ route: ''format_conversion'' | ''rework_feedback'' | ''escalate'',
+      tier: string, reason: string }'
+  pre_conditions:
+  - T3.1, T3.2, T3.3, T3.4 all completed
+  - 'Tier thresholds configured: A >= 4.5, B >= 4.0, C >= 3.0, D < 3.0 (composite
+    scale 0-5)'
+  - Handlebars report template loaded
+  post_conditions:
+    conditions:
+    - quality_analysis_report_json schema is valid
+    - tier assigned based on composite score
+    - routing_decision emitted to N8N
+    acceptance_criteria:
+    - 'Composite score formula: (clarity × 0.4) + (completeness/20 × 0.3) + (sinkra_adherence_score
+      × 0.3)'
+    - 'Tier A (composite >= 4.5): route to wf_format_conversion directly'
+    - 'Tier B/C (composite 3.0-4.4): route to wf_rework_feedback'
+    - 'Tier D (composite < 3.0): escalate to Quality Analyst, do not publish'
+    - Report generation completes within 2 minutes
+  performance:
+    duration: < 2min
+    cost: < $0.001 per execution
+    cacheable: false
+    sla_minutes: 2
+    error_handling:
+      strategy: fallback
+      max_retries: 0
+      fallback: Default tier = D → manual escalation to Quality Analyst
+      alert: slack-qa
+      alert_on_failure: true
+- task: notificarRework
+  task_id: T_REWORK_NOTIFY
+  task_name: Notify SOP Owner and create rework task
+  atomic_layer: Atom
+  responsavel_type: Worker
+  executor_role: Notification Worker (N8N + ClickUp API integration)
+  workflow: wf_rework_feedback
+  domain: Operational
+  automation_decision: AUTOMATE
+  entrada:
+  - campo: quality_analysis_report_json
+    tipo: JSON
+    origem: T3.5 (tier IN 'B', 'C')
+    obrigatorio: true
+  - campo: recommendations_json
+    tipo: JSON
+    origem: T3.4
+    obrigatorio: true
+  - campo: owner_contact
+    tipo: string (email)
+    origem: T1.1 owner_metadata
+    obrigatorio: true
+  saida:
+  - campo: clickup_task_id
+    tipo: string
+    destino: T_REWORK_HUMAN tracking
+    persistido: true
+  - campo: notification_status
+    tipo: JSON
+    destino: Supabase sop_notifications_log
+    persistido: true
+    schema: '{ email_sent: bool, clickup_task_created: bool, due_date: ISO8601, created_at:
+      ISO8601 }'
+  pre_conditions:
+  - tier IN ('B', 'C') — confirmed from T3.5
+  - SOP Owner email is available and valid
+  - ClickUp API key configured and accessible
+  - Rework deadline = 5 business days from notification
+  post_conditions:
+    conditions:
+    - ClickUp task created with due date (5 business days)
+    - Email notification sent to SOP Owner with recommendations
+    - Rework status = PENDING in Supabase
+    acceptance_criteria:
+    - 'Email contains: quality_report link, recommendations list, deadline, portal
+      resubmission URL'
+    - ClickUp task ID stored for tracking in T_REWORK_HUMAN
+    - Notification completes within 5 minutes
+  performance:
+    duration: < 5min
+    cost: < $0.01 per execution
+    cacheable: false
+    sla_minutes: 5
+    error_handling:
+      strategy: retry
+      max_retries: 3
+      fallback: Manual notification via Documentation Coordinator
+      alert: slack-qa
+      alert_on_failure: true
+- task: revisarSOP
+  task_id: T_REWORK_HUMAN
+  task_name: Incorporate recommendations and resubmit SOP
+  atomic_layer: Atom
+  responsavel_type: Human
+  executor_role: SOP Owner (rework)
+  workflow: wf_rework_feedback
+  domain: Operational
+  automation_decision: KEEP_MANUAL
+  entrada:
+  - campo: original_sop
+    tipo: File
+    origem: T1.3 storage_path
+    obrigatorio: true
+  - campo: quality_analysis_report_json
+    tipo: JSON
+    origem: T3.5 via ClickUp task
+    obrigatorio: true
+  - campo: clickup_task
+    tipo: ClickUp task
+    origem: T_REWORK_NOTIFY
+    obrigatorio: true
+  saida:
+  - campo: revised_sop_document
+    tipo: File
+    destino: T2.1 (re-enter extraction pipeline from start)
+    persistido: true
+  - campo: rework_notes
+    tipo: string
+    destino: Supabase sop_rework_log
+    persistido: true
+  pre_conditions:
+  - ClickUp task assigned and acknowledged by SOP Owner
+  - SOP Owner has access to Quality Analysis Report
+  - rework_loop_count < 2 (max 2 rework loops per SOP)
+  post_conditions:
+    conditions:
+    - Revised SOP submitted via portal (re-enters T1.1 → T2.1 pipeline)
+    - Rework notes documented in Supabase
+    - ClickUp task marked complete
+    acceptance_criteria:
+    - Revised SOP addresses at least all critical and high-severity recommendations
+    - Rework submitted within 5 business day SLA
+    - 'If SLA missed: manager escalation triggered; option to reject or extend'
+  performance:
+    duration: 1-5 business days (SLA)
+    cost: Human time — variable
+    cacheable: false
+    sla_business_days: 5
+    error_handling:
+      strategy: retry
+      max_retries: 1
+      fallback: Escalate to manager + Quality Analyst after SLA miss
+      alert: slack-qa
+      alert_on_failure: true
+- task: converterJSONLD
+  task_id: T4.1
+  task_name: Convert to JSON-LD with semantic enrichment
+  atomic_layer: Atom
+  responsavel_type: Worker
+  executor_role: JSON-LD Transformer (Node.js template transformation script)
+  workflow: wf_format_conversion
+  domain: Operational
+  automation_decision: AUTOMATE
+  parallel_group: pg_ml_vs_docs
+  entrada:
+  - campo: validated_sinkra_schema_json
+    tipo: JSON
+    origem: T2.4 (source of truth) — also gated by T3.5 tier routing
+    obrigatorio: true
+  saida:
+  - campo: json_ld_artifact
+    tipo: JSON-LD
+    destino: T6.1 (coherence validation)
+    persistido: true
+    schema: JSON-LD with @context, @type, and semantic links per SINKRA ontology
+  pre_conditions:
+  - Tier classification from T3.5 is 'A' OR rework cycle completed
+  - validated_sinkra_schema_json available
+  - SINKRA JSON-LD @context definition loaded
+  - JSON-LD template loaded
+  post_conditions:
+    conditions:
+    - Output is valid JSON-LD (passes JSON-LD validator)
+    - '@context references SINKRA ontology URL'
+    - '@type mapped to SINKRA process taxonomy'
+    acceptance_criteria:
+    - JSON-LD validates against JSON-LD spec 1.1
+    - All mandatory SOP fields present as JSON-LD properties
+    - Completes within 3 minutes
+  performance:
+    duration: < 3min
+    cost: < $0.001 per execution
+    cacheable: true
+    sla_minutes: 3
+    error_handling:
+      strategy: retry
+      max_retries: 2
+      fallback: Escalate to AI Engineer via slack-devops
+      alert: slack-devops
+      alert_on_failure: true
+- task: gerarEmbeddings
+  task_id: T4.2
+  task_name: Generate vector embeddings with caching
+  atomic_layer: Atom
+  responsavel_type: Worker
+  executor_role: Embedding Generator (Anthropic Embeddings API + Redis/file cache)
+  workflow: wf_format_conversion
+  domain: Operational
+  automation_decision: AUTOMATE
+  parallel_group: pg_ml_vs_docs
+  entrada:
+  - campo: validated_sinkra_schema_json
+    tipo: JSON
+    origem: T2.4
+    obrigatorio: true
+  saida:
+  - campo: vector_embeddings
+    tipo: float[] (1536 dimensions)
+    destino: Supabase pgvector table (sop_embeddings) + T6.1
+    persistido: true
+  - campo: embedding_metadata
+    tipo: JSON
+    destino: Supabase sop_embeddings_log
+    persistido: true
+    schema: '{ sop_id, model: string, dimensions: 1536, cache_hit: bool, generated_at:
+      ISO8601 }'
+  pre_conditions:
+  - validated_sinkra_schema_json available
+  - Anthropic Embeddings API accessible and authenticated
+  - Cache layer (Redis or file cache) available
+  - Content hash computed for cache lookup
+  post_conditions:
+    conditions:
+    - vector_embeddings dimension count = 1536
+    - embedding_metadata logged (including cache_hit status)
+    - Stored in Supabase pgvector
+    acceptance_criteria:
+    - Dimension count == 1536 (strict equality)
+    - 'Cache hit: completes within 1 minute'
+    - 'Cache miss: completes within 20 minutes'
+    - 70% cost reduction target via caching
+    - Embedding stored with sop_id foreign key
+  performance:
+    duration: < 1min (cached) / < 20min (uncached)
+    cost: ~$0.10 per embedding (uncached) / $0 (cached)
+    cacheable: true
+    cache_key: content_hash(sinkra_schema_json)
+    sla_minutes: 20
+    error_handling:
+      strategy: retry
+      max_retries: 2
+      fallback: Escalate to AI Engineer via slack-devops. Log cache miss.
+      alert: slack-devops
+      alert_on_failure: true
+- task: gerarGrafoGraphML
+  task_id: T4.3
+  task_name: Generate dependency graph (GraphML)
+  atomic_layer: Atom
+  responsavel_type: Agent
+  executor_role: Graph Generator (Claude API via Gateway AI + GraphML generator library)
+  workflow: wf_format_conversion
+  domain: Operational
+  automation_decision: DELEGATE
+  parallel_group: pg_ml_vs_docs
+  entrada:
+  - campo: validated_sinkra_schema_json
+    tipo: JSON
+    origem: T2.4
+    obrigatorio: true
+  saida:
+  - campo: graphml_dependency_graph
+    tipo: GraphML (XML)
+    destino: T6.1 (coherence validation)
+    persistido: true
+  - campo: graph_metadata
+    tipo: JSON
+    destino: Supabase sop_graphs_log
+    persistido: true
+    schema: '{ node_count: int, edge_count: int, is_dag: bool, has_cycles: bool, critical_path:
+      string[] }'
+  pre_conditions:
+  - validated_sinkra_schema_json available
+  - Gateway AI (OpenClaw) accessible
+  - GraphML generator library available
+  - SOP has at least 1 step with dependencies
+  post_conditions:
+    conditions:
+    - Output is valid XML (passes XML parser)
+    - GraphML DTD validation passes
+    - is_dag = true (no cycles detected)
+    - Node count matches step count in SOP
+    acceptance_criteria:
+    - GraphML is valid XML per GraphML-Primer spec
+    - Every SOP step is represented as a node
+    - Dependencies correctly inferred from step sequence and conditional flows
+    - Completes within 10 minutes
+  performance:
+    duration: < 10min
+    cost: ~$0.05-0.20 per SOP
+    cacheable: false
+    sla_minutes: 10
+    error_handling:
+      strategy: retry
+      max_retries: 2
+      fallback: Escalate to AI Engineer via slack-devops
+      alert: slack-devops
+      alert_on_failure: true
+- task: tokenizarParaLLM
+  task_id: T4.4
+  task_name: Tokenize and prepare for LLM fine-tuning
+  atomic_layer: Atom
+  responsavel_type: Worker
+  executor_role: Tokenizer (tiktoken or equivalent — Python script)
+  workflow: wf_format_conversion
+  domain: Operational
+  automation_decision: AUTOMATE
+  parallel_group: pg_ml_vs_docs
+  entrada:
+  - campo: validated_sinkra_schema_json
+    tipo: JSON
+    origem: T2.4
+    obrigatorio: true
+  saida:
+  - campo: token_sequences
+    tipo: JSONL
+    destino: T6.1 (coherence validation) + fine-tuning dataset
+    persistido: true
+  - campo: tokenization_metadata
+    tipo: JSON
+    destino: Supabase sop_tokenization_log
+    persistido: true
+    schema: '{ token_count: int, model_target: string, special_tokens: string[], created_at:
+      ISO8601 }'
+  pre_conditions:
+  - validated_sinkra_schema_json available
+  - tiktoken (or target tokenizer) installed
+  - Target model tokenizer configured (e.g., cl100k_base for GPT-4)
+  post_conditions:
+    conditions:
+    - token_sequences is valid JSONL
+    - token_count > 0
+    - Special tokens ([SOP_START], [SOP_END], [STEP], [ACTOR]) injected
+    acceptance_criteria:
+    - Output JSONL parseable line by line
+    - special_tokens present and non-empty
+    - Completes within 5 minutes
+  performance:
+    duration: < 5min
+    cost: < $0.001 per execution
+    cacheable: true
+    sla_minutes: 5
+    error_handling:
+      strategy: retry
+      max_retries: 2
+      fallback: Escalate to AI Engineer via slack-devops
+      alert: slack-devops
+      alert_on_failure: true
+- task: gerarSumarioExecutivo
+  task_id: T5.1
+  task_name: Generate narrative (executive summary)
+  atomic_layer: Atom
+  responsavel_type: Agent
+  executor_role: Executive Writer (Claude API via Gateway AI — OpenClaw)
+  workflow: wf_format_conversion
+  domain: Operational
+  automation_decision: DELEGATE
+  parallel_group: pg_ml_vs_docs
+  entrada:
+  - campo: validated_sinkra_schema_json
+    tipo: JSON
+    origem: T2.4
+    obrigatorio: true
+  - campo: executive_summary_template
+    tipo: Markdown template
+    origem: squads/aiox-sop/templates/executive-summary-tmpl.md — loaded at runtime
+    obrigatorio: true
+  saida:
+  - campo: executive_summary_md
+    tipo: Markdown
+    destino: T5.4 (Multi-Format Renderer)
+    persistido: true
+  pre_conditions:
+  - validated_sinkra_schema_json available
+  - Gateway AI (OpenClaw) accessible
+  - Executive summary template loaded
+  - 'Target audience: C-level / decision-makers'
+  post_conditions:
+    conditions:
+    - Output is valid Markdown
+    - Word count >= 200
+    - 'Audience tone matches: executive / strategic (no implementation details)'
+    acceptance_criteria:
+    - Word count >= 200 words
+    - 'Sections: Process Overview, Key Objectives, Expected Outcomes, Stakeholders'
+    - No implementation-level detail (that goes in T5.3)
+    - Completes within 10 minutes
+  performance:
+    duration: < 10min
+    cost: ~$0.10-0.40 per SOP (Claude API tokens)
+    cacheable: false
+    sla_minutes: 10
+    error_handling:
+      strategy: retry
+      max_retries: 2
+      fallback: Escalate to Tech Writer Lead via slack-devops
+      alert: slack-devops
+      alert_on_failure: true
+- task: gerarGuiaOperacional
+  task_id: T5.2
+  task_name: Generate operational guide (step-by-step)
+  atomic_layer: Atom
+  responsavel_type: Agent
+  executor_role: Operational Writer (Claude API via Gateway AI — OpenClaw)
+  workflow: wf_format_conversion
+  domain: Operational
+  automation_decision: DELEGATE
+  parallel_group: pg_ml_vs_docs
+  entrada:
+  - campo: validated_sinkra_schema_json
+    tipo: JSON
+    origem: T2.4
+    obrigatorio: true
+  - campo: operational_guide_template
+    tipo: Markdown template
+    origem: squads/aiox-sop/templates/operational-guide-tmpl.md — loaded at runtime
+    obrigatorio: true
+  saida:
+  - campo: operational_guide_md
+    tipo: Markdown
+    destino: T5.4 (Multi-Format Renderer)
+    persistido: true
+  pre_conditions:
+  - validated_sinkra_schema_json available
+  - Gateway AI (OpenClaw) accessible
+  - Operational guide template loaded
+  - 'Target audience: process operators / frontline staff'
+  post_conditions:
+    conditions:
+    - Output is valid Markdown
+    - Word count >= 500
+    - 'Step-by-step format: numbered steps, actors, inputs/outputs per step'
+    acceptance_criteria:
+    - Word count >= 500 words
+    - 'Every step has: actor, action, inputs, outputs, success criteria'
+    - Decision points clearly marked as conditional branches
+    - Completes within 10 minutes
+  performance:
+    duration: < 10min
+    cost: ~$0.10-0.40 per SOP
+    cacheable: false
+    sla_minutes: 10
+    error_handling:
+      strategy: retry
+      max_retries: 2
+      fallback: Escalate to Tech Writer Lead via slack-devops
+      alert: slack-devops
+      alert_on_failure: true
+- task: gerarReferencialTecnico
+  task_id: T5.3
+  task_name: Generate technical reference (detailed)
+  atomic_layer: Atom
+  responsavel_type: Agent
+  executor_role: Technical Writer (Claude API via Gateway AI — OpenClaw)
+  workflow: wf_format_conversion
+  domain: Operational
+  automation_decision: DELEGATE
+  parallel_group: pg_ml_vs_docs
+  entrada:
+  - campo: validated_sinkra_schema_json
+    tipo: JSON
+    origem: T2.4
+    obrigatorio: true
+  - campo: technical_reference_template
+    tipo: Markdown template
+    origem: squads/aiox-sop/templates/technical-reference-tmpl.md — loaded at runtime
+    obrigatorio: true
+  saida:
+  - campo: technical_reference_md
+    tipo: Markdown
+    destino: T5.4 (Multi-Format Renderer)
+    persistido: true
+  pre_conditions:
+  - validated_sinkra_schema_json available
+  - Gateway AI (OpenClaw) accessible
+  - Technical reference template loaded
+  - 'Target audience: architects, developers, SINKRA practitioners'
+  post_conditions:
+    conditions:
+    - Output is valid Markdown
+    - Word count >= 1000
+    - 'Includes: full schema definitions, edge cases, integration points, versioning
+      notes'
+    acceptance_criteria:
+    - Word count >= 1000 words
+    - 'Sections: Schema Definition, Executor Matrix, Integration Points, Edge Cases,
+      Version History'
+    - All SINKRA field names reference token-registry identifiers
+    - Completes within 10 minutes
+  performance:
+    duration: < 10min
+    cost: ~$0.15-0.60 per SOP
+    cacheable: false
+    sla_minutes: 10
+    error_handling:
+      strategy: retry
+      max_retries: 2
+      fallback: Escalate to Tech Writer Lead via slack-devops
+      alert: slack-devops
+      alert_on_failure: true
+- task: renderizarMultiplosFormatos
+  task_id: T5.4
+  task_name: Render in multiple formats (Markdown → PDF/HTML/Notion)
+  atomic_layer: Atom
+  responsavel_type: Worker
+  executor_role: Multi-Format Renderer (pandoc + Notion API + HTML renderer)
+  workflow: wf_format_conversion
+  domain: Operational
+  automation_decision: AUTOMATE
+  entrada:
+  - campo: executive_summary_md
+    tipo: Markdown
+    origem: T5.1
+    obrigatorio: true
+  - campo: operational_guide_md
+    tipo: Markdown
+    origem: T5.2
+    obrigatorio: true
+  - campo: technical_reference_md
+    tipo: Markdown
+    origem: T5.3
+    obrigatorio: true
+  saida:
+  - campo: pdf_files
+    tipo: PDF[] (3 files)
+    destino: T5.5 (Metadata Injector) + T6.1
+    persistido: true
+  - campo: html_files
+    tipo: HTML[] (3 files)
+    destino: T5.5
+    persistido: true
+  - campo: notion_pages
+    tipo: Notion Page[] (3 pages)
+    destino: T5.5
+    persistido: true
+  pre_conditions:
+  - executive_summary_md, operational_guide_md, technical_reference_md all available
+  - pandoc installed (version >= 2.19)
+  - Notion API key configured and workspace accessible
+  - Output storage paths configured
+  post_conditions:
+    conditions:
+    - '9 output files generated (3 docs × 3 formats: PDF, HTML, Notion)'
+    - All PDFs render without errors
+    - All Notion pages accessible via URL
+    - All HTML files are valid HTML5
+    acceptance_criteria:
+    - PDF count == 3, HTML count == 3, Notion page count == 3
+    - pandoc exit code = 0 for all PDF/HTML conversions
+    - Notion pages accessible within 30s of creation
+    - Completes within 8 minutes
+  performance:
+    duration: < 8min
+    cost: < $0.01 per execution (API calls to Notion)
+    cacheable: false
+    sla_minutes: 8
+    error_handling:
+      strategy: retry
+      max_retries: 2
+      fallback: Escalate to Tech Writer Lead via slack-devops
+      alert: slack-devops
+      alert_on_failure: true
+- task: injetarMetadados
+  task_id: T5.5
+  task_name: Add metadata and navigation (TOC, links, breadcrumbs)
+  atomic_layer: Atom
+  responsavel_type: Worker
+  executor_role: Metadata Injector (Node.js template script)
+  workflow: wf_format_conversion
+  domain: Operational
+  automation_decision: AUTOMATE
+  entrada:
+  - campo: html_files
+    tipo: HTML[] (3 files)
+    origem: T5.4
+    obrigatorio: true
+  - campo: notion_pages
+    tipo: Notion Page[] (3 pages)
+    origem: T5.4
+    obrigatorio: true
+  - campo: sop_metadata
+    tipo: JSON
+    origem: T1.3 (sop_id, version, owner, date)
+    obrigatorio: true
+  saida:
+  - campo: html_with_navigation
+    tipo: HTML[] (3 files) — enriched
+    destino: T6.1 (coherence validation)
+    persistido: true
+  - campo: notion_with_breadcrumbs
+    tipo: Notion Page[] (3 pages) — enriched
+    destino: T6.1
+    persistido: true
+  pre_conditions:
+  - html_files and notion_pages available from T5.4
+  - 'sop_metadata contains: sop_id, version, owner_name, created_at'
+  - Navigation template loaded
+  post_conditions:
+    conditions:
+    - TOC present in all HTML files
+    - Breadcrumbs present in all Notion pages
+    - SOP ID, version, date injected into all documents
+    acceptance_criteria:
+    - HTML files contain <nav> element with TOC
+    - Notion pages contain breadcrumb block at top
+    - sop_id metadata tag present in HTML <head> and Notion properties
+    - Completes within 3 minutes
+  performance:
+    duration: < 3min
+    cost: < $0.01 per execution
+    cacheable: false
+    sla_minutes: 3
+    error_handling:
+      strategy: fallback
+      max_retries: 0
+      fallback: Escalate to Tech Writer Lead via slack-devops
+      alert: slack-devops
+      alert_on_failure: true
+- task: validarCoerenciaArtifatos
+  task_id: T6.1
+  task_name: Validate coherence between versions
+  atomic_layer: Atom
+  responsavel_type: Worker
+  executor_role: Coherence Validator (Node.js structural check script)
+  workflow: wf_publishing_qa
+  domain: Operational
+  automation_decision: AUTOMATE
+  entrada:
+  - campo: all_generated_artifacts
+    tipo: Manifest JSON
+    origem: T4.1, T4.2, T4.3, T4.4, T5.5 — manifest assembled by N8N after T5.5 completion
+    obrigatorio: true
+    detail: '{ json_ld, embeddings, graphml, tokens, html_files, notion_pages, pdf_files
+      }'
+  - campo: sinkra_schema_json
+    tipo: JSON
+    origem: T2.4 (source of truth)
+    obrigatorio: true
+  saida:
+  - campo: coherence_validation_result
+    tipo: JSON
+    destino: T6.3 (Feedback Validator)
+    persistido: true
+    schema: '{ passed: bool, artifact_count_expected: int, artifact_count_found: int,
+      discrepancies: string[], validated_at: ISO8601 }'
+  pre_conditions:
+  - All T4 artifacts present in storage (json_ld, embeddings, graphml, tokens)
+  - All T5 artifacts present in storage (html, pdf, notion)
+  - Artifact manifest file available
+  - SINKRA schema source of truth accessible
+  post_conditions:
+    conditions:
+    - Validation result logged with all artifact counts
+    - 'If FAIL: discrepancy report details exactly which artifacts are missing or
+      inconsistent'
+    - No orphaned files (files in storage not referenced in manifest)
+    acceptance_criteria:
+    - artifact_count_expected == artifact_count_found
+    - SOP ID consistent across all artifacts
+    - 'If coherence_failed: pipeline halted, Deployment Lead alerted — no publishing
+      proceeds'
+    - Completes within 5 minutes
+  performance:
+    duration: < 5min
+    cost: < $0.001 per execution
+    cacheable: false
+    sla_minutes: 5
+    error_handling:
+      strategy: fallback
+      max_retries: 0
+      fallback: HALT pipeline. Alert Deployment Lead via slack-deployment with discrepancy
+        report. Manual fix required.
+      alert: slack-deployment
+      alert_on_failure: true
+- task: validarIncorporacaoFeedback
+  task_id: T6.3
+  task_name: Validate that T3 feedback was incorporated
+  atomic_layer: Atom
+  responsavel_type: Worker
+  executor_role: Feedback Validator (Node.js checklist script)
+  workflow: wf_publishing_qa
+  domain: Operational
+  automation_decision: AUTOMATE
+  entrada:
+  - campo: quality_analysis_report_json
+    tipo: JSON
+    origem: T3.5
+    obrigatorio: true
+  - campo: coherence_validation_result
+    tipo: JSON
+    origem: T6.1 (passed == true)
+    obrigatorio: true
+  - campo: rework_notes
+    tipo: string
+    origem: T_REWORK_HUMAN (if rework cycle occurred) or null
+    obrigatorio: false
+  saida:
+  - campo: feedback_incorporation_result
+    tipo: JSON
+    destino: T6.4 (Human sign-off, if required) or T6.5 (if auto-approved)
+    persistido: true
+    schema: '{ passed: bool, recommendations_total: int, incorporated: int, rejected:
+      int, documented: int, unaddressed_critical: int }'
+  pre_conditions:
+  - coherence_validation_result.passed == true (T6.1)
+  - quality_analysis_report_json available from T3.5
+  - 'Each recommendation has a traceable status: incorporated/rejected/documented'
+  post_conditions:
+    conditions:
+    - 'Each recommendation has a status: incorporated / rejected (with reason) / documented'
+    - unaddressed_critical count computed
+    - Routing decision derived from tier + unaddressed_critical count
+    acceptance_criteria:
+    - 'Tier A + unaddressed_critical == 0: auto-approve, route to T6.5'
+    - 'Tier B/C OR unaddressed_critical > 0: route to T6.4 (Human sign-off)'
+    - 'Tier D: escalate to Quality Analyst, do not publish'
+    - Completes within 3 minutes
+  performance:
+    duration: < 3min
+    cost: < $0.001 per execution
+    cacheable: false
+    sla_minutes: 3
+    error_handling:
+      strategy: fallback
+      max_retries: 0
+      fallback: Escalate to Deployment Lead via slack-deployment
+      alert: slack-deployment
+      alert_on_failure: true
+- task: assinarFormalmenteSOP
+  task_id: T6.4
+  task_name: Formal sign-off by SOP owner
+  atomic_layer: Atom
+  responsavel_type: Human
+  executor_role: SOP Owner (formal accountability sign-off)
+  workflow: wf_publishing_qa
+  domain: Tactical
+  automation_decision: KEEP_MANUAL
+  nota: Only triggered for Tier B/C or when unaddressed_critical > 0. Tier A auto-approved
+    after T6.3.
+  entrada:
+  - campo: all_generated_artifacts
+    tipo: Manifest JSON + artifact URLs
+    origem: T6.1 manifest
+    obrigatorio: true
+  - campo: quality_analysis_report_json
+    tipo: JSON
+    origem: T3.5
+    obrigatorio: true
+  - campo: feedback_incorporation_result
+    tipo: JSON
+    origem: T6.3
+    obrigatorio: true
+  saida:
+  - campo: approval_decision
+    tipo: JSON
+    destino: T6.5 (Deployment Worker)
+    persistido: true
+    schema: '{ decision: ''approve'' | ''reject'', notes: string, approved_by: string,
+      approved_at: ISO8601, sla_auto_approved: bool }'
+  pre_conditions:
+  - All validations passed (T6.1, T6.3)
+  - Sign-off request sent via ClickUp to SOP Owner
+  - SOP Owner notified with artifact review links
+  post_conditions:
+    conditions:
+    - Approval status logged in Supabase with timestamp
+    - Decision and notes documented
+    - 'If rejected: routed back to wf_rework_feedback with rejection notes (max 1
+      rejection loop)'
+    acceptance_criteria:
+    - Decision is 'approve' or 'reject' (binary, no pending)
+    - 'If 3 business days elapsed without response: auto-approve with SLA_AUTO_APPROVED
+      flag'
+    - Auto-approval requires manager countersign in audit trail
+  performance:
+    duration: 1-3 business days
+    cost: Human time — variable
+    cacheable: false
+    sla_days: 3
+    sla_business_days: 2
+    error_handling:
+      strategy: retry
+      max_retries: 1
+      fallback: 'Day 1: auto-reminder. Day 2: escalate to manager. Day 3: auto-approve
+        with manager countersign + SLA_AUTO_APPROVED flag in audit trail.'
+      alert: slack-deployment
+      alert_on_failure: true
+- task: publicarArtifatos
+  task_id: T6.5
+  task_name: Publish to repositories (Git/Supabase/Notion/S3)
+  atomic_layer: Atom
+  responsavel_type: Worker
+  executor_role: Deployment Worker (Git SDK + Supabase SDK + Notion API + AWS S3 SDK)
+  workflow: wf_publishing_qa
+  domain: Operational
+  automation_decision: AUTOMATE
+  entrada:
+  - campo: all_approved_artifacts
+    tipo: Manifest JSON + artifact files
+    origem: T6.4 (approval_decision.decision == 'approve') OR T6.3 (auto-approve path
+      for Tier A)
+    obrigatorio: true
+  - campo: deployment_manifest
+    tipo: JSON
+    origem: N8N workflow (assembled from all artifact paths)
+    obrigatorio: true
+  saida:
+  - campo: publish_status_json
+    tipo: JSON
+    destino: T6.6 (Audit Trail Writer)
+    persistido: true
+    schema: '{ git_commit_hash: string, supabase_record_id: string, notion_page_urls:
+      string[], s3_object_keys: string[], all_succeeded: bool, published_at: ISO8601
+      }'
+  pre_conditions:
+  - Approval status = 'approve' (from T6.4 or T6.3 auto-approve)
+  - Git, Supabase, Notion, S3 credentials configured
+  - Network accessible to all 4 target systems
+  post_conditions:
+    conditions:
+    - Git commit pushed to repository
+    - Supabase sop_catalog record status = 'published'
+    - All Notion pages have published status
+    - S3 objects accessible (public or pre-signed URL)
+    - all_succeeded = true
+    acceptance_criteria:
+    - git_commit_hash is a valid 40-char SHA
+    - supabase_record_id exists in sop_catalog table
+    - notion_page_urls all return HTTP 200
+    - S3 objects accessible within 10s of upload
+    - Completes within 10 minutes
+  performance:
+    duration: < 10min
+    cost: < $0.05 per SOP (S3 + API calls)
+    cacheable: false
+    sla_minutes: 10
+    error_handling:
+      strategy: retry
+      max_retries: 3
+      fallback: Escalate to Deployment Lead with detailed publish log via slack-deployment
+      alert: slack-deployment
+      alert_on_failure: true
+- task: gerarAuditTrail
+  task_id: T6.6
+  task_name: Generate and archive audit trail
+  atomic_layer: Atom
+  responsavel_type: Worker
+  executor_role: Audit Trail Writer (Supabase RLS logger + S3 server-side encrypted
+    archiver)
+  workflow: wf_publishing_qa
+  domain: Operational
+  automation_decision: AUTOMATE
+  entrada:
+  - campo: publish_status_json
+    tipo: JSON
+    origem: T6.5
+    obrigatorio: true
+  - campo: all_process_events_logs
+    tipo: JSON (event stream)
+    origem: Supabase sop_events_log — collected across all phases
+    obrigatorio: true
+  - campo: sop_metadata
+    tipo: JSON
+    origem: T1.3 (sop_id, version, owner)
+    obrigatorio: true
+  - campo: approval_decision
+    tipo: JSON
+    origem: T6.4 (or auto-approve metadata from T6.3)
+    obrigatorio: true
+  saida:
+  - campo: audit_trail_record
+    tipo: DB record (immutable)
+    destino: 'Supabase sop_audit_log table (RLS: INSERT only, no UPDATE/DELETE)'
+    persistido: true
+  - campo: audit_archive_s3
+    tipo: JSON (server-side encrypted)
+    destino: S3 sop-audit-archive bucket
+    persistido: true
+  - campo: process_completion_event
+    tipo: JSON event
+    destino: Supabase realtime (triggers dashboard update)
+    persistido: false
+  pre_conditions:
+  - Deployment successful (T6.5.all_succeeded == true)
+  - All process logs collected from Supabase sop_events_log
+  - 'Supabase sop_audit_log table has RLS: INSERT-only policy'
+  post_conditions:
+    conditions:
+    - Audit record created with ISO8601 timestamp
+    - Record is immutable (RLS blocks UPDATE and DELETE)
+    - S3 object has server-side encryption enabled
+    - process_completion_event emitted
+    acceptance_criteria:
+    - 'Audit record contains: sop_id, all phase timestamps, all executor IDs, approval
+      decision, publish URLs'
+    - S3 object has x-amz-server-side-encryption header
+    - 'Supabase RLS test: UPDATE on audit record returns 403'
+    - Completes within 2 minutes
+  performance:
+    duration: < 2min
+    cost: < $0.01 per SOP
+    cacheable: false
+    sla_minutes: 2
+    error_handling:
+      strategy: retry
+      max_retries: 3
+      fallback: 'CRITICAL: alert Deployment Lead + manual audit entry required. Deployment
+        NOT rolled back, but audit gap must be resolved within 24h.'
+      alert: slack-deployment
+      alert_on_failure: true
+validation_summary:
+  total_tasks_defined: 27
+  tasks_excluded:
+  - task_id: T6.2
+    reason: ELIMINATE — Formally removed in Phase 4 (workflow_definition.json). Replaced
+      by T3 scoring pipeline + T5 Agent-generated docs + T6.1 coherence check.
+  field_completeness_check:
+    tasks_with_all_8_fields: 27
+    tasks_missing_any_field: 0
+    check_status: PASS
+  executor_uniqueness_check:
+    tasks_with_exactly_1_executor: 27
+    tasks_with_multiple_executors: 0
+    check_status: PASS
+  executor_distribution:
+    Human: 3
+    Agent: 7
+    Worker: 15
+    Clone: 2
+  mandamento_1_compliance: PASS — 27 tasks, each with exactly 1 responsavel_type.
+    Zero ambiguity.
+  mandamento_2_compliance: PASS — All tasks have post_conditions.acceptance_criteria
+    defined.
+  mandamento_3_compliance: 'PASS — All Worker tasks have alert_on_failure: true and
+    logging targets.'
+  mandamento_4_compliance: PASS — All Agent tasks produce schema-validated JSON output.
+  mandamento_8_compliance: 'PASS — No Worker has strategy: ''silent''. All Workers
+    alert on failure.'

@@ -1,0 +1,378 @@
+# Hormozi Ads Swipefile
+# Copy real de campanhas comprovadas do Hormozi
+# Fonte: $100M Money Models Implementation System + Skool Launch
+
+version: "1.0"
+extraction_date: "2026-02-23"
+source: "Swipe File Ads Hormozi.md"
+total_ads: 24
+
+# =============================================================================
+# RETARGETING ADS - eCommerce Store Visitors Who Didn't Check Out
+# =============================================================================
+retargeting_ads:
+  context: "Visitors who added to cart but didn't complete purchase"
+  product: "$100M Money Models Implementation System"
+
+  angles:
+    - id: "RT_001"
+      name: "Quick Reminder"
+      angle_type: "reminder"
+      copy: |
+        Quick reminder about what you get with the $100M Money Models Implementation System: 12 physical playbooks solving every business constraint (leads, sales, delivery, profit), plus the custom ACQ AI trained on 1,000+ businesses. Your order is still available to complete.
+      hooks_used:
+        - "Quick reminder"
+      proof_elements:
+        - "12 physical playbooks"
+        - "1,000+ businesses"
+        - "custom ACQ AI"
+      cta_type: "soft_reminder"
+
+    - id: "RT_002"
+      name: "Still There For You"
+      angle_type: "persistence"
+      copy: |
+        The Implementation System is still there in your cart: battle-tested solutions from working with 1,026+ businesses, organized into 12 actionable playbooks. Everything we discovered about what actually moves the needle in real companies.
+      hooks_used:
+        - "Still there"
+      proof_elements:
+        - "1,026+ businesses"
+        - "12 actionable playbooks"
+        - "real companies"
+      cta_type: "cart_reminder"
+
+    - id: "RT_003"
+      name: "What You Saw"
+      angle_type: "recap"
+      copy: |
+        Just so you remember what you were looking at: The complete system that breaks down every constraint we found across 1,000+ businesses. Four systems (Leads, Sales, Delivery, Profit) with step-by-step playbooks for each. All ready to implement.
+      hooks_used:
+        - "Just so you remember"
+      proof_elements:
+        - "1,000+ businesses"
+        - "Four systems"
+        - "step-by-step"
+      cta_type: "memory_trigger"
+
+    - id: "RT_004"
+      name: "Worth Remembering"
+      angle_type: "value_stack"
+      copy: |
+        Worth remembering what the Implementation System includes: physical playbooks (not PDFs), the workshop to identify your biggest constraint first, and the ACQ AI with insights from $31M in consulting. Built from real business data, not theory.
+      hooks_used:
+        - "Worth remembering"
+      proof_elements:
+        - "physical playbooks (not PDFs)"
+        - "$31M in consulting"
+        - "real business data, not theory"
+      cta_type: "value_reminder"
+
+    - id: "RT_005"
+      name: "In Case You Forgot"
+      angle_type: "differentiation"
+      copy: |
+        In case you forgot what makes this different: these aren't generic business tips. Every solution comes from analyzing actual constraints in real businesses. 12 playbooks covering the only 4 problems that actually matter for growth.
+      hooks_used:
+        - "In case you forgot"
+        - "what makes this different"
+      proof_elements:
+        - "actual constraints"
+        - "real businesses"
+        - "only 4 problems"
+      cta_type: "usp_reminder"
+
+    - id: "RT_006"
+      name: "The Real Value"
+      angle_type: "proof_focus"
+      copy: |
+        The real value isn't just the 12 playbooks - it's that every solution was tested with actual businesses making real money. Plus you get the workshop to know which constraint to tackle first. Your cart is still active if you want to complete it.
+      hooks_used:
+        - "The real value"
+      proof_elements:
+        - "tested with actual businesses"
+        - "making real money"
+        - "workshop included"
+      cta_type: "value_reframe"
+
+    - id: "RT_007"
+      name: "What You Get"
+      angle_type: "benefit_list"
+      copy: |
+        What you get: Solutions to the 4 constraints that kill every business (leads, sales, delivery, profit). Not theory - battle-tested systems from 1,000+ real companies. Physical implementation guides you can actually use.
+      hooks_used:
+        - "What you get"
+      proof_elements:
+        - "4 constraints"
+        - "1,000+ real companies"
+        - "Physical implementation guides"
+      cta_type: "benefit_stack"
+
+    - id: "RT_008"
+      name: "Just Clarifying"
+      angle_type: "price_anchor"
+      copy: |
+        Just clarifying what you were looking at: 12 playbooks containing the exact processes we charged $35,000 each to implement in person. Same solutions, same frameworks, organized for you to implement yourself.
+      hooks_used:
+        - "Just clarifying"
+      proof_elements:
+        - "$35,000 each"
+        - "Same solutions, same frameworks"
+      cta_type: "price_comparison"
+
+    - id: "RT_009"
+      name: "Your Benefits"
+      angle_type: "outcome_focus"
+      copy: |
+        Your benefits with the Implementation System: Stop guessing what works, get proven solutions from analyzing 1,000+ businesses, know exactly which constraint to fix first, have a 24/7 business advisor (the custom ACQ AI). Order is ready when you are.
+      hooks_used:
+        - "Your benefits"
+      proof_elements:
+        - "1,000+ businesses"
+        - "24/7 business advisor"
+        - "custom ACQ AI"
+      cta_type: "benefit_summary"
+
+    - id: "RT_010"
+      name: "Simple Reminder"
+      angle_type: "metaphor"
+      copy: |
+        Simple reminder: The Implementation System gives you the map (12 playbooks), the compass (workshop to find your constraint), and the guide (custom ACQ AI). Everything needed to solve what's actually holding your business back.
+      hooks_used:
+        - "Simple reminder"
+        - "map, compass, guide"
+      proof_elements:
+        - "12 playbooks"
+        - "workshop"
+        - "custom ACQ AI"
+      cta_type: "metaphor_close"
+
+# =============================================================================
+# SKOOL TRIAL ADS - Launch Campaign
+# =============================================================================
+skool_trial_ads:
+  context: "90-day free Skool trial + $9/month lifetime rate launch"
+  product: "$100M Money Models System + Skool Trial"
+  scarcity: "One-time launch only - this Saturday then gone forever"
+
+  angles:
+    - id: "SK_001"
+      name: "The Complete Free Stack"
+      angle_type: "value_stack"
+      copy: |
+        Get the entire $100M Money Models System completely free: Attraction Accelerator, Epic Upsells, Deal Maker Downsells, Continuity Blueprint, plus the audiobook and Lost Chapters. All yours with a 90-day free Skool trial + lifetime $9/month rate. One-time launch only - this Saturday then it's gone forever.
+      hooks_used:
+        - "completely free"
+        - "One-time launch only"
+      scarcity_elements:
+        - "this Saturday then it's gone forever"
+        - "lifetime $9/month rate"
+      value_stack:
+        - "Attraction Accelerator"
+        - "Epic Upsells"
+        - "Deal Maker Downsells"
+        - "Continuity Blueprint"
+        - "audiobook"
+        - "Lost Chapters"
+
+    - id: "SK_002"
+      name: "90 Days to Build Your Empire"
+      angle_type: "time_frame"
+      copy: |
+        90 days free on Skool is enough time to implement every money model mechanism and start seeing results. Plus you get the complete $100M Money Models training system to guide you through it. Lock in $9/month for life - but only until this Saturday. One-time launch offer.
+      hooks_used:
+        - "90 days free"
+        - "enough time to implement"
+      time_framing: "90 days = implementation + results"
+
+    - id: "SK_003"
+      name: "From Theory to Reality"
+      angle_type: "transformation"
+      copy: |
+        You've seen the money models - now learn how to turn them into reality on Skool. Get 90 days free to implement Attraction Accelerators, Epic Upsells, and Continuity mechanisms with the platform built for it. Plus lifetime access at $9/month. Offer expires this Saturday - one-time launch only.
+      hooks_used:
+        - "turn them into reality"
+        - "platform built for it"
+      transformation_promise: "theory -> reality"
+
+    - id: "SK_004"
+      name: "The $70K Value Stack"
+      angle_type: "price_anchor"
+      copy: |
+        $69,955 worth of money model systems, completely free. The Attraction Accelerator ($15,999), Epic Upsells ($5,999), Deal Maker Downsells ($6,499), Continuity Blueprint ($41,458) - all yours with your Skool trial. 90 days free, then $9/month for life. This Saturday only - never again.
+      hooks_used:
+        - "$69,955 worth"
+        - "completely free"
+      price_anchoring:
+        total_value: "$69,955"
+        breakdown:
+          - item: "Attraction Accelerator"
+            value: "$15,999"
+          - item: "Epic Upsells"
+            value: "$5,999"
+          - item: "Deal Maker Downsells"
+            value: "$6,499"
+          - item: "Continuity Blueprint"
+            value: "$41,458"
+
+    - id: "SK_005"
+      name: "Everything You Need to Start"
+      angle_type: "empathy"
+      copy: |
+        If you're an up-and-coming entrepreneur, this is your free tech starter kit. 90 days of Skool free, complete money models training, plus a lifetime rate of just $9/month. I've been broke - this is the best head start I can give you. One-time launch only, expires this Saturday.
+      hooks_used:
+        - "I've been broke"
+        - "free tech starter kit"
+      empathy_element: "I've been broke - this is the best head start I can give you"
+
+    - id: "SK_006"
+      name: "25% Make Sales Month One"
+      angle_type: "social_proof_stat"
+      copy: |
+        25% of monetized groups make a sale in their first month on Skool. 39% do eventually. Get 90 days free to implement the complete $100M Money Models System and become part of that success stat. Lock in $9/month forever - but only until this Saturday ends.
+      hooks_used:
+        - "25% make sales month one"
+        - "39% do eventually"
+      stats:
+        - "25% make sale in first month"
+        - "39% make sale eventually"
+
+    - id: "SK_007"
+      name: "The Platform Built for Money Models"
+      angle_type: "platform_fit"
+      copy: |
+        Skool was built specifically to make money models work. Get 90 days free to test every mechanism - attractions, upsells, downsells, continuity. Plus the complete training system to guide your implementation. Then just $9/month for life. This Saturday only - one-time launch deal.
+      hooks_used:
+        - "built specifically"
+        - "test every mechanism"
+      platform_positioning: "built for money models"
+
+    - id: "SK_008"
+      name: "Don't Give Up - Get 90 Days"
+      angle_type: "persistence"
+      copy: |
+        39% of Skool users eventually make sales - but only if they don't give up. That's why I'm giving you 90 days free (not 14) to implement the money models properly. Plus lifetime access at $9/month instead of $99. Launch ends this Saturday - never offered again.
+      hooks_used:
+        - "don't give up"
+        - "90 days free (not 14)"
+      objection_handling: "Most people quit too early - 90 days gives you time"
+
+    - id: "SK_009"
+      name: "Free Tech + Free Training"
+      angle_type: "double_value"
+      copy: |
+        Get both the platform AND the training free. 90 days of Skool plus the complete $100M Money Models System - Attraction Accelerator, Epic Upsells, Deal Maker Downsells, Continuity Blueprint. Everything you need to succeed, then $9/month forever. One-time launch only, gone this Saturday.
+      hooks_used:
+        - "both the platform AND the training free"
+      double_value:
+        - "Platform (Skool)"
+        - "Training ($100M Money Models)"
+
+    - id: "SK_010"
+      name: "The Head Start You Need"
+      angle_type: "competitive_advantage"
+      copy: |
+        Stop trying to figure it out alone. Get 90 days free on Skool plus the exact money model systems that built my $250M+ portfolio. Complete training on turning every mechanism into reality. Lock in $9/month for life - this Saturday only, then back to $99/month forever.
+      hooks_used:
+        - "Stop trying to figure it out alone"
+        - "$250M+ portfolio"
+      proof_element: "$250M+ portfolio"
+
+    - id: "SK_011"
+      name: "Turn the Models Into Money"
+      angle_type: "outcome"
+      copy: |
+        You have the money models - now turn them into actual money. Get 90 days free on Skool to implement every mechanism and start generating cash flow. Complete training included, then just $9/month for life to keep building your empire. One-time launch only - gone this Saturday forever.
+      hooks_used:
+        - "turn them into actual money"
+        - "start generating cash flow"
+      outcome_focus: "models -> money"
+
+    - id: "SK_012"
+      name: "10x Better, 10x Cheaper"
+      angle_type: "comparison"
+      copy: |
+        Skool isn't just better than other platforms - it's 10x better AND 10x cheaper. Get 90 days free to test everything, plus the complete $100M Money Models System. Then lock in $9/month forever instead of paying $99+ elsewhere. This Saturday only - never offered again.
+      hooks_used:
+        - "10x better AND 10x cheaper"
+      comparison: "10x better AND 10x cheaper than alternatives"
+
+    - id: "SK_013"
+      name: "7-Day Window for 90-Day Trial"
+      angle_type: "urgency"
+      copy: |
+        This 90-day free trial is only available for 7 days. After this Saturday, it goes back to the standard 14-day trial and $99/month pricing. Get the complete $100M Money Models System free, 90 days to implement, then $9/month for life. One-time launch window closes Saturday.
+      hooks_used:
+        - "7-day window"
+        - "goes back to standard"
+      urgency_mechanics:
+        window: "7 days"
+        after_deadline: "14-day trial + $99/month"
+
+    - id: "SK_014"
+      name: "Price Dropped 10x"
+      angle_type: "price_drop"
+      copy: |
+        The price was $99/month. Now it's $9/month for life when you start during this launch. Get 90 days completely free, plus the entire $100M Money Models training system. This pricing disappears this Saturday and will never happen again. One-time launch only.
+      hooks_used:
+        - "Price dropped 10x"
+        - "will never happen again"
+      price_comparison:
+        original: "$99/month"
+        launch: "$9/month for life"
+        discount: "90%"
+
+# =============================================================================
+# PATTERN ANALYSIS
+# =============================================================================
+patterns:
+  retargeting_patterns:
+    - pattern: "Soft opener + value recap + cart reminder"
+    - pattern: "Proof elements always included (numbers, results)"
+    - pattern: "Multiple hooks per ad"
+    - pattern: "No hard sell - reminder tone"
+    - pattern: "Specific numbers over vague claims"
+
+  launch_patterns:
+    - pattern: "Extreme urgency with specific deadline"
+    - pattern: "Price anchoring with itemized value"
+    - pattern: "90 days framing as 'enough time'"
+    - pattern: "Lifetime pricing creates FOMO"
+    - pattern: "Stats-based social proof"
+    - pattern: "Empathy elements (I've been broke)"
+
+  hook_inventory:
+    soft_hooks:
+      - "Quick reminder"
+      - "Just so you remember"
+      - "Worth remembering"
+      - "In case you forgot"
+      - "Simple reminder"
+    value_hooks:
+      - "The real value"
+      - "What you get"
+      - "Your benefits"
+      - "$X worth"
+    urgency_hooks:
+      - "One-time launch only"
+      - "This Saturday only"
+      - "Never again"
+      - "Gone forever"
+
+# =============================================================================
+# USAGE GUIDELINES FOR AGENTS
+# =============================================================================
+agent_usage:
+  hormozi_ads:
+    - "Use retargeting angles for abandoned cart sequences"
+    - "Adapt Skool angles for any trial/launch campaign"
+    - "Maintain proof element density"
+    - "Use soft hooks for retargeting, urgency hooks for launches"
+
+  hormozi_copy:
+    - "Study value stack structure"
+    - "Note price anchoring technique"
+    - "Copy empathy elements pattern"
+
+  hormozi_hooks:
+    - "Add these hooks to 121 formulas inventory"
+    - "Note context-specific hook selection"

@@ -1,0 +1,395 @@
+# Claude Code Frontmatter Schemas — Extracted from Source
+# Squad: claude-code-mastery
+# Source: /claude-code-main (commit analysis 2026-04-06)
+# Purpose: Single source of truth for all frontmatter fields across entity types
+#
+# IMPORTANT: This file is the canonical reference. Do NOT guess frontmatter fields.
+# If a field is not listed here, it does not exist in Claude Code runtime.
+
+version: "1.0.0"
+last_verified: "2026-04-06"
+
+# ===========================================================================
+# SKILLS FRONTMATTER (.claude/skills/*/SKILL.md)
+# ===========================================================================
+# Source: src/utils/frontmatterParser.ts (FrontmatterData type, lines 10-59)
+# Source: src/skills/loadSkillsDir.ts (parsing, lines 185-265)
+# Source: src/types/command.ts (PromptCommand type, lines 25-57)
+
+skills:
+  fields:
+    name:
+      type: string
+      default: "filename"
+      description: "Display name for the skill (overrides directory name)"
+      source: "loadSkillsDir.ts:239"
+
+    description:
+      type: string
+      default: "extracted from first markdown heading"
+      description: "Brief description used for routing. If omitted, Claude extracts from first heading"
+      source: "frontmatterParser.ts:13"
+      routing_impact: "HIGH — this is what Claude uses to decide WHEN to invoke the skill"
+
+    version:
+      type: string
+      default: ~
+      description: "Semantic version of the skill"
+      source: "frontmatterParser.ts:19"
+
+    user-invocable:
+      type: boolean_string
+      valid_values: ["true", "false"]
+      default: "false (skills), true (legacy commands)"
+      description: "Whether users can type /skill-name to invoke. false = model-only (Skill tool)"
+      source: "frontmatterParser.ts:29-32"
+
+    context:
+      type: enum
+      valid_values: ["fork"]
+      default: "inline (when omitted)"
+      description: |
+        Execution context. Only 'fork' has special behavior.
+        Omit field for inline. Any non-'fork' value = inline.
+        fork: runs in isolated sub-agent with separate token budget.
+        inline: expands into current conversation.
+      source: "frontmatterParser.ts:41-44"
+      decision_logic: "src/tools/SkillTool/SkillTool.ts:621 — if command.context === 'fork'"
+      hardening: "fork isolates token budget, restricts tools, prevents context leakage"
+
+    agent:
+      type: string
+      default: "general-purpose"
+      description: "Sub-agent type when context=fork. Options: Explore, Plan, general-purpose, Bash, or any custom agent"
+      only_when: "context: fork"
+      source: "frontmatterParser.ts:45-47"
+      resolution: "src/utils/forkedAgent.ts:211-221 — command.agent ?? 'general-purpose'"
+
+    allowed-tools:
+      type: string_or_array
+      default: "undefined (no restriction for inline; fork inherits agent type tools)"
+      description: "Tools the skill can invoke. Comma-separated or YAML array"
+      source: "frontmatterParser.ts:12"
+
+    model:
+      type: string
+      valid_values: ["haiku", "sonnet", "opus", "inherit", "<specific-model-id>"]
+      default: ~
+      description: "Model override. 'inherit' uses parent model. Case-insensitive for known aliases"
+      source: "frontmatterParser.ts:23-25"
+
+    effort:
+      type: string_or_integer
+      valid_values: ["low", "medium", "high", "max", "<positive integer>"]
+      default: ~
+      description: "Thinking effort level for the model"
+      source: "frontmatterParser.ts:38-40"
+
+    arguments:
+      type: string_or_array
+      default: ~
+      description: |
+        Named arguments. Space-separated string or YAML array.
+        Maps to $foo, $bar placeholders in skill content.
+        Numeric names rejected (conflict with $0, $1 shorthand).
+      source: "loadSkillsDir.ts:250, argumentSubstitution.ts:42-68"
+      substitutions:
+        - "$ARGUMENTS — full argument string"
+        - "$ARGUMENTS[N] — Nth argument (0-indexed)"
+        - "$0, $1, $2 — positional shorthand"
+        - "$foo, $bar — named argument"
+        - "${CLAUDE_SKILL_DIR} — skill directory path"
+        - "${CLAUDE_SESSION_ID} — current session ID"
+
+    argument-hint:
+      type: string
+      default: ~
+      description: "Gray hint text displayed after command name in autocomplete"
+      source: "frontmatterParser.ts:17"
+
+    when_to_use:
+      type: string
+      default: ~
+      description: "Detailed usage scenarios (supplements description for routing)"
+      source: "frontmatterParser.ts:18"
+
+    paths:
+      type: string_or_array
+      default: ~
+      description: |
+        Glob patterns (gitignore-style). Skill activated only when model touches matching files.
+        Supports brace expansion: "src/*.{ts,tsx}" → ["src/*.ts", "src/*.tsx"]
+      source: "frontmatterParser.ts:48-52"
+
+    shell:
+      type: enum
+      valid_values: ["bash", "powershell"]
+      default: "bash"
+      description: "Shell for !`cmd` and ```! blocks. Disabled for MCP-provided skills"
+      source: "frontmatterParser.ts:53-57"
+
+    hooks:
+      type: object
+      default: ~
+      description: "Hooks registered when skill is invoked. Zod-validated HooksSettings"
+      source: "frontmatterParser.ts:33-37"
+
+    disable-model-invocation:
+      type: boolean_string
+      valid_values: ["true", "false"]
+      default: "false"
+      description: "Prevent model from using this skill via Skill tool"
+      source: "loadSkillsDir.ts:255-256"
+
+    hide-from-slash-command-tool:
+      type: boolean_string
+      valid_values: ["true", "false"]
+      default: ~
+      description: "Only for slash commands. Hides from SlashCommand tool visibility"
+      source: "frontmatterParser.ts:20-22"
+
+    maxTurns:
+      type: integer
+      default: ~
+      description: "Maximum agentic turns before stopping"
+      source: "loadSkillsDir.ts (via command type)"
+
+  non_native_fields_note: |
+    Fields like owner_squad, sinkra_tier are AIOX-specific extensions.
+    Claude Code ignores them but they pass through as unknown frontmatter.
+    They are used by our validation scripts (validate:skill-sync, validate-skill).
+
+# ===========================================================================
+# AGENTS FRONTMATTER (.claude/agents/*.md)
+# ===========================================================================
+# Source: src/tools/AgentTool/loadAgentsDir.ts (lines 541-755)
+# Type: BaseAgentDefinition, CustomAgentDefinition
+
+agents:
+  fields:
+    name:
+      type: string
+      required: true
+      description: "Agent type name. Becomes the agentType identifier"
+      source: "loadAgentsDir.ts:549"
+
+    description:
+      type: string
+      required: true
+      description: "Agent description (used as whenToUse). Supports \\n for multiline"
+      source: "loadAgentsDir.ts:550"
+
+    tools:
+      type: string_or_array
+      default: "undefined (all tools)"
+      description: "Allowlist of tools. '*' or missing = all tools"
+      source: "loadAgentsDir.ts:660"
+
+    disallowedTools:
+      type: string_or_array
+      default: ~
+      description: "Blocklist of tools. Takes precedence over tools allowlist"
+      source: "loadAgentsDir.ts:677-681"
+
+    model:
+      type: string
+      valid_values: ["haiku", "sonnet", "opus", "inherit", "<model-id>"]
+      default: ~
+      description: "Model for the agent. 'inherit' uses parent model"
+      source: "loadAgentsDir.ts:568-573"
+
+    effort:
+      type: string_or_integer
+      valid_values: ["low", "medium", "high", "max", "<positive integer>"]
+      default: ~
+      description: "Thinking effort level"
+      source: "loadAgentsDir.ts:624-632"
+
+    permissionMode:
+      type: enum
+      valid_values: ["default", "acceptEdits", "dontAsk", "bypassPermissions", "plan", "auto"]
+      default: ~
+      description: "Permission handling mode for the agent"
+      source: "loadAgentsDir.ts:635-645"
+
+    maxTurns:
+      type: integer
+      default: ~
+      description: "Maximum agentic turns before stopping"
+      source: "loadAgentsDir.ts:648-654"
+
+    skills:
+      type: string_or_array
+      default: ~
+      description: "Skill names to preload for the agent"
+      source: "loadAgentsDir.ts:684"
+
+    initialPrompt:
+      type: string
+      default: ~
+      description: "Text prepended to first user turn. Slash commands work here"
+      source: "loadAgentsDir.ts:686-690"
+
+    memory:
+      type: enum
+      valid_values: ["user", "project", "local"]
+      default: ~
+      description: "Persistent memory scope. Memory prompt auto-appended to system prompt"
+      source: "loadAgentsDir.ts:594-605"
+
+    background:
+      type: boolean
+      default: ~
+      description: "Always run as background task when spawned"
+      source: "loadAgentsDir.ts:576-591"
+
+    isolation:
+      type: enum
+      valid_values: ["worktree"]
+      default: ~
+      description: "Run in isolated git worktree"
+      source: "loadAgentsDir.ts:607-621"
+
+    color:
+      type: enum
+      default: ~
+      description: "UI color for the agent badge. Values from AGENT_COLORS array"
+      source: "loadAgentsDir.ts:567"
+
+    mcpServers:
+      type: array
+      default: ~
+      description: |
+        MCP servers for this agent. Two formats:
+        - String: reference existing server by name
+        - Object: inline server definition {name: {command, args}}
+      source: "loadAgentsDir.ts:693-708"
+
+    hooks:
+      type: object
+      default: ~
+      description: "Session-scoped hooks registered when agent starts"
+      source: "loadAgentsDir.ts:711"
+
+  body_note: "Content after frontmatter becomes the agent's system prompt"
+
+# ===========================================================================
+# MEMORY FILES FRONTMATTER (.claude/memory/*.md)
+# ===========================================================================
+# Source: src/memdir/memoryScan.ts, src/memdir/memoryTypes.ts
+
+memory:
+  fields:
+    description:
+      type: string
+      default: ~
+      description: "One-line description used for relevance matching during retrieval"
+      source: "memoryTypes.ts:260-271"
+
+    type:
+      type: enum
+      valid_values: ["user", "feedback", "project", "reference"]
+      default: ~
+      description: |
+        Memory classification:
+        - user: role, goals, preferences, knowledge
+        - feedback: guidance on approach
+        - project: ongoing work/initiatives
+        - reference: pointers to external resources
+      source: "memoryTypes.ts:22-31"
+
+    name:
+      type: string
+      default: ~
+      description: "Display name for the memory"
+      source: "memoryTypes.ts:264"
+
+# ===========================================================================
+# OUTPUT STYLES FRONTMATTER (plugin output-styles)
+# ===========================================================================
+# Source: src/utils/plugins/loadPluginOutputStyles.ts (lines 36-85)
+
+output_styles:
+  fields:
+    name:
+      type: string
+      default: "filename"
+      description: "Display name for the output style"
+      source: "loadPluginOutputStyles.ts:53"
+
+    description:
+      type: string
+      default: "extracted from markdown"
+      description: "Description of the output style"
+      source: "loadPluginOutputStyles.ts:56-61"
+
+    force-for-plugin:
+      type: boolean_string
+      valid_values: ["true", "false"]
+      default: ~
+      description: "Force use of this style for the plugin"
+      source: "loadPluginOutputStyles.ts:64-70"
+
+# ===========================================================================
+# HOOK EVENTS (applicable in hooks field of skills and agents)
+# ===========================================================================
+# Source: src/types/hooks.ts
+
+hook_events:
+  - PreToolUse
+  - PostToolUse
+  - PostToolUseFailure
+  - PermissionRequest
+  - PermissionDenied
+  - Stop
+  - UserPromptSubmit
+  - SessionStart
+  - Setup
+  - FileChanged
+  - CwdChanged
+  - WorktreeCreate
+  - SubagentStart
+  - Notification
+  - Elicitation
+  - ElicitationResult
+
+# ===========================================================================
+# PARSING RULES & EDGE CASES
+# ===========================================================================
+
+parsing_rules:
+  booleans: "Only literal true or string 'true' → true. Everything else → false"
+  arrays: "Most array fields accept comma-separated strings OR YAML arrays"
+  numeric_args: "Rejected in arguments field (conflicts with $0, $1 shorthand)"
+  memory_type: "Invalid types silently default to undefined"
+  missing_required: "Files without required frontmatter are silently skipped"
+  description_whitespace: "Trimmed; empty strings become null"
+  tool_wildcards: "tools: '*' → undefined (all tools)"
+  model_matching: "Case-insensitive for known aliases (haiku, sonnet, opus)"
+  brace_expansion: "paths: 'src/*.{ts,tsx}' → ['src/*.ts', 'src/*.tsx']"
+  yaml_special_chars: "Auto-quoted: { } [ ] * & # ! | > % @ \\ : (with space)"
+
+# ===========================================================================
+# AIOX-SPECIFIC EXTENSIONS (not native to Claude Code)
+# ===========================================================================
+# These fields are used by our validation and governance but ignored by CC runtime
+
+aiox_extensions:
+  skills_and_agents:
+    forbidden:
+      - owner_squad    # Governance metadata — belongs in tasks only
+      - sinkra_tier    # Governance metadata — belongs in tasks only
+    note: "Skills and agents MUST contain only CC-native fields. SINKRA fields go in squads/*/tasks/"
+  tasks:
+    allowed:
+      - owner_squad
+      - sinkra_tier
+      - process_id
+      - mode
+      - artifact_contracts
+    note: "Tasks (squads/*/tasks/) MAY use AIOX-specific fields for governance"
+  agents_body:
+    - squad prefix in name (e.g., "squad--agent")
+    - activation-instructions in body
+    - persona/voice_dna sections
+    note: "Body content (not frontmatter) may contain AIOX conventions"

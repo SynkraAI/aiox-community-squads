@@ -1,0 +1,20 @@
+{
+  "squad": "aiox-sop",
+  "status": "PASS",
+  "counts": {
+    "local_agents": 6,
+    "total_agents": 6,
+    "bridges": 0,
+    "tasks": 17,
+    "workflows": 3,
+    "checklists": 6,
+    "templates": 13
+  },
+  "bridge_agents": [],
+  "files_checked": [
+    "squads/aiox-sop/README.md",
+    "squads/aiox-sop/ARCHITECTURE.md",
+    "squads/aiox-sop/CHANGELOG.md"
+  ],
+  "findings": []
+}

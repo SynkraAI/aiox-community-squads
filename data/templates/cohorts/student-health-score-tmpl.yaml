@@ -1,0 +1,50 @@
+template_metadata:
+  schema_version: "analytics-template-v1"
+  template_id: "student-health-score-tmpl"
+  artifact: "student-health-score"
+  artifact_family: "cohorts"
+  owner_agent: "nick-mehta"
+  governance_owners:
+    - "marketing-lead"
+    - "narrative-strategist"
+    - "data-chief"
+  output_path: "workspace/businesses/{slug}/analytics/cohorts/student-health-score.yaml"
+  custom_fallback_path: "docs/data/{slug}/student-health-score-{date}.md"
+  contains_real_data: false
+  pii_allowed: false
+
+context:
+  business_slug: "{slug}"
+  product_slug: "{product_slug}"
+  cohort_slug: "{cohort_slug}"
+  period_start: "{yyyy-mm-dd}"
+  period_end: "{yyyy-mm-dd}"
+  generated_at: "{iso_datetime}"
+  generated_by: "{agent_or_workflow}"
+
+analysis:
+  scoring_model:
+    score_range: "0-100"
+    components: []
+    thresholds:
+      healthy_min: null
+      attention_min: null
+      risk_min: null
+      critical_min: null
+  students: []
+  leading_signals: []
+  at_risk_cluster: []
+
+insights: []
+
+recommendations:
+  intervention_playbooks: []
+  owner_assignment: []
+  escalation_rules: []
+
+quality:
+  completeness_score: null
+  confidence_score: null
+  validation:
+    sources_linked: false
+    assumptions_listed: false

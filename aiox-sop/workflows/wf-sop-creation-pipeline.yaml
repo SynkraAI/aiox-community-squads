@@ -1,0 +1,200 @@
+workflow:
+  id: wf-sop-creation-pipeline
+  name: SOP Creation Pipeline
+  type: pipeline
+  version: 1.1.0
+  orchestrator: sop-chief
+  mode: interactive
+  optimization:
+    optimized_by: "*optimize-workflow v1.0.0"
+    optimized_at: "2026-03-09"
+    focus:
+      - d2_parallelization
+      - d3_checkpoint_optimization
+      - d4_executor_distribution
+      - d5_gap_zero
+  description: |
+    Complete SOP creation pipeline following the Juran Quality Trilogy approach.
+    Phase 1 (Quality Planning): Gather requirements, define scope, identify audience.
+    Phase 2 (Quality Creation): Draft SOP in chosen format(s).
+    Phase 3 (Quality Control): Review, validate, and audit the SOP.
+    Phase 4 (Quality Improvement): Incorporate feedback and finalize.
+    Supports dual-output: human-readable AND AI/ML-readable formats.
+  sequence:
+    - phase: requirements-gathering
+      agent: sop-chief
+      executor: hybrid
+      depends_on: []
+      creates: sop_creation_requirements
+      action: gather_requirements
+      checkpoint:
+        type: hybrid
+        condition: required_inputs_complete == true
+      on_complete:
+        trigger: drafting
+    - phase: drafting
+      agent: sop-chief
+      executor: agent
+      depends_on:
+        - requirements-gathering
+      parallel_group: dual-format-drafting
+      creates: sop_draft
+      action: draft_sop
+      checkpoint:
+        type: heuristic
+        condition: sop_draft_exists == true
+      on_complete:
+        trigger: internal-review
+    - phase: internal-review
+      agent: sop-analyst
+      executor: hybrid
+      depends_on:
+        - drafting
+      creates: reviewed_sop_draft
+      action: score_and_iterate
+      checkpoint:
+        type: heuristic
+        condition: analyst_score >= 70 OR iteration_count < 3
+      on_complete:
+        trigger: audit-and-certification
+    - phase: audit-and-certification
+      agent: sop-auditor
+      executor: hybrid
+      depends_on:
+        - internal-review
+      creates: audited_sop
+      action: validate_compliance
+      checkpoint:
+        type: hybrid
+        condition: audit_verdict in ['APPROVED', 'CERTIFIED']
+      on_complete:
+        trigger: finalize-and-publish
+    - phase: finalize-and-publish
+      agent: sop-chief
+      executor: worker
+      depends_on:
+        - audit-and-certification
+      creates: sop_package
+      action: publish_artifacts
+      checkpoint:
+        type: heuristic
+        condition: artifacts_saved == true AND scorecard_generated == true
+      on_complete:
+        trigger: workflow-complete
+  handoff_prompts: []
+  gap_zero:
+    enabled: true
+    transition_policy: immediate-next-phase
+  veto_conditions:
+    - id: WF-CREATE-VETO-001
+      condition: required_inputs_complete != true
+      action: HALT - missing required creation inputs
+    - id: WF-CREATE-VETO-002
+      condition: analyst_score < 60
+      action: HALT - major rewrite required before audit
+    - id: WF-CREATE-VETO-003
+      condition: audit_verdict in ['REJECTED', 'BLOCKED']
+      action: HALT - publication blocked until remediation
+  phases:
+    phase_0:
+      name: Requirements Gathering
+      agent: sop-chief
+      steps:
+        - id: "0.1"
+          name: Identify Process
+          action: Ask user to describe the process to document
+          elicit: true
+        - id: "0.2"
+          name: Define Audience
+          action: Determine target audience (human operators, AI agents, or both)
+          elicit: true
+        - id: "0.3"
+          name: Select Output Format
+          action: "Choose: human-only, ML-only, or dual-format"
+          elicit: true
+        - id: "0.4"
+          name: Identify Compliance Requirements
+          action: Determine applicable standards (ISO 9001, FDA/GMP, OSHA, none)
+          elicit: true
+        - id: "0.5"
+          name: Route to Creator(s)
+          action: Delegate to sop-creator and/or sop-ml-architect based on format choice
+    phase_1:
+      name: SOP Drafting
+      execution: parallel
+      parallel_group: dual-format-drafting
+      steps:
+        - id: "1.1"
+          name: Create Human SOP
+          agent: sop-creator
+          condition: format in ['human', 'dual']
+          action: Execute create-sop-human task
+        - id: "1.2"
+          name: Create ML SOP
+          agent: sop-ml-architect
+          condition: format in ['ml', 'dual']
+          action: Execute create-sop-ml task
+    phase_2:
+      name: Internal Review
+      steps:
+        - id: "2.1"
+          name: Self-Review Against Quality Checklist
+          action: Run sop-quality-checklist against draft
+        - id: "2.2"
+          name: Analyze Draft Score
+          agent: sop-analyst
+          action: Execute analyze-sop on draft, must score >= 70
+        - id: "2.3"
+          name: Iterate if Needed
+          action: If score < 70, return to phase_1 with remediation notes
+          max_iterations: 3
+    phase_3:
+      name: Audit & Certification
+      agent: sop-auditor
+      steps:
+        - id: "3.1"
+          name: Full Audit
+          action: Execute audit-sop with applicable compliance standards
+        - id: "3.2"
+          name: Verdict Check
+          action: Must achieve APPROVED or CERTIFIED verdict
+    phase_4:
+      name: Finalize & Publish
+      agent: sop-chief
+      steps:
+        - id: "4.1"
+          name: Generate Checklist
+          action: Create operational checklist from final SOP
+        - id: "4.2"
+          name: Save Artifacts
+          action: |
+            Save markdown SOP artifacts to docs/sops/
+            Save machine-readable SOP artifacts to workspace/businesses/{business}/sops/
+            Save auxiliary reports to outputs/aiox-sop/
+        - id: "4.3"
+          name: Generate Scorecard
+          action: Create one-page scorecard summary
+  quality_gate:
+    id: QG-SOP-001
+    name: SOP Publication Quality Gate
+    transition: Draft -> Published
+    type: blocking
+    criteria:
+      - SOP Quality Checklist passed (all items checked)
+      - Analyst score >= 70 (C grade minimum)
+      - "Auditor verdict: APPROVED or CERTIFIED"
+      - All placeholder text resolved
+      - Version and metadata complete
+    veto_conditions:
+      - Score < 60 -> HALT, major rewrite needed
+      - Compliance violations -> HALT, cannot publish
+      - Missing RACI matrix -> HALT, accountability gap
+  output:
+    format: SOP Package
+    location: split publish contract
+    artifacts:
+      - human_sop: docs/sops/{process-name}-sop-v{version}.md
+      - ml_sop: workspace/businesses/{business}/sops/{process-name}-sop-v{version}.yaml
+      - checklist: outputs/aiox-sop/checklists/{process-name}-checklist.md
+      - scorecard: outputs/aiox-sop/analysis/{process-name}-scorecard.md
+      - analysis: outputs/aiox-sop/analysis/{process-name}-analysis.md

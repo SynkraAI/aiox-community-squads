@@ -1,0 +1,392 @@
+# ============================================================
+# SOP-SLIDES-003: Slide Deck Creation — Brand-Agnostic LLM Reference
+# Stack: React + TypeScript + Framer Motion + Tailwind
+# All brand values use {{handlebars}} — resolve before use
+# ============================================================
+
+sop:
+  id: "SOP-SLIDES-003"
+  version: "1.1.0"
+  title: "Slide Deck Creation — Brand-Agnostic LLM Reference"
+  purpose: "Enable LLM agents to generate slide decks for ANY brand using React/TSX/Framer Motion"
+  consumer: "llm_agent"
+  stack: "React + TypeScript + Framer Motion + Tailwind CSS"
+
+  classification:
+    domain: "design-system"
+    category: "slide-creation-agnostic"
+    risk_level: "medium"
+    compliance_tags: ["WCAG-2.2-AA"]
+  status: "DRAFT"
+  effective_date: "2026-03-16"
+
+  # --- Brand Configuration Schema ------------------------------------------
+  # EVERY {{placeholder}} must be resolved before generating code.
+  brand_config:
+    identity:
+      name: "{{brand.name}}"
+      prefix: "{{brand.prefix}}"
+      url: "{{brand.url}}"
+      tagline: "{{brand.tagline}}"
+
+    colors:
+      bg_primary:
+        placeholder: "{{brand.color.bg_primary}}"
+        description: "Dark background (80% of slides)"
+        example: "#050505"
+      bg_accent:
+        placeholder: "{{brand.color.bg_accent}}"
+        description: "Accent/highlight background for section breaks, emphasis"
+        example: "#D1FF00"
+      surface:
+        placeholder: "{{brand.color.surface}}"
+        description: "Cards, panels, internal containers"
+        example: "#111111"
+      text_primary:
+        placeholder: "{{brand.color.text_primary}}"
+        description: "Primary text on dark background"
+        example: "#FFFDD0"
+      text_secondary:
+        placeholder: "{{brand.color.text_secondary}}"
+        description: "Secondary/dim text. MUST be >= #777777 for WCAG AA"
+        example: "#999999"
+        constraint: "hex value must yield >= 4.5:1 contrast ratio on bg_primary"
+      accent:
+        placeholder: "{{brand.color.accent}}"
+        description: "Inline highlights, emphasis, chart primary color"
+        example: "#D1FF00"
+      border:
+        placeholder: "{{brand.color.border}}"
+        description: "Borders, dividers, separators"
+        example: "#222222"
+      warning:
+        placeholder: "{{brand.color.warning}}"
+        description: "Warning/negative accent (used in COMPARISON 'before' side)"
+        example: "#FF4444"
+
+    fonts:
+      sans:
+        placeholder: "{{brand.font.sans}}"
+        description: "Primary sans-serif font family"
+        example: "Geist"
+      sans_fallback:
+        placeholder: "{{brand.font.sans_fb}}"
+        description: "Fallback for sans"
+        example: "system-ui, sans-serif"
+      mono:
+        placeholder: "{{brand.font.mono}}"
+        description: "Monospace font for labels, data, code"
+        example: "Geist Mono"
+      mono_fallback:
+        placeholder: "{{brand.font.mono_fb}}"
+        description: "Fallback for mono"
+        example: "monospace"
+
+    contrast_requirements:
+      - combo: "text_primary on bg_primary"
+        minimum: 4.5
+        grade: "AA"
+        preferred: 7.0
+      - combo: "accent on bg_primary"
+        minimum: 4.5
+        grade: "AA"
+      - combo: "text_secondary on bg_primary"
+        minimum: 4.5
+        grade: "AA"
+        hard_rule: "text_secondary hex must be >= #777777"
+      - combo: "bg_primary on bg_accent"
+        minimum: 4.5
+        grade: "AA"
+    validation: "IF any contrast fails → DO NOT PROCEED. Adjust brand colors."
+
+  # --- CSS Variables to Generate -------------------------------------------
+  css_variables:
+    colors:
+      "--slide-bg": "{{brand.color.bg_primary}}"
+      "--slide-accent": "{{brand.color.bg_accent}}"
+      "--slide-surface": "{{brand.color.surface}}"
+      "--slide-text": "{{brand.color.text_primary}}"
+      "--slide-text-dim": "{{brand.color.text_secondary}}"
+      "--slide-border": "{{brand.color.border}}"
+      "--slide-warning": "{{brand.color.warning}}"
+    fonts:
+      "--font-slide-sans": '"{{brand.font.sans}}", {{brand.font.sans_fb}}'
+      "--font-slide-mono": '"{{brand.font.mono}}", {{brand.font.mono_fb}}'
+    typography_scale:
+      "--slide-title-xl": "clamp(48px, 6.8vw, 130px)"
+      "--slide-title-lg": "clamp(40px, 3.3vw, 64px)"
+      "--slide-title-md": "clamp(32px, 2.5vw, 48px)"
+      "--slide-body": "clamp(24px, 1.9vw, 36px)"
+      "--slide-caption": "clamp(16px, 1.5vw, 28px)"
+      "--slide-label": "clamp(13px, 0.7vw, 14px)"
+    spacing:
+      "--slide-space-xs": "clamp(4px, 0.4vw, 8px)"
+      "--slide-space-sm": "clamp(8px, 0.8vw, 16px)"
+      "--slide-space-md": "clamp(16px, 1.7vw, 32px)"
+      "--slide-space-lg": "clamp(32px, 3.3vw, 64px)"
+      "--slide-space-xl": "clamp(64px, 5vw, 96px)"
+    margins:
+      "--slide-margin-x": "clamp(48px, 7.3vw, 200px)"
+      "--slide-margin-top": "clamp(40px, 5vw, 136px)"
+      "--slide-margin-bottom": "clamp(24px, 2.1vw, 40px)"
+    floor: "13px — no text below this in any viewport"
+    palco_label_min: "16px effective"
+
+  # --- Shared Module API ---------------------------------------------------
+  api:
+    font_constants:
+      FONT_SANS: '{ fontFamily: "var(--font-slide-sans)" }'
+      FONT_MONO: '{ fontFamily: "var(--font-slide-mono)" }'
+      rule: "EVERY text element MUST have style={FONT_SANS} or style={FONT_MONO} inline"
+
+    animations:
+      fadeUp: { y: 20, duration: 0.5, ease: "SMOOTH", use: "titles, text" }
+      fadeIn: { duration: 0.4, ease: "SMOOTH", use: "backgrounds" }
+      slideRight: { x: -40, duration: 0.6, ease: "SMOOTH", use: "from left" }
+      slideLeft: { x: 40, duration: 0.6, ease: "SMOOTH", use: "from right" }
+      scaleIn: { scale: 0.88, duration: 0.45, ease: "SPRING", use: "cards, metrics" }
+      growWidth: { scaleX: 0, duration: 0.7, ease: "SMOOTH", use: "horiz lines" }
+      growHeight: { scaleY: 0, duration: 0.7, ease: "SMOOTH", use: "vert lines, bars" }
+      stagger: { formula: "base + i * 0.08", default_base: 0.1 }
+    easing:
+      EASE_SMOOTH: [0.25, 0.1, 0.25, 1]
+      EASE_SPRING: [0.34, 1.56, 0.64, 1]
+
+    components:
+      SlideLayout: { renders: "1920x1080 motion.div", bg: "var(--slide-bg)", text: "var(--slide-text)", font: "FONT_SANS" }
+      SectionTag: { props: "label, delay?", style: "mono, uppercase, tracking, text-dim" }
+      CornerMarks: { props: "color?, opacity?", default: "var(--slide-accent) 0.3", constraint: "max 2 per section" }
+      WatermarkNumber: { props: "n, className?", renders: "16rem, accent color, 4% opacity" }
+      MetaBar: { props: "left, center?, right", renders: "56px bar, border-bottom" }
+      TechFrame: { props: "children, className?", renders: "12px corner clips", constraint: "max 2 per slide" }
+
+    patterns:
+      inline_highlight: 'style={{ background: "var(--slide-accent)", color: "var(--slide-bg)", padding: "0.05em 0.2em" }}'
+      max_highlights_per_slide: 2
+      page_footer: "Inline div, absolute bottom, 3-part: section — number — brand.name"
+
+  # --- Format Guide ---------------------------------------------------------
+  format_guide:
+    ted_keynote: { mode: "palco", slides: "40-90", bullets: "NEVER", text: "minimal", dominant: ["STATEMENT", "IMAGE", "METRIC"], rule: "slide supports narrator" }
+    pitch_deck: { mode: "palco+async", slides: "10-15", data: "essential", font_min: "30pt", versions: 2, fatal: "We have no competition" }
+    sales_deck: { mode: "palco+async", slides: "8-25", framework: "SCR", leave_behind: "autonomous seller" }
+    technical: { mode: "palco", code: "legitimate", code_font: "20pt", backup: "5-10 slides", test: "step back 2m" }
+    zoom_virtual: { mode: "live", movements_per_min: 2, interaction_every: "3-5 min", slide_is_focus: true }
+    carousel_stories: { mode: "async", ratio: "9:16 or 1:1", slides: "5-10", bullets: "NEVER", first: "hook", last: "CTA" }
+
+  # --- Decision Trees -------------------------------------------------------
+  decisions:
+    format:
+      - { condition: "TED, keynote, inspirational", result: "ted_keynote" }
+      - { condition: "VC, investor, fundraising", result: "pitch_deck" }
+      - { condition: "sales call, B2B, demo", result: "sales_deck" }
+      - { condition: "conference, engineering, technical", result: "technical" }
+      - { condition: "Zoom, Teams, virtual call", result: "zoom_virtual" }
+      - { condition: "Instagram, LinkedIn, Stories", result: "carousel_stories" }
+      - { condition: "default", result: "determine mode directly" }
+
+    mode:
+      - condition: "context in [conference, keynote, workshop]"
+        result: { mode: "palco", max_words: 15, min_font: "2.2vw", whitespace: 50, animations: true, notes: true }
+      - condition: "context in [youtube, twitch, screenshare]"
+        result: { mode: "live", max_words: 15, min_font: "2.2vw", whitespace: 45, animations: true, delay_reduction: 0.3, safe_right: "20%", safe_bottom: "15%", notes: true }
+      - condition: "context in [post_event, course, pdf]"
+        result: { mode: "async", max_words: 30, min_font: "1.6vw", whitespace: 40, animations: false, notes: false }
+
+    aspect_ratio:
+      - { condition: "projector/monitor/stream", result: "16:9 1920x1080" }
+      - { condition: "macbook", result: "16:10 1920x1200" }
+      - { condition: "stories/reels", result: "9:16 1080x1920" }
+      - { condition: "instagram/carousel", result: "1:1 1080x1080" }
+      - { condition: "default", result: "16:9 1920x1080" }
+
+    slide_type:
+      - { content: "opening/title/speaker", type: "TITLE" }
+      - { content: "section transition", type: "SECTION_BREAK" }
+      - { content: "impact phrase", type: "STATEMENT" }
+      - { content: "third-party quote", type: "QUOTE" }
+      - { content: "bullets/keywords", type: "CONTENT" }
+      - { content: "before/after, A vs B", type: "COMPARISON" }
+      - { content: "1-3 big numbers", type: "METRIC" }
+      - { content: "chart/graph/table", type: "DATA_VIZ" }
+      - { content: "photo/screenshot", type: "IMAGE" }
+      - { content: "step-by-step/timeline", type: "BUILD" }
+      - { content: "code snippet", type: "CODE" }
+      - { content: "CTA/thank you", type: "CLOSING" }
+
+  # --- Slide Types (compact rules) -----------------------------------------
+  slide_types:
+    TITLE:
+      position: "first"
+      title: { token: "title_xl", weight: 900, max_words: 5 }
+      decoratives: ["CornerMarks", "MetaBar"]
+      layout: ["full_center", "left_with_visual"]
+      screen_time_s: [10, 15]
+
+    SECTION_BREAK:
+      title: { token: "title_lg", weight: 900, max_words: 3 }
+      layout: "full_center"
+      footer: false
+      backgrounds: ["bg_primary", "bg_accent"]
+      screen_time_s: [3, 5]
+
+    STATEMENT:
+      text: { token: ["title_xl", "title_lg"], weight: 900 }
+      max_words: 10
+      max_highlights: 2
+      background: "bg_primary only"
+      min_whitespace: 60
+      screen_time_s: [5, 10]
+
+    QUOTE:
+      extends: "STATEMENT"
+      has_attribution: true
+      visual_quotes: true
+      quote_font: "mono"
+
+    CONTENT:
+      section_tag: true
+      title: { token: "title_lg", weight: 900 }
+      items: { token: "body", count: [3, 4], format: "keywords not sentences" }
+      footer: "PageFooter"
+      layout: "left_aligned"
+      min_whitespace: 50
+      screen_time_s: [20, 40]
+
+    COMPARISON:
+      sides: 2
+      items_per_side: [2, 3]
+      split: ["50_50", "60_40"]
+      differentiation: "color + form, NEVER color alone"
+      screen_time_s: [20, 40]
+
+    METRIC:
+      count: [1, 3]
+      value: { token: "title_xl", weight: 900, font: "mono" }
+      label: { token: "caption", weight: 500 }
+      animation: "scaleIn stagger 0.15"
+      screen_time_s: [10, 20]
+
+    DATA_VIZ:
+      title_rule: "conclusion not description"
+      chart_min_area: "60%"
+      max_series: 3
+      colors: { primary: "accent", secondary: "text@60%", tertiary: "text_dim" }
+      differentiation: "color + pattern"
+      allowed: { bar_v: 6, bar_h: 8, line: "12pts/2lines", donut: 4, table: "4x5" }
+      prohibited: ["scatter", "heatmap", "treemap", "sankey"]
+      screen_time_s: [30, 60]
+
+    IMAGE:
+      min_area: "60%"
+      caption_max_words: 8
+      overlay: "bg_primary gradient 60-80%"
+      min_resolution: "1920px"
+      max_size: "500KB webp"
+      anti_patterns: ["stock", "no_context", "pixelated", "watermark", "unrelated"]
+      screen_time_s: [5, 15]
+
+    BUILD:
+      steps: [2, 5]
+      active_opacity: 1.0
+      future_opacity: 0.15
+      async_mode: "all visible"
+      screen_time_s_per_step: [15, 30]
+
+    CODE:
+      font: "mono"
+      min_size: "body"
+      max_lines: 12
+      overflow: "split into 2 slides"
+      rule: "NEVER screenshot code"
+      screen_time_s: [30, 60]
+
+    CLOSING:
+      position: "last"
+      message: { token: "title_lg", weight: 900, max_words: 5 }
+      rule: "text CTA only, no clickable buttons"
+      screen_time_s: [10, 20]
+
+  # --- Sequence -------------------------------------------------------------
+  sequence:
+    first: "TITLE"
+    last: "CLOSING"
+    section_breaks: "between thematic blocks"
+    max_consecutive_same_type: 3
+    max_slide_duration_s: 120
+    rhythm_patterns:
+      - { seq: ["STATEMENT", "CONTENT", "CONTENT"], effect: "impact-detail-detail" }
+      - { seq: ["METRIC", "DATA_VIZ", "CONTENT"], effect: "number-context-explain" }
+      - { seq: ["IMAGE", "STATEMENT"], effect: "visual-emotional" }
+      - { seq: ["COMPARISON", "STATEMENT"], effect: "contrast-conclusion" }
+
+  # --- Animation Rules ------------------------------------------------------
+  animation_rules:
+    async: "skip all"
+    live: "reduce delays 30%"
+    palco: "normal"
+    max_types_per_slide: 3
+    max_total_delay_s: 1.5
+    max_flash_per_second: 3
+    animate: ["sequential_steps", "impact_reveal", "build", "comparative_charts"]
+    skip: ["decorative_bg", "slide_title", "content_all_at_once"]
+
+  # --- Validation -----------------------------------------------------------
+  validation:
+    per_slide:
+      - "single idea"
+      - "3-second comprehension"
+      - "font inline style on every text"
+      - "all colors via var(--slide-*) — zero hardcoded hex"
+      - "whitespace >= mode min"
+      - "zero paragraphs (async: max 1)"
+      - "zero buttons"
+      - "alt text on images"
+      - "unique accessible title"
+    killer_items:
+      - "contrast < WCAG AA"
+      - "missing font inline style"
+      - "> 15 words palco/live"
+      - "paragraph palco/live"
+      - "code screenshot"
+      - "text_secondary < #777777"
+      - "hardcoded brand color hex"
+    per_sequence:
+      - "first=TITLE, last=CLOSING"
+      - "section breaks between blocks"
+      - "no slide > 2min"
+      - "max 3 consecutive same type"
+
+  # --- Anti-Patterns --------------------------------------------------------
+  anti_patterns:
+    - "text paragraphs"
+    - "font < body in palco"
+    - "> 4 bullets palco/live"
+    - "clickable buttons"
+    - "hover effects"
+    - "fill all space"
+    - "> 3 colors per slide"
+    - "animations > 1.5s"
+    - "hardcoded px sizing"
+    - "code screenshots"
+    - "stock photos"
+    - "> 1 chart per slide"
+    - "color-only differentiation"
+    - "no accessible title"
+    - "hardcoded hex colors (breaks portability)"
+
+  # --- Metadata -------------------------------------------------------------
+  metadata:
+    created_by: "Gerber (SOP Creator Agent)"
+    created_at: "2026-03-16T00:00:00Z"
+    tags: ["slides", "llm", "brand-agnostic", "react", "framer-motion"]
+    review_cycle: "P180D"
+    change_log:
+      - version: "1.1.0"
+        date: "2026-03-16"
+        author: "Gerber (SOP Creator Agent)"
+        summary: "svh (not dvh), Format Guide (TED/Pitch/Sales/Technical/Zoom/Carousel), format decision tree, PEAT 2017 note."
+      - version: "1.0.0"
+        date: "2026-03-16"
+        author: "Gerber (SOP Creator Agent)"
+        summary: "Initial version. Brand-agnostic adaptation of SOP-SLIDES-002. All AIOX tokens replaced with {{brand.*}} handlebars. Code examples use CSS vars. Brand config schema with contrast validation gate."

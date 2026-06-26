@@ -1,0 +1,14 @@
+sop:
+  id: daily-backup-verification
+  version: "1.0.0"
+  objective: "Confirm backup completion and restore integrity."
+  steps:
+    - id: "1"
+      action: "Check backup jobs for current date"
+      success_criteria: "All jobs report SUCCESS"
+    - id: "2"
+      action: "Run restore test in staging"
+      success_criteria: "Checksum matches source"
+    - id: "3"
+      action: "Write verification status to ops log"
+      success_criteria: "Log entry created with timestamp and operator"

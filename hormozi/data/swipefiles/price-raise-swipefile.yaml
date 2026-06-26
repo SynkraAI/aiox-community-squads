@@ -1,0 +1,213 @@
+# $100M Price Raise Playbook Swipefile
+# Source: Alex Hormozi - Acquisition.com Playbooks
+# Extracted: 2026-02-23
+
+version: "1.0"
+source:
+  title: "$100M Price Raise Playbook"
+  author: "Alex Hormozi"
+  type: "playbook"
+  origin: "acquisition.com"
+
+core_insight: |
+  Se voce tem que fazer uma sessao de oracao antes de aumentar
+  o preco em um decimo de centavo, voce tem um negocio terrivel.
+  - Warren Buffett
+
+key_metric: |
+  Caso Trey: Triplicou precos ($49 para ~$150).
+  Resultado: De -$2.000/mes para +$4.000/mes em 1 semana.
+
+frameworks:
+  raise_letter_framework:
+    name: "RAISE"
+    description: "Estrutura da carta perfeita de aumento de preco"
+    components:
+      R:
+        name: "Lembre-os do valor"
+        description: "Valor que ja receberam"
+        example: |
+          Nos ultimos 12 meses, adicionamos tanto valor ao PRODUTO:
+          - Fizemos X para voce
+          - Recurso A ajudou voce a fazer Y
+          - Recurso B e otimo e voce usa diariamente
+
+      A:
+        name: "Aborde a mudanca"
+        description: "Direto, arranque o band-aid"
+        example: |
+          Para continuarmos a investir em tornar O PRODUTO melhor
+          para voce, precisamos aumentar nossos precos.
+
+      I:
+        name: "Invista no futuro"
+        description: "Como o dinheiro extra sera usado"
+        categories:
+          - "Contratar pessoas melhores"
+          - "Treinar as pessoas que voce tem"
+          - "Melhor Equipamento"
+          - "Melhor Tecnologia/Software"
+          - "Melhorias nas Instalacoes"
+          - "Maior nivel de servico"
+
+      S:
+        name: "Suavize com desconto"
+        description: "Recompensa de lealdade"
+        example: |
+          Voce tem sido leal pelos ultimos X meses.
+          Novos clientes pagam preco cheio hoje.
+          Voce fica no plano atual por mais 3-6 meses.
+          Credito de $XXXX como agradecimento.
+
+      E:
+        name: "Explique preocupacoes"
+        description: "PS de seguranca"
+        b2c: "Se isso vai afetar sua capacidade de comprar mantimentos, me avise"
+        b2b: "Se isso impacta materialmente seu negocio, me avise"
+
+  price_cycles:
+    vicious:
+      name: "Ciclo Vicioso (precos baixos)"
+      effects:
+        cliente:
+          - "Investimento emocional DIMINUI"
+          - "Valor percebido DIMINUI"
+          - "Resultados DIMINUEM"
+          - "Exigencia AUMENTA"
+          - "Servico recebido DIMINUI"
+        negocio:
+          - "Lucro por cliente DIMINUI"
+          - "Autovalor percebido DIMINUI"
+          - "Capacidade de criar resultados DIMINUI"
+          - "Conviccao no processo de vendas DIMINUI"
+
+    virtuous:
+      name: "Ciclo Virtuoso (precos altos)"
+      effects:
+        cliente:
+          - "Investimento emocional AUMENTA"
+          - "Valor percebido AUMENTA"
+          - "Resultados AUMENTAM"
+          - "Exigencia DIMINUI"
+          - "Servico recebido AUMENTA"
+        negocio:
+          - "Lucro por cliente AUMENTA"
+          - "Autovalor percebido AUMENTA"
+          - "Capacidade de criar resultados AUMENTA"
+          - "Conviccao no processo de vendas AUMENTA"
+
+strategies:
+  price_rules:
+    - rule: "Nao manter clientes em planos antigos"
+      reason: "Valor depende de preco. Nunca trave preco."
+
+    - rule: "Nunca vender preco unico para acesso vitalicio"
+      reason: "Para sempre dura mais que o pagamento unico."
+
+    - rule: "E bom ser inseguro no inicio"
+      reason: "Voce provavelmente e ruim (por enquanto)."
+
+    - rule: "Aumente precos pelo menos 1x por ano"
+      reason: "Warren Buffett aumentou See's 10% por ano, 50 anos."
+
+    - rule: "Teste em novos clientes primeiro"
+      reason: "Dados + confianca antes de migrar base."
+
+    - rule: "Encontro pessoal se aumento > 50%"
+      reason: "Caso Shopify: $30 para $3000 (100x), perdeu 1 de 300."
+
+    - rule: "Combine aumento com lancamento"
+      reason: "Precos de adotante inicial funcionam bem."
+
+  customer_types:
+    after_price_raise:
+      - type: "Tipo 1: Veem o valor"
+        behavior: "Podem nao gostar mas entendem e cumprem"
+        action: "Nada, agradecer"
+
+      - type: "Tipo 2: Realmente afetados"
+        behavior: "Escrevem historias tristes"
+        action: "Estender desconto por mais 6 meses"
+
+      - type: "Tipo 3: Iam cancelar de qualquer forma"
+        behavior: "Churn aumenta no primeiro mes, normaliza no terceiro"
+        action: "Aceitar, voce so perde 1 mes de receita"
+
+tactics:
+  pricing_math:
+    description: "Tabela de impacto de preco no lucro"
+    example:
+      baseline:
+        price: "$10"
+        conversion: "5%"
+        churn: "10%"
+        ltv: "$100"
+        return: "$500"
+      doubled:
+        price: "$20"
+        conversion: "4%"
+        churn: "10%"
+        ltv: "$200"
+        return: "$800"
+        difference: "+60%"
+    insight: |
+      Dobrar preco com 20% menos vendas = 60% mais receita.
+      Se margem era 30%, lucro TRIPLICA.
+
+  rollout_options:
+    immediate:
+      description: "Fazer de uma vez"
+      when: "Nao lucrativo, precisa do movimento"
+
+    incremental:
+      description: "1-3 incrementos"
+      example: "$200/mes desconto por 4 meses, $100 por 4 meses, $50 por 4 meses"
+      benefit: "Facilita clientes no novo preco"
+
+  communication:
+    video_post:
+      - "Postar video explicativo na comunidade"
+      - "DESLIGAR comentarios no post"
+      - "Referenciar perguntas para voce diretamente"
+
+    new_customers:
+      script: |
+        Isso pode parecer ma noticia mas e boa noticia.
+        Primeiro - continuamos tornando o valor melhor.
+        96% dos clientes concordaram. Eles ja estao usando.
+        Este e o mais barato que jamais sera.
+        Nunca havera um momento melhor para comecar.
+
+checklists:
+  pre_increase:
+    - "Decidir sobre aumento de preco"
+    - "Testar com novos clientes primeiro"
+    - "Confirmar que vendas + retencao = mais dinheiro"
+    - "Segmentar clientes 'antigos'"
+
+  letter_preparation:
+    - "Escrever 1-5 pontos de valor atual"
+    - "Personalizar ao maximo grau possivel"
+    - "Escrever 3 pontos de investimentos futuros"
+    - "Definir desconto expirando (3-6 meses)"
+    - "Preparar declaracao PS"
+    - "Assinar com tinta se possivel"
+
+  post_increase:
+    - "Responder pessoalmente a preocupacoes"
+    - "Estender termos para casos genuinos"
+    - "Implementar preco cheio para novos imediatamente"
+
+agent_usage:
+  pm:
+    - "Planejar cronograma de aumento anual"
+    - "Coordenar lancamentos + aumentos"
+  analyst:
+    - "Calcular impacto de preco no LTV"
+    - "Segmentar clientes por antiguidade"
+  dev:
+    - "Implementar logica de desconto expirando"
+    - "Automatizar notificacoes"
+  po:
+    - "Definir proposta de valor para carta"
+    - "Validar investimentos planejados"

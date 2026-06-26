@@ -1,0 +1,557 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# DISPATCH SQUAD - Configuration
+# Version: 1.0.0
+# Purpose: Parallel execution engine — story-driven, wave-optimized, cost-efficient
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: dispatch
+version: 1.0.0
+
+pack:
+  name: dispatch
+  version: 1.0.0
+  short-title: Dispatch Squad
+  description: >-
+    Parallel execution engine for AIOS. Receives stories/PRDs/tasks, decomposes
+    into atomic sub-tasks, optimizes into DAG-based waves, routes to correct
+    agents/models, and executes in parallel via subagents. Enforces CODE > LLM,
+    story-driven input, and zero main context contamination.
+  author: AIOS
+  icon: "⚡"
+  slashPrefix: dispatch
+
+entry_agent: dispatch-chief
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# THE 7 IMMUTABLE LAWS OF DISPATCH
+# ═══════════════════════════════════════════════════════════════════════════════
+
+core_principles:
+  - name: "LAW #0: NEVER MAIN CONTEXT"
+    rule: "Zero execution in terminal principal. ALL work via subagents. No exception. Opus context > 100k = exponential cost."
+
+  - name: "LAW #1: CODE > LLM"
+    rule: "If deterministic → script Python/Bash. If needs reasoning → LLM. Never use LLM for what code resolves."
+
+  - name: "LAW #2: RIGHT MODEL"
+    rule: "Haiku for well-defined tasks. Sonnet for judgment. Opus NEVER as executor (if needs Opus, shouldn't be dispatched)."
+
+  - name: "LAW #3: STORY-DRIVEN"
+    rule: "All work from story with acceptance criteria. No story = no execution."
+
+  - name: "LAW #4: SLASH COMMAND MAP"
+    rule: "Dispatch KNOWS all / commands. Routes with full path (/copy:tasks:create-sales-page), never with @."
+
+  - name: "LAW #5: WAVE OPTIMIZED"
+    rule: "Real DAG with topological sort. MAXIMUM parallelism. Never fixed order when parallel is possible."
+
+  - name: "LAW #6: OPTIMIZE EVERYTHING"
+    rule: "Apply executor-decision-tree (Q1-Q6) on each action: Worker if deterministic, Agent if reasoning needed."
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TIER STRUCTURE
+# ═══════════════════════════════════════════════════════════════════════════════
+
+tier_structure:
+  orchestrator:
+    agent: dispatch-chief
+    mind: "Gene Kim"
+    role: "Receives work, validates sufficiency, orchestrates full pipeline"
+
+  tier_0:
+    name: "Pre-Execution Validation"
+    agents:
+      - quality-gate
+    mind: "W. Edwards Deming + Pedro Valério"
+    purpose: "Validate work is sufficiently defined BEFORE dispatch"
+
+  tier_1:
+    name: "Planning & Optimization"
+    agents:
+      - wave-planner
+    minds: "Donald Reinertsen + Eliyahu Goldratt"
+    purpose: "Decompose into atomic tasks, optimize into DAG-based waves"
+
+  tier_2:
+    name: "Routing"
+    agents:
+      - task-router
+    purpose: "Route each task to correct agent + model + enrichment level"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PATTERN LIBRARY
+# ═══════════════════════════════════════════════════════════════════════════════
+
+pattern_library:
+  prefix: DS
+  naming_convention:
+    format: "{PREFIX}-{CATEGORY}-{NUMBER}"
+    example: "DS-WP-001"
+  categories:
+    - id: WP
+      name: "Wave Patterns"
+      description: "Patterns for wave optimization and parallelism"
+    - id: RP
+      name: "Routing Patterns"
+      description: "Patterns for task-to-agent routing"
+    - id: QG
+      name: "Quality Gate Patterns"
+      description: "Patterns for pre/post-execution validation"
+    - id: EP
+      name: "Executor Patterns"
+      description: "Patterns for Worker vs Agent vs Hybrid selection"
+    - id: CP
+      name: "Cost Patterns"
+      description: "Patterns for cost optimization and tracking"
+  patterns:
+    - id: DS-WP-001
+      name: "DAG Topological Sort"
+      description: "Kahn's algorithm for wave optimization — group ALL independent tasks"
+      source: "Donald Reinertsen (PDFLOW)"
+    - id: DS-WP-002
+      name: "Batch Size Optimization"
+      description: "Reinertsen U-curve — find economic batch size per task type"
+      source: "Donald Reinertsen (PDFLOW)"
+    - id: DS-WP-003
+      name: "Drum-Buffer-Rope"
+      description: "Pace all work at rate of constraint (API rate limits, parallel task limits)"
+      source: "Eliyahu Goldratt (TOC)"
+    - id: DS-QG-001
+      name: "Operational Definitions"
+      description: "Every criterion must be measurable and binary (PASS/FAIL)"
+      source: "W. Edwards Deming (PDSA)"
+    - id: DS-QG-002
+      name: "Veto Conditions"
+      description: "Impossible paths blocked with formal IDs (V0.*, V1.*, V2.*)"
+      source: "Pedro Valério"
+    - id: DS-EP-001
+      name: "Three Ways Pipeline"
+      description: "Flow → Feedback → Learning applied to dispatch execution"
+      source: "Gene Kim (DevOps Handbook)"
+    - id: DS-CP-001
+      name: "Context Economy"
+      description: "43-58x cheaper via subagents vs main context execution"
+      source: "Claude Code pricing analysis 2026"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TASK STANDARDS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+task_standards:
+  enforce_anatomy: true
+  validator: "DS-QG-001"
+  required_fields:
+    - task_name
+    - status
+    - responsible_executor
+    - execution_type
+    - input
+    - output
+    - action_items
+    - acceptance_criteria
+  optional_fields:
+    - estimated_time
+    - dependencies
+    - templates
+    - quality_gate
+    - timeout
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# EXECUTOR TYPES
+# ═══════════════════════════════════════════════════════════════════════════════
+
+executor_types:
+  worker:
+    id: "DS-EP-001"
+    name: "Worker (Script)"
+    use_for:
+      - "Create folders (mkdir)"
+      - "Move/rename files"
+      - "Generate INDEX.md"
+      - "Template fill (no reasoning)"
+      - "DAG topological sort"
+      - "Cost calculation"
+      - "Veto condition checks"
+    timeout: 30
+    cost: "$0.00"
+
+  agent_haiku:
+    id: "DS-EP-002"
+    name: "Agent (Haiku 4.5)"
+    use_for:
+      - "Well-defined content creation with template"
+      - "Code generation < 100 lines"
+      - "Simple routing decisions with registry"
+    timeout: 120
+    cost: "~$0.007/task"
+
+  agent_sonnet:
+    id: "DS-EP-003"
+    name: "Agent (Sonnet 4.5)"
+    use_for:
+      - "Judgment/evaluation tasks"
+      - "Creative writing > 500 words"
+      - "Feedback loop evaluation"
+      - "Story decomposition"
+    timeout: 300
+    cost: "~$0.025/task"
+
+  human:
+    id: "DS-EP-004"
+    name: "Human"
+    use_for:
+      - "Strategy approval"
+      - "Sufficiency gate (redirect)"
+      - "Architecture decisions"
+    timeout: null
+
+executor_selection:
+  deterministic_output: worker
+  template_based: agent_haiku
+  judgment_required: agent_sonnet
+  strategic_decision: human
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# WORKFLOW CONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+workflow_config:
+  checkpoint_policy: always_active
+  checkpoint_modes:
+    always_active: "Every checkpoint MUST pass"
+    skip_on_override: "Can skip with manual approval"
+    advisory: "Only alerts, doesn't block"
+  fail_fast: true
+  allow_manual_override: false
+  max_fix_iterations: 2
+  circuit_breaker: 5  # consecutive failures → HALT
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# QUALITY GATES
+# ═══════════════════════════════════════════════════════════════════════════════
+
+quality_gates:
+  - id: "QG-SUFF"
+    name: "Sufficiency Gate"
+    transition: "Input → Planning"
+    type: "soft_block"
+    agent: dispatch-chief
+    criteria:
+      - "Input has acceptance criteria"
+      - "Input has specific deliverables"
+      - "Input has output format"
+      - "Zero ambiguity"
+    if_fails:
+      action: "Redirect to correct agent with recommendation"
+      rework_limit: 1
+
+  - id: "QG-PRE"
+    name: "Pre-Execution Gate"
+    transition: "Planning → Execution"
+    type: "hard_block"
+    agent: quality-gate
+    criteria:
+      - "All tasks atomic (1 deliverable)"
+      - "All acceptance criteria operational (measurable, binary)"
+      - "All output paths defined"
+      - "All models assigned"
+      - "Zero placeholders"
+      - "Zero vague verbs"
+      - "Dependencies resolved"
+      - "Timeouts assigned"
+    if_fails:
+      action: "Return to wave-planner for fix"
+      rework_limit: 2
+
+  - id: "QG-POST"
+    name: "Post-Execution Gate"
+    transition: "Execution → Reporting"
+    type: "hard_block"
+    agent: quality-gate
+    criteria:
+      - "All output files exist"
+      - "All files non-empty"
+      - "Deterministic criteria pass"
+      - "Cost within 3x estimate"
+    if_fails:
+      action: "Retry failed tasks (max 3 attempts)"
+      rework_limit: 3
+
+  - id: "QG-ROUTE-1.0"
+    name: "Routing Quality Gate"
+    transition: "Planning → Routing"
+    type: "hard_block"
+    agent: task-router
+    criteria:
+      - "Task assigned to correct agent"
+      - "Model selection validated"
+      - "Enrichment level determined"
+      - "Routing path verified"
+    if_fails:
+      action: "Return to wave-planner for re-routing"
+      rework_limit: 2
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# EXTERNAL DEPENDENCIES
+# ═══════════════════════════════════════════════════════════════════════════════
+
+dependencies:
+  core_agents:
+    - agent: "@dev"
+      when: "Code implementation tasks"
+    - agent: "@qa"
+      when: "Quality validation tasks"
+    - agent: "@architect"
+      when: "Architecture decisions (should NOT be dispatched)"
+    - agent: "@pm"
+      when: "PRD creation (redirect, not dispatch)"
+    - agent: "@po"
+      when: "Story creation (redirect, not dispatch)"
+
+  squad_agents:
+    - agent: "/copy:agents:copy-chief"
+      squad: "copy"
+      when: "Marketing copy, emails, newsletters"
+    - agent: "/design:agents:design-system"
+      squad: "design"
+      when: "Design system components"
+    - agent: "/curator:agents:curator-chief"
+      squad: "curator"
+      when: "Content curation"
+    - agent: "/squad-creator:agents:squad-architect"
+      squad: "squad-creator"
+      when: "Squad creation"
+
+  scripts:
+    - script: "scripts/wave-optimizer.py"
+      purpose: "DAG topological sort (Kahn's algorithm)"
+    - script: "scripts/build-command-registry.py"
+      purpose: "Scan all squads + .aios-core → command-registry.yaml"
+    - script: "scripts/build-domain-registry.py"
+      purpose: "Auto-discover ecosystem → domain-registry.yaml"
+    - script: "scripts/cost-tracker.py"
+      purpose: "Track actual costs per run"
+    - script: "scripts/validate-dispatch-gate.sh"
+      purpose: "Veto condition checker"
+    - script: "scripts/validate-wave-results.py"
+      purpose: "Post-execution verification"
+    - script: "scripts/enrich-task.py"
+      purpose: "KB injection (template fill)"
+    - script: "scripts/dispatch-health-score.py"
+      purpose: "12-point health score"
+    - script: "scripts/route-tasks.py"
+      purpose: "Full routing pipeline orchestrator (CODE > LLM)"
+    - script: "scripts/select-model.py"
+      purpose: "Q1-Q4 model decision tree (deterministic)"
+    - script: "scripts/assign-enrichment.py"
+      purpose: "MINIMAL/STANDARD/FULL enrichment assignment"
+    - script: "scripts/assign-timeout.py"
+      purpose: "Timeout + max_turns assignment"
+    - script: "scripts/batch-size-optimizer.py"
+      purpose: "Reinertsen U-curve batch sizing (EOQ formula)"
+    - script: "scripts/critical-chain-analyzer.py"
+      purpose: "Goldratt critical chain + slack analysis"
+    - script: "scripts/estimate-batch-cost.py"
+      purpose: "Per-story + total batch cost estimation"
+    - script: "scripts/validate-haiku-prompt.py"
+      purpose: "14-rule ALWAYS/NEVER Haiku prompt validation"
+    - script: "scripts/validate-sufficiency-gate.py"
+      purpose: "Phase 0 sufficiency gate (validation category)"
+    - script: "scripts/validate-routing-gate.py"
+      purpose: "Post-routing quality gate (validation category)"
+    - script: "scripts/auto-fix-veto.py"
+      purpose: "Auto-fix V1.* violations (validation category)"
+    - script: "scripts/self-heal-failure.py"
+      purpose: "Classify failures and auto-heal (support category)"
+    - script: "scripts/detect-migration-triggers.py"
+      purpose: "Detect Agent→Worker conversion patterns (optimization category)"
+
+  hooks:
+    - script: "scripts/log-task-start.py"
+      event: "SubagentStart"
+      purpose: "Track wave progress"
+    - script: "scripts/check-wave-complete.py"
+      event: "SubagentStop"
+      purpose: "Trigger next wave"
+    - script: "scripts/save-dispatch-state.py"
+      event: "PreCompact"
+      purpose: "Auto-save before compaction"
+    - script: "scripts/reload-dispatch-context.py"
+      event: "SessionStart(compact)"
+      purpose: "Re-inject context after compaction"
+    - script: "scripts/log-task-failure.py"
+      event: "PostToolUseFailure"
+      purpose: "Log failures + retry logic"
+
+  pipeline:
+    - module: "lib/pipeline_state.py"
+      purpose: "DispatchState + WaveState + TaskState"
+    - module: "lib/progress.py"
+      purpose: "Progress display"
+    - module: "lib/event_log.py"
+      purpose: "Event sourcing (events.jsonl)"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# OUTPUT FORMATS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+output_formats:
+  execution_plan:
+    description: "Execution plan with waves, tasks, model selection"
+    template: "templates/execution-plan-tmpl.yaml"
+
+  wave_manifest:
+    description: "Single wave definition with tasks"
+    template: "templates/wave-manifest-tmpl.yaml"
+
+  task_prompt:
+    description: "Enriched prompt for Haiku/Sonnet subagent"
+    template: "templates/task-prompt-tmpl.md"
+
+  execution_report:
+    description: "Post-execution report with metrics"
+    template: "templates/execution-report-tmpl.md"
+    output_path: "_temp/dispatch/runs/{run_id}/report.md"
+
+  cost_report:
+    description: "Cost breakdown per task, wave, run"
+    template: "templates/cost-report-tmpl.md"
+
+  state:
+    description: "Dispatch run state (JSON)"
+    template: "templates/dispatch-state-tmpl.json"
+    output_path: "_temp/dispatch/runs/{run_id}/state.json"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CONTEXT ECONOMY (Pricing 2026)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+context_economy:
+  pricing_2026:
+    haiku:
+      input_per_mtok: 1.00
+      output_per_mtok: 5.00
+      cache_write_per_mtok: 1.25
+      cache_read_per_mtok: 0.10
+    sonnet:
+      input_per_mtok: 3.00
+      output_per_mtok: 15.00
+      cache_write_per_mtok: 3.75
+      cache_read_per_mtok: 0.30
+    opus:
+      input_per_mtok: 5.00
+      output_per_mtok: 25.00
+      cache_write_per_mtok: 6.25
+      cache_read_per_mtok: 0.50
+
+  cost_ratio:
+    main_context_vs_haiku: "43x more expensive"
+    main_context_vs_haiku_cached: "58x more expensive"
+
+  subagent_constraints:
+    max_concurrent: 10
+    recommended_wave_size: 5-7
+    nesting: FORBIDDEN
+    background_mcp: UNAVAILABLE
+    max_result_tokens: 500
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# HANDOFFS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+handoffs:
+  receives_from:
+    - agent: "user"
+      what: "Story file, PRD, task list, or free text"
+    - agent: "/po"
+      what: "Stories with acceptance criteria"
+    - agent: "/pm"
+      what: "PRD with requirements"
+
+  delivers_to:
+    - agent: "any domain agent"
+      what: "Enriched atomic tasks via subagents"
+    - agent: "user"
+      what: "Execution report with metrics + cost"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# REGISTRIES
+# ═══════════════════════════════════════════════════════════════════════════════
+
+agents:
+  - name: dispatch-chief
+    file: agents/dispatch-chief.md
+    tier: orchestrator
+    mind: "Gene Kim"
+    role: "Pipeline orchestration"
+  - name: quality-gate
+    file: agents/quality-gate.md
+    tier: 0
+    mind: "Deming + Pedro Valério"
+    role: "Pre/post-execution validation"
+  - name: wave-planner
+    file: agents/wave-planner.md
+    tier: 1
+    minds: "Reinertsen + Goldratt"
+    role: "DAG optimization"
+  - name: task-router
+    file: agents/task-router.md
+    tier: 2
+    role: "Agent/model/enrichment selection"
+
+tasks:
+  planning:
+    - plan-execution.md
+    - decompose-to-waves.md
+    - route-tasks.md
+    - convert-input.md
+  execution:
+    - execute-wave.md
+    - verify-wave.md
+  reporting:
+    - report-execution.md
+  discovery:
+    - auto-discover-ecosystem.md
+
+templates:
+  - execution-plan-tmpl.yaml
+  - wave-manifest-tmpl.yaml
+  - task-prompt-tmpl.md
+  - execution-report-tmpl.md
+  - cost-report-tmpl.md
+  - dispatch-state-tmpl.json
+
+checklists:
+  - pre-dispatch-gate.md
+  - pre-execution-gate.md
+  - post-execution-gate.md
+  - haiku-prompt-checklist.md
+  - dispatch-health-score.md
+  - batch-discovery-gate.md
+  - batch-prioritization-gate.md
+  - batch-dispatch-gate.md
+
+workflows:
+  - name: wf-dispatch-main.yaml
+    purpose: "Story → Plan → Gate → Execute → Report"
+    phases: 7
+  - name: wf-dispatch-free.yaml
+    purpose: "Free text → Dispatch (backward compat)"
+    phases: 8
+  - name: wf-dispatch-batch.yaml
+    purpose: "Multiple stories in sequence"
+    phases: 4
+
+data:
+  - command-registry.yaml
+  - domain-registry.yaml
+  - model-selection-rules.yaml
+  - veto-conditions.yaml
+  - dispatch-heuristics.yaml
+  - haiku-patterns.yaml
+  - enrichment-rules.yaml
+  - timeout-rules.yaml
+  - dispatch-kb.md
+  - routing-quality-gate.yaml
+  - orchestrator-prompt.md
+  - error-decision-templates.yaml

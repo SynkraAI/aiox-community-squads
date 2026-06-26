@@ -1,0 +1,95 @@
+{
+  "_comment": "Dispatch State Template v1.0.0 — Initial structure for new dispatch runs",
+  "_source": "PRD Section 11 + lib/pipeline_state.py",
+  "_note": "This template shows the JSON structure. Actual state is created by DispatchStateManager.create_run()",
+
+  "run_id": "dispatch-YYYYMMDD-HHMMSS",
+  "description": "Original work description from user",
+  "input_type": "story|prd|free_text|batch",
+  "input_path": null,
+  "status": "planning",
+  "current_wave": 0,
+  "total_waves": 0,
+  "started_at": "2026-01-01T00:00:00.000000",
+  "last_updated": "2026-01-01T00:00:00.000000",
+
+  "waves": {
+    "1": {
+      "wave_num": 1,
+      "status": "pending",
+      "task_ids": ["T001", "T002", "T003"],
+      "started_at": null,
+      "completed_at": null,
+      "prediction": "Deming PDSA — expected 3 files created, 0 failures, ~$0.021 cost",
+      "cost_usd": 0.0
+    }
+  },
+
+  "tasks": {
+    "T001": {
+      "task_id": "T001",
+      "description": "Task description here",
+      "agent": "/squad:type:command-name",
+      "model": "haiku",
+      "enrichment": "STANDARD",
+      "executor_type": "Agent",
+      "status": "pending",
+      "wave": 1,
+      "attempts": 0,
+      "max_attempts": 3,
+      "output_path": "output/path/to/file.md",
+      "cost_usd": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "timeout": 120,
+      "error": null,
+      "started_at": null,
+      "completed_at": null,
+      "veto_results": {
+        "V1.1": true,
+        "V1.2": true,
+        "V1.3": true,
+        "V1.4": true,
+        "V1.5": true,
+        "V1.6": true,
+        "V1.7": true,
+        "V1.8": true,
+        "V1.9": true,
+        "V1.10": true,
+        "V1.11": true
+      },
+      "prediction": "Deming PDSA — expected: file exists with 3+ sections"
+    }
+  },
+
+  "total_tokens_in": 0,
+  "total_tokens_out": 0,
+  "total_cost_usd": 0.0,
+  "health_score": null,
+  "learnings": [],
+  "domains_used": [],
+
+  "_status_values": {
+    "run": ["planning", "executing", "paused", "complete", "failed", "aborted"],
+    "wave": ["pending", "executing", "complete", "failed"],
+    "task": ["pending", "queued", "executing", "pass", "fail", "retry"]
+  },
+
+  "_persistence_rules": {
+    "save_after": [
+      "run_created",
+      "wave_started",
+      "task_started",
+      "task_completed",
+      "task_failed",
+      "wave_completed",
+      "wave_failed",
+      "run_completed",
+      "run_failed",
+      "run_aborted",
+      "learning_added"
+    ],
+    "location": "_temp/dispatch/runs/{run_id}/state.json",
+    "events_log": "_temp/dispatch/runs/{run_id}/events.jsonl"
+  }
+}

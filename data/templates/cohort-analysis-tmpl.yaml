@@ -1,0 +1,72 @@
+# Cohort Analysis Template
+# Clone: @peter-fader (Tier 0)
+# Output format for cohort-based retention and CLV analysis
+
+metadata:
+  template_id: cohort-analysis-tmpl
+  version: "1.0"
+  clone: peter-fader
+  tier: 0
+  analysis_date: "{{date}}"
+
+# Cohort Definition
+cohort_definition:
+  type: "signup"  # signup|first_purchase|activation
+  period: "monthly"  # weekly|monthly|quarterly
+  date_range:
+    start: "{{start_date}}"
+    end: "{{end_date}}"
+
+# Retention Analysis
+retention_matrix:
+  # Rows = cohorts, Columns = periods
+  # Example: Jan 2026 cohort retained % over 6 months
+  cohorts:
+    - cohort_id: "2026-01"
+      size: 100
+      retention:
+        - period: 0
+          pct: 100
+          active: 100
+        - period: 1
+          pct: 45
+          active: 45
+        - period: 2
+          pct: 30
+          active: 30
+        # ... continues
+
+# CLV by Cohort (Peter Fader specialty)
+clv_by_cohort:
+  - cohort_id: "2026-01"
+    avg_clv: 0
+    median_clv: 0
+    top_10_pct_clv: 0  # CLV of top 10% customers
+    clv_distribution:
+      p25: 0
+      p50: 0
+      p75: 0
+      p90: 0
+
+# Viral/Referral by Cohort (Sean Ellis)
+viral_metrics:
+  - cohort_id: "2026-01"
+    referrals_generated: 0
+    viral_coefficient: 0.0  # referrals/user
+    referral_clv_multiplier: 0.0  # CLV of referred vs organic
+
+# Completion by Cohort (Wes Kao)
+completion_metrics:
+  - cohort_id: "2026-01"
+    enrolled: 100
+    started: 80
+    completed: 3  # The problem we're solving!
+    completion_rate: 0.03
+    avg_time_to_complete: 0
+
+# Cohort Comparison Summary
+summary:
+  best_performing_cohort: "{{cohort_id}}"
+  worst_performing_cohort: "{{cohort_id}}"
+  key_insight: "{{data_driven_insight}}"
+  recommended_action: "{{action}}"

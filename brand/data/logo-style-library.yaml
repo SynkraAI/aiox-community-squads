@@ -1,0 +1,226 @@
+# Logo Style Library — Archetype to Visual DNA Mapping
+# ============================================================================
+# Maps the 12 brand archetypes to visual design attributes for logo generation
+# Used by: logo-prompt-engineering, logo-strategic-direction
+# Source: Mark & Pearson 12 Archetypes + Alina Wheeler visual identity principles
+# ============================================================================
+
+version: "1.0.0"
+created: "2026-02-28"
+used_by: ["logo-prompt-engineering", "logo-strategic-direction", "wheeler-brand-design"]
+
+# Archetype Visual DNA
+# ============================================================================
+
+archetypes:
+  innocent:
+    description: "Optimistic, pure, simple, trustworthy"
+    brands_reference: ["Dove", "Coca-Cola", "Nintendo", "Whole Foods"]
+    shape_language: "rounded, soft, circular, organic curves"
+    color_territory: "soft pastels, white, sky blue, light green, warm yellow"
+    typography_feel: "sans-serif, clean, rounded, friendly, medium weight"
+    style_keywords:
+      - "clean and simple"
+      - "warm and inviting"
+      - "soft edges"
+      - "airy composition"
+      - "gentle and approachable"
+    mood: "pure, honest, optimistic, wholesome"
+    design_movement: "Scandinavian minimalism"
+    avoid: ["sharp angles", "dark colors", "aggressive forms", "complex detail"]
+
+  explorer:
+    description: "Adventurous, independent, pioneering, ambitious"
+    brands_reference: ["Jeep", "Patagonia", "The North Face", "REI"]
+    shape_language: "angular, directional, dynamic, triangular, arrow-like"
+    color_territory: "earth tones, forest green, mountain blue, burnt orange, slate gray"
+    typography_feel: "sans-serif, bold, condensed, rugged, strong weight"
+    style_keywords:
+      - "bold and adventurous"
+      - "rugged texture"
+      - "dynamic movement"
+      - "natural and grounded"
+      - "confident and strong"
+    mood: "adventurous, free, ambitious, pioneering"
+    design_movement: "Outdoor/expedition branding"
+    avoid: ["delicate forms", "pastel colors", "ornate decoration", "static composition"]
+
+  sage:
+    description: "Wise, knowledgeable, authoritative, analytical"
+    brands_reference: ["Google", "MIT", "TED", "McKinsey"]
+    shape_language: "geometric, precise, structured, symmetrical, grid-based"
+    color_territory: "deep blue, navy, forest green, charcoal, muted gold"
+    typography_feel: "serif or refined sans-serif, precise, intellectual, light to regular weight"
+    style_keywords:
+      - "precise and intellectual"
+      - "structured geometry"
+      - "refined minimalism"
+      - "authoritative and clean"
+      - "systematic and ordered"
+    mood: "thoughtful, authoritative, intelligent, trustworthy"
+    design_movement: "Swiss Design, International Typographic Style"
+    avoid: ["playful forms", "bright colors", "organic chaos", "hand-drawn elements"]
+
+  hero:
+    description: "Courageous, bold, determined, transformative"
+    brands_reference: ["Nike", "FedEx", "Adidas", "Under Armour"]
+    shape_language: "angular, bold, sharp, dynamic, upward-pointing, aggressive"
+    color_territory: "black, red, bold blue, white, high contrast"
+    typography_feel: "sans-serif, bold to black weight, condensed, uppercase"
+    style_keywords:
+      - "bold and powerful"
+      - "dynamic energy"
+      - "sharp precision"
+      - "high contrast"
+      - "commanding presence"
+    mood: "powerful, determined, victorious, inspiring"
+    design_movement: "Constructivism, bold modernism"
+    avoid: ["soft curves", "pastel colors", "delicate forms", "ornate detail"]
+
+  outlaw:
+    description: "Rebellious, disruptive, edgy, unconventional"
+    brands_reference: ["Harley-Davidson", "Virgin", "Diesel", "Jack Daniel's"]
+    shape_language: "angular, sharp, asymmetric, broken, deconstructed"
+    color_territory: "black, red, dark gray, metallic, neon accents"
+    typography_feel: "bold sans-serif or distressed, heavy weight, aggressive, uppercase"
+    style_keywords:
+      - "edgy and rebellious"
+      - "raw and unpolished"
+      - "dark and intense"
+      - "unconventional composition"
+      - "provocative and bold"
+    mood: "rebellious, raw, defiant, provocative"
+    design_movement: "Punk graphic design, grunge aesthetic"
+    avoid: ["corporate polish", "pastel colors", "symmetry", "conventional layouts"]
+
+  magician:
+    description: "Visionary, transformative, imaginative, innovative"
+    brands_reference: ["Apple", "Tesla", "Disney", "Dyson"]
+    shape_language: "fluid, transformative, elegant curves, impossible geometry"
+    color_territory: "deep purple, electric blue, silver, black, iridescent tones"
+    typography_feel: "clean sans-serif, elegant, light to regular weight, precise"
+    style_keywords:
+      - "sleek and innovative"
+      - "elegant simplicity"
+      - "futuristic and refined"
+      - "transformative design"
+      - "premium and sophisticated"
+    mood: "visionary, magical, innovative, transformative"
+    design_movement: "Apple-inspired minimalism, futurism"
+    avoid: ["busy patterns", "earthy colors", "traditional forms", "heavy textures"]
+
+  regular_guy:
+    description: "Relatable, honest, down-to-earth, inclusive"
+    brands_reference: ["IKEA", "Target", "Gap", "Budweiser"]
+    shape_language: "simple, friendly, rounded, familiar, accessible"
+    color_territory: "primary colors, red, blue, green, warm neutrals"
+    typography_feel: "sans-serif, medium weight, friendly, approachable, readable"
+    style_keywords:
+      - "friendly and approachable"
+      - "simple and clear"
+      - "warm and relatable"
+      - "honest design"
+      - "inclusive and accessible"
+    mood: "approachable, honest, friendly, inclusive"
+    design_movement: "Democratic design, accessibility-first"
+    avoid: ["luxury cues", "complex symbolism", "exclusivity markers", "avant-garde forms"]
+
+  lover:
+    description: "Passionate, sensual, intimate, elegant"
+    brands_reference: ["Chanel", "Victoria's Secret", "Godiva", "Alfa Romeo"]
+    shape_language: "flowing curves, organic, sensual, elegant S-curves"
+    color_territory: "deep red, burgundy, rose gold, black, cream, rich purple"
+    typography_feel: "elegant serif or script, light weight, refined, flowing"
+    style_keywords:
+      - "elegant and sensual"
+      - "luxurious and refined"
+      - "intimate and warm"
+      - "flowing and graceful"
+      - "rich and indulgent"
+    mood: "passionate, elegant, desirable, intimate"
+    design_movement: "Art Nouveau, luxury branding"
+    avoid: ["angular forms", "primary colors", "industrial aesthetic", "bold sans-serif"]
+
+  jester:
+    description: "Playful, humorous, irreverent, entertaining"
+    brands_reference: ["M&M's", "Old Spice", "Fanta", "Ben & Jerry's"]
+    shape_language: "rounded, bouncy, irregular, playful, exaggerated"
+    color_territory: "bright, saturated, multi-color, yellow, orange, electric blue"
+    typography_feel: "rounded sans-serif or display, bold, playful, irregular baseline"
+    style_keywords:
+      - "playful and fun"
+      - "bright and colorful"
+      - "irreverent and surprising"
+      - "energetic and bouncy"
+      - "cheerful and lighthearted"
+    mood: "playful, fun, irreverent, joyful"
+    design_movement: "Pop Art, contemporary illustration"
+    avoid: ["corporate seriousness", "monochrome", "rigid geometry", "serif typography"]
+
+  caregiver:
+    description: "Nurturing, protective, generous, compassionate"
+    brands_reference: ["Johnson & Johnson", "UNICEF", "Pampers", "Volvo"]
+    shape_language: "rounded, embracing, protective, enclosing, shield-like"
+    color_territory: "warm blue, soft green, white, warm neutrals, gentle yellow"
+    typography_feel: "humanist sans-serif, medium weight, warm, trustworthy"
+    style_keywords:
+      - "warm and nurturing"
+      - "trustworthy and safe"
+      - "protective and caring"
+      - "gentle and compassionate"
+      - "reliable and steady"
+    mood: "nurturing, protective, trustworthy, warm"
+    design_movement: "Humanist design, healthcare branding"
+    avoid: ["aggressive forms", "dark colors", "edgy aesthetics", "cold geometry"]
+
+  ruler:
+    description: "Authoritative, premium, exclusive, commanding"
+    brands_reference: ["Rolex", "Mercedes-Benz", "Louis Vuitton", "American Express"]
+    shape_language: "precise, symmetrical, geometric, crown-like, monumental"
+    color_territory: "gold, black, navy, deep burgundy, silver, royal purple"
+    typography_feel: "elegant serif, regular to bold weight, classical proportions, uppercase"
+    style_keywords:
+      - "prestigious and commanding"
+      - "classical and refined"
+      - "luxurious and exclusive"
+      - "powerful and authoritative"
+      - "timeless and monumental"
+    mood: "authoritative, premium, exclusive, commanding"
+    design_movement: "Neoclassical, luxury house branding"
+    avoid: ["playful forms", "bright colors", "casual typography", "trendy aesthetics"]
+
+  creator:
+    description: "Imaginative, expressive, artistic, innovative"
+    brands_reference: ["Adobe", "LEGO", "Crayola", "Pinterest"]
+    shape_language: "expressive, varied, modular, building-block, constructive"
+    color_territory: "varied palette, creative primaries, gradients, multicolor, bold accents"
+    typography_feel: "modern sans-serif or custom display, medium weight, distinctive, expressive"
+    style_keywords:
+      - "creative and expressive"
+      - "bold and distinctive"
+      - "artistic and imaginative"
+      - "innovative composition"
+      - "visually stimulating"
+    mood: "creative, expressive, innovative, imaginative"
+    design_movement: "Bauhaus, contemporary graphic design"
+    avoid: ["conservative forms", "monochrome only", "traditional layouts", "corporate blandness"]
+
+# Usage Guide
+# ============================================================================
+usage:
+  lookup_flow:
+    - "1. Identify primary archetype from brand foundations/archetype-consultant output"
+    - "2. Optionally identify secondary archetype (mix at 70/30 ratio)"
+    - "3. Extract shape_language, color_territory, typography_feel, style_keywords"
+    - "4. Inject into SCDS template variables from logo-scds-templates.yaml"
+
+  mixing_archetypes:
+    description: "Most brands have primary + secondary archetype"
+    ratio: "70% primary / 30% secondary"
+    example:
+      primary: "sage (70%)"
+      secondary: "magician (30%)"
+      result:
+        shape_language: "geometric, precise, with subtle fluid curves"
+        color_territory: "deep blue with electric purple accent"
+        style_keywords: ["precise and intellectual", "innovative composition"]

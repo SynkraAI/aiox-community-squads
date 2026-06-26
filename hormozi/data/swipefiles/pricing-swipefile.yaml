@@ -1,0 +1,203 @@
+# $100M Pricing Playbook Swipefile
+# Source: Alex Hormozi - Acquisition.com Playbooks
+# Extracted: 2026-02-23
+
+version: "1.0"
+source:
+  title: "$100M Pricing Playbook"
+  author: "Alex Hormozi"
+  type: "playbook"
+  origin: "acquisition.com"
+
+core_insight: |
+  Melhorar precificacao em 1% e 2x mais eficiente que melhorar retencao.
+  E 4x mais eficiente que melhorar aquisicao.
+  (Estudo Profitwell: 512 empresas)
+
+key_metric: |
+  Cenario Genio: Dobrar preco = 6x lucro.
+  Dobrar clientes ou retencao = 3.5x lucro.
+  Precificacao e a alavanca mais poderosa.
+
+frameworks:
+  pricing_models:
+    cost_plus:
+      name: "Precificacao Custo + Margem"
+      pros: "Simples, cobre custos"
+      cons: "Clientes nao sabem seus custos. Custos mudam."
+
+    competitor_based:
+      name: "Precificacao Baseada em Concorrente"
+      pros: "Simples, mais proximo do mercado"
+      cons: "Voce e imitador. Baseado no negocio DELES."
+
+    value_based:
+      name: "Precificacao Baseada em Valor"
+      pros: "Baseada no que cliente paga (WTP). Pode cobrar 2-5x mercado."
+      cons: "Requer trabalho. Foco em valor, nao volume."
+      best: true
+
+  genie_test:
+    description: "Qual alavanca dobrar?"
+    options:
+      - option: "2x Clientes"
+        result: "3.5x Lucro"
+      - option: "2x Retencao"
+        result: "3.5x Lucro"
+      - option: "2x Preco"
+        result: "6x Lucro"
+    winner: "Preco - Custos nao dobram quando preco dobra"
+
+strategies:
+  pricing_rules:
+    - "Aumentar preco faz ganhar dinheiro de 2 formas: mais receita + menos custo de entrega"
+    - "Precifique para ganhar mais dinheiro, nao vender mais clientes"
+    - "Taxa de fechamento alta = precos muito baixos"
+    - "Capacidade total = precos muito baixos"
+    - "Continue aumentando ate a perda em vendas nao compensar"
+    - "Cobre com menos frequencia para ter menos churn"
+    - "Exiba preco no menor incremento, cobre no maior"
+
+  instant_profit_plays:
+    description: "10 jogadas de lucro instantaneo"
+    total_potential: "26.8% - 63.8% aumento de receita"
+
+    plays:
+      - name: "Ciclos de 28 Dias"
+        increase: "8.3%"
+        logic: "12 ciclos -> 13 ciclos por ano"
+        implementation:
+          - "Mudar 'por mes' para 'a cada 28 dias'"
+          - "Ou semanal/quinzenal = mesmo resultado"
+          - "Ninguem nota, conversoes iguais"
+
+      - name: "Taxa de Processamento CC"
+        increase: "3-4%"
+        logic: "Adicionar 3.99% no checkout"
+        implementation:
+          - "Perguntar: Como quer pagar?"
+          - "Informar: Taxa de 3.99% para cartao"
+          - "Alternativa: Segunda forma de pagamento remove taxa"
+        bonus: "Segunda forma = -24-34% churn involuntario"
+
+      - name: "Imposto Sobre Vendas"
+        increase: "0-10%"
+        logic: "Pare de pagar impostos pelos clientes"
+        implementation:
+          - "Adicionar na fatura: Codigo tributario exige X%"
+          - "Ou: Reincorporar em estado sem imposto"
+
+      - name: "Aumento Anual CPI"
+        increase: "3-10%"
+        logic: "Inflacao come suas margens todo ano"
+        implementation:
+          - "Clausula em contrato: precos ajustam anualmente"
+          - "5% ao ano = 22% em 4 anos"
+          - "Warren Buffett: See's 50 aumentos em 51 anos"
+
+      - name: "Cobranca Anual"
+        increase: "10-15%"
+        logic: "Menos frequencia = menos churn"
+        data:
+          annual: "2% churn mensal"
+          quarterly: "5% churn mensal"
+          monthly: "10.7% churn mensal"
+        implementation:
+          - "Oferecer compre 10 ganhe 2 gratis (16% desconto)"
+          - "10-15% pegam se opcao, 30% se padrao"
+
+      - name: "Arredondar Para Cima"
+        increase: "1-3%"
+        logic: "7 -> 9, adicionar .99"
+        implementation:
+          - "$47 -> $49.99 = +6.36% receita"
+          - "Sem mudanca em conversao"
+          - "Excecao: Luxo usa numeros redondos"
+
+      - name: "Taxa de Renovacao Anual"
+        increase: "10%"
+        logic: "Taxa anual ALEM da mensalidade"
+        implementation:
+          - "Ex: $39/mes + $99/ano = $47/mes efetivo (+20%)"
+          - "Anunciar o mensal, cobrar o anual"
+          - "Justificar: Protecao de taxa"
+
+      - name: "Continuidade Automatica"
+        increase: "10%"
+        logic: "Apos periodo X, rola para assinatura menor"
+        implementation:
+          - "Vender 1 ano de acesso"
+          - "Rola para $99/mes automaticamente"
+          - "Clientes concordam antecipadamente"
+        case: "$150.000/mes lucro puro extra"
+
+      - name: "Ancora Ultra Alto Ticket"
+        increase: "10-15%"
+        logic: "Primeiro numero ancora conversa"
+        implementation:
+          - "Adicionar produto 10x mais caro"
+          - "Apresentar primeiro"
+          - "10% pegam = LTV dobra"
+        example: "$5000 -> $500 -> $200 = LTV $440 -> $890"
+
+      - name: "Garantia/Garantia Estendida"
+        increase: "5-20%"
+        logic: "Vender o risco de volta para eles"
+        implementation:
+          - "5-30% do preco do produto"
+          - "Preco = custo de reposicao (zero perda)"
+          - "1 em 20 usa = $1900 lucro puro de 20"
+
+tactics:
+  pricing_display:
+    rule: "Exiba no menor, cobre no maior"
+    example: "Diga $5/dia, cobre $1825/ano"
+
+  billing_cycles:
+    recommendation: "Cada 4 semanas (28 dias)"
+    reason: "Semanal/quinzenal = muitas pausas. Mensal = 1 ciclo menos"
+
+  second_payment_method:
+    script: |
+      Voce pode economizar 3.99% fornecendo segunda forma de pagamento.
+      So temos a taxa porque 7% dos cartoes sao recusados todo mes.
+      Se voce nos economiza tempo e esforco, passamos economias para voce.
+
+  annual_upsell:
+    sequence:
+      - "Comece com preco anual cheio"
+      - "Pergunte se quer desconto"
+      - "Sim: 17% desconto pre-pago anual"
+      - "Nao: 8% desconto pre-pago trimestral"
+      - "Nao: Mensal sem desconto"
+
+checklists:
+  immediate_wins:
+    - "Mudar para ciclos de 28 dias"
+    - "Adicionar taxa de processamento"
+    - "Passar imposto sobre vendas"
+    - "Arredondar precos para cima (.99, 7->9)"
+
+  medium_term:
+    - "Adicionar opcao de cobranca anual"
+    - "Implementar taxa de renovacao anual"
+    - "Criar continuidade automatica"
+
+  strategic:
+    - "Criar ancora ultra alto ticket"
+    - "Implementar garantia vendida"
+    - "Clausula de aumento anual em contratos"
+
+agent_usage:
+  pm:
+    - "Priorizar jogadas por impacto/esforco"
+    - "Cronograma de implementacao"
+  analyst:
+    - "Calcular impacto de cada jogada"
+    - "Modelar cenarios de preco vs churn"
+  dev:
+    - "Implementar logica de ciclos de cobranca"
+    - "Sistema de continuidade automatica"
+  po:
+    - "Definir produtos ancora"
+    - "Estruturar opcoes de garantia"

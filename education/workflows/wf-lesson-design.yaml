@@ -1,0 +1,221 @@
+workflow:
+  id: wf-lesson-design
+  name: "Single Lesson Design"
+  version: "1.0"
+  squad: education
+  description: "Evidence-based design for a single lesson: Merrill → Rosenshine → Mayer → Clark → Bjork → Ericsson → FSRS"
+  orchestrator: merrill-designer
+  estimated_duration: "45-90 minutes per lesson"
+
+  metadata:
+    author: "AIOS Education Squad"
+    created: "2026-02-14"
+    updated: "2026-02-14"
+    tags: [lesson-design, evidence-based, retention-engineering]
+
+phases:
+  - id: phase_1_objective
+    name: "Define Objective"
+    description: "Clarify learning objective with measurable verb"
+    agents: [bloom-diagnostician]
+
+    tasks:
+      - id: classify-objective
+        description: "Bloom taxonomy classification"
+        inputs:
+          - lesson_goal
+        outputs:
+          - bloom_classified_objective
+          - mastery_criteria
+
+    checkpoint:
+      gate: "Objective measurable and classified?"
+      validation_criteria:
+        - "Objective uses Bloom verb"
+        - "Mastery criteria defined"
+
+  - id: phase_2_merrill
+    name: "Merrill First Principles"
+    description: "Problem-centered instruction (5 phases)"
+    agents: [merrill-designer]
+
+    tasks:
+      - id: apply-merrill
+        description: "Design: problem → activation → demonstration → application → integration"
+        inputs:
+          - bloom_classified_objective
+        outputs:
+          - lesson_structure (5 phases)
+
+    checkpoint:
+      gate: "All 5 Merrill phases present?"
+      validation_criteria:
+        - "Real-world problem defined"
+        - "Prior knowledge activated"
+        - "Demonstration designed"
+        - "Application task created"
+        - "Integration activity present"
+      veto_conditions:
+        - condition: "Missing any Merrill phase"
+          action: "BLOCK, complete all 5 phases"
+
+  - id: phase_3_rosenshine
+    name: "Rosenshine Principles"
+    description: "Apply 10 Principles of Instruction"
+    agents: [rosenshine-teacher]
+
+    tasks:
+      - id: apply-rosenshine
+        description: "Enhance lesson with Rosenshine's 10 principles"
+        inputs:
+          - lesson_structure
+        outputs:
+          - lesson_with_rosenshine
+
+    checkpoint:
+      gate: "Rosenshine principles applied?"
+      validation_criteria:
+        - "Daily review present"
+        - "New material in small steps"
+        - "Questions for understanding"
+        - "Modeling included"
+        - "Guided practice"
+        - "Checks for understanding"
+        - "Independent practice"
+        - "Weekly/monthly review planned"
+
+  - id: phase_4_media
+    name: "Media Format Decision"
+    description: "Mayer multimedia principles + Clark evidence"
+    agents: [mayer-presenter, clark-validator]
+
+    tasks:
+      - id: design-format
+        description: "Choose format based on cognitive load"
+        inputs:
+          - lesson_with_rosenshine
+          - cognitive_load_estimate
+        outputs:
+          - media_format_spec
+          - multimedia_guidelines
+
+      - id: validate-evidence
+        description: "Clark validation — remove unsubstantiated claims"
+        inputs:
+          - media_format_spec
+        outputs:
+          - evidence_validation
+          - flagged_claims
+
+    checkpoint:
+      gate: "Format chosen? Evidence validated?"
+      validation_criteria:
+        - "Mayer principles applied (coherence, signaling, redundancy, etc.)"
+        - "All claims research-backed"
+      checklists:
+        - multimedia-principles-check.md
+        - evidence-based-check.md
+      veto_conditions:
+        - condition: "Unsubstantiated claims present"
+          action: "BLOCK, remove or validate"
+
+  - id: phase_5_retention
+    name: "Retention Engineering"
+    description: "Bjork desirable difficulties + Ericsson deliberate practice + FSRS scheduling"
+    agents: [bjork-engineer, ericsson-coach, fsrs-scheduler]
+
+    tasks:
+      - id: design-difficulties
+        description: "Add spacing, interleaving, variation"
+        inputs:
+          - lesson_with_rosenshine
+        outputs:
+          - practice_with_difficulties
+
+      - id: design-coaching
+        description: "Deliberate practice with immediate feedback"
+        inputs:
+          - practice_with_difficulties
+          - mastery_criteria
+        outputs:
+          - coaching_protocol
+          - feedback_mechanisms
+
+      - id: schedule-reviews
+        description: "FSRS spaced repetition schedule"
+        inputs:
+          - practice_with_difficulties
+          - retention_target
+        outputs:
+          - fsrs_schedule
+          - review_intervals
+
+    checkpoint:
+      gate: "Retention mechanisms in place?"
+      validation_criteria:
+        - "Desirable difficulties present"
+        - "Deliberate practice designed"
+        - "Immediate feedback specified"
+        - "FSRS schedule generated"
+      checklists:
+        - retention-design-check.md
+      veto_conditions:
+        - condition: "No retrieval practice"
+          action: "BLOCK, add retrieval practice"
+
+  - id: phase_6_assembly
+    name: "Lesson Assembly"
+    description: "Final lesson file with all components"
+    agents: [merrill-designer]
+
+    tasks:
+      - id: assemble-lesson
+        description: "Combine all phases into complete lesson"
+        inputs:
+          - all_phase_outputs
+        outputs:
+          - complete_lesson_file
+
+      - id: final-validation
+        description: "Run lesson quality checklist"
+        inputs:
+          - complete_lesson_file
+        outputs:
+          - validation_report
+
+    checkpoint:
+      gate: "Lesson complete and validated?"
+      validation_criteria:
+        - "All phases present"
+        - "Evidence-based throughout"
+        - "Retention mechanisms in place"
+      checklist: lesson-quality.md
+
+success_criteria:
+  - "Merrill 5 phases complete"
+  - "Rosenshine principles applied"
+  - "Mayer multimedia principles followed"
+  - "All claims evidence-backed"
+  - "Retention engineering applied"
+  - "FSRS schedule generated"
+
+output_artifacts:
+  - "lesson-templates/{lesson-id}.yaml"
+  - "fsrs-schedules/{lesson-id}.yaml"
+  - "coaching-protocols/{lesson-id}.md"
+
+dependencies:
+  - squads/education/agents/merrill-designer.md
+  - squads/education/agents/rosenshine-teacher.md
+  - squads/education/agents/mayer-presenter.md
+  - squads/education/agents/clark-validator.md
+  - squads/education/agents/bjork-engineer.md
+  - squads/education/agents/ericsson-coach.md
+  - squads/education/agents/fsrs-scheduler.md
+  - squads/education/tasks/design-lesson.md
+  - squads/education/tasks/design-media-format.md
+  - squads/education/tasks/validate-evidence.md
+  - squads/education/tasks/design-practice.md
+  - squads/education/checklists/lesson-quality.md
+  - squads/education/checklists/multimedia-principles-check.md
+  - squads/education/checklists/retention-design-check.md

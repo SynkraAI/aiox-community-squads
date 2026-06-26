@@ -1,0 +1,191 @@
+# $100M Marketing Machine Swipefile
+# Source: Alex Hormozi - Acquisition.com Playbooks
+# Extracted: 2026-02-23
+
+version: "1.0"
+source:
+  title: "$100M Marketing Machine"
+  author: "Alex Hormozi"
+  type: "playbook"
+  origin: "acquisition.com"
+
+core_insight: |
+  A Maquina de Marketing transforma atividades que voce ja faz
+  em um fluxo constante de anuncios e criativos gerados por clientes.
+  Resultado: anuncios infinitos SEM depender do seu rosto.
+
+key_metric: |
+  Na Gym Launch, 40 dos 50 melhores anuncios NAO tinham o rosto do fundador.
+  80% eram de clientes. Negocios independentes do fundador sao mais valiosos.
+
+frameworks:
+  marketing_machine_components:
+    description: "9 fontes de conteudo gerado por clientes"
+    components:
+      - name: "Ciclo de Vida"
+        description: "Cortar momentos antes/durante/depois de ligacoes"
+        implementation:
+          - "Gravar todas as ligacoes: vendas, integracao, suporte, ascensao"
+          - "Cortar momento ANTES (dor) das ligacoes de vendas"
+          - "Cortar momento DURANTE das ligacoes de suporte"
+          - "Cortar momento DEPOIS das ligacoes de marco/upsell"
+
+      - name: "Raspagem de Midia Social"
+        description: "Coletar midia de clientes nas redes"
+        implementation:
+          - "Criar hashtag da comunidade: #gymlord #gymlaunch"
+          - "Definir lembretes para raspar stories (24h expira)"
+          - "Separar bons dos ruins em pastas"
+          - "Usar melhor desempenho organico como criativos de anuncio"
+
+      - name: "Eventos Presenciais"
+        types:
+          palco: "Fotos/videos no palco com multidao atras"
+          profissional: "Sala separada, iluminacao, script 6 pontos"
+          homem_na_rua: "Soundbites rapidos, perguntas de 1 resposta"
+
+      - name: "Raspagem de Comunicacao"
+        sources:
+          - "Chats de suporte/rep de conta"
+          - "Posts e comentarios da comunidade"
+          - "Sites de avaliacao (Glassdoor, Yelp, Google)"
+        tactics:
+          - "Buscar termos-chave: PIF, Sales, $, Profit, Revenue"
+          - "Gravar tela rolando comentarios de vitoria"
+
+      - name: "Desbloqueios de Bonus"
+        description: "Troque depoimento por bonus valioso"
+        process:
+          - "Criar brinde que cobra separadamente"
+          - "Oferecer gratis em troca de video de 5min"
+          - "Usar script de 6 pontos"
+
+      - name: "Depoimentos de Premio"
+        description: "4 provas de 1 premio"
+        proofs:
+          - "Post com numero de vendas (PROVA 1)"
+          - "Video por email (PROVA 2)"
+          - "Video desembrulhando (PROVA 3)"
+          - "Video no palco recebendo (PROVA 4)"
+
+      - name: "Competicoes"
+        description: "Competicao de depoimento estilo iPhone"
+        rules:
+          - "1-2x por ano max (evitar fadiga)"
+          - "Melhor = maior conversao como anuncio em 30 dias"
+          - "Premio louco: 6 meses gratis"
+
+  testimonial_6_point_script:
+    description: "Script de 6 pontos para depoimentos"
+    points:
+      - name: "Luta Interna"
+        prompt: "Qual foi o fundo do poco? O que voce odiava fazer?"
+      - name: "Luta Externa"
+        prompt: "Quais eram suas metricas objetivas?"
+      - name: "Ceticismo"
+        prompt: "Quais preocupacoes sobre comprar/clicar/juntar-se?"
+      - name: "Superar"
+        prompt: "O que te fez fazer mesmo assim?"
+      - name: "Vitoria Externa"
+        prompt: "Quais sao suas metricas objetivas agora?"
+      - name: "Vitoria Interna"
+        prompt: "Qual foi o melhor momento? O que pode fazer agora?"
+
+strategies:
+  weekly_content_machine:
+    description: "Fluxo semanal de conteudo baseado em prova"
+    deliverables:
+      - "Lista de nomes de pessoas com otimos resultados"
+      - "Midia social raspada (imagens e videos)"
+      - "Screenshots de chat/mensagem"
+      - "Depoimentos de posts da comunidade"
+      - "Novas avaliacoes 5 estrelas"
+      - "Desbloqueios de bonus"
+      - "Entregas de premios"
+      - "Videos de reacao de cliente"
+
+  implementation_order:
+    description: "Ordem recomendada de implementacao"
+    sequence:
+      - priority: 1
+        item: "Competicao"
+        reason: "Grande influxo inicial"
+      - priority: 2
+        item: "Raspagem de chat/mensagem"
+        reason: "Ja existe, edicao minima"
+      - priority: 3
+        item: "Raspagem de comunidade"
+        reason: "Ja existe"
+      - priority: 4
+        item: "Raspagem de avaliacoes"
+        reason: "Ja existe"
+      - priority: 5
+        item: "Raspagem de midia social"
+        reason: "Ja existe"
+      - priority: 6
+        item: "Desbloqueios de bonus"
+        reason: "Requer criar algo"
+      - priority: 7
+        item: "Desbloqueios de premio"
+        reason: "Requer criar algo"
+      - priority: 8
+        item: "Eventos"
+        reason: "Muito trabalho, mas vale"
+      - priority: 9
+        item: "Ciclo de vida"
+        reason: "Maior forca de edicao"
+
+checklists:
+  legal:
+    - "Adicionar linguagem de conformidade a contratos"
+    - "Permissao para usar gravacoes em publicidade"
+
+  tech:
+    - "Gravar todas as ligacoes"
+    - "Comprar espaco de armazenamento extra"
+    - "Desligar auto-deletar"
+    - "Sistema de rotulagem pesquisavel para clips"
+
+  events:
+    - "Reservar sala separada para gravacao"
+    - "Contratar equipe de camera extra"
+    - "Testar iluminacao e som"
+    - "Escolher clientes para depoimento antecipadamente"
+    - "Imprimir lista de alvos"
+    - "Anunciar no inicio do evento"
+    - "Dar incentivo por depoimento"
+
+tactics:
+  event_testimonial_capture:
+    timing: "Final do dia 1 ou antes do almoco dia 2"
+    selfie: "Multiplas imagens + video"
+    equipment: "2 cameras + 2 mics + 1 corredor"
+
+  scraping_keywords:
+    examples:
+      - "PIF"
+      - "Sales"
+      - "$"
+      - "Profit"
+      - "Revenue"
+      - "Monthly"
+      - "close"
+      - "closed"
+      - "leads"
+      - "show"
+      - "scheduled"
+      - "win"
+
+agent_usage:
+  pm:
+    - "Planejar cronograma de competicoes e eventos"
+    - "Definir metas de conteudo semanal"
+  dev:
+    - "Implementar sistema de rotulagem"
+    - "Automacao de raspagem"
+  analyst:
+    - "Rastrear desempenho de criativos"
+    - "Identificar melhores performers"
+  qa:
+    - "Validar qualidade de clips"
+    - "Testar fluxos de upload"

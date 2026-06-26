@@ -1,0 +1,255 @@
+# =============================================================================
+# Tool Binding Template for ML SOPs
+# =============================================================================
+# Template: tool-binding-template.yaml | SOP Factory | Synkra AIOX
+# Used by: sop-ml-architect (*bind-tools command)
+#
+# Purpose:
+#   Maps each actionable SOP step to a concrete tool, API endpoint, CLI command,
+#   or MCP server function. Tool bindings make ML SOPs executable by specifying
+#   exactly HOW each action is performed.
+#
+# Tool Types:
+#   mcp     - Model Context Protocol server tool
+#   cli     - Command-line tool or script
+#   api     - REST/GraphQL API endpoint
+#   ui      - User interface action (requires human-in-loop)
+#   agent   - Delegated to another AI agent
+#   manual  - Human action with instructions (no automation)
+#
+# Usage:
+#   1. Define all available tools in the tool_registry section
+#   2. Create bindings that map SOP steps to registered tools
+#   3. Embed tool_registry in context.tools and bindings in each step's tool field
+# =============================================================================
+
+# ==============================================================================
+# TOOL REGISTRY (declare all available tools)
+# ==============================================================================
+tool_registry:
+
+  # --- MCP Server Tool --------------------------------------------------------
+  - id: "{{mcp_tool_id}}"
+    name: "{{mcp_tool_name}}"
+    type: "mcp"
+    description: "{{tool_description}}"
+    server: "{{mcp_server_name}}"              # MCP server identifier
+    function: "{{function_name}}"              # Function exposed by the server
+    version: "{{min_version}}"
+    required: true
+    auth:
+      type: "{{none | api_key | oauth | bearer}}"
+      config_key: "{{ENV_VAR_NAME}}"           # Environment variable holding credentials
+    rate_limit:
+      requests_per_minute: 60
+      burst: 10
+    health_check:
+      method: "{{ping | list_tools | status}}"
+      timeout: "PT5S"
+
+  # --- CLI Tool ---------------------------------------------------------------
+  - id: "{{cli_tool_id}}"
+    name: "{{cli_tool_name}}"
+    type: "cli"
+    description: "{{tool_description}}"
+    command: "{{base_command}}"                 # e.g., "pg_dump", "aws", "npm"
+    version: "{{min_version}}"
+    required: true
+    install_check: "{{version_command}}"        # e.g., "pg_dump --version"
+    platform:
+      - "linux"
+      - "darwin"
+
+  # --- REST API Tool ----------------------------------------------------------
+  - id: "{{api_tool_id}}"
+    name: "{{api_tool_name}}"
+    type: "api"
+    description: "{{tool_description}}"
+    base_url: "{{https://api.example.com/v1}}"
+    version: "{{api_version}}"
+    required: true
+    auth:
+      type: "{{bearer | api_key | oauth2}}"
+      header: "{{Authorization}}"
+      config_key: "{{ENV_VAR_NAME}}"
+    rate_limit:
+      requests_per_minute: 100
+    retry_config:
+      retryable_status_codes: [429, 500, 502, 503]
+      max_retries: 3
+      backoff: "exponential"
+
+  # --- Agent Tool (delegation) ------------------------------------------------
+  - id: "{{agent_tool_id}}"
+    name: "{{agent_name}}"
+    type: "agent"
+    description: "{{what_the_agent_does}}"
+    agent_id: "{{agent_identifier}}"
+    capabilities:
+      - "{{capability_1}}"
+      - "{{capability_2}}"
+    timeout: "{{PT10M}}"
+
+  # --- Manual Tool (human action) ---------------------------------------------
+  - id: "{{manual_tool_id}}"
+    name: "{{manual_action_name}}"
+    type: "manual"
+    description: "{{what_the_human_does}}"
+    instructions: "{{step_by_step_instructions}}"
+    estimated_duration: "{{PT5M}}"
+    requires_confirmation: true                # Agent waits for human confirmation
+
+# ==============================================================================
+# TOOL BINDINGS (map SOP steps to tools)
+# ==============================================================================
+tool_bindings:
+
+  # --- MCP Binding Example ----------------------------------------------------
+  - step_id: "{{S00x}}"
+    tool_id: "{{mcp_tool_id}}"                 # References tool_registry[].id
+    invocation:
+      function: "{{function_name}}"
+      parameters:
+        - name: "{{param_1}}"
+          value: "{{literal_value | $input.field | $S00x.output_var}}"
+          type: "{{string | number | boolean | object}}"
+        - name: "{{param_2}}"
+          value: "{{value_source}}"
+          type: "{{type}}"
+    expected_response:
+      success:
+        condition: "{{response.status == 'ok'}}"
+        extract:
+          - field: "{{response.data.result}}"
+            store_as: "{{output_variable}}"
+      failure:
+        condition: "{{response.error != null}}"
+        action: "{{trigger_error_handler}}"
+    timeout: "{{PT30S}}"
+
+  # --- CLI Binding Example ----------------------------------------------------
+  - step_id: "{{S00x}}"
+    tool_id: "{{cli_tool_id}}"
+    invocation:
+      command: "{{full_command_with_args}}"     # e.g., "pg_dump -h $DB_HOST -d $DB_NAME -F c"
+      working_dir: "{{/path/to/dir}}"
+      env_override:                            # Additional env vars for this command
+        - key: "{{EXTRA_VAR}}"
+          value: "{{value}}"
+    expected_response:
+      success:
+        condition: "exit_code == 0"
+        extract:
+          - field: "stdout"
+            store_as: "{{output_variable}}"
+      failure:
+        condition: "exit_code != 0"
+        extract:
+          - field: "stderr"
+            store_as: "{{error_message}}"
+    timeout: "{{PT5M}}"
+
+  # --- API Binding Example ----------------------------------------------------
+  - step_id: "{{S00x}}"
+    tool_id: "{{api_tool_id}}"
+    invocation:
+      method: "{{GET | POST | PUT | DELETE}}"
+      path: "{{/endpoint/path}}"               # Appended to base_url
+      headers:
+        Content-Type: "application/json"
+        X-Custom-Header: "{{header_value}}"
+      query_params:
+        - name: "{{param}}"
+          value: "{{value}}"
+      body:                                    # For POST/PUT
+        field_1: "{{$input.field | $S00x.var}}"
+        field_2: "{{value}}"
+    expected_response:
+      success:
+        status_codes: [200, 201]
+        condition: "{{response.body.success == true}}"
+        extract:
+          - field: "{{response.body.data.id}}"
+            store_as: "{{resource_id}}"
+      failure:
+        status_codes: [400, 404, 500]
+        extract:
+          - field: "{{response.body.error.message}}"
+            store_as: "{{error_detail}}"
+    timeout: "{{PT15S}}"
+
+  # --- Agent Binding Example --------------------------------------------------
+  - step_id: "{{S00x}}"
+    tool_id: "{{agent_tool_id}}"
+    invocation:
+      task: "{{task_description}}"
+      input:
+        - name: "{{param}}"
+          value: "{{value_or_ref}}"
+      constraints:
+        max_turns: 10
+        timeout: "{{PT10M}}"
+    expected_response:
+      success:
+        condition: "{{agent.status == 'completed'}}"
+        extract:
+          - field: "{{agent.output}}"
+            store_as: "{{agent_result}}"
+
+  # --- Manual Binding Example -------------------------------------------------
+  - step_id: "{{S00x}}"
+    tool_id: "{{manual_tool_id}}"
+    invocation:
+      prompt: "{{instruction_to_display_to_human}}"
+      input_fields:
+        - name: "{{field_name}}"
+          type: "{{string | boolean | file}}"
+          label: "{{human_readable_label}}"
+          required: true
+    expected_response:
+      success:
+        condition: "{{confirmation_received == true}}"
+        extract:
+          - field: "{{user_input.field_name}}"
+            store_as: "{{human_response}}"
+    timeout: "{{PT30M}}"                       # Longer timeout for human actions
+
+# ==============================================================================
+# FALLBACK CHAIN
+# ==============================================================================
+# When primary tool fails, try fallback tools in order.
+# Useful for critical steps that must succeed.
+
+fallback_chains:
+  - step_id: "{{S00x}}"
+    primary: "{{primary_tool_id}}"
+    fallbacks:
+      - tool_id: "{{fallback_tool_1}}"
+        condition: "{{when_to_use}}"           # e.g., "primary_timeout"
+      - tool_id: "{{manual_fallback}}"
+        condition: "all_automated_failed"       # Last resort: human
+
+# ==============================================================================
+# CIRCUIT BREAKER
+# ==============================================================================
+# Prevent cascading failures when a tool is consistently failing.
+
+circuit_breakers:
+  - tool_id: "{{tool_id}}"
+    failure_threshold: 5                       # Failures before circuit opens
+    recovery_timeout: "PT5M"                   # Time before retry after open
+    half_open_max: 2                           # Test requests in half-open state
+    on_open: "{{use_fallback | skip | abort}}"
+
+# ==============================================================================
+# VALIDATION RULES (agent must verify before finalizing)
+# ==============================================================================
+# 1. Every actionable step has a tool binding
+# 2. All tool_id references exist in tool_registry
+# 3. All parameter value references ($input.x, $S00x.var) are resolvable
+# 4. Critical steps have fallback chains defined
+# 5. API tools have auth configured
+# 6. CLI tools have install_check defined
+# 7. Manual tools have clear instructions and reasonable timeouts
+# 8. No tool_id appears in bindings without a registry entry
+# ==============================================================================

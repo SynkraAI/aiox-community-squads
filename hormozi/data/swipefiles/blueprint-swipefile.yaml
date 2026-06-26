@@ -1,0 +1,1223 @@
+# Blueprint $100M Money Models - Complete Swipefile
+# Source: Alex Hormozi - $100M Money Models Launch Campaign
+# Extracted: 2026-02-24
+
+version: "1.0"
+source: "Blueprint $100M Money Models"
+description: "Complete collection of ad angles, email sequences, SMS templates, landing page copy, and VSL scripts from the $100M Money Models book launch campaign"
+
+# =============================================================================
+# AD ANGLES - BUSINESS GROWTH
+# =============================================================================
+ad_angles:
+  business_growth:
+    # Core hooks for business growth ads
+    - id: "bg_rumors_true_big_companies"
+      hook: "The rumors are true..."
+      angle: "Big companies DO have an unfair advantage - they think about customers differently"
+      key_contrast:
+        small_business: "How do I get someone to buy my thing?"
+        big_business: "How do I get someone to keep buying my things?"
+      example:
+        small: "Sell $500 course, hope customer is happy, maybe they buy again someday"
+        big: "Give away $500 course for free, sell $200/month implementation, upsell $5,000 done-for-you, keep helping them scale"
+      result: "Same customer. More value. 10x more revenue."
+      cta: "Grab your free ticket here"
+      ps_elements:
+        - "Preorder a book on the way in and you'll get instantly upgraded to VIP and get 4 amazing free bonuses"
+        - "Expect fireworks"
+
+    - id: "bg_rumors_true_rich_broke"
+      hook: "The rumors are true..."
+      angle: "Rich business owners ARE different - they make money from customers, not from sales"
+      key_insight: "Rich approach: Sell once, then sell again, then sell again"
+      analogy: "It's like the difference between digging for gold with a spoon vs. using heavy machinery"
+
+    - id: "bg_rumors_true_overnight"
+      hook: "The rumors are true..."
+      angle: "Overnight success = cracked the code on customer economics"
+      math:
+        overnight: "$3-5 from every $1 spent on advertising"
+        everyone_else: "$1.20 from every $1 spent (or loses money)"
+      analogy: "Money printing machine vs. piggy bank"
+
+    - id: "bg_rumors_true_million_dollar"
+      hook: "The rumors are true..."
+      angle: "Million-dollar secret is a way of thinking"
+      contrast:
+        transaction: "How do I get someone to buy something?"
+        relationship: "How do I help someone solve their whole problem?"
+      example:
+        transaction: "Sell $2,000 website and move on"
+        relationship: "$2,000 website + $500/month hosting + $1,000/month marketing + $300/month maintenance = $50,000+ over time"
+
+    - id: "bg_rumors_true_unfair_advantage"
+      hook: "The rumors are true..."
+      angle: "Legal unfair advantage = customer mathematics"
+      broke_math:
+        cac: "$100"
+        revenue: "$120"
+        profit: "$20"
+        strategy: "Reinvest slowly, compete on price, struggle to grow"
+      rich_math:
+        cac: "$100"
+        revenue: "$400"
+        profit: "$300"
+        strategy: "Reinvest aggressively, compete on value, scale rapidly"
+      insight: "Rich math isn't about charging more. It's about structuring offers smarter"
+      example: "Instead of one $120 offer, create a sequence: $97 + $199 + $147 + $97/month"
+
+    - id: "bg_quick_question"
+      hook: "Quick question: What's your email?"
+      angle: "Solving the wrong problem - need more money per customer, not cheaper leads"
+      math: "If you make $200/customer, spend $50. If competitor makes $800/customer, they can spend $300. Who wins?"
+
+    - id: "bg_cheaper_leads"
+      hook: "You don't need cheaper leads. You need a better money model."
+      comparison:
+        business_a: "Gets customers for $20, makes $60 each"
+        business_b: "Gets customers for $50, makes $250 each"
+      winner: "Business B - can spend 2.5x more on ads and still make more profit"
+
+    - id: "bg_3x_value"
+      hook: "Is it possible to 3x your customer value in 90 days?"
+      contrast:
+        single_transaction: "$500 per customer"
+        money_model: "$1,500+ per customer"
+      analogy: "Selling someone one book vs. getting them to join your library"
+
+    - id: "bg_losing_to_profit"
+      hook: "I went from losing $20 on every customer to making $240 profit from every customer."
+      before: "Sell $100, spend $120 getting them, lose $20"
+      after: "Sell $100 + $200 upsell + $160 follow-up + $50/month = $240 profit day one"
+
+    - id: "bg_age_hook"
+      hook: "If you're 25 to 55 and own a business that's not growing as fast as you want..."
+      problem: "Working harder but nothing changes"
+      shift:
+        old: "I need more customers"
+        new: "I need to make more money from each customer"
+      analogy: "Hamster wheel vs. money machine"
+
+    - id: "bg_woke_up"
+      hook: "If I woke up with a struggling business tomorrow, and wanted to fix it by December..."
+      plan:
+        month_1: "Figure out what's broken - customer journey, confusion points, why they don't buy"
+        month_2: "Fix the broken stuff - easier understanding, more reasons to buy, backup offers"
+        month_3: "Test everything - one thing at a time, keep good, throw out bad"
+      key_insight: "Think like an architect, not a firefighter"
+
+    - id: "bg_client_results"
+      hook: "One of my portfolio companies got a 7.5x increase in profit per location..."
+      old_way: "Run ads, get customers, sell one thing, hope they come back, lose money"
+      new_way: "Sell $97, immediately sell $300, follow up $200, get $97/month"
+      result: "Instead of $97 per customer, now make $694 per customer on average"
+
+    - id: "bg_business_model"
+      hook: "Most businesses work like this: Customer buys something. Business hopes they buy again someday. The end."
+      examples:
+        netflix: "Free trial gets you to try, good shows keep you watching, new shows keep you paying"
+        apple: "iPhone gets you in the door, apps make it useful, cases protect investment, upgrades keep you buying"
+      insight: "They don't hope you come back. They design systems that make you want to come back."
+
+    - id: "bg_two_types"
+      hook: "There are two types of business owners..."
+      type_1:
+        question: "How do I get more customers?"
+        focus: "Work IN their business"
+      type_2:
+        question: "How do I make more money from each customer?"
+        focus: "Work ON their business"
+
+    - id: "bg_pattern_recognition"
+      hook: "I've been obsessed with one question: Why can some businesses spend unlimited money on ads?"
+      pattern:
+        - "Get customers cheaper than competitors"
+        - "Make more money from each customer"
+        - "Get customers to buy repeatedly"
+        - "Reinvest profits to get more customers"
+      insight: "It's like compound interest, but for businesses"
+
+    - id: "bg_economics_theory"
+      hook: "Here's a simple business problem..."
+      company_a: "Spends $100, makes $120 back in 30 days"
+      company_b: "Spends $100, makes $380 back in 30 days"
+      why_different: "Not better products or marketing - better design"
+      outcome: "Company B gets 3x more customers, dominates market, Company A goes out of business"
+
+    - id: "bg_price_setters"
+      hook: "In every market, there are two types of businesses: Price setters and price takers."
+      price_setter:
+        example: "Assessment $500 + Strategy $2,000 + Implementation $5,000 + Support $1,000/month"
+        result: "Can spend more on marketing, offer better guarantees, provide more value upfront"
+
+    - id: "bg_bucket_analogy"
+      hook: "A lot of people ask me what's better: getting more customers or getting more money from customers you already have."
+      analogy: "Getting more customers = filling bucket with holes. Getting more from current = fixing the holes first."
+
+    - id: "bg_book_comparison"
+      hook: "This book will teach you more about making money from customers than all these famous business books combined"
+      books_compared:
+        - "Good to Great"
+        - "The Lean Startup"
+        - "Built to Last"
+        - "The E-Myth"
+        - "Blue Ocean Strategy"
+      difference: "Those books talk ABOUT business. This book shows you HOW to do business."
+
+    - id: "bg_100k_vs_1m"
+      hook: "$100K business owner: 'I need more customers.' $1M business owner: 'I need better systems.'"
+      shift: "$100K owners solve problems once. $1M owners solve problems forever."
+
+    - id: "bg_only_3_books"
+      hook: "These are the only 3 books you need if you want to build a real business"
+      books:
+        - "$100M Offers - What to sell"
+        - "$100M Leads - How to find people to buy it"
+        - "$100M Money Models - How to make the most money from each person"
+
+    - id: "bg_customer_journey"
+      hook: "Does your customer journey look like this?"
+      bad: "Ad -> Landing Page -> One Offer -> Cross Your Fingers"
+      good: "Ad -> Value -> More Value -> Sale -> More Sales -> Happy Customer"
+
+    - id: "bg_50_percent_more"
+      hook: "Did you know that if you could get just 50% more money from each customer, you could spend 50% more to get them?"
+      insight: "Not about charging more - about giving more value in smarter ways"
+      example: "Instead of one $500 thing: $200 + $150 + $100 + $50/month"
+
+    - id: "bg_small_vs_big"
+      hook: "Small business vs. Big business - what's the difference?"
+      small: "Make one offer, customer buys or doesn't, move on, repeat forever"
+      big: "Make one offer, customer buys, make another offer, customer buys again, customer becomes a fan"
+
+    - id: "bg_one_book_2025"
+      hook: "If you could only read 1 business book in 2025, it should be this one."
+      reason: "Solves the ONE problem that kills most businesses: Not making enough money from customers"
+
+    - id: "bg_mba_comparison"
+      hook: "This book will teach you more about making money in business than a $200,000 MBA."
+      comparison:
+        mba: "Teach you how to analyze businesses that already work"
+        book: "Teach you how to build a business that works"
+      metrics:
+        mba_time: "2 years"
+        book_time: "2 days"
+        mba_cost: "$200,000"
+        book_cost: "$47"
+
+    - id: "bg_12_week_plan"
+      hook: "If you want to fix one thing about your business every week for the next 12 weeks..."
+      weeks:
+        - "Figure out what you're actually selling"
+        - "Make sure people want it"
+        - "Make it easier to buy"
+        - "Add something else they might want"
+        - "Make saying no harder"
+        - "Get them to come back"
+        - "Get them to buy again"
+        - "Make them tell their friends"
+        - "Keep them happy"
+        - "Find more people like them"
+        - "Do it all faster"
+        - "Do it again"
+
+    - id: "bg_90_days_new_town"
+      hook: "If I only had 90 days in a brand new town with zero connections..."
+      plan:
+        days_1_30: "Find the money leak in local businesses"
+        days_31_60: "Fix the leak for free to prove it works"
+        days_61_90: "Offer to fix same problem for competitors, charge based on results"
+
+    - id: "bg_double_profits"
+      hook: "If you're a business owner and you want to double your profits by fixing how you sell instead of getting more customers..."
+      shift: "Instead of 100 customers at $200 each... What if 50 customers at $800 each?"
+
+    - id: "bg_first_millionaire"
+      hook: "Want to be the first millionaire in your family?"
+      truth: "Not about working harder or being smarter. It's about information."
+      system:
+        - "Find people with problems"
+        - "Solve their problems for money"
+        - "Make more money from each person"
+        - "Get them to pay you repeatedly"
+        - "Reinvest profits to help more people"
+
+    - id: "bg_90_percent_losing"
+      hook: "What if I told you that 90% of businesses are losing money on every customer... but they don't know it?"
+      real_math:
+        cac: "$100"
+        service_cost: "$50"
+        revenue_if_stay: "$300 over 4 months"
+        reality: "Most leave after one purchase = $120 revenue, lose $30 per customer"
+
+    - id: "bg_1000_books"
+      hook: "I have read over 1,000 books on business and this is the only one you need to read to build a million-dollar company."
+      reason: "None teach the ONE thing that determines success: How to make money from customers"
+
+    - id: "bg_smart_vs_dumb"
+      hook: "Smart business owners make money from customers. Dumb business owners make money from products."
+      dumb: "Sell $500 course and hope they're happy"
+      smart: "Give $500 course free, offer $200/month coaching, offer $5,000 done-for-you when ready"
+
+    - id: "bg_how_long"
+      hook: "How long does it take you to go from broke business owner to millionaire?"
+      slow_path: "10-20 years - one product, hope people buy, reinvest slowly, scale gradually"
+      fast_path: "2-5 years - design systems, reinvest aggressively, scale exponentially"
+
+    - id: "bg_60_seconds"
+      hook: "In the next 60 seconds, I'm going to show you why 95% of businesses struggle and 5% get rich."
+      struggling:
+        cac: "$100"
+        revenue: "$120"
+        profit: "$20"
+      rich:
+        cac: "$100"
+        revenue: "$400"
+        profit: "$300"
+      example:
+        struggling_gym: "Customer pays $100/month, stays 3 months = $300"
+        rich_gym: "Customer pays $600 challenge + $200 supplements + $100/month x 12 = $2,000"
+
+    - id: "bg_8_years"
+      hook: "It took me 8 years to learn this, but I'm going to teach you how in 90 minutes."
+      lesson: "You don't make money from products. You make money from customers."
+      shift:
+        product_thinking: "If I can just create the perfect product, customers will come"
+        customer_thinking: "If I can just understand my customers perfectly, I'll know exactly what to offer"
+
+    - id: "bg_ltv_steps"
+      hook: "Everyone tells you to 'increase customer lifetime value' but nobody actually shows you how to do it."
+      steps:
+        step_1: "Map your current customer journey"
+        step_2: "Find the gaps"
+        step_3: "Fill the gaps"
+        step_4: "Connect the dots"
+        step_5: "Test and improve"
+
+    - id: "bg_product_vs_customer"
+      hook: "What happens when you design your business around customers instead of products?"
+      product_focused:
+        questions:
+          - "What can I sell?"
+          - "How do I make this cheaper?"
+          - "How do I get more customers?"
+      customer_focused:
+        questions:
+          - "What do customers need?"
+          - "How do I provide more value?"
+          - "How do I help customers more?"
+
+  # --------------------------------------------------------------------------
+  # RETARGETING AD ANGLES (eCommerce)
+  # --------------------------------------------------------------------------
+  retargeting:
+    - id: "rt_quick_reminder"
+      angle: "Quick reminder about what you get"
+      copy: "Quick reminder about what you get with the $100M Money Models Implementation System: 12 physical playbooks solving every business constraint (leads, sales, delivery, profit), plus the custom ACQ AI trained on 1,000+ businesses. Your order is still available to complete."
+
+    - id: "rt_still_there"
+      angle: "Still there for you"
+      copy: "The Implementation System is still there in your cart: battle-tested solutions from working with 1,026+ businesses, organized into 12 actionable playbooks. Everything we discovered about what actually moves the needle in real companies."
+
+    - id: "rt_what_you_saw"
+      angle: "What you were looking at"
+      copy: "Just so you remember what you were looking at: The complete system that breaks down every constraint we found across 1,000+ businesses. Four systems (Leads, Sales, Delivery, Profit) with step-by-step playbooks for each. All ready to implement."
+
+    - id: "rt_worth_remembering"
+      angle: "Worth remembering"
+      copy: "Worth remembering what the Implementation System includes: physical playbooks (not PDFs), the workshop to identify your biggest constraint first, and the ACQ AI with insights from $31M in consulting. Built from real business data, not theory."
+
+    - id: "rt_in_case_forgot"
+      angle: "In case you forgot"
+      copy: "In case you forgot what makes this different: these aren't generic business tips. Every solution comes from analyzing actual constraints in real businesses. 12 playbooks covering the only 4 problems that actually matter for growth."
+
+    - id: "rt_real_value"
+      angle: "The real value"
+      copy: "The real value isn't just the 12 playbooks - it's that every solution was tested with actual businesses making real money. Plus you get the workshop to know which constraint to tackle first. Your cart is still active if you want to complete it."
+
+    - id: "rt_what_you_get"
+      angle: "What you get"
+      copy: "What you get: Solutions to the 4 constraints that kill every business (leads, sales, delivery, profit). Not theory - battle-tested systems from 1,000+ real companies. Physical implementation guides you can actually use."
+
+    - id: "rt_just_clarifying"
+      angle: "Just clarifying"
+      copy: "Just clarifying what you were looking at: 12 playbooks containing the exact processes we charged $35,000 each to implement in person. Same solutions, same frameworks, organized for you to implement yourself."
+
+    - id: "rt_your_benefits"
+      angle: "Your benefits"
+      copy: "Your benefits with the Implementation System: Stop guessing what works, get proven solutions from analyzing 1,000+ businesses, know exactly which constraint to fix first, have a 24/7 business advisor (the custom ACQ AI). Order is ready when you are."
+
+    - id: "rt_simple_reminder"
+      angle: "Simple reminder"
+      copy: "Simple reminder: The Implementation System gives you the map (12 playbooks), the compass (workshop to find your constraint), and the guide (custom ACQ AI). Everything needed to solve what's actually holding your business back."
+
+  # --------------------------------------------------------------------------
+  # SKOOL TRIAL AD ANGLES
+  # --------------------------------------------------------------------------
+  skool_trial:
+    - id: "sk_complete_free_stack"
+      angle: "The Complete Free Stack"
+      copy: "Get the entire $100M Money Models System completely free: Attraction Accelerator, Epic Upsells, Deal Maker Downsells, Continuity Blueprint, plus the audiobook and Lost Chapters. All yours with a 90-day free Skool trial + lifetime $9/month rate. One-time launch only - this Saturday then it's gone forever."
+
+    - id: "sk_90_days_empire"
+      angle: "90 Days to Build Your Empire"
+      copy: "90 days free on Skool is enough time to implement every money model mechanism and start seeing results. Plus you get the complete $100M Money Models training system to guide you through it. Lock in $9/month for life - but only until this Saturday. One-time launch offer."
+
+    - id: "sk_theory_to_reality"
+      angle: "From Theory to Reality"
+      copy: "You've seen the money models - now learn how to turn them into reality on Skool. Get 90 days free to implement Attraction Accelerators, Epic Upsells, and Continuity mechanisms with the platform built for it. Plus lifetime access at $9/month. Offer expires this Saturday - one-time launch only."
+
+    - id: "sk_70k_value_stack"
+      angle: "The $70K Value Stack"
+      copy: "$69,955 worth of money model systems, completely free. The Attraction Accelerator ($15,999), Epic Upsells ($5,999), Deal Maker Downsells ($6,499), Continuity Blueprint ($41,458) - all yours with your Skool trial. 90 days free, then $9/month for life. This Saturday only - never again."
+
+    - id: "sk_starter_kit"
+      angle: "Everything You Need to Start"
+      copy: "If you're an up-and-coming entrepreneur, this is your free tech starter kit. 90 days of Skool free, complete money models training, plus a lifetime rate of just $9/month. I've been broke - this is the best head start I can give you. One-time launch only, expires this Saturday."
+
+    - id: "sk_25_percent_sales"
+      angle: "25% Make Sales Month One"
+      copy: "25% of monetized groups make a sale in their first month on Skool. 39% do eventually. Get 90 days free to implement the complete $100M Money Models System and become part of that success stat. Lock in $9/month forever - but only until this Saturday ends."
+
+    - id: "sk_platform_built"
+      angle: "The Platform Built for Money Models"
+      copy: "Skool was built specifically to make money models work. Get 90 days free to test every mechanism - attractions, upsells, downsells, continuity. Plus the complete training system to guide your implementation. Then just $9/month for life. This Saturday only - one-time launch deal."
+
+    - id: "sk_dont_give_up"
+      angle: "Don't Give Up - Get 90 Days"
+      copy: "39% of Skool users eventually make sales - but only if they don't give up. That's why I'm giving you 90 days free (not 14) to implement the money models properly. Plus lifetime access at $9/month instead of $99. Launch ends this Saturday - never offered again."
+
+    - id: "sk_free_tech_training"
+      angle: "Free Tech + Free Training"
+      copy: "Get both the platform AND the training free. 90 days of Skool plus the complete $100M Money Models System - Attraction Accelerator, Epic Upsells, Deal Maker Downsells, Continuity Blueprint. Everything you need to succeed, then $9/month forever. One-time launch only, gone this Saturday."
+
+    - id: "sk_head_start"
+      angle: "The Head Start You Need"
+      copy: "Stop trying to figure it out alone. Get 90 days free on Skool plus the exact money model systems that built my $250M+ portfolio. Complete training on turning every mechanism into reality. Lock in $9/month for life - this Saturday only, then back to $99/month forever."
+
+    - id: "sk_turn_models_money"
+      angle: "Turn the Models Into Money"
+      copy: "You have the money models - now turn them into actual money. Get 90 days free on Skool to implement every mechanism and start generating cash flow. Complete training included, then just $9/month for life to keep building your empire. One-time launch only - gone this Saturday forever."
+
+    - id: "sk_10x_better_cheaper"
+      angle: "10x Better, 10x Cheaper"
+      copy: "Skool isn't just better than other platforms - it's 10x better AND 10x cheaper. Get 90 days free to test everything, plus the complete $100M Money Models System. Then lock in $9/month forever instead of paying $99+ elsewhere. This Saturday only - never offered again."
+
+    - id: "sk_7_day_window"
+      angle: "7-Day Window for 90-Day Trial"
+      copy: "This 90-day free trial is only available for 7 days. After this Saturday, it goes back to the standard 14-day trial and $99/month pricing. Get the complete $100M Money Models System free, 90 days to implement, then $9/month for life. One-time launch window closes Saturday."
+
+    - id: "sk_price_dropped"
+      angle: "Price Dropped 10x"
+      copy: "The price was $99/month. Now it's $9/month for life when you start during this launch. Get 90 days completely free, plus the entire $100M Money Models training system. This pricing disappears this Saturday and will never happen again. One-time launch only."
+
+  # --------------------------------------------------------------------------
+  # LAUNCH ADS
+  # --------------------------------------------------------------------------
+  launch_ads:
+    - id: "la_4_bonuses"
+      angle: "The 4 Amazing Free Bonuses"
+      copy: "This Saturday, I'm giving away 4 amazing free bonuses with every copy of $100M Money Models ordered during the livestream. These bonuses have never been available before and disappear when the stream ends. Don't miss out."
+
+    - id: "la_book_launch_today"
+      angle: "Book Launch Event Today"
+      copy: "Today is the day. The $100M Money Models launch event this Saturday. If you've been waiting to get your copy, this is your moment. Plus I'm announcing something special that's only available during the livestream."
+
+    - id: "la_final_hours"
+      angle: "Final Hours Warning"
+      copy: "Final hours to join the $100M Money Models launch event. I've prepared something incredible for everyone who shows up live. Miss this livestream and you'll miss out on the biggest announcement I've ever made."
+
+    - id: "la_something_big"
+      angle: "Something Big Coming"
+      copy: "This Saturday, I'm announcing something that will change how you think about business growth forever. If $100M Offers and $100M Leads helped your business, you cannot afford to miss what's coming next."
+
+    - id: "la_launch_day_energy"
+      angle: "Launch Day Energy"
+      copy: "It's launch day for $100M Money Models! The energy is incredible. My team has been working for months on what we're revealing today. Join the livestream this Saturday - you'll want to be part of this moment."
+
+    - id: "la_limited_time_bonuses"
+      angle: "Limited Time Bonuses"
+      copy: "The 4 free bonuses I'm giving away with $100M Money Models today are only available during the livestream. Once it ends, they're gone forever. This Saturday to secure yours."
+
+    - id: "la_exclusive_livestream"
+      angle: "Exclusive Livestream Offer"
+      copy: "What I'm offering during today's $100M Money Models livestream has never been available before and will never be available again. This is a one-time event. Join us this Saturday."
+
+    - id: "la_big_reveal"
+      angle: "The Big Reveal"
+      copy: "After months of preparation, today is the big reveal. The $100M Money Models launch event this Saturday. Come see what we've been working on - it's going to blow your mind."
+
+    - id: "la_history"
+      angle: "Don't Miss History"
+      copy: "You're about to witness something that's never been done before in business education. The $100M Money Models launch event this Saturday. Be part of history in the making."
+
+    - id: "la_final_call"
+      angle: "Final Call"
+      copy: "This is your final call. The $100M Money Models launch event this Saturday. Get your copy of the book plus 4 amazing free bonuses that disappear when the livestream ends. Don't be the person who missed this."
+
+    - id: "la_last_chance_vip"
+      angle: "Last Chance VIP Status"
+      copy: "Last chance to become a VIP before the record breaking $100M Money Models launch this Saturday. Once the livestream starts, this opportunity disappears forever. Secure your VIP access now."
+
+    - id: "la_record_breaking"
+      angle: "Record Breaking Event"
+      copy: "The record breaking $100M Money Models launch is coming this Saturday. Not gonna wanna miss it... I've prepared something that's never been done before in business education. Be there."
+
+    - id: "la_few_days_left"
+      angle: "Few Days Left"
+      copy: "In just a few days, everything changes. The $100M Money Models launch event this Saturday will be unlike anything you've seen before. Don't be the person who wished they were there."
+
+    - id: "la_vip_access_ending"
+      angle: "VIP Access Ending"
+      copy: "VIP access to the $100M Money Models launch ends soon. This Saturday's event is going to be massive - record breaking massive. Last chance to secure your spot before it's too late."
+
+# =============================================================================
+# EMAIL/SMS SWIPES
+# =============================================================================
+email_sms_swipes:
+  registration_sequence:
+    - id: "reg_confirmation"
+      type: "email"
+      trigger: "Immediately post registration"
+      subject: "You're registered. (Save this email)"
+      sms: "Hey {Name}, it's Alex Hormozi - you'll get 6 more launch texts: 3 reminders + 3 goodies. Check email for details. Reply 'Stop' to stop."
+      key_elements:
+        - "PLEASE SAVE THIS EMAIL. IT HAS IMPORTANT BOOK LAUNCH DETAILS."
+        - "We have A LOT OF PEOPLE registered already. Our goal is to pass 1,000,000+ registrations by launch day."
+        - "I will stream it on Youtube Live. No fancy tech."
+        - "PS - If you pre-ordered, products ship first the moment event wraps up"
+        - "PPS - We'll select 10 people who pre-ordered to come spend a day with me in Vegas"
+
+    - id: "reg_missed_this"
+      type: "email"
+      trigger: "15 min after registration"
+      subject: "in case you missed this"
+      target: "Registered but not purchased"
+      vip_benefits:
+        - "Automatic entry to win a day with me in Vegas (you and 9 others)"
+        - "Your $100M Money Models book first & guaranteed first printing"
+        - "A private VIP livestream 'Backstage Pass' with chat enabled"
+        - "$100M LAUNCH Workshop - revealing my proven launch process"
+      ps: "I'm giving something huge away for free to everyone live at the launch... it's better than a NFT but less than a Bitcoin... but you gotta be there live to get it."
+
+    - id: "reg_get_book_first"
+      type: "email"
+      trigger: "24 hours after registration"
+      subject: "Get your book first + VIP Livestream"
+      key_persuasion:
+        - "People who wait to get their copy at the event will pay the same price but don't get any of the VIP Benefits"
+        - "This means you get all the VIP bonuses for free if you simply pre-order the book for the same price"
+
+    - id: "reg_affiliate_invite"
+      type: "email"
+      trigger: "48 hours after registration"
+      subject: "Win a day with me (free)"
+      stats: "32,000 people signed up, brought 130,000+ people with them"
+      incentive: "Just getting 10 people to opt in gets you 3 amazing prizes"
+
+  prelaunch_sequence:
+    - id: "pre_45d_new_book"
+      type: "email"
+      timing: "45 days before"
+      subject: "I've got a new book"
+      key_elements:
+        - "Spent the last two years stockpiling tactical Money Models"
+        - "Money model is a series of offers deliberately structured to generate the most cash up front"
+        - "MASSIVE P.S. - giving something huge away... better than an NFT but less than a Bitcoin"
+
+    - id: "pre_41d_invite"
+      type: "email"
+      timing: "41 days before"
+      subject: "[Your Invite Inside]"
+      key_hook: "It's better than an NFT but less than a Bitcoin... but here's the catch: You have to show up live to get it."
+
+    - id: "pre_35d_what_is_mm"
+      type: "email"
+      timing: "35 days before"
+      subject: "What's a money model?"
+      definition: "A Money Model is a series of offers deliberately structured to generate the most cash up front, get the most leads, and get your highest customer lifetime value."
+      four_parts:
+        - "Attraction Offers: to get the most leads"
+        - "Upsell Offers: to get more money from them faster"
+        - "Downsell Offers: to turn a 'no' into a 'yes'"
+        - "Continuity Offers: to keep them buying again and again"
+
+    - id: "pre_28d_pics"
+      type: "email"
+      timing: "28 days before"
+      subject: "[new pic] - shipment of books for you"
+      visual_proof: "Trucks filled to the brim with books"
+      reason_for_preorder: "Shipping 1 million books takes 1 million minutes"
+
+    - id: "pre_19d_huge_giveaway"
+      type: "email"
+      timing: "19 days before"
+      subject: "I'm giving something HUGE away...LIVE"
+      key_point: "We will export the list of people who show up live and only send those people the surprise gift"
+
+    - id: "pre_14d_bigger_than"
+      type: "email"
+      timing: "14 days before"
+      subject: "Bigger than..."
+      context: "It would take 6+ Madison Square Gardens at full capacity to hold everyone for this event"
+
+    - id: "pre_11d_headliners"
+      type: "email"
+      timing: "11 days before"
+      subject: "5 Mystery headliners...1 event...free?"
+      teaser_profiles:
+        - "A service business owner so massive their Money Model defined an industry"
+        - "A professional services titan who scaled to multi-9 figure exit"
+        - "A software entrepreneur who beat VC backed competitors by outspending them"
+
+    - id: "pre_9d_sneak_peek"
+      type: "email"
+      timing: "9 days before"
+      subject: "Money Models (sneak peek)"
+      content: "Table of Contents reveal"
+
+    - id: "pre_7d_meta_book"
+      type: "email"
+      timing: "7 days before"
+      subject: "Did you miss this?"
+      key_insight: "Every book in the $100M series has been a meta book - the book demonstrates tactics that actually work"
+      examples:
+        offers: "Put on Kindle for .99 cents + full course free = grew on word of mouth"
+        leads: "Used all advertising methods to get more than a mid-sized city registered"
+        money_models: "The Money Model for the book itself will show you how to create your own"
+
+    - id: "pre_4d_nft_btc"
+      type: "email"
+      timing: "4 days before"
+      subject: "What I'm gonna give you..."
+      metaphor: "If this were a Marvel movie, think of the Money Model types as the infinity stones, and this, the thing I'm giving away, as the gauntlet that allows you to wield them."
+
+    - id: "pre_48h_countdown"
+      type: "email"
+      timing: "48 hours before"
+      subject: "(48hrs out) what you need to know"
+      checklist:
+        - "Mark your Calendar"
+        - "Pre-order to get guaranteed book + VIP benefits"
+        - "For best live experience, desktop is best"
+        - "Send this email to a friend"
+      timezone_list: true
+      key_note: "IMPORTANT: Due to larger volumes than expected, it is best to join 12-17 minutes early"
+
+    - id: "pre_24h_final"
+      type: "email"
+      timing: "24 hours before"
+      subject: "Watch your inbox tomorrow @9am PST / 12pm EST"
+      sms: "{name}, it's Hormozi - 24hr book launch reminder. You'll get 2yrs of pent up goodies LIVE tomorrow at 9am PT/12pm ET. Save this link: {insert link}"
+      content_preview:
+        - "How Money Models are the engine behind all the companies I've scaled"
+        - "How I used Money Models in the book to get over 500,000+ people to register...at a profit"
+        - "The Secret Project I spent this last year working on"
+        - "5 mystery headliners"
+        - "10 VIPs randomly selected to fly to Vegas"
+
+  launch_day_sequence:
+    - id: "ld_3hrs_before"
+      type: "email"
+      timing: "3 hours before"
+      subject: "Live in ~3hrs"
+      key_message: "Save this link: live.acq.com"
+      ps: "Last chance to get VIP FOR FREE by preordering a single book"
+
+    - id: "ld_60min_before"
+      type: "email"
+      timing: "60 min before"
+      subject: "We're live in 60min..."
+      key_message: "The stream is up & live now. So you can hop on the livestream early"
+
+    - id: "ld_15min_before"
+      type: "email + sms"
+      timing: "15 min before"
+      subject: "WE ARE LIVE NOW (LINK INSIDE)"
+      sms: "Hey {name}, Alex Hormozi here. It's time. We're going live on youtube. Tap the link to join: join.acq.com"
+
+    - id: "ld_plus_15min_leila"
+      type: "email"
+      timing: "+15 min"
+      from: "Leila"
+      subject: "Alex is live & murdering it! Hop on!"
+      key_element: "I stole Alex's email. Just wanted to let you know Alex is live on youtube & murdering it!"
+
+    - id: "ld_plus_60min_offer"
+      type: "email"
+      timing: "+60 min"
+      subject: "Made this for you..."
+      key_message: "I'm revealing the book bonuses now. They blow everything else out of the water."
+
+    - id: "ld_plus_90min_urgency"
+      type: "email"
+      timing: "+90 min"
+      subject: "Launch Bonus Gone When Livestream Ends"
+      full_offer_breakdown: true
+      urgency: "THIS GOES AWAY THE MOMENT THE LIVESTREAM ENDS."
+
+    - id: "ld_plus_150min_countdown"
+      type: "email"
+      timing: "+150 min"
+      subject: "LAUNCH BONUS EXPIRES IN ~60MINS..."
+      offer_elements:
+        acq_workshop:
+          - "Proprietary ACQ Deconstraining Process"
+          - "Supply & Demand Amplification"
+          - "Find & Create Leverage"
+          - "Crystal Clear Personalized Implementation Plan"
+        playbooks:
+          - "Closing Handbook - 64 pages"
+          - "Proof Checklist - 32 pages"
+          - "Retention Playbook - 42 pages"
+          - "Marketing Machine - 32 pages"
+          - "Lifetime Value - 32 pages"
+          - "Hooks Playbook - 30 pages"
+          - "Branding Playbook - 42 pages"
+          - "Price Raise Playbook - 32 pages"
+          - "Promo Cash Playbook - 36 pages"
+          - "GOATed Ads - 36 pages"
+          - "Lead Nurture - 46 pages"
+        acq_ai:
+          - "Finally Answers 'What Would Alex Do In My Business?'"
+          - "Puts $28M of Real-World Consulting At Your Fingertips"
+          - "Your $135,000 Answer Fine-Tuned In An Instant"
+          - "Engineers Hyper-Relevant Solutions"
+          - "Like Having My ACQ Killers On-Call 24/7"
+          - "Grants Access To The 'De-Classified' ACQ Data Vault"
+
+    - id: "ld_plus_360min_recap"
+      type: "email"
+      timing: "+360 min"
+      subject: "I wrote you a letter"
+      cta: "recap.acq.com"
+
+  cart_close_sequence:
+    - id: "cc_48hrs"
+      type: "email"
+      timing: "Sunday midnight"
+      subject: "Everything goes away at midnight"
+      urgency: "This offer is only good for less than 48hrs (midnight tomorrow PST)"
+
+    - id: "cc_36hrs"
+      type: "email"
+      timing: "Sunday noon"
+      subject: "Cart closes in ~36 hours"
+
+    - id: "cc_24hrs"
+      type: "email"
+      timing: "Monday midnight"
+      subject: "Cart closes in ~24 hours"
+
+    - id: "cc_12hrs"
+      type: "email"
+      timing: "Monday noon"
+      subject: "Cart closes in ~12 hours"
+      urgency: "Cart closes at midnight tonight (PST)"
+
+    - id: "cc_7hrs_sms"
+      type: "sms"
+      timing: "Monday 5pm"
+      copy: "Hormozi here. Last chance. Get your bonuses here before they disappear forever: {insert link}"
+
+    - id: "cc_6hrs"
+      type: "email"
+      timing: "Monday 6pm"
+      subject: "Last chance (6 hrs left)"
+      ps: "Whether you buy or not, I just want to say thank you. You are my people. And no purchase will ever change that."
+
+    - id: "cc_3hrs"
+      type: "email"
+      timing: "Monday 8:30pm"
+      subject: "Last chance (3 hrs left)"
+      urgency: "ALL BONUSES DISAPPEAR IN LESS THAN 180 MINUTES"
+      full_offer_breakdown: true
+      ps: "S&Me 500 to the moon"
+
+    - id: "cc_30min"
+      type: "email"
+      timing: "Monday 11pm"
+      subject: "Last chance (~30min left)"
+      copy: "The book bonuses disappear in LESS THAN 30 MINUTES at midnight tonight. I could write a long email about everything you're missing with your 200 book bundle, but you already know what this is worth. The only question left is: Will you join us?"
+      cta: "Minutes. It's time. LFG."
+
+  post_launch_sequence:
+    - id: "pl_as_promised"
+      type: "email"
+      timing: "Tuesday 2am"
+      subject: "As promised...(plus a surprise)"
+      offer: "3 month free trial of Skool (continues at $9/month, cancel anytime)"
+      contents:
+        - "Audiobook"
+        - "Course"
+        - "Bonus training on using tech to accomplish the money models"
+
+    - id: "pl_secret_project"
+      type: "email"
+      timing: "Tuesday 2am"
+      target: "Attendees who clicked live link"
+      subject: "My Secret Project: Revealed"
+      content: "Free Copy of The Lost Chapters"
+      urgency: "Redeem in the next 48 hours before it expires"
+
+    - id: "pl_blackbook"
+      type: "email"
+      timing: "Tuesday 10am"
+      target: "200+ Book Buyers during livestream"
+      subject: "My Launch Blackbook"
+      content: "All emails, texts, sales letter scripts, webinar slides, affiliate blackbook, affiliate emails, ads"
+
+  abandoned_cart_sequence:
+    - id: "ac_preorder_failed"
+      type: "email"
+      trigger: "20 min after abandonment"
+      subject: "Pre-order checkout failed"
+      key_message: "Your info is still saved & you can checkout here"
+
+    - id: "ac_24hr_followup"
+      type: "email"
+      trigger: "24 hours after abandonment"
+      subject: "Pre-order checkout failed x 2"
+      comparison:
+        wait: "Miss chance at Vegas trip, get book later, no private stream, miss workshop"
+        preorder_now: "All VIP benefits for same price"
+
+    - id: "ac_book_30min"
+      type: "email"
+      trigger: "30 min after book cart abandonment"
+      subject: "Trouble finishing your order?"
+      preview: "Your copy is still waiting - here's a 10-second shortcut"
+      key_cta: "Complete your order in one click"
+      ps: "Your cart is reserved for the next 24 hours"
+
+    - id: "ac_book_24hr"
+      type: "email"
+      trigger: "24 hours after book cart abandonment"
+      subject: "Get more leads"
+      educational_content:
+        step_1: "Pick An Attraction Offer: Win Your Money Back, Buy X get Y Free, Giveaways, Pay Less Now Pay More Later, or Decoys"
+        step_2: "Pick what you're gonna give away for free"
+        step_3: "Let people know about your free thing - but wrap it in the Attraction Offer structure"
+      hook: "If you're not using one of these, you're probably leaving leads (and business) on the table"
+
+  vam_client_zoom_sequence:
+    - id: "vam_exclusive_access"
+      type: "email + sms"
+      timing: "Monday before launch"
+      subject: "$100M Money Models Exclusive access. Just for you"
+      sms: "Hey {Name}, the $100M Book Launch team here - thanks for being part of our VAM Advisory Practice! You're invited to join Alex Hormozi LIVE on Zoom for the launch event. Only 150 seats are available to appear on screen."
+      key_benefits:
+        - "Be one of only 150 featured faces behind Alex on screen"
+        - "Take part in what we expect to be a world-record-breaking event"
+        - "Participate in live audience interaction"
+      guidelines:
+        - "Keep your camera on for the entire session"
+        - "Stay in frame and in a professional setting"
+        - "Keep your microphone muted unless invited to speak"
+        - "Come prepared with a white sheet of paper and black marker"
+        - "Be fully present and distraction-free"
+
+    - id: "vam_reminder"
+      type: "email"
+      timing: "Tuesday before launch"
+      subject: "RE: You Still Have Early Access to the $100M Book Launch"
+      key_message: "Just bumping this to the top of your inbox"
+
+    - id: "vam_final_reminder"
+      type: "email + sms"
+      timing: "Thursday before launch"
+      subject: "Last chance: to be featured live at the $100M Money Models Event"
+      sms: "Final chance, {Name} - only a few Zoom seats left for the Virtual $100M Book Launch Event with Alex Hormozi. Be featured on screen + possibly engage live."
+
+    - id: "vam_48hr_reminder"
+      type: "email"
+      timing: "48 hours before"
+      subject: "48 Hours Until the $100M Money Models Zoom Event - You're In!"
+      preview: "You're confirmed to join Alex Hormozi live. Here's everything you need to know before we go live."
+
+    - id: "vam_24hr_reminder"
+      type: "email"
+      timing: "24 hours before"
+      subject: "Final Countdown: Your $100M Money Models Zoom Event is almost here!"
+      key_message: "Your spot is locked in, and we only extended this invite to a select group of clients who helped shape the VAM Advisory Practice."
+
+    - id: "vam_1hr_reminder"
+      type: "email"
+      timing: "1 hour before"
+      subject: "$100M Money Models Book Launch Event goes live in 1 hour!"
+      key_message: "If you've got Acquisition.com gear, wear it - we'd love to see it on screen!"
+
+# =============================================================================
+# LANDING PAGES
+# =============================================================================
+landing_pages:
+  main_offer_faq:
+    pricing_question:
+      q: "Why does this cost $5,998?"
+      a: "You're not just buying a product - you're helping put 200 books in the hands of entrepreneurs who need them. The $5,998 covers the cost of donating these books to other business owners. It's 100% tax deductible as a charitable contribution, and you get the complete implementation system as our way of saying thank you."
+
+    financing_question:
+      q: "Can I finance this purchase?"
+      a: "Yes, if you qualify through Affirm, you can get the system for as low as $249 per month, interest-free. That's less than the cost of a Chipotle burrito per day."
+
+    physical_vs_digital:
+      q: "Are these physical books or digital downloads?"
+      a: "Everything is physical. You'll receive 12 actual printed playbooks in binders that you can reference and use regularly. No PDFs, no digital downloads - just real books you can hold and mark up."
+
+    playbook_contents:
+      q: "What exactly are the 12 playbooks?"
+      a:
+        leads_system:
+          count: 4
+          topics:
+            - "Scale ad spend"
+            - "Fix content"
+            - "Build brand authority"
+            - "Remove yourself from marketing"
+        sales_system:
+          count: 3
+          topics:
+            - "Get more appointments"
+            - "Close more deals"
+            - "Use proof effectively"
+        delivery_system:
+          count: 2
+          topics:
+            - "Multiply customer value"
+            - "Eliminate churn"
+        profit_system:
+          count: 3
+          topics:
+            - "Generate emergency cash"
+            - "Optimize pricing"
+            - "Raise prices without losing customers"
+
+    industry_fit:
+      q: "Will this work for my industry/business size?"
+      a: "Yes. These are foundational business principles that work across all industries and business sizes. Whether you're a one-person shop or have 200 employees, the math is the same. You're selling to humans, and humans respond to the same psychological triggers regardless of what you're selling."
+
+    ai_advisor:
+      q: "What if I don't know how to apply these to my specific business?"
+      a: "That's what the Custom ACQ AI is for. It's trained on every book Alex has written, every playbook, and $31M+ in consulting work from 1,026+ businesses. Ask it specific questions about your business and get personalized answers in 30 seconds instead of months of trial and error."
+
+  single_book_thank_you:
+    headline: "Thank you for ordering, get all my other free gifts here (without waiting until Tuesday)"
+    offer:
+      - "$100M Money Models training"
+      - "90 day trial of Skool (cancel with a click)"
+      - "Skool Exclusive Training on how to turn models into reality"
+      - "Lifetime lower rate of $9/mo after the trial ends"
+    ps: "You don't need to get a trial of Skool to get the free stuff. It'll be live after 8/20 on my site. This is just a little incentive + keeps it clean all in one place."
+
+  200_book_thank_you:
+    opening: "Good choice. You just got something that took me years to build."
+    what_you_got:
+      playbooks: "12 Physical Playbooks - These aren't PDFs on your computer. These are real books you can hold and reference."
+      workshop: "The Implementation Workshop - I'm going to show you exactly where your business is stuck and what to fix first."
+      ai: "Your Custom ACQ AI - This AI knows what I would do in your business. It's trained on $31 million worth of real consulting work."
+    what_makes_different: "This isn't theory. This isn't what we think might work. This is what we use right now to run our companies."
+    how_to_use:
+      step_1: "Do the workshop first. I'll show you which problem to solve first."
+      step_2: "Read only the playbook that matches your biggest problem."
+      step_3: "Use those tactics in your business."
+      step_4: "Get results. Then move to the next problem - and next playbook."
+    closing: "You made a smart choice. You now have the same systems we use to run our businesses. While other people are guessing what works, you know what works."
+
+  800_book_offer:
+    hook: "I have something to confess... Part of the reason I am doing this bundle is because I'm trying to break a Guinness World Record."
+    real_reason: "I want to put a book in the hands of every entrepreneur in the US - that's 32.5 million people. That's my actual goal."
+    offer_structure:
+      total: "$24k for 800 more books"
+      credit: "$6k credited from first purchase"
+      net: "$18k"
+      payment: "$3k today + five more monthly installments of $3k"
+    what_you_get:
+      direct_access: "Direct access to me and my advisory team through my first ever online community, the ACQ Scale Advisory hosted on Skool"
+      team_access:
+        - "Director of Sales"
+        - "Director of Recruiting"
+        - "Director of Marketing"
+        - "Director of Investments"
+      intensives:
+        count: 6
+        topics:
+          - "Marketing (Alex)"
+          - "Sales (Alex)"
+          - "LTV (Alex)"
+          - "Profit/Pricing (Alex)"
+          - "People/AI (Leila)"
+          - "Wealth (Sharran)"
+      network: "Exclusive network access - first and last group of this kind"
+      behind_scenes: "Investment deals I'm doing, high level business/wealth stuff, tax and accounting strategies"
+    urgency: "This offer disappears forever Monday night at midnight"
+    close: "So with that being said, if you're on the fence - do it. You won't regret it and this will likely be the last time I do something like this."
+
+  800_book_thank_you:
+    opening: "Welcome to the ACQ Scale Advisory. You just made what I believe will be one of the best investments you've ever made in your business and in 1000 other entrepreneurs."
+    what_makes_different: "You're not getting motivational speeches or surface-level tactics. You're getting the actual systems my team and I use every day to build and scale businesses."
+    network_effect: "The person who introduces themselves right after you might become your next business partner. The question someone asks in month 3 might solve a problem you didn't even know you had yet."
+    your_success: "Your success over the next 6 months is directly tied to my reputation. I'm not just invested financially - I'm invested reputationally."
+    next_steps:
+      - "Go to your email and click the community access link"
+      - "Introduce yourself and share your most valuable business tactic you've ever learned"
+      - "Add the workshop dates to your calendar"
+      - "Start distributing your book codes to other entrepreneurs"
+      - "The playbooks will come in the mail"
+
+# =============================================================================
+# VSL CONTENT
+# =============================================================================
+vsl_content:
+  recap_vsl:
+    headline: "My Most Insane Offer of All Time - Ends Monday Forever"
+    subhead: "Can literally pay for itself, is a complete tax write-off, and helps 200 other entrepreneurs with their business... for free by donating 200 books."
+
+    data_collection:
+      headline: "The $31 Million Data Collection Project That Changed Everything"
+      stats: "Over the last 2 years, I had over 1,026+ businesses at my headquarters. They paid between $35,000 and $135,000."
+      reason: "I did it for only one reason: the data."
+
+    four_problems:
+      - "Not enough leads"
+      - "Not enough conversions"
+      - "Delivery bottlenecks"
+      - "Doing 1-3, but still not profitable enough"
+
+    four_systems:
+      leads_system:
+        playbooks: 4
+        solves: "leads constraint"
+        teaches:
+          - "How we scale ad spend profitably"
+          - "Fix your content to get sales not just views"
+          - "Build premium brand authority"
+          - "Remove yourself from marketing entirely"
+        proof: "Grew my audience to 13 million people and let me spend $250,000 a day on ads"
+        case_studies:
+          - name: "Chris Howell"
+            business: "commercial architect"
+            result: "tripled his business growth"
+          - name: "Jorge"
+            business: "local brick & mortar pharmacy"
+            result: "had to hire more staff the first month just to keep up with the growth"
+          - name: "Ava"
+            business: "content agency (19 years old)"
+            result: "from 10-15 new deals a month to 40-60 new B2B high ticket recurring deals a month"
+
+      sales_system:
+        playbooks: 3
+        solves: "every sales constraint"
+        teaches:
+          - "How we get way more appointments to show"
+          - "Our proven frameworks to close more deals"
+          - "How to use proof to make selling easier"
+        proof: "89% show rates and 46% close rate for our advisory practice"
+        case_studies:
+          - name: "Well Oiled Operations"
+            business: "B2B operations consulting"
+            result: "from 27% close rate to 45% close rate"
+          - name: "IBC Global"
+            business: "insurance brokerage"
+            result: "from 20% to 61% conversion rate (3x)"
+
+      delivery_system:
+        playbooks: 2
+        solves: "profitability constraints"
+        teaches:
+          - "Multiply customer value"
+          - "Eliminate churn through scientific methods"
+        case_studies:
+          - name: "WeWhiten"
+            business: "teeth whitening chain"
+            result: "7.5x profit per location across 28 stores"
+          - name: "Erik and Amanda"
+            business: "advisory client"
+            result: "doubled their AOV"
+          - name: "Skool"
+            result: "incredible retention graph on way from 1M to 15M users"
+
+      profit_system:
+        playbooks: 3
+        solves: "cash flow constraints"
+        teaches:
+          - "Generate emergency cash"
+          - "Optimize pricing instantly"
+          - "Raise prices without losing customers"
+        case_studies:
+          - name: "Toussaint"
+            result: "tripled his LTV"
+          - name: "Stefiene"
+            result: "increased price from $200 to $516 per month"
+          - name: "Leander"
+            result: "increased prices by 78.6% while increasing revenue and his brand"
+          - name: "Kara, Sam, and Matt"
+            result: "all sold out their fast cash promotions"
+
+    bonuses:
+      workshop:
+        name: "Virtual ACQ Implementation Workshop Tickets"
+        purpose: "Identify your biggest constraint and create your implementation roadmap"
+      ai:
+        name: "Custom Trained GPT Business Advisor"
+        trained_on:
+          - "Every book I've written"
+          - "Every playbook inside"
+          - "Internal notes from over $31 million in consulting work from 1,026+ businesses"
+        metaphor: "Think of the playbooks as your map. The event as your compass. And the GPT as your guide."
+
+    cost_of_waiting:
+      headline: "Why Now Matters (The Cost of Waiting)"
+      concept: "Every day you wait is another day you're paying what I call the 'ignorance tax.' And that tax compounds."
+
+    investment:
+      normal_cost: "$35,000 each to implement in person with my team"
+      total_value: "$420,000 for 12 sessions"
+      your_investment: "$5,998 to cover book donations (100% tax deductible)"
+      financing: "$249 per month through Affirm, interest-free"
+      comparison: "That's less than the cost of a chipotle burrito per day"
+
+    three_ways_free:
+      - "100% tax deductible"
+      - "Could buy books, sell at sticker, keep all bonuses 'free'"
+      - "Give book codes away as amazing lead magnets to get more customers"
+
+    close: "Don't hope things grow. Make them grow."
+
+  acq_scale_advisory_training:
+    opening:
+      - "Welcome to the group."
+      - "You made a smart decision."
+      - "You're gonna love it."
+
+    mindset: "This isn't school. It's not a course. This is a tool. You don't need to 'finish' anything to win - you just need to use it."
+
+    first_24_hours:
+      step_1: "Click the Calendar tab and save the intensives on your calendar"
+      step_2: "Go to the Community tab and post the most valuable tactic that's grown your business"
+
+    posting_guidelines:
+      do: "Post what's working. Help other members win."
+      dont: "Not your questions - your wins"
+      categories: ["Paid Ads", "Content", "Sales", "People/AI", "Strategy/Offer"]
+      principle: "If everyone gives, this group becomes a goldmine. If everyone treats it like an FAQ, the group will suck."
+
+    platform_features:
+      community_tab: "The feed. It's where the best ideas and wins live. Use it daily."
+      calendar_tab: "Every intensive, every call, every live session is here"
+      map_feature: "You can see who else is near you. Meet up. Build real relationships."
+
+    six_intensives:
+      - "Leads Intensive - get a steady flow of qualified leads"
+      - "Sales Intensive - turn leads into paying customers"
+      - "LTV Intensive - upsells, downsells, continuity"
+      - "Profit Intensive - led by me - fix your cash, margins, systems"
+      - "People AI Intensive - led by Leila - build the team right"
+      - "Wealth Intensive - led by Sharran - multiply and protect what you build"
+
+    rules:
+      - "No pitching"
+      - "No whining"
+      - "No entitlement"
+      - "Don't DM people unsolicited"
+      - "Don't post low-effort content"
+      - "Don't post AI fluff"
+      - "Don't try to look smart"
+      - "Be useful"
+
+    close: "You paid to be in the room. This is the room. Let's get to work."
+
+# =============================================================================
+# AGENT USAGE INSTRUCTIONS
+# =============================================================================
+agent_usage:
+  hormozi_ads:
+    description: "Use these ad angles for creating business growth focused paid and organic content"
+    instructions:
+      - "Select angle based on target audience awareness level"
+      - "Adapt hook to specific platform (LinkedIn more professional, Facebook more casual)"
+      - "Always include contrast/comparison element"
+      - "Use math/numbers to make abstract concepts concrete"
+      - "End with clear CTA and PS elements"
+    best_practices:
+      - "Use 'The rumors are true...' hook for curiosity-driven audiences"
+      - "Use 'Quick question' hook for engagement-focused content"
+      - "Use comparison hooks (small vs big, smart vs dumb) for problem-aware audiences"
+      - "Use math hooks ($100K vs $1M owner) for sophisticated business audiences"
+      - "Always address common objections within the ad"
+
+  hormozi_copy:
+    description: "Use these email/SMS sequences for launch campaigns, cart abandonment, and customer journeys"
+    instructions:
+      - "Follow sequence timing exactly - it's optimized for conversion"
+      - "Maintain consistent voice throughout (direct, no-BS, value-focused)"
+      - "Use PS elements for additional persuasion and urgency"
+      - "Segment audiences properly (VIP vs general, purchased vs not)"
+      - "Always include mobile-friendly formatting"
+    sequence_principles:
+      registration: "Build anticipation with mystery + concrete benefits"
+      prelaunch: "Educate while building urgency (countdown + content reveals)"
+      launch_day: "High frequency, high urgency, multiple channels"
+      cart_close: "Escalating urgency with decreasing time windows"
+      post_launch: "Deliver on promises + create next opportunity"
+    key_patterns:
+      mystery_element: "Better than an NFT but less than a Bitcoin"
+      social_proof: "Over 1,000,000 people registered"
+      scarcity: "This goes away the moment the livestream ends"
+      urgency: "Less than 3 hours to grab..."
+      value_stacking: "All these are FREE when you buy..."
+
+  hormozi_landing_pages:
+    description: "Use these landing page structures for offer pages, thank you pages, and sales letters"
+    instructions:
+      - "Lead with transformation/outcome, not features"
+      - "Use FAQ format to address objections proactively"
+      - "Structure VSLs with clear sections (hook, problem, solution, proof, offer, close)"
+      - "Include multiple proof elements (case studies, stats, testimonials)"
+      - "Make next steps crystal clear"
+    page_types:
+      offer_page: "Problem > Solution > Proof > Offer > FAQ > CTA"
+      thank_you_page: "Congratulations > What You Got > How To Use > Next Steps"
+      sales_letter: "Hook > Story > Problem > Solution > Proof > Offer > Urgency > CTA"
+
+  hormozi_vsl:
+    description: "Use these VSL scripts for video sales content and webinar presentations"
+    instructions:
+      - "Open with confession/authenticity element"
+      - "Use 'This is what we use, that's how we know it works' proof structure"
+      - "Stack value with specific page counts and concrete deliverables"
+      - "Address 'will this work for me' objection directly"
+      - "Close with urgency + guarantee + clear CTA"
+    timing_guidelines:
+      hook: "0-30 seconds"
+      problem_setup: "30 seconds - 2 minutes"
+      solution_intro: "2-5 minutes"
+      value_stack: "5-15 minutes"
+      proof_and_case_studies: "15-25 minutes"
+      offer_presentation: "25-35 minutes"
+      urgency_and_close: "35-40 minutes"
+
+# =============================================================================
+# METADATA
+# =============================================================================
+metadata:
+  extraction_date: "2026-02-24"
+  source_files:
+    - "Business_Growth_Ad_Angles.md"
+    - "Retargeting_Ad_Angles_eCommerce.md"
+    - "Skool_Trial_Ad_Angles.md"
+    - "Money_Models_Launch_Ads.md"
+    - "Registration_Page_Content.md"
+    - "VAM_Client_Zoom_Email_Templates.md"
+    - "Main_Offer_Page_with_FAQ.md"
+    - "Launch_Recap_Page_Content.md"
+    - "ACQ_Scale_Advisory_Offer_Page.md"
+    - "ACQ_Scale_Advisory_Skool_Training.md"
+    - "200_Book_Bundle_Thank_You_Page.md"
+    - "800_Book_ACQ_Scale_Thank_You_Page.md"
+    - "Single_Book_Thank_You_Page.md"
+  total_ad_angles: 57
+  total_email_templates: 50
+  total_sms_templates: 12
+  total_landing_pages: 5
+  total_vsl_scripts: 2

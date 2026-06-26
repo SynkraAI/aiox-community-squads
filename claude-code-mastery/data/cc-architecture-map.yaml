@@ -1,0 +1,217 @@
+# Claude Code — Architecture & Bounded Contexts (Decoded)
+# Latest runtime cross-check: 2026-04-03 against <local>/claude-code-main
+# Canonical extracted artifacts: outputs/decoded/claude-code-main/
+
+version: "1.1.0"
+source: "outputs/decoded/claude-code-main"
+total_bounded_contexts: 25
+
+# ═══════════════════════════════════════════════════════════
+# BOUNDED CONTEXTS — 6 Core + 14 Supporting + 5 Generic
+# ═══════════════════════════════════════════════════════════
+
+core_contexts:
+  - id: BC-01
+    name: Conversation Engine
+    responsibility: "Query-response loop, streaming, token budgets, compaction"
+    key_files: ["query.ts", "QueryEngine.ts", "services/compact/"]
+    complexity: very_high
+    rules_estimated: 25
+
+  - id: BC-02
+    name: Tool Execution
+    responsibility: "Tool definition, discovery, validation, orchestration, execution"
+    key_files: ["Tool.ts", "tools.ts", "tools/", "services/tools/"]
+    complexity: very_high
+    rules_estimated: 40
+
+  - id: BC-03
+    name: Permission & Safety
+    responsibility: "Permission modes, classifiers, sandbox, dangerous patterns"
+    key_files: ["utils/permissions/", "hooks/useCanUseTool.tsx"]
+    complexity: high
+    rules_estimated: 106
+    note: "Highest rule density — 106 rules extracted from BashTool alone"
+
+  - id: BC-04
+    name: Agent Orchestration
+    responsibility: "Sub-agent spawning, forking, built-in agents, worktree isolation"
+    key_files: ["tools/AgentTool/", "utils/agentContext.ts"]
+    complexity: high
+    rules_estimated: 15
+
+  - id: BC-05
+    name: Multi-Agent Swarm
+    responsibility: "Teams, teammates, mailbox messaging, permission sync"
+    key_files: ["tools/TeamCreateTool/", "utils/swarm/"]
+    complexity: very_high
+    rules_estimated: 20
+
+  - id: BC-07
+    name: MCP Integration
+    responsibility: "MCP server config, transport, OAuth, channels, elicitation"
+    key_files: ["services/mcp/", "tools/MCPTool/"]
+    complexity: high
+    rules_estimated: 12
+
+supporting_contexts:
+  - id: BC-06
+    name: Task Management
+    key_files: ["Task.ts", "tasks/"]
+
+  - id: BC-08
+    name: Memory & Knowledge
+    key_files: ["utils/claudemd.ts", "memdir/", "services/SessionMemory/"]
+    note: "CLAUDE.md hierarchy, MEMORY.md caps, typed memory taxonomy, assistant append-only daily logs"
+
+  - id: BC-09
+    name: Authentication & Identity
+    key_files: ["services/oauth/", "utils/auth.ts"]
+
+  - id: BC-10
+    name: API Client
+    key_files: ["services/api/", "cost-tracker.ts"]
+
+  - id: BC-11
+    name: Settings & Configuration
+    key_files: ["utils/settings/", "services/policyLimits/"]
+    note: "Hierarchical: user < project shared < project local < managed; separate enterprise MCP surface via managed-mcp.json"
+
+  - id: BC-12
+    name: Terminal UI
+    key_files: ["components/", "screens/", "ink/"]
+
+  - id: BC-13
+    name: Command System
+    key_files: ["commands/", "commands.ts"]
+
+  - id: BC-14
+    name: Plugin System
+    key_files: ["plugins/", "utils/plugins/"]
+    note: "Plugin MCP servers are deduplicated against manual/project configuration"
+
+  - id: BC-15
+    name: Hooks Engine
+    key_files: ["utils/hooks/"]
+    note: "Pre/post-sampling hooks + structured output"
+
+  - id: BC-16
+    name: Skill System
+    key_files: ["skills/", "tools/SkillTool/"]
+    note: "Managed/user/project/plugin/bundled/MCP skill surfaces; conditional activation via paths; full body loaded on invocation; hot reload clears command caches"
+
+  - id: BC-18
+    name: Session Persistence
+    key_files: ["utils/sessionStorage.ts"]
+
+  - id: BC-19
+    name: Bridge (Cloud Relay)
+    key_files: ["bridge/"]
+
+  - id: BC-21
+    name: Cost & Usage Tracking
+    key_files: ["cost-tracker.ts", "costHook.ts"]
+
+  - id: BC-25
+    name: Teleport & Remote
+    key_files: ["utils/teleport/", "remote/"]
+    note: "Remote sessions support reconnect/backoff, viewerOnly mode, and explicit interrupt control"
+
+generic_contexts:
+  - { id: BC-17, name: "Analytics & Telemetry", key_files: ["services/analytics/"] }
+  - { id: BC-20, name: "LSP Integration", key_files: ["services/lsp/"] }
+  - { id: BC-22, name: "Git & Version Control", key_files: ["utils/git.ts", "utils/git/"] }
+  - { id: BC-23, name: "Cron & Scheduling", key_files: ["utils/cron*.ts"] }
+  - { id: BC-24, name: "Voice Input", key_files: ["voice/", "services/voice.ts"] }
+
+# ═══════════════════════════════════════════════════════════
+# ARCHITECTURAL PATTERNS (from Phase 1)
+# ═══════════════════════════════════════════════════════════
+
+architectural_patterns:
+  - pattern: Chain of Responsibility
+    location: bashPermissions.ts
+    rule_encoding: "Ordered validator functions returning PermissionResult"
+    extraction_impact: HIGH
+
+  - pattern: Strategy (dual)
+    location: readOnlyValidation.ts
+    rule_encoding: "Config-driven allowlist + regex fallback"
+    extraction_impact: HIGH
+
+  - pattern: State Machine
+    location: "PermissionMode.ts, getNextPermissionMode.ts"
+    rule_encoding: "Mode transitions + mode-dependent branches"
+    extraction_impact: MEDIUM
+
+  - pattern: Command
+    location: "Tool.ts, all tools/*/"
+    rule_encoding: "Self-describing tool definitions"
+    extraction_impact: MEDIUM
+
+  - pattern: Rules Engine (emergent)
+    location: bashSecurity.ts
+    rule_encoding: "15+ named validators with numeric IDs (BASH_SECURITY_CHECK_IDS)"
+    extraction_impact: VERY_HIGH
+    note: "bashCommandIsSafe_DEPRECATED() calls 15+ validators sequentially — already a rule catalog in code"
+
+# ═══════════════════════════════════════════════════════════
+# AGENT TOOL AVAILABILITY MATRIX (RF-01 from Phase 3)
+# ═══════════════════════════════════════════════════════════
+
+agent_tool_matrix:
+  - agent_type: Main Session
+    user_type: any
+    tools: ALL
+
+  - agent_type: Async Agent
+    user_type: ant
+    tools: "Async Allowlist + Agent"
+
+  - agent_type: Async Agent
+    user_type: external
+    tools: "Async Allowlist (no Agent)"
+
+  - agent_type: In-Process Teammate
+    user_type: ant
+    tools: "Async + Task/Message + Agent"
+
+  - agent_type: In-Process Teammate
+    user_type: external
+    tools: "Async + Task/Message (no Agent)"
+
+  - agent_type: Coordinator
+    user_type: any
+    tools: "Agent, TaskStop, SendMessage, SyntheticOutput ONLY"
+
+runtime_contract_highlights:
+  permissions:
+    external_modes: [default, acceptEdits, dontAsk, bypassPermissions, plan]
+    gated_modes:
+      auto: "Feature-gated classifier mode"
+    notes:
+      - "dontAsk is fail-closed: promptable actions become deny"
+      - "bypassPermissions is launch-gated and still respects safety checks"
+  memory:
+    entrypoint: "MEMORY.md"
+    caps:
+      max_lines: 200
+      max_bytes: 25000
+    exclusion_rule: "Do not store state derivable from code, architecture, or git history"
+    assistant_mode: "KAIROS writes append-only daily logs later distilled into MEMORY.md"
+  mcp:
+    project_surface: ".mcp.json"
+    enterprise_surface: "managed-mcp.json"
+    precedence: "Manual/project config wins over plugin duplicates; first plugin wins over later duplicates"
+    enterprise_lock: "Enterprise MCP configuration has exclusive control when present"
+  keybindings:
+    file: "~/.claude/keybindings.json"
+    availability: "Currently internal/feature-gated"
+    valid_contexts: [Global, Chat, Autocomplete, Confirmation, Help]
+    reserved_shortcuts: "Platform and terminal-reserved shortcuts are validated separately"
+  skills:
+    discovery: "Managed, user, project, plugin, bundled, explicit --add-dir, and feature-gated MCP surfaces"
+    activation: "paths frontmatter creates conditional skills that activate dynamically on matching cwd-relative files"
+    routing: "Description, when_to_use, and invocability metadata drive discovery; the full body is loaded on invocation"
+    runtime_context: "Only context: fork is special; any other value behaves as inline/default"
+    safety: "Inline shell preprocessing is disabled for remote MCP skills"

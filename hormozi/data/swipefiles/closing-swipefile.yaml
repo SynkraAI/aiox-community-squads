@@ -1,0 +1,716 @@
+# Closing Swipefile - Hormozi Method
+# Extracted from: $100M Closing Playbook.pdf
+version: "1.0"
+extraction_date: "2026-02-23"
+source_files:
+  - "02 Playbooks/Fechamento/$100M Closing Playbook.pdf"
+
+# ==============================================================================
+# FRAMEWORK CLOSER - Estrutura Principal
+# ==============================================================================
+frameworks:
+  closer:
+    description: "Framework de 6 passos para fechar qualquer venda"
+    acronimo:
+      C: "Clarify why they are there"
+      L: "Label them with a problem"
+      O: "Overview their past pain"
+      S: "Sell the vacation"
+      E: "Explain away their concerns"
+      R: "Reinforce their decision"
+
+    passos_detalhados:
+      1_clarify:
+        objetivo: "Entender por que a pessoa esta na ligacao"
+        script: "Entao, [NOME], eu vi que voce preencheu o formulario sobre [TOPICO]. O que te fez clicar no botao?"
+        dicas:
+          - "Deixe eles falarem 80% do tempo"
+          - "Anote palavras-chave que eles usam"
+          - "Repita as palavras deles de volta"
+
+      2_label:
+        objetivo: "Rotular o problema de forma que eles concordem"
+        script: "Entao parece que o maior desafio agora e [PROBLEMA DELES]. Isso esta certo?"
+        tecnica: "Use as EXATAS palavras que eles usaram"
+
+      3_overview:
+        objetivo: "Explorar a dor passada para criar urgencia"
+        perguntas:
+          - "Ha quanto tempo voce esta lidando com isso?"
+          - "O que voce ja tentou?"
+          - "Quanto voce acha que isso ja te custou?"
+          - "Como isso afeta outras areas da sua vida?"
+        principio: "Dor passada prediz comprometimento futuro"
+
+      4_sell_vacation:
+        objetivo: "Vender o destino, nao o aviao"
+        script: "Imagine que daqui 90 dias voce acorda e [RESULTADO DESEJADO]. Como seria seu dia?"
+        regra: "NUNCA venda o processo. Venda o resultado."
+        exemplos:
+          errado: "Voce vai ter acesso a 12 modulos..."
+          certo: "Voce vai acordar com a agenda lotada de clientes pagantes..."
+
+      5_explain_concerns:
+        objetivo: "Lidar com objecoes ANTES delas surgirem"
+        transicao: "A maioria das pessoas nesse ponto tem algumas perguntas..."
+        tecnica: "Levantar e resolver objecoes proativamente"
+
+      6_reinforce:
+        objetivo: "Reforcar a decisao apos o sim"
+        script: "Parabens, [NOME]. Voce acabou de tomar uma decisao que [X]% das pessoas nunca toma..."
+        importancia: "Reduz cancelamentos e chargebacks em ate 40%"
+
+# ==============================================================================
+# SCRIPTS DE ABERTURA
+# ==============================================================================
+scripts:
+  abertura:
+    padrao:
+      script: |
+        Oi [NOME], tudo bem? Aqui e o [SEU NOME] da [EMPRESA].
+        Voce preencheu um formulario sobre [TOPICO] - ainda faz sentido conversar sobre isso?
+
+        [ESPERAR RESPOSTA]
+
+        Otimo. Antes de comecar, deixa eu te fazer algumas perguntas pra ter certeza
+        que consigo te ajudar. Pode ser?
+      notas:
+        - "Pedir permissao para perguntas aumenta compliance"
+        - "Tom conversacional, nao de vendedor"
+
+    alta_energia:
+      script: |
+        [NOME]! E o [SEU NOME]. Como voce esta?
+
+        [ESPERAR]
+
+        Cara, eu to empolgado com essa ligacao. Vi que voce ta buscando [RESULTADO].
+        Me conta - o que te fez clicar no botao?
+      quando_usar: "Leads quentes, eventos, listas engajadas"
+
+    reativacao:
+      script: |
+        Oi [NOME], aqui e o [SEU NOME] da [EMPRESA].
+        Voce conversou com a gente [TEMPO ATRAS] sobre [TOPICO].
+
+        Queria saber - voce ja resolveu isso ou ainda e uma prioridade?
+      quando_usar: "Leads antigos, no-shows, follow-up"
+
+  qualificacao:
+    script_bant_adaptado:
+      perguntas:
+        situacao: "Me conta um pouco sobre sua situacao atual com [AREA]"
+        problema: "Qual o maior desafio que voce enfrenta hoje?"
+        impacto: "Como isso esta afetando [AREA DA VIDA/NEGOCIO]?"
+        tentativas: "O que voce ja tentou pra resolver?"
+        timeline: "Quando voce precisa ter isso resolvido?"
+        decisao: "Alem de voce, quem mais participa dessa decisao?"
+        investimento: "Voce ja tem uma ideia de quanto pretende investir nisso?"
+
+    desqualificacao_elegante:
+      script: |
+        [NOME], sendo honesto com voce - pelo que voce me descreveu,
+        eu nao acho que somos a melhor opcao pra voce agora.
+
+        O que eu sugiro e [ALTERNATIVA].
+
+        Mas se no futuro [CONDICAO], a gente pode conversar de novo.
+      quando_usar:
+        - "Lead sem budget"
+        - "Timing errado"
+        - "Problema que voce nao resolve"
+      beneficio: "Constroi confianca e gera referrals"
+
+  apresentacao:
+    estrutura_3_partes:
+      parte_1_contexto:
+        duracao: "2-3 minutos"
+        objetivo: "Conectar a solucao ao problema especifico deles"
+        script: |
+          Baseado no que voce me contou, eu vou te mostrar exatamente como
+          [RESULTADO QUE ELES QUEREM] sem [DOR QUE ELES TEM].
+
+          A gente desenvolveu um sistema de [X] etapas que ja ajudou
+          [NUMERO] pessoas a [RESULTADO COMPROVADO].
+
+      parte_2_mecanismo:
+        duracao: "5-7 minutos"
+        objetivo: "Explicar COMO funciona (mas nao TUDO)"
+        regra: "Ensina o QUE fazer, nao COMO fazer"
+        estrutura:
+          - "Etapa 1: [NOME] - [RESULTADO DA ETAPA]"
+          - "Etapa 2: [NOME] - [RESULTADO DA ETAPA]"
+          - "Etapa 3: [NOME] - [RESULTADO DA ETAPA]"
+
+      parte_3_prova:
+        duracao: "3-5 minutos"
+        objetivo: "Provar que funciona para pessoas como eles"
+        elementos:
+          - "Case study de cliente similar"
+          - "Resultado especifico com numeros"
+          - "Timeline realista"
+        script: |
+          Deixa eu te contar sobre o [NOME DO CLIENTE].
+          Ele era [SITUACAO SIMILAR A DO LEAD].
+          Em [TEMPO], ele conseguiu [RESULTADO ESPECIFICO].
+          Hoje ele [SITUACAO ATUAL].
+
+  transicao_para_preco:
+    script_suave:
+      script: |
+        [NOME], pelo que a gente conversou, parece que isso faz sentido pra voce.
+
+        Antes de eu te falar sobre o investimento, me tira uma duvida:
+        Se isso fizer sentido financeiramente, voce estaria pronto pra comecar?
+      objetivo: "Isolar a objecao de dinheiro das outras"
+
+    script_direto:
+      script: |
+        O investimento pra ter acesso a tudo isso e [PRECO].
+
+        [PAUSA - NAO FALE NADA]
+
+        [ESPERAR REACAO]
+      regra: "Quem fala primeiro depois do preco, perde"
+
+  fechamento:
+    assumido:
+      script: |
+        Entao [NOME], a gente vai comecar com o plano [X] ou o [Y]?
+      quando_usar: "Quando lead deu sinais claros de compra"
+
+    alternativa:
+      script: |
+        Voce prefere comecar essa semana ou esperar o proximo grupo?
+      tecnica: "Oferece duas opcoes - ambas sao 'sim'"
+
+    urgencia_real:
+      script: |
+        Olha, essa condicao especial e porque voce veio de [ORIGEM].
+        Depois de [DEADLINE], o preco volta pra [PRECO CHEIO].
+
+        Faz sentido aproveitar agora?
+      alerta: "Escassez DEVE ser real"
+
+    resumo:
+      script: |
+        Deixa eu recapitular o que voce leva:
+
+        [BENEFICIO 1] - que resolve [DOR 1]
+        [BENEFICIO 2] - que te da [RESULTADO 2]
+        [BENEFICIO 3] - que garante [SEGURANCA]
+
+        Tudo isso por [PRECO] em vez de [PRECO MAIOR].
+
+        Vamos fazer isso?
+
+# ==============================================================================
+# TRATAMENTO DE OBJECOES
+# ==============================================================================
+objection_handling:
+  framework:
+    nome: "ACAC - Acknowledge, Clarify, Answer, Confirm"
+    passos:
+      1_acknowledge: "Entendo, [NOME]. Faz total sentido pensar nisso."
+      2_clarify: "Quando voce diz [OBJECAO], voce quer dizer [INTERPRETACAO]?"
+      3_answer: "[RESPOSTA ESPECIFICA]"
+      4_confirm: "Isso responde sua preocupacao?"
+
+  objecoes_comuns:
+    preco_caro:
+      variantes:
+        - "E muito caro"
+        - "Nao tenho esse dinheiro"
+        - "Preciso pensar no investimento"
+
+      respostas:
+        comparacao_custo:
+          script: |
+            Entendo. Me fala - quanto voce acha que ja perdeu
+            por nao ter resolvido isso ate agora?
+
+            [ESPERAR]
+
+            Entao voce ta me dizendo que [CUSTO DA INACAO] e aceitavel,
+            mas investir [PRECO] pra resolver definitivamente nao e?
+
+        parcelamento:
+          script: |
+            Se a gente conseguir quebrar isso em parcelas que
+            caibam no seu orcamento mensal, faria sentido?
+
+            Quanto por mes seria confortavel pra voce?
+
+        perspectiva_investimento:
+          script: |
+            Deixa eu te perguntar uma coisa:
+            Se voce tivesse certeza que isso ia te trazer
+            [RESULTADO QUE ELES QUEREM], ainda seria caro?
+
+            [ESPERAR]
+
+            Entao a questao nao e o preco - e a confianca. Certo?
+
+    preciso_pensar:
+      diagnostico: "Geralmente significa objecao nao verbalizada"
+
+      respostas:
+        descoberta:
+          script: |
+            Claro, [NOME]. E uma decisao importante.
+
+            Me ajuda a entender - o que especificamente voce
+            precisa pensar? E sobre o investimento, o timing,
+            ou se isso realmente funciona?
+          objetivo: "Descobrir a objecao real"
+
+        deadline:
+          script: |
+            Entendo. Quanto tempo voce precisa?
+
+            [ESPERAR]
+
+            Ok. Vou te ligar [DIA/HORA]. Ate la, o que mais
+            voce precisa saber pra tomar a decisao?
+
+        reversao:
+          script: |
+            [NOME], o que exatamente mudaria entre agora e
+            depois de pensar?
+
+            Porque geralmente quando as pessoas falam isso,
+            e porque tem alguma coisa que eu nao expliquei direito.
+
+            O que ficou confuso?
+
+    preciso_falar_com:
+      variantes:
+        - "Preciso falar com meu socio"
+        - "Preciso falar com minha esposa/marido"
+        - "Preciso consultar minha equipe"
+
+      respostas:
+        envolvimento:
+          script: |
+            Faz total sentido. [PESSOA] deveria estar nessa conversa.
+
+            Vamos fazer o seguinte: eu marco uma ligacao com
+            voces dois. Qual o melhor horario?
+          objetivo: "Incluir o decisor na proxima call"
+
+        diagnostico:
+          script: |
+            Entendo. Se dependesse so de voce, voce faria?
+
+            [SE SIM]
+
+            O que voce acha que [PESSOA] vai perguntar ou
+            se preocupar?
+
+            [RESPONDER OBJECOES POTENCIAIS]
+
+            Voce se sente confiante pra explicar isso pra ele/ela?
+
+        armamento:
+          script: |
+            Ok. Deixa eu te dar as informacoes que voce precisa
+            pra ter essa conversa.
+
+            [DAR PONTOS-CHAVE]
+
+            Voce consegue falar com ele/ela ate [PRAZO]?
+            Eu te ligo [HORA] pra saber o que decidiram.
+
+    nao_e_o_momento:
+      respostas:
+        custo_espera:
+          script: |
+            Entendo, timing e importante.
+
+            Mas me conta - ha quanto tempo voce ta adiando isso?
+
+            [ESPERAR]
+
+            E quanto voce acha que perdeu nesse tempo todo?
+
+            O que vai ser diferente daqui [TEMPO QUE ELES QUEREM]?
+
+        urgencia_real:
+          script: |
+            O que precisaria acontecer pra ser o momento certo?
+
+            [ESPERAR]
+
+            E se eu te mostrasse como resolver [OBSTACULO]?
+            Ai faria sentido comecar?
+
+    ja_tentei_e_nao_funcionou:
+      resposta:
+        script: |
+          Eu entendo completamente, [NOME]. Voce ja investiu
+          tempo e dinheiro antes e nao deu certo.
+
+          Me conta - o que exatamente voce tentou?
+
+          [ESPERAR]
+
+          Entendi. E isso e bem diferente do que a gente faz.
+
+          [EXPLICAR DIFERENCIAL]
+
+          Faz sentido por que dessa vez seria diferente?
+
+    medo_de_nao_funcionar:
+      resposta:
+        script: |
+          Essa preocupacao e legitima. Deixa eu te mostrar
+          como a gente garante seu resultado:
+
+          [GARANTIA]
+
+          Se nao funcionar, voce [PROTECAO].
+
+          O unico risco real e voce continuar fazendo
+          o que ja ta fazendo e esperando um resultado diferente.
+
+          Concorda?
+
+# ==============================================================================
+# TECNICAS AVANCADAS
+# ==============================================================================
+techniques:
+  rapport:
+    espelhamento:
+      descricao: "Copiar tom, velocidade e palavras do lead"
+      exemplos:
+        - "Se falam devagar, fale devagar"
+        - "Se usam girias, use as mesmas girias"
+        - "Repita as ultimas 2-3 palavras como pergunta"
+
+    validacao_emocional:
+      descricao: "Reconhecer sentimentos antes de resolver"
+      script: "Deve ser frustrante lidar com isso ha tanto tempo..."
+
+  controle_da_conversa:
+    perguntas_direcionadas:
+      descricao: "Toda pergunta leva a uma conclusao especifica"
+      exemplos:
+        setup: "O que te impede de ter [RESULTADO]?"
+        direcao: "Leva a: falta de [SOLUCAO QUE VOCE OFERECE]"
+
+    assumir_venda:
+      descricao: "Agir como se a compra fosse certa"
+      exemplos:
+        - "Quando a gente comecar..."
+        - "No seu primeiro mes..."
+        - "Voce vai receber o acesso em..."
+
+    silencio_estrategico:
+      descricao: "Ficar em silencio apos perguntas importantes"
+      quando_usar:
+        - "Depois de falar o preco"
+        - "Depois de perguntar 'faz sentido?'"
+        - "Depois de objecao do cliente"
+      duracao: "Minimo 3-5 segundos (parece uma eternidade)"
+
+  ancoragem:
+    preco_alto_primeiro:
+      descricao: "Mostrar opcao mais cara antes"
+      exemplo: |
+        "O programa completo com mentoria individual e R$15.000.
+        Mas como voce veio por [ORIGEM], tenho uma opcao
+        de R$4.997 que inclui [ITENS]."
+
+    comparacao_externa:
+      descricao: "Comparar com alternativas mais caras"
+      exemplo: |
+        "Contratar uma agencia pra fazer isso custaria
+        R$10.000/mes. Voce ta levando o sistema completo
+        por menos do que 2 meses de agencia."
+
+  urgencia_escassez:
+    tipos_legitimos:
+      - "Vagas limitadas por capacidade real"
+      - "Bonus temporario (com data real)"
+      - "Preco promocional (com deadline real)"
+      - "Turma com data de inicio"
+    regra: "NUNCA invente escassez. Constroi ou destroi confianca."
+
+  storytelling:
+    estrutura_hero:
+      passos:
+        1: "Heroi (cliente similar) com problema"
+        2: "Encontra guia (voce/produto)"
+        3: "Supera obstaculos (com seu metodo)"
+        4: "Conquista resultado (especifico)"
+        5: "Nova vida (estado atual)"
+      exemplo: |
+        "O Joao era dono de academia, 80 alunos, trabalhando
+        14 horas por dia. Achava que era assim mesmo.
+
+        Quando a gente comecou a trabalhar juntos, implementamos
+        o sistema de vendas em 3 semanas.
+
+        Nos primeiros 30 dias, ele fechou 47 novos alunos.
+
+        Hoje ele tem 200+ membros, trabalha 6 horas por dia
+        e acaba de abrir a segunda unidade."
+
+# ==============================================================================
+# MINDSET DO CLOSER
+# ==============================================================================
+mindset:
+  principios_fundamentais:
+    servico_nao_venda:
+      descricao: "Voce esta ajudando, nao vendendo"
+      script_interno: |
+        "Eu tenho algo que pode mudar a vida dessa pessoa.
+        Seria negligencia minha NAO oferecer."
+
+    desapego_do_resultado:
+      descricao: "Seu valor nao depende do 'sim'"
+      pratica: "Desapego emocional, comprometimento total"
+
+    abundancia:
+      descricao: "Sempre tem mais leads"
+      impacto: "Remove desespero da voz e postura"
+
+    convicao:
+      descricao: "Crenca inabalavel no produto"
+      teste: "Voce indicaria pra sua mae?"
+      se_nao: "Melhore o produto ou mude de empresa"
+
+  preparacao:
+    antes_da_call:
+      checklist:
+        - "Revisar informacoes do lead"
+        - "Preparar ambiente silencioso"
+        - "Testar audio e video"
+        - "Estado mental: 'estou aqui pra ajudar'"
+
+    rotina_diaria:
+      manha:
+        - "Revisar metas e conversoes"
+        - "Ler depoimentos de clientes"
+        - "Aquecer a voz"
+      entre_calls:
+        - "Reset mental: cada call e nova"
+        - "Nao carregar energia da anterior"
+
+  gestao_emocional:
+    apos_rejeicao:
+      script_interno: "Proximo. Esse nao era o cliente certo."
+      pratica: "5 respiracoes profundas, proxima call"
+
+    apos_fechamento:
+      script_interno: "Ajudei mais uma pessoa. Proximo."
+      pratica: "Celebrar internamente, manter compostura"
+
+# ==============================================================================
+# METRICAS E CHECKLISTS
+# ==============================================================================
+checklists:
+  pre_call:
+    items:
+      - "Lead info revisado (nome, origem, respostas formulario)"
+      - "Script relevante selecionado"
+      - "CRM aberto com ficha do lead"
+      - "Ambiente silencioso e profissional"
+      - "Agua disponivel"
+      - "Energia e mindset corretos"
+
+  durante_call:
+    abertura:
+      - "Confirmar que e o momento certo"
+      - "Pedir permissao para perguntas"
+      - "Estabelecer rapport inicial"
+    qualificacao:
+      - "Problema clarificado"
+      - "Dor quantificada (tempo, dinheiro)"
+      - "Tentativas anteriores exploradas"
+      - "Timeline identificada"
+      - "Decisores mapeados"
+      - "Budget qualificado"
+    apresentacao:
+      - "Solucao conectada ao problema especifico"
+      - "Mecanismo explicado (nao detalhado demais)"
+      - "Prova social relevante compartilhada"
+      - "Resultado pintado vividamente"
+    fechamento:
+      - "Transicao suave para preco"
+      - "Silencio apos preco"
+      - "Objecoes tratadas"
+      - "Proximos passos claros"
+
+  pos_call:
+    fechamento_positivo:
+      - "Onboarding agendado"
+      - "Email de boas-vindas enviado"
+      - "CRM atualizado"
+      - "Decisao reforçada"
+    fechamento_negativo:
+      - "Motivo real registrado"
+      - "Follow-up agendado (se aplicavel)"
+      - "Lead categorizado corretamente"
+      - "Aprendizado anotado"
+
+  metricas_acompanhar:
+    diarias:
+      - "Numero de calls realizadas"
+      - "Taxa de show-up"
+      - "Taxa de fechamento"
+      - "Ticket medio"
+    semanais:
+      - "Conversao por origem de lead"
+      - "Tempo medio de call"
+      - "Objecoes mais comuns"
+      - "Scripts que mais convertem"
+    mensais:
+      - "Receita total"
+      - "Comissoes"
+      - "Churn rate dos clientes que fechou"
+      - "LTV dos clientes que fechou"
+
+  kpis_benchmark:
+    taxa_show_up:
+      ruim: "< 50%"
+      ok: "50-70%"
+      bom: "70-85%"
+      excelente: "> 85%"
+    taxa_fechamento:
+      ruim: "< 10%"
+      ok: "10-20%"
+      bom: "20-35%"
+      excelente: "> 35%"
+    tempo_call:
+      muito_curto: "< 15 min (nao qualificou direito)"
+      ideal: "30-45 min"
+      muito_longo: "> 60 min (perdeu controle)"
+
+# ==============================================================================
+# FOLLOW-UP SEQUENCES
+# ==============================================================================
+follow_up:
+  no_show:
+    dia_mesmo:
+      canal: "WhatsApp/SMS"
+      script: |
+        Oi [NOME], tudo bem? Tivemos uma ligacao agendada agora.
+        Aconteceu alguma coisa? Posso remarcar pra ainda hoje?
+
+    dia_seguinte:
+      canal: "Email + WhatsApp"
+      script: |
+        [NOME], tentei te ligar ontem sobre [TOPICO].
+        Sei que a vida acontece - quer remarcar?
+
+        Tenho horario [OPCAO 1] ou [OPCAO 2].
+
+    terceira_tentativa:
+      canal: "Email"
+      script: |
+        [NOME], essa e minha ultima tentativa.
+
+        Entendo se as prioridades mudaram.
+        Se ainda fizer sentido conversar sobre [RESULTADO],
+        e so responder esse email.
+
+        Senao, sem problemas - te desejo sucesso.
+
+  nao_fechou:
+    24_horas:
+      canal: "Email"
+      script: |
+        [NOME], obrigado pela conversa de ontem.
+
+        Fiquei pensando no que voce disse sobre [DOR ESPECIFICA].
+
+        [RECURSO/INSIGHT UTIL]
+
+        Se tiver mais perguntas, to aqui.
+
+    3_dias:
+      canal: "WhatsApp"
+      script: |
+        Oi [NOME]! Surgiu alguma duvida desde nossa conversa?
+
+    7_dias:
+      canal: "Email"
+      script: |
+        [NOME], queria compartilhar algo que achei relevante
+        pra sua situacao com [PROBLEMA]:
+
+        [CASE STUDY OU DEPOIMENTO SIMILAR]
+
+        Ainda faz sentido resolver isso?
+
+    30_dias:
+      canal: "Email"
+      script: |
+        [NOME], faz um mes desde nossa conversa.
+
+        Queria saber - voce encontrou outra solucao pra
+        [PROBLEMA] ou ainda e uma prioridade?
+
+        Se quiser retomar, os precos mudaram mas consigo
+        manter a condicao original por mais essa semana.
+
+# ==============================================================================
+# AGENT USAGE - INSTRUCOES PARA AGENTES AI
+# ==============================================================================
+agent_usage:
+  hormozi_closer:
+    descricao: "Agente especializado em fechamento de vendas high-ticket"
+
+    quando_usar:
+      - "Criar scripts de vendas personalizados"
+      - "Treinar equipe de closers"
+      - "Analisar calls gravadas"
+      - "Otimizar processo de vendas"
+      - "Preparar respostas para objecoes"
+
+    instrucoes:
+      - "Use o framework CLOSER como estrutura base"
+      - "Adapte scripts para o contexto especifico do usuario"
+      - "Sempre considere o produto/servico do usuario"
+      - "Personalize objecoes para o nicho"
+      - "Mantenha tom conversacional, nao robotico"
+
+    exemplos_uso:
+      criar_script:
+        input: "Crie um script de fechamento para consultoria de marketing"
+        processo:
+          - "Identificar avatar do cliente"
+          - "Mapear dores principais"
+          - "Adaptar cada etapa do CLOSER"
+          - "Criar tratamentos de objecao especificos"
+          - "Incluir scripts de follow-up"
+
+      analisar_call:
+        input: "Analise essa call e sugira melhorias"
+        processo:
+          - "Verificar se CLOSER foi seguido"
+          - "Identificar onde perdeu controle"
+          - "Avaliar tratamento de objecoes"
+          - "Sugerir scripts alternativos"
+
+      treinar_closer:
+        input: "Prepare treinamento para novo closer"
+        processo:
+          - "Comecar com mindset e principios"
+          - "Ensinar framework CLOSER"
+          - "Praticar scripts principais"
+          - "Role-play de objecoes"
+          - "Definir metricas de sucesso"
+
+    integracao_outros_swipefiles:
+      copy_sales: "Usar frameworks de copy na apresentacao"
+      pricing: "Aplicar ancoragem e value equation"
+      hooks: "Usar hooks na abertura da call"
+      proof: "Integrar prova social nos scripts"
+
+    metricas_sucesso:
+      - "Taxa de fechamento > 25%"
+      - "Tempo de call entre 30-45 min"
+      - "Churn rate < 10%"
+      - "NPS dos clientes fechados > 8"

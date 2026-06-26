@@ -1,0 +1,247 @@
+id: wf-brand-mockup-generation
+name: Brand Mockup Generation Workflow
+description: "Gera mockups de identidade visual em touchpoints: definição → prompt engineering → geração → curadoria → refinamento → entrega"
+version: 1.0.0
+squad: brand
+created: "2026-03-06"
+type: legacy
+config:
+  mode: sequential
+  checkpoint_required: true
+  max_curation_loops: 3
+  cross_squad:
+    - squad: aiox-design
+      agent: nano-banana-generator
+      tasks:
+        - image-generate
+        - image-batch
+        - prompt-refine
+inputs:
+  required:
+    - name: brand_name
+      type: string
+    - name: brand_context
+      type: string
+      description: Brandbook ou brief da marca
+    - name: logo_path
+      type: string
+      description: Path do logo aprovado (output do wf-logo-brainstorm)
+  optional:
+    - name: touchpoints
+      type: list
+      description: Touchpoints específicos (business card, letterhead, social, packaging, etc.)
+      default:
+        - business-card
+        - letterhead
+        - social-media-profile
+        - website-hero
+    - name: color_palette
+      type: string
+      description: Paleta de cores definida
+    - name: typography
+      type: string
+      description: Tipografia definida
+workspace_contract:
+  required_preflight:
+    - bash squads/brand/scripts/bootstrap-brand-workspace.sh {{brand_name}}
+    - bash squads/brand/scripts/validate-brand-essentials.sh
+    - node workspace/scripts/resolve-squad-workspace-readiness.cjs --squad=brand --business={{brand_name}} --context-type=brand
+  context_task: load-workspace-context
+  canonical_output_root: workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/
+prerequisites:
+  environment:
+    - variable: GEMINI_API_KEY
+      location: .env
+      required_for: phases 3 and 5 (image generation) — primary provider
+      priority: primary
+    - variable: OPENROUTER_API_KEY
+      location: .env
+      required_for: phases 3 and 5 (image generation) — fallback provider
+      priority: fallback
+phases:
+  - id: workspace_context
+    name: Workspace preflight and context load
+    executor: brand-chief
+    tasks:
+      - task: load-workspace-context.md
+        inputs:
+          - brand_name
+  - id: touchpoint_definition
+    name: Touchpoint Definition & Brief
+    executor: wheeler-brand-design
+    elicit: true
+    description: Define quais touchpoints mockupar e coleta requisitos visuais
+    inputs:
+      - brand_name
+      - brand_context
+      - logo_path
+      - touchpoints
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/mockup-brief.md
+    checkpoint:
+      gate: Touchpoints aprovados pelo usuário
+      blocking: true
+  - id: prompt_engineering
+    name: Mockup Prompt Engineering
+    executor: wheeler-brand-design
+    description: Cria prompts especializados para cada touchpoint com prefixos de consistência
+    inputs:
+      - mockup_brief
+      - logo_path
+      - color_palette
+      - typography
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/mockup-prompts.yaml
+    checkpoint:
+      gate: Prompts seguem SCDS e incluem consistency prefixes
+      blocking: true
+  - id: generation
+    name: AI Mockup Generation
+    executor: nano-banana-generator
+    cross_squad: aiox-design
+    description: Gera mockups via Gemini/OpenRouter para cada touchpoint
+    inputs:
+      - mockup_prompts
+      - output_dir
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/generations/
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/generation-log.yaml
+    checkpoint:
+      gate: Imagens geradas sem erro
+      blocking: true
+  - id: curation
+    name: Mockup Curation & Validation
+    executor: wheeler-brand-design
+    elicit: true
+    description: "Curadoria visual: consistência de marca, qualidade, fidelidade ao brief"
+    loop:
+      max_iterations: 3
+      on_iterate: prompt_engineering
+      on_approve: refinement
+    inputs:
+      - generations_dir
+      - generation_log
+      - mockup_brief
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/curation-report.md
+    checkpoint:
+      gate: Pelo menos 1 mockup aprovado por touchpoint
+      blocking: true
+  - id: refinement
+    name: Mockup Refinement
+    executor: nano-banana-generator
+    cross_squad: aiox-design
+    description: Refina mockups selecionados com ajustes de detalhe
+    inputs:
+      - selected_mockups
+      - refinement_notes
+      - mockup_prompts
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/refinements/
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/refinement-log.yaml
+  - id: deliverable
+    name: Final Mockup Package
+    executor: wheeler-brand-design
+    elicit: true
+    description: Consolida mockups finais + relatório de identidade visual aplicada
+    inputs:
+      - refinements_dir
+      - mockup_brief
+      - curation_report
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/mockup-spec.md
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/mockup-report.md
+outputs:
+  base_path: workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/
+  artifacts:
+    - mockup-brief.md
+    - mockup-prompts.yaml
+    - generations/
+    - generation-log.yaml
+    - curation-report.md
+    - refinements/
+    - refinement-log.yaml
+    - mockup-spec.md
+    - mockup-report.md
+final_output:
+  format: markdown
+  includes:
+    - mockup_spec
+    - mockup_report
+workflow:
+  id: wf-brand-mockup-generation
+  name: Brand Mockup Generation Workflow
+  version: 1.0.0
+  description: "Gera mockups de identidade visual em touchpoints: definição → prompt engineering → geração → curadoria → refinamento → entrega"
+  type: legacy
+  sequence:
+    - step: workspace-context
+      id: workspace-context
+      phase: 1
+      phase_name: Workspace preflight and context load
+      agent: brand-chief
+      action: execute_workspace-preflight-and-context-load
+      next: touchpoint-definition
+    - step: touchpoint-definition
+      id: touchpoint-definition
+      phase: 2
+      phase_name: Touchpoint Definition & Brief
+      agent: wheeler-brand-design
+      action: execute_define-quais-touchpoints-mockupar-e-coleta-requisitos-visuais
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/mockup-brief.md
+      next: prompt-engineering
+    - step: prompt-engineering
+      id: prompt-engineering
+      phase: 3
+      phase_name: Mockup Prompt Engineering
+      agent: wheeler-brand-design
+      action: execute_cria-prompts-especializados-para-cada-touchpoint-com-prefixos-de
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/mockup-prompts.yaml
+      next: generation
+    - step: generation
+      id: generation
+      phase: 4
+      phase_name: AI Mockup Generation
+      agent: nano-banana-generator
+      action: execute_gera-mockups-via-gemini-openrouter-para-cada-touchpoint
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/generations/
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/generation-log.yaml
+      next: curation
+    - step: curation
+      id: curation
+      phase: 5
+      phase_name: Mockup Curation & Validation
+      agent: wheeler-brand-design
+      action: execute_curadoria-visual-consist-ncia-de-marca-qualidade-fidelidade-ao-b
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/curation-report.md
+      next: refinement
+    - step: refinement
+      id: refinement
+      phase: 6
+      phase_name: Mockup Refinement
+      agent: nano-banana-generator
+      action: execute_refina-mockups-selecionados-com-ajustes-de-detalhe
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/refinements/
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/refinement-log.yaml
+      next: deliverable
+    - step: deliverable
+      id: deliverable
+      phase: 7
+      phase_name: Final Mockup Package
+      agent: wheeler-brand-design
+      action: execute_consolida-mockups-finais-relat-rio-de-identidade-visual-aplicada
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/mockup-spec.md
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/mockups/mockup-report.md
+    - workflow_end:
+        id: complete
+        action: workflow_complete
+  handoff_prompts:
+    brand-chief_to_wheeler-brand-design: Handoff context from brand-chief to wheeler-brand-design. Preserve outputs, risks, and open decisions.
+    wheeler-brand-design_to_nano-banana-generator: Handoff context from wheeler-brand-design to nano-banana-generator. Preserve outputs, risks, and open decisions.
+    nano-banana-generator_to_wheeler-brand-design: Handoff context from nano-banana-generator to wheeler-brand-design. Preserve outputs, risks, and open decisions.

@@ -1,0 +1,190 @@
+# $100M Fast Cash Playbook Swipefile
+# Source: Alex Hormozi - Acquisition.com
+# Extracted: 2026-02-23
+
+version: "1.0"
+source:
+  title: "$100M Fast Cash Playbook"
+  author: "Alex Hormozi"
+  publisher: "Acquisition.com"
+  year: 2025
+
+core_concept:
+  definition: "Limited time offers advertised to your warmest audiences"
+  target_audiences:
+    - "Current customers"
+    - "Previous customers"
+    - "Engaged leads (explicit permission to contact)"
+  frequency: "Run every 90 days (quarterly)"
+  principle: "Revenue is vanity. Profit is sanity. Cash is reality."
+
+frameworks:
+  10x_the_10_percent:
+    rule: "If you get 10% of customers to pay 10x the price, you double your revenue"
+    benefit: "Extra revenue drops straight to bottom line since customer already acquired"
+    mindset: "Worst case - you just don't sell that many. You're no worse off."
+
+  fast_cash_characteristics:
+    - "Limited in spots (scarcity)"
+    - "High touch (exclusivity)"
+    - "Sold for lots of money (big ticket)"
+    - "For a limited time (urgency)"
+
+strategies:
+  what_to_sell:
+    attention:
+      - "1 on 1 attention from you or senior persons"
+      - "Many on 1 - team of people supports one customer"
+    personalization:
+      - "Personalized, customized versions of standard solutions"
+    convenience:
+      - "24/7 support"
+      - "Extended hours"
+      - "Exclusive times"
+    status:
+      - "Special parking"
+      - "Perks and badges"
+      - "Public recognition"
+    duration:
+      - "Longer duration than standard (6 months to a year)"
+    speed:
+      - "First in line"
+      - "Priority access"
+      - "Fast response time (<10 min)"
+    experience:
+      - "White glove service"
+      - "Personal cell phone access"
+      - "Concierge line"
+      - "Nice dinners and gifts"
+    access:
+      - "In-person experiences"
+      - "Retreats"
+      - "Behind the scenes"
+    network:
+      - "Connection with other top customers"
+    secrets:
+      - "Exclusive bonuses"
+      - "Trade secrets"
+      - "Vetted vendors"
+
+  pricing:
+    rule: "Take average cart value and add a zero (10x to 50x)"
+    mindset: "Go beyond comparison to your other products"
+    principle: "You will work more for these customers - earn that money"
+
+  quantity:
+    cap: "5-10% of your customers"
+    goal: "Sell out fast to make next offer even more compelling"
+
+tactics:
+  push_to_consult_sequence:
+    day_7_out:
+      action: "Text - let them know something big is coming"
+    day_6_out:
+      action: "Announcement email with 1-3 core components"
+      text: "Draw attention to email"
+      cta: "Schedule a consult"
+    day_5_out:
+      action: "Recap offer + first bonus"
+    day_3_out:
+      action: "Sales update - how many sold, how many left"
+      text: "Reminder with CTA to reply"
+    day_2_out:
+      action: "X Spots Left + second bonus"
+      text: "Reminder with CTA to reply"
+    day_1_am:
+      action: "Warning + best bonus (worth more than entire price)"
+      text: "Reminder with CTA to reply"
+    day_1_pm:
+      action: "Sold out notification"
+
+  push_to_checkout_sequence:
+    day_5_out:
+      action: "Primer text - something big coming"
+    day_4_out:
+      action: "Announcement email with core components"
+    day_2_out:
+      action: "Cart opens in 48 hours - first come first serve"
+    day_1_out:
+      action: "Add first bonus - set alarm"
+    60_min_out:
+      action: "Text to remind - have payment ready"
+    cart_open:
+      action: "Best bonus - immediate benefit"
+    60_min_post:
+      action: "Sales update - how many sold/left"
+    6_hours_post:
+      action: "X spots left + unannounced bonus"
+    12_hours_post:
+      action: "Sold out"
+
+examples:
+  b2c_fitness:
+    price: "$10,000"
+    offer: "1 on 1 Year Long Total Transformation Package"
+    core: "Tailored supplements, meals, workouts, photoshoot"
+    bonus_1: "Nutrition plan for a year + meal prep company intro"
+    bonus_2: "1 on 1 workouts 3x per week"
+    bonus_3: "24/7 personal cell phone access"
+
+  b2b_agency:
+    price: "$50,000/year"
+    offer: "Personal Brand Explosion - Get Famous Package"
+    core: "Script, film, edit, post all content 4x per year"
+    bonus_1: "Additional social media platform"
+    bonus_2: "Lead magnet creation"
+    bonus_3: "Organic funnel with video sales letters"
+
+  recurring_max_cash:
+    price: "Monthly price x 12"
+    offer: "1 Year to [ULTIMATE RESULT]"
+    bonus_1: "Custom work on their struggle"
+    bonus_2: "Thing that makes it faster"
+    bonus_3: "Thing that virtually guarantees achievement"
+    note: "10% of existing customers typically say yes"
+
+roi_benchmarks:
+  scenario:
+    business: "$25k/mo gym with 166 members at $150/mo"
+    current_margin: "25%"
+    current_profit: "$75,000/year"
+  fast_cash_results:
+    q1: "10 people x $6,000 = $60,000"
+    q2: "13 people x $5,000 = $65,000"
+    q3: "8 people x $6,000 = $48,000"
+    q4: "14 people x $4,000 = $56,000"
+    total_extra: "$229,000"
+  outcome:
+    old_revenue: "$300,000/year"
+    old_profit: "$75,000/year"
+    new_revenue: "$529,000/year"
+    new_profit: "$281,000/year"
+    revenue_increase: "76%"
+    profit_multiplier: "4x"
+
+checklist:
+  - "Pick and assemble list (past and present customers)"
+  - "Pick offer - max out unscalable value"
+  - "Pick price (10x to 50x for maximum cash)"
+  - "Choose sales method (consults vs automated checkout)"
+  - "Prep emails and texts with CTAs"
+  - "Send sequence"
+  - "Collect cash"
+  - "Deliver the stuff"
+  - "Collect 4Rs: Reviews, Results, Referrals, Resells"
+  - "Cooldown list - provide value"
+  - "Set next date - rinse and repeat"
+
+agent_usage:
+  pm:
+    - "Structure quarterly cash play calendar"
+    - "Design offer progression with bonuses"
+  po:
+    - "Validate offer against customer segments"
+    - "Prioritize which unscalable value to include"
+  dev:
+    - "Build checkout flows with urgency elements"
+    - "Implement scheduling and notification systems"
+  analyst:
+    - "Track conversion rates by segment"
+    - "Measure ROI on each quarterly promotion"

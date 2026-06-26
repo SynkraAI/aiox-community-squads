@@ -1,0 +1,267 @@
+# ============================================================
+# WF-002: Quick Research Pipeline
+# Duration: 5-15 minutes (single session)
+# Best for: Time-sensitive research, preliminary investigation, rapid evidence checks
+# ============================================================
+
+workflow:
+  id: wf-quick-research
+  name: "Quick Research Pipeline"
+  version: "1.0"
+  orchestrator: "dr-orchestrator"
+  description: "Abbreviated 3-phase pipeline: Diagnostic (Sackett+Booth) -> Quick Execution (top 2 agents) -> Quick QA (Kahneman only) -> Synthesis"
+  created: "2026-03-06"
+
+  metadata:
+    squad: "deep-research"
+    total_agents: 6  # Sackett, Booth, 2 Tier 1, Kahneman, Orchestrator
+    tiers: 3
+    quality_gates: 3  # Skips QG-002 full diagnostic check (Creswell skipped)
+    estimated_duration: "5-15 min"
+    depth: "Reduced -- abbreviated diagnostic, top 2 Tier 1 agents, Kahneman-only QA"
+    watermark: "QUICK MODE - Evidence reliability unaudited (Ioannidis skipped)"
+
+  trade_offs:
+    skipped:
+      - agent: creswell
+        reason: "Research design architecture is overkill for rapid evidence checks"
+        impact: "No formal mixed methods design. Default to quantitative or narrative synthesis."
+      - agent: ioannidis
+        reason: "PPV calculation and meta-research audit traded for speed"
+        impact: "Evidence reliability unaudited. Findings carry 'unaudited' watermark."
+    reduced:
+      - agent: "Tier 1"
+        reason: "Only top 2 agents activated (highest relevance to use case)"
+        impact: "Narrower evidence base. May miss perspectives from non-activated agents."
+    preserved:
+      - agent: sackett
+        reason: "Question formulation is non-negotiable. Bad questions produce bad answers."
+      - agent: booth
+        reason: "Methodology selection ensures structured approach even at speed."
+      - agent: kahneman
+        reason: "Cognitive bias audit is the minimum viable QA. Never skip."
+
+# ============================================================
+# AGENT ROSTER
+# ============================================================
+
+agents_by_phase:
+
+  tier_0_diagnostic:
+    label: "Quick Diagnostic (Question + Methodology)"
+    execution_mode: SEQUENTIAL
+    agents:
+      - id: sackett
+        name: "David Sackett"
+        role: "Research Question Architect"
+        focus: "PICO formulation (abbreviated -- focus on P, I, O; C optional if obvious)"
+      - id: booth
+        name: "Andrew Booth"
+        role: "Research Methodology Selector"
+        focus: "Quick review type selection (rapid review default), abbreviated STARLITE"
+
+  tier_1_execution:
+    label: "Quick Execution (Top 2 Agents)"
+    execution_mode: PARALLEL
+    selection_rule: "Select top 2 primary agents for the classified use case"
+    agent_pool:
+      UC-001: [forsgren, cochrane]
+      UC-002: [klein, gilad]
+      UC-003: [cochrane, higgins]
+      UC-004: [gilad, higgins]
+
+  tier_qa:
+    label: "Quick QA (Bias Check Only)"
+    execution_mode: SINGLE
+    agents:
+      - id: kahneman
+        name: "Daniel Kahneman"
+        role: "Decision Quality Auditor"
+        focus: "Abbreviated 12-Question Bias Checklist + rapid premortem"
+
+# ============================================================
+# PHASES
+# ============================================================
+
+phases:
+
+  - id: PHASE-1
+    name: "Quick Classification"
+    agent: dr-orchestrator
+    tier: 0
+    description: "Classify query and select top 2 Tier 1 agents"
+    tasks:
+      - task_file: tasks/classify-research-query.md
+        agent: dr-orchestrator
+        mode: quick
+    checkpoint:
+      criteria:
+        - "Use case identified"
+        - "Top 2 agents selected"
+      on_fail: "Request clarification from user"
+    error_handling:
+      - condition: "Query too vague"
+        action: "Request 1-sentence clarification, do not iterate more than once"
+
+  - id: PHASE-2
+    name: "Quick Diagnostic"
+    tier: 0
+    execution_mode: SEQUENTIAL
+    description: "Sackett formulates PICO, Booth selects rapid review methodology. Creswell SKIPPED."
+    tasks:
+      - task_file: tasks/formulate-pico-question.md
+        agent: sackett
+        mode: quick
+        output: "Abbreviated PICO (P, I, O required; C optional if obvious)"
+      - task_file: tasks/select-review-methodology.md
+        agent: booth
+        mode: quick
+        input_from: sackett
+        output: "Rapid review type + abbreviated STARLITE (S, T, E minimum)"
+    checkpoint:
+      criteria:
+        - "PICO has at least P, I, and O defined"
+        - "Review type selected (default: rapid review)"
+      on_fail: "Proceed with abbreviated PICO, flag gaps"
+    error_handling:
+      - condition: "Sackett struggles with PICO"
+        action: "Proceed with best-effort formulation, flag as incomplete"
+
+  - id: PHASE-3
+    name: "Quick Execution"
+    tier: 1
+    execution_mode: PARALLEL
+    description: "Top 2 agents execute in parallel with reduced depth"
+    tasks:
+      - task_file: tasks/quick-execution.md
+        agent: "selected_agent_1"
+        mode: quick
+        condition: "Top primary agent for classified use case"
+      - task_file: tasks/quick-execution.md
+        agent: "selected_agent_2"
+        mode: quick
+        condition: "Second primary agent for classified use case"
+    checkpoint:
+      criteria:
+        - "Both agents produced output"
+        - "Minimum 3 sources cited"
+      on_fail: "Proceed with available output, flag gaps"
+    error_handling:
+      - condition: "One agent fails"
+        action: "Proceed with single agent output, flag reduced confidence"
+      - condition: "Both agents fail"
+        action: "Abort quick research, suggest full deep research pipeline"
+
+  - id: PHASE-4
+    name: "Quick QA"
+    tier: 2
+    execution_mode: SINGLE
+    description: "Kahneman-only bias check. Ioannidis SKIPPED."
+    tasks:
+      - task_file: tasks/audit-decision-quality.md
+        agent: kahneman
+        mode: quick
+        input_from: "All PHASE-3 agents"
+        output: "Abbreviated bias checklist (top 5 questions) + rapid premortem"
+    checkpoint:
+      criteria:
+        - "Bias check complete (minimum 5 of 12 questions)"
+        - "Rapid premortem conducted"
+      on_fail: "Flag unaudited findings, proceed with watermark"
+    error_handling:
+      - condition: "Critical biases detected (3+ HIGH flags)"
+        action: "Recommend escalation to full deep research pipeline"
+
+  - id: PHASE-5
+    name: "Quick Synthesis"
+    tier: 0
+    description: "Abbreviated report with QUICK MODE watermark"
+    tasks:
+      - task_file: tasks/synthesize-final-report.md
+        agent: dr-orchestrator
+        mode: quick
+        input_from: "All phases"
+    checkpoint:
+      criteria:
+        - "Report includes executive summary + findings + limitations"
+        - "QUICK MODE watermark applied"
+        - "Skipped agents and trade-offs documented"
+
+# ============================================================
+# QUALITY GATES
+# ============================================================
+
+quality_gates:
+
+  - id: QG-001
+    name: "Input Validation"
+    phase: PHASE-1
+    type: non-blocking
+    checks:
+      - "Query is specific enough to classify"
+      - "Query is within squad scope"
+
+  - id: QG-002
+    name: "Quick Diagnostic Completeness"
+    phase: PHASE-2
+    type: soft-blocking
+    checks:
+      - "PICO has P, I, and O at minimum"
+      - "Review type selected"
+
+  - id: QG-003
+    name: "Quick Output Quality"
+    phase: PHASE-4
+    type: soft-blocking
+    checks:
+      - "No recommendation with 3+ HIGH bias flags"
+      - "All claims have at least 1 traceable source"
+
+# ============================================================
+# REPORT STRUCTURE
+# ============================================================
+
+report_structure:
+  watermark: "QUICK MODE - Evidence reliability unaudited. Ioannidis PPV audit skipped. Creswell design architecture skipped."
+  sections:
+    1_executive_summary: "Key findings (2-3 bullets)"
+    2_findings: "Evidence from top 2 agents"
+    3_bias_check: "Kahneman abbreviated audit"
+    4_limitations: "Skipped agents, reduced depth, unaudited reliability"
+    5_sources: "Source list (minimum 3)"
+    6_escalation: "Recommendation for full deep research if warranted"
+
+  confidence_levels:
+    medium: "Kahneman-audited, no critical biases, 3+ sources"
+    low: "Minor bias flags or limited sources"
+    unaudited: "Ioannidis audit skipped (default for quick mode)"
+
+# ============================================================
+# CONSTRAINTS
+# ============================================================
+
+constraints:
+  max_tier_1_agents: 2
+  max_sources_per_agent: 10
+  max_sources_per_report: 20
+  max_retries_per_agent: 0  # No retries in quick mode
+  target_duration_minutes: 15
+
+# ============================================================
+# ESCALATION
+# ============================================================
+
+escalation:
+  trigger_conditions:
+    - "3+ HIGH bias flags from Kahneman"
+    - "Both Tier 1 agents fail to produce output"
+    - "User requests deeper analysis"
+    - "Question complexity exceeds quick mode capacity"
+  escalation_target: "wf-deep-research"
+  message: "Quick research identified complexity exceeding abbreviated pipeline. Recommend full deep research."
+
+# ============================================================
+# COMPLETION SIGNAL
+# ============================================================
+
+completion_signal: "<promise>COMPLETE:QUICK</promise>"

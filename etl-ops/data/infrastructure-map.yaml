@@ -1,0 +1,27 @@
+service_catalog:
+  etl_service:
+    service_ref: "services/etl/"
+    connection: "services/etl/"
+    integration: "CLI tools, collectors e ETLService API"
+  etl_outputs:
+    service_ref: "outputs/etl/"
+    connection: "outputs/etl/"
+    integration: "Persistência legada de runs ETL"
+  workspace_etl:
+    service_ref: "workspace/businesses/{slug}/etl/"
+    connection: "workspace/businesses/{slug}/etl/"
+    integration: "Persistência canônica de runs ETL"
+
+integrations:
+  - name: etl_cli
+    connection: "services/etl/"
+    endpoint: local-service
+    mode: read_write
+  - name: workspace_outputs
+    connection: "workspace/businesses/{slug}/etl/"
+    endpoint: filesystem
+    mode: read_write
+  - name: legacy_outputs
+    connection: "outputs/etl/"
+    endpoint: filesystem
+    mode: read_write

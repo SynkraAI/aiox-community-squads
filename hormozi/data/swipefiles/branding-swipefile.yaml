@@ -1,0 +1,142 @@
+# $100M Branding Playbook Swipefile
+# Source: Alex Hormozi - Acquisition.com
+# Extracted: 2026-02-23
+
+version: "1.0"
+source:
+  title: "$100M Branding Playbook"
+  author: "Alex Hormozi"
+  publisher: "Acquisition.com"
+  year: 2025
+
+core_definition:
+  what_branding_is: "Pairing two or more things together deliberately"
+  good_branding: "Pairing your business with something a majority of your ideal audience likes"
+  bad_branding: "Pairing your business with something a majority of your audience dislikes"
+  no_branding: "Exposure results in them behaving as normal - practically invisible"
+
+brand_measurement:
+  advertising_metric: "Reach - how many people know about your stuff"
+  branding_metrics:
+    - name: "Influence"
+      description: "The chance it changes behavior when they see it"
+    - name: "Direction"
+      description: "How their behavior changes - towards or away"
+
+brand_benefits:
+  lower_cac:
+    description: "Convert higher percentage from advertising at fractions of competition cost"
+    example: "Dwayne Johnson can have millions of customers on any new product launch day one"
+  raise_ltv:
+    description: "Charge 2x, 5x, or 10x more than competition for the exact same thing"
+    example: "Starbucks charges $5 for coffee when others charge $1"
+  lower_risk:
+    description: "Customers buy repeatedly without considering competition"
+    example: "Once you're a Mac user, you tend to only buy Apple products for life"
+
+frameworks:
+  four_step_brand_building:
+    - step: 1
+      name: "Figure out who your ideal customer is"
+      criteria:
+        - "Growing market"
+        - "Have enough money"
+        - "Easy to target"
+        - "In pain"
+    - step: 2
+      name: "Figure out what they like"
+      description: "Identify their desires, problems, and aspirations"
+    - step: 3
+      name: "Associate your brand with relevant things they like"
+      tactics:
+        - "Make content they like"
+        - "Make products they like (free and paid)"
+        - "Appear next to people they like"
+    - step: 4
+      name: "Optimize associations for max profit"
+      directions:
+        - "Up market - larger customers"
+        - "Down market - smaller customers"
+        - "Adjacent - similar market, slightly different"
+        - "Broader - the entire category"
+        - "Narrower - a slice of your existing market"
+
+  levels_of_authority:
+    - level: 1
+      name: "What We Say"
+      influence: "Least influential"
+      examples: ["Content", "Ads", "Outreach"]
+    - level: 2
+      name: "What Other People Say"
+      influence: "More influential"
+      examples: ["Affiliates", "Customer referrals"]
+    - level: 3
+      name: "What They Experience"
+      influence: "Most influential"
+      description: "Their own opinion has the most authority"
+
+  bouquet_metaphor:
+    concept: "Think about branding like assembling a bouquet of flowers"
+    narrowing: "Talk only about specific things - like having only red roses"
+    expanding: "Bring in all sorts of flowers, not just roses"
+    adjacent: "Slowly switch from red roses to yellow roses"
+    mistake_recovery: "Don't eliminate the dead rose - overwhelm it with more good flowers"
+
+strategies:
+  brand_pivots:
+    principle: "All about net changes in audience"
+    goal: "Gain more than you lose"
+    warning: "Don't let five mean comments stop you from gaining 500 new people"
+
+  dealing_with_mistakes:
+    approach: "Don't shrink away - double down on what they like"
+    method: "Overwhelm customers with stuff they like until bad pairing shrinks into irrelevance"
+
+  patience:
+    insight: "Branding has higher returns than direct response if measured over longer period"
+    timeline: "Wait five years and don't give up"
+
+outcomes:
+  when_done_right:
+    - "Higher click through rates on all advertising"
+    - "Higher closing rates"
+    - "Close at higher prices"
+    - "People keep buying again and again"
+    - "Cheaper customers than everyone else"
+    - "Increasingly large customers over time"
+    - "New customers from compounding word of mouth"
+    - "Attract the best talent"
+    - "Build an asset that itself has value"
+
+  when_done_wrong:
+    - "Ward off good customers"
+    - "Attract bad ones"
+    - "Pay more for customers than you should"
+    - "Negative word of mouth compounds"
+    - "Lose customers on the back end"
+    - "Need crazy offers to get customers"
+    - "Struggle to get good talent"
+
+checklist:
+  - "Figure out who your ideal avatar is (growing, in pain, can afford, easy to find)"
+  - "Figure out what they like"
+  - "Associate yourself with stuff they like through content, products, people"
+  - "Grow influence strategically - associate with bigger things"
+  - "Do more advertising to grow reach"
+  - "Make products match promises for virtuous cycle"
+  - "When you make mistakes, double down on what they like"
+  - "Wait five years and don't give up"
+
+agent_usage:
+  pm:
+    - "Use brand building framework for product positioning"
+    - "Apply levels of authority for marketing strategy"
+  po:
+    - "Validate features against target audience preferences"
+    - "Ensure product delivers on brand promises"
+  dev:
+    - "Consider brand consistency in UI/UX decisions"
+    - "Build features that reinforce brand associations"
+  analyst:
+    - "Track brand metrics: reach, influence, direction"
+    - "Measure conversion rates and pricing power"

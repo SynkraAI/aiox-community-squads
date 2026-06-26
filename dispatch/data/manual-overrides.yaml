@@ -1,0 +1,26 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# MANUAL OVERRIDES — Preserved between build-domain-registry.py runs
+# Add custom domain entries or override auto-discovered values here.
+# Keys match domain IDs in domain-registry.yaml.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+overrides: {}
+
+# Example:
+#   overrides:
+#     marketing_copy:
+#       enrichment: FULL
+#       note: "Always use FULL enrichment for copy tasks"
+#     custom_domain:
+#       source: "manual"
+#       triggers:
+#         primary: ["keyword1", "keyword2"]
+#         secondary: []
+#         weight_primary: 3
+#         weight_secondary: 1
+#       agents:
+#         primary: "/custom:agents:my-agent"
+#         squad: "custom"
+#       kb_files: []
+#       enrichment: STANDARD
+#       default_model: haiku

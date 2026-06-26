@@ -1,0 +1,400 @@
+# WF-SB-BF: Storybook Brownfield Migration Pipeline
+# Duration: 1-3 sessions (depends on component count)
+# Best for: Existing codebases with 20-200+ components needing Storybook documentation
+# Key Agents: @storybook-expert, @brad-frost (atomic classification)
+
+workflow:
+  id: wf-storybook-brownfield-migration
+  name: "Storybook Brownfield Migration Pipeline"
+  version: "1.0"
+  orchestrator: "@storybook-expert"
+  duration: "1-3 sessions"
+  description: |
+    End-to-end pipeline for migrating brownfield codebases into Storybook.
+    Takes ANY existing React/Next.js project and produces:
+    - Complete component inventory with atomic classification
+    - Dependency graph showing component relationships
+    - Phased migration plan (atoms → molecules → organisms → templates → pages)
+    - Story files for EVERY component
+    - Mock decorators for context-dependent components
+    - Adaptation report documenting all changes
+
+    Supports same-project (add stories) and cross-project (copy + add stories) modes.
+
+  best_for:
+    - "Existing project with 20-200+ undocumented components"
+    - "Migrating components from one project to another"
+    - "Design system adoption in legacy codebases"
+    - "Component library documentation from scratch"
+    - "Atomization of monolithic UI code"
+
+  decision_matrix_fit:
+    awareness: "Migration"
+    sophistication: "Advanced"
+    primary_output: "Complete Storybook with brownfield component stories"
+
+  migration_modes:
+    same_project:
+      description: "Add stories co-located with existing components"
+      when: "Project already has Storybook or components stay in place"
+      output: "*.stories.tsx next to each component"
+    cross_project:
+      description: "Copy components to target project, adapt imports, add stories"
+      when: "Building a separate design system package"
+      output: "Components + stories in target project"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 1: SCAN (Component Inventory & Classification)
+# ═══════════════════════════════════════════════════════════════════════════════
+phases:
+  - id: PHASE-1
+    name: "Scan & Classify Components"
+    tier: 0
+    description: |
+      Walk the source codebase and produce a complete component inventory.
+      Classify each component by atomic level (atom/molecule/organism/template/page),
+      map dependencies between components, and generate a phased migration plan
+      ordered by dependency tree.
+
+    tasks:
+      - task_file: sb-brownfield-scan.md
+        agent: "@storybook-expert"
+        required: true
+        description: "Inventory all components, classify, build dependency graph"
+        output: "component-inventory.json, migration-plan.md, dependency-graph.json"
+
+    checkpoint:
+      criteria:
+        - "All component files scanned and classified"
+        - "Dependency graph has no unresolved references"
+        - "Migration plan has at least 2 phases"
+        - "Atomic distribution covers atom through organism minimum"
+      human_review: true
+      message: |
+        Scan complete. Review the migration plan before proceeding.
+        - Total components: {total_components}
+        - Atoms: {atoms} | Molecules: {molecules} | Organisms: {organisms}
+        - Already have stories: {with_stories}
+        - Need stories: {migration_gap}
+        Approve to proceed with migration, or adjust plan.
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # PHASE 2: PREPARE (Storybook Environment)
+  # ═══════════════════════════════════════════════════════════════════════════════
+  - id: PHASE-2
+    name: "Prepare Storybook Environment"
+    tier: 0
+    description: |
+      Ensure target project has Storybook installed and configured.
+      If not present, run sb-install and sb-configure. If present,
+      verify stories glob covers brownfield component locations.
+
+    tasks:
+      - task_file: sb-install.md
+        agent: "@storybook-expert"
+        required: false
+        description: "Install Storybook if not present (skip if exists)"
+        output: "installed_packages"
+        notes: |
+          CONDITIONAL: Only execute if target project has no Storybook.
+          Check for .storybook/ directory and storybook in devDependencies.
+
+      - task_file: sb-configure.md
+        agent: "@storybook-expert"
+        required: false
+        description: "Configure Storybook if not configured (skip if exists)"
+        output: ".storybook/main.ts, .storybook/preview.ts"
+        notes: |
+          CONDITIONAL: Only execute if .storybook/main.ts doesn't exist.
+          If exists, verify stories glob covers component paths.
+
+    checkpoint:
+      criteria:
+        - "Storybook is installed and configured"
+        - "Stories glob covers all component locations from scan"
+        - "Storybook dev server starts without errors"
+      human_review: false
+      message: "Storybook environment ready. Starting migration."
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # PHASE 3: MIGRATE ATOMS (Foundation Components)
+  # ═══════════════════════════════════════════════════════════════════════════════
+  - id: PHASE-3
+    name: "Migrate Atoms & Primitives"
+    tier: 1
+    description: |
+      Migrate all atom-level components first. These have zero internal
+      dependencies and form the foundation for all other components.
+      Typically: buttons, badges, avatars, inputs, labels, separators, icons.
+
+    tasks:
+      - task_file: sb-brownfield-migrate.md
+        agent: "@storybook-expert"
+        required: true
+        description: "Generate stories for all atom components"
+        output: "story_files (atoms)"
+        notes: |
+          Execute with: phase_filter="1" (atoms phase from migration plan)
+          These components should need NO mocks or decorators.
+          Strategy: args-driven stories with Default + Variants + Gallery.
+
+    checkpoint:
+      criteria:
+        - "All atom components have stories"
+        - "npm run typecheck passes"
+        - "All atoms render in Storybook without errors"
+      human_review: false
+      message: "Atoms migrated. Foundation complete."
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # PHASE 4: MIGRATE MOLECULES (Composite Components)
+  # ═══════════════════════════════════════════════════════════════════════════════
+  - id: PHASE-4
+    name: "Migrate Molecules"
+    tier: 1
+    description: |
+      Migrate molecule-level components. These compose 2-3 atoms into
+      reusable patterns. May need render functions to show composition.
+      Typically: InputWithLabel, CardHeader, NavItem, SearchBar.
+
+    tasks:
+      - task_file: sb-brownfield-migrate.md
+        agent: "@storybook-expert"
+        required: true
+        description: "Generate stories for all molecule components"
+        output: "story_files (molecules)"
+        notes: |
+          Execute with: phase_filter matching molecule phases from migration plan.
+          Strategy: render function stories showing composition.
+
+    checkpoint:
+      criteria:
+        - "All molecule components have stories"
+        - "npm run typecheck passes"
+        - "Molecules render correctly (atoms are available)"
+      human_review: false
+      message: "Molecules migrated."
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # PHASE 5: MIGRATE ORGANISMS (Feature Components)
+  # ═══════════════════════════════════════════════════════════════════════════════
+  - id: PHASE-5
+    name: "Migrate Organisms & Features"
+    tier: 2
+    description: |
+      Migrate organism-level components. These are section-level components
+      with business logic, context dependencies, and multiple internal deps.
+      This phase typically requires the most adaptations (mock providers,
+      stub data, decorator wrappers).
+
+      Includes: AgentCard, KanbanColumn, ChatContainer, Sidebar, etc.
+
+    tasks:
+      - task_file: sb-brownfield-migrate.md
+        agent: "@storybook-expert"
+        required: true
+        description: "Generate stories for organisms with necessary mocks"
+        output: "story_files (organisms), mock_files"
+        notes: |
+          Execute with: phase_filter matching organism phases.
+          Strategy: render function + decorators for context.
+          Create mock providers in .storybook/mocks/ as needed.
+          Document every adaptation in the report.
+
+    checkpoint:
+      criteria:
+        - "All organism components have stories"
+        - "Mock decorators created for context-dependent components"
+        - "npm run typecheck passes"
+        - "All adaptations documented in report"
+      human_review: true
+      message: |
+        Organisms migrated. This phase had the most adaptations.
+        Review mock files and adaptations before proceeding to templates/pages.
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # PHASE 6: MIGRATE TEMPLATES & PAGES (Layout & Full Pages)
+  # ═══════════════════════════════════════════════════════════════════════════════
+  - id: PHASE-6
+    name: "Migrate Templates & Pages"
+    tier: 2
+    description: |
+      Migrate template and page-level components. These are full layouts
+      and pages that compose organisms. Need layout: "fullscreen" parameter
+      and comprehensive mock data.
+
+    tasks:
+      - task_file: sb-brownfield-migrate.md
+        agent: "@storybook-expert"
+        required: true
+        description: "Generate stories for templates and pages"
+        output: "story_files (templates, pages)"
+        notes: |
+          Execute with: phase_filter matching template/page phases.
+          Use parameters: { layout: "fullscreen" } for layout components.
+          May need mock routing, mock API responses, mock global state.
+
+    checkpoint:
+      criteria:
+        - "All template and page components have stories"
+        - "Layout stories use fullscreen layout"
+        - "npm run typecheck passes"
+      human_review: false
+      message: "Templates and pages migrated. Running final verification."
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # PHASE 7: VERIFY (Final Quality Gate)
+  # ═══════════════════════════════════════════════════════════════════════════════
+  - id: PHASE-7
+    name: "Verify Complete Migration"
+    tier: 2
+    description: |
+      Final verification of the complete brownfield migration.
+      Runs typecheck, lint, build, story coverage check, and
+      generates the final adaptation report.
+
+    tasks:
+      - task_file: sb-verify.md
+        agent: "@storybook-expert"
+        required: true
+        description: "Run all verification checks"
+        output: "verification_report"
+
+    checkpoint:
+      criteria:
+        - "TypeScript: zero errors"
+        - "Lint: zero errors"
+        - "Build: succeeds"
+        - "Coverage: 100% of planned components"
+        - "Adaptation report complete"
+      human_review: true
+      message: "Migration complete. Review final report."
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ERROR HANDLING
+# ═══════════════════════════════════════════════════════════════════════════════
+error_handling:
+  on_phase_failure:
+    - log_error: true
+    - notify_stakeholders: false
+    - create_remediation_task: false
+    - halt_workflow: true
+
+  on_checkpoint_failure:
+    - log_failure_reason: true
+    - return_to_previous_phase: false
+    - max_retries: 3
+
+  phase_specific:
+    PHASE-5_organisms:
+      description: "Organisms phase most likely to fail due to context deps"
+      on_failure: "Create mock for failing component, document in report, continue"
+      max_component_retries: 2
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# COMPLETION SIGNALS
+# ═══════════════════════════════════════════════════════════════════════════════
+completion_signal: "<promise>COMPLETE</promise>"
+checkpoint_signal: "<promise>CHECKPOINT:PHASE-X</promise>"
+blocked_signal: "<promise>BLOCKED:T-X.Y</promise>"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# OUTPUT ARTIFACTS
+# ═══════════════════════════════════════════════════════════════════════════════
+outputs:
+  scan_results:
+    - "outputs/design-system/{project}/brownfield/component-inventory.json"
+    - "outputs/design-system/{project}/brownfield/dependency-graph.json"
+    - "outputs/design-system/{project}/brownfield/migration-plan.md"
+  stories:
+    - "src/components/**/*.stories.tsx (one per component)"
+  mocks:
+    - ".storybook/mocks/*.tsx (provider mocks)"
+    - ".storybook/decorators/*.tsx (story decorators)"
+  reports:
+    - "outputs/design-system/{project}/brownfield/adaptation-report.md"
+    - "Verification report (typecheck, lint, build, coverage)"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# AGENT ASSIGNMENTS BY PHASE
+# ═══════════════════════════════════════════════════════════════════════════════
+agents_by_phase:
+  PHASE-1:
+    primary:
+      - "@storybook-expert"
+    secondary:
+      - "@brad-frost"
+  PHASE-2:
+    primary:
+      - "@storybook-expert"
+  PHASE-3:
+    primary:
+      - "@storybook-expert"
+  PHASE-4:
+    primary:
+      - "@storybook-expert"
+  PHASE-5:
+    primary:
+      - "@storybook-expert"
+    secondary:
+      - "@brad-frost"
+  PHASE-6:
+    primary:
+      - "@storybook-expert"
+  PHASE-7:
+    primary:
+      - "@storybook-expert"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# QUALITY CHECKLIST
+# ═══════════════════════════════════════════════════════════════════════════════
+quality_checklist:
+  scan:
+    - "[ ] All component files discovered"
+    - "[ ] Atomic classification applied to every component"
+    - "[ ] Dependency graph is complete and acyclic"
+    - "[ ] Migration plan phases ordered by dependency"
+
+  atoms:
+    - "[ ] All atoms have stories"
+    - "[ ] Stories are args-driven (no unnecessary render functions)"
+    - "[ ] Gallery stories for multi-variant atoms"
+
+  molecules:
+    - "[ ] All molecules have stories"
+    - "[ ] Composition patterns shown in render functions"
+
+  organisms:
+    - "[ ] All organisms have stories"
+    - "[ ] Context dependencies mocked"
+    - "[ ] Adaptations documented"
+
+  templates_pages:
+    - "[ ] All templates/pages have stories"
+    - "[ ] Layout stories use fullscreen"
+    - "[ ] Mock data is representative"
+
+  verification:
+    - "[ ] npm run typecheck — zero errors"
+    - "[ ] npm run lint — zero errors"
+    - "[ ] npm run build-storybook — succeeds"
+    - "[ ] Coverage: 100% of planned components"
+    - "[ ] Adaptation report complete"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA
+# ═══════════════════════════════════════════════════════════════════════════════
+metadata:
+  version: "1.0"
+  framework: "AIOS Design Squad"
+  created: "2026-02-25"
+  primary_use_case: "Brownfield component migration to Storybook"
+  key_difference: |
+    Unlike storybook-full-setup (greenfield), this workflow handles
+    EXISTING codebases with scattered, undocumented components.
+    Key capabilities:
+    - Component discovery and atomic classification
+    - Dependency-aware migration ordering
+    - Context isolation (mock providers, stub data)
+    - Same-project and cross-project modes
+    - Adaptation tracking and reporting
