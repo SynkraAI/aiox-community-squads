@@ -1,0 +1,208 @@
+{
+  "$comment": "ML-SOP JSON Template | SOP Factory | Synkra AIOX",
+  "$schema_ref": "data/sop-ml-schema.yaml v1.0.0",
+  "usage": "Copy, replace {{placeholders}}, validate against schema. For API consumption and strict schema validation.",
+
+  "sop": {
+    "id": "{{sop_id}}",
+    "version": "{{version}}",
+    "title": "{{sop_title}}",
+    "purpose": "{{purpose_statement}}",
+
+    "classification": {
+      "domain": "{{domain}}",
+      "category": "{{category}}",
+      "risk_level": "{{risk_level}}",
+      "compliance_tags": ["{{standard_1}}"]
+    },
+    "status": "DRAFT",
+    "effective_date": "{{YYYY-MM-DD}}",
+    "review_date": "{{YYYY-MM-DD}}",
+
+    "trigger": {
+      "type": "{{trigger_type}}",
+      "description": "{{trigger_description}}",
+      "event": "{{event_name}}",
+      "schedule": "{{cron_expression}}",
+      "source": "{{trigger_source}}",
+      "conditions": [
+        {
+          "field": "{{condition_field}}",
+          "operator": "{{operator}}",
+          "value": "{{expected_value}}"
+        }
+      ]
+    },
+
+    "context": {
+      "tools": [
+        {
+          "id": "{{tool_id}}",
+          "name": "{{tool_name}}",
+          "type": "{{tool_type}}",
+          "version": "{{min_version}}",
+          "required": true
+        }
+      ],
+      "permissions": [
+        {
+          "resource": "{{resource}}",
+          "action": "{{permission}}",
+          "scope": "{{scope}}",
+          "justification": "{{why_needed}}"
+        }
+      ],
+      "environment": [
+        {
+          "key": "{{ENV_VAR}}",
+          "description": "{{var_description}}",
+          "required": true,
+          "sensitive": false
+        }
+      ],
+      "input": [
+        {
+          "name": "{{input_name}}",
+          "type": "{{input_type}}",
+          "required": true,
+          "description": "{{input_description}}",
+          "validation": "{{regex_or_rule}}"
+        }
+      ]
+    },
+
+    "steps": [
+      {
+        "id": "S001",
+        "name": "{{step_name}}",
+        "action": "{{verb_noun}}",
+        "description": "{{step_description}}",
+        "performer": "{{role_or_agent}}",
+        "critical": false,
+        "estimated_duration": "{{PTxM}}",
+        "tool": {
+          "id": "{{tool_ref}}",
+          "command": "{{command_or_endpoint}}",
+          "timeout": "{{PTxM}}"
+        },
+        "input": [
+          {
+            "name": "{{param_name}}",
+            "type": "{{param_type}}",
+            "source": "{{source}}",
+            "value": "{{value_or_ref}}",
+            "required": true
+          }
+        ],
+        "output": [
+          {
+            "name": "{{output_name}}",
+            "type": "{{output_type}}",
+            "store_as": "{{variable_name}}"
+          }
+        ],
+        "validation": {
+          "type": "{{val_type}}",
+          "rules": [
+            {
+              "field": "{{field}}",
+              "operator": "{{op}}",
+              "expected": "{{expected}}",
+              "message": "{{failure_message}}"
+            }
+          ]
+        },
+        "on_success": "S002",
+        "on_failure": "{{error_handler_id}}",
+        "decision_point": null
+      }
+    ],
+
+    "error_handling": {
+      "handlers": [
+        {
+          "id": "{{handler_id}}",
+          "name": "{{handler_name}}",
+          "trigger_on": [
+            { "error_type": "{{error_type}}" }
+          ],
+          "severity": "{{severity}}",
+          "actions": [
+            {
+              "type": "{{action_type}}",
+              "config": {
+                "max_retries": 3,
+                "retry_delay": "PT30S",
+                "backoff": "exponential"
+              }
+            }
+          ]
+        }
+      ],
+      "fallback": {
+        "action": "abort",
+        "notify": ["{{fallback_recipient}}"],
+        "log_level": "error"
+      },
+      "global_timeout": "{{PT2H}}"
+    },
+
+    "quality_gate": {
+      "enabled": true,
+      "criteria": [
+        {
+          "name": "{{criteria_name}}",
+          "type": "{{criteria_type}}",
+          "target": "{{target_value}}",
+          "actual": null,
+          "weight": 0.5
+        }
+      ],
+      "pass_threshold": 0.8,
+      "on_fail": "block"
+    },
+
+    "outputs": {
+      "artifacts": [
+        {
+          "name": "{{artifact_name}}",
+          "type": "{{artifact_type}}",
+          "format": "{{format}}",
+          "destination": "{{path_or_url}}",
+          "retention": "{{P1Y}}"
+        }
+      ],
+      "notifications": {
+        "on_complete": [
+          { "channel": "{{channel}}", "recipients": ["{{recipient}}"] }
+        ],
+        "on_failure": [
+          { "channel": "{{channel}}", "recipients": ["{{recipient}}"] }
+        ]
+      }
+    },
+
+    "metadata": {
+      "created_by": "sop-ml-architect",
+      "created_at": "{{ISO-8601-datetime}}",
+      "updated_by": "{{updater}}",
+      "updated_at": "{{ISO-8601-datetime}}",
+      "owner": "{{owner_role}}",
+      "department": "{{department}}",
+      "tags": ["{{tag1}}", "{{tag2}}"],
+      "review_cycle": "P90D",
+      "regulatory_refs": [
+        { "standard": "{{standard}}", "clause": "{{clause}}" }
+      ],
+      "related_sops": ["{{related_sop_id}}"],
+      "change_log": [
+        {
+          "version": "{{version}}",
+          "date": "{{YYYY-MM-DD}}",
+          "author": "{{author}}",
+          "summary": "{{change_summary}}"
+        }
+      ]
+    }
+  }
+}

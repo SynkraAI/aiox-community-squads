@@ -1,0 +1,192 @@
+workflow:
+  id: wf-curriculum-validation
+  name: "Curriculum Validation"
+  version: "1.0"
+  squad: education
+  description: "Validation-only workflow: LTEM assessment → mastery verification → CLT audit → MEC compliance"
+  orchestrator: thalheimer-assessor
+  estimated_duration: "1-2 hours"
+
+  metadata:
+    author: "AIOS Education Squad"
+    created: "2026-02-14"
+    updated: "2026-02-14"
+    tags: [validation, transfer, mec-compliance, quality-assurance]
+
+phases:
+  - id: phase_1_transfer
+    name: "Transfer Assessment"
+    description: "LTEM (Learning Transfer Evaluation Model) tier 5+ verification"
+    agents: [thalheimer-assessor]
+
+    tasks:
+      - id: assess-ltem
+        description: "Evaluate each module on LTEM scale (1-10)"
+        inputs:
+          - lesson_templates
+          - practice_activities
+        outputs:
+          - ltem_scores_per_module
+          - transfer_gaps
+
+    checkpoint:
+      gate: "All modules achieve LTEM tier 5+?"
+      validation_criteria:
+        - "Each module scored on LTEM scale"
+        - "Tier 5 minimum (realistic practice)"
+        - "Transfer gaps documented"
+      checklist: transfer-validation-check.md
+      veto_conditions:
+        - condition: "Any module below tier 5"
+          action: "BLOCK, redesign for realistic transfer"
+
+  - id: phase_2_mastery
+    name: "Mastery Criteria Verification"
+    description: "Bloom mastery check — objectives met?"
+    agents: [bloom-diagnostician]
+
+    tasks:
+      - id: verify-mastery
+        description: "Check each objective against mastery criteria"
+        inputs:
+          - competency_matrix
+          - lesson_templates
+          - ltem_scores
+        outputs:
+          - mastery_verification_report
+          - unmet_criteria
+
+    checkpoint:
+      gate: "All mastery criteria verifiable?"
+      validation_criteria:
+        - "Each objective has assessment"
+        - "Mastery criteria measurable"
+        - "No unmet criteria"
+      checklist: mastery-criteria-check.md
+      veto_conditions:
+        - condition: "Unmet mastery criteria"
+          action: "BLOCK, add assessments or revise criteria"
+
+  - id: phase_3_cognitive_load
+    name: "Cognitive Load Audit"
+    description: "Sweller CLT final audit — extraneous load minimized?"
+    agents: [sweller-analyst]
+
+    tasks:
+      - id: audit-load
+        description: "Audit extraneous, intrinsic, germane load"
+        inputs:
+          - lesson_templates
+          - media_format_specs
+        outputs:
+          - cognitive_load_audit
+          - load_reduction_recommendations
+
+    checkpoint:
+      gate: "Extraneous load minimized?"
+      validation_criteria:
+        - "Extraneous load identified and reduced"
+        - "Germane load optimized"
+        - "Intrinsic load appropriate for audience"
+      checklist: cognitive-load-check.md
+
+  - id: phase_4_mec_compliance
+    name: "MEC Compliance Check"
+    description: "Verify against MEC requirements for course type"
+    agents: [mec-compliance]
+
+    tasks:
+      - id: load-requirements
+        description: "Load MEC requirements for course type"
+        inputs:
+          - course_type_classification
+        outputs:
+          - mec_requirements
+
+      - id: verify-compliance
+        description: "Check curriculum against requirements"
+        inputs:
+          - mec_requirements
+          - curriculum_architecture
+          - lesson_templates
+        outputs:
+          - mec_compliance_report
+          - gap_list
+          - compliance_status (PASS|FAIL)
+
+    checkpoint:
+      gate: "MEC compliance verified?"
+      validation_criteria:
+        - "All requirements checked"
+        - "Compliance status: PASS"
+        - "Gaps documented (if any)"
+      checklist: "mec-{type}-check.md (based on course type)"
+      veto_conditions:
+        - condition: "MEC compliance FAIL"
+          action: "BLOCK, list gaps, return to architecture phase"
+
+  - id: phase_5_final_report
+    name: "Final Validation Report"
+    description: "Compile validation report with all findings"
+    agents: [thalheimer-assessor]
+
+    tasks:
+      - id: compile-report
+        description: "Aggregate all validation results"
+        inputs:
+          - ltem_scores
+          - mastery_verification
+          - cognitive_load_audit
+          - mec_compliance_report
+        outputs:
+          - final_validation_report
+
+      - id: provide-recommendations
+        description: "Recommendations for improvement (if needed)"
+        inputs:
+          - final_validation_report
+          - transfer_gaps
+          - unmet_criteria
+          - gap_list
+        outputs:
+          - improvement_recommendations
+
+    checkpoint:
+      gate: "Validation report complete?"
+      validation_criteria:
+        - "All assessments included"
+        - "Clear PASS/FAIL status"
+        - "Recommendations provided (if gaps exist)"
+
+success_criteria:
+  - "All modules LTEM tier 5+"
+  - "All mastery criteria verifiable"
+  - "Cognitive load optimized"
+  - "MEC compliance: PASS"
+
+failure_modes:
+  - "LTEM <5 → Return to lesson design"
+  - "MEC compliance FAIL → Return to curriculum architecture"
+  - "Mastery criteria unmet → Revise assessments"
+
+output_artifacts:
+  - "validation-report.md"
+  - "mec-compliance-report.md"
+  - "ltem-scores.yaml"
+  - "improvement-recommendations.md (if needed)"
+
+dependencies:
+  - squads/education/agents/thalheimer-assessor.md
+  - squads/education/agents/bloom-diagnostician.md
+  - squads/education/agents/sweller-analyst.md
+  - squads/education/agents/mec-compliance.md
+  - squads/education/tasks/assess-transfer.md
+  - squads/education/tasks/validate-mec-compliance.md
+  - squads/education/checklists/transfer-validation-check.md
+  - squads/education/checklists/mastery-criteria-check.md
+  - squads/education/checklists/cognitive-load-check.md
+  - squads/education/checklists/mec-{type}-check.md
+
+veto_escalation:
+  - "If vetoed at Phase 1 (LTEM): Return to lesson design workflow"
+  - "If vetoed at Phase 4 (MEC): Return to curriculum architecture workflow"

@@ -1,0 +1,364 @@
+# ==============================================================================
+# APEX SQUAD — Discovery Output Schema
+# data/discovery-output-schema.yaml
+# ==============================================================================
+# Purpose:  Defines structured JSON output schemas for all 11 discovery tools.
+#           Enables: integration with external tools, temporal diff between scans,
+#           and machine-readable data for suggest-fixes automation.
+#
+# Used by:  All *discover-* tasks, *apex-suggest, *apex-audit
+# Owner:    apex-lead
+# Version:  1.0.0
+# ==============================================================================
+
+version: "1.0.0"
+
+# ==============================================================================
+# OUTPUT STORAGE
+# ==============================================================================
+output:
+  directory: ".aios/apex-context/discoveries/"
+  format: json
+  naming: "{discovery_type}-{ISO8601_date}.json"
+  retention: "Keep last 10 scans per type for diff capability"
+  gitignore: true
+
+# ==============================================================================
+# COMMON ENVELOPE (all discoveries use this wrapper)
+# ==============================================================================
+common_envelope:
+  discovery_type: { type: string, enum: [components, design, routes, dependencies, motion, a11y, performance, state, types, forms, security] }
+  version: { type: string, description: "Schema version" }
+  timestamp: { type: string, format: "ISO 8601" }
+  project_path: { type: string }
+  profile: { type: string, enum: [full, web-next, web-spa, minimal] }
+  duration_ms: { type: integer, description: "Scan duration in milliseconds" }
+  health_score: { type: integer, min: 0, max: 100 }
+  health_score_formula:
+    type: string
+    description: "Penalty-based formula specific to each discovery type"
+  summary: { type: string, description: "1-line human-readable summary" }
+  issues:
+    type: array
+    items:
+      id: { type: string }
+      severity: { type: enum, values: [CRITICAL, HIGH, MEDIUM, LOW] }
+      category: { type: string }
+      message: { type: string }
+      file: { type: string }
+      line: { type: integer }
+      suggestion: { type: string }
+      auto_fixable: { type: boolean }
+      related_veto:
+        type: string
+        description: "Veto condition ID this issue would trigger (e.g., VC-DISC-A11Y-001)"
+        required: false
+  data: { type: object, description: "Discovery-specific data (see schemas below)" }
+
+# ==============================================================================
+# DISCOVER-COMPONENTS SCHEMA
+# ==============================================================================
+schemas:
+  components:
+    data:
+      total_count: { type: integer }
+      by_type:
+        page: { type: integer }
+        layout: { type: integer }
+        ui: { type: integer }
+        hook: { type: integer }
+        utility: { type: integer }
+      components:
+        type: array
+        items:
+          name: { type: string }
+          path: { type: string }
+          type: { type: enum, values: [page, layout, ui, hook, utility] }
+          loc: { type: integer }
+          hooks_count: { type: integer }
+          imports: { type: array, items: { type: string } }
+          imported_by: { type: array, items: { type: string } }
+          has_tests: { type: boolean }
+          has_error_boundary: { type: boolean }
+          is_orphan: { type: boolean }
+          is_god_component: { type: boolean }
+      orphan_count: { type: integer }
+      untested_count: { type: integer }
+      god_component_count: { type: integer }
+      dependency_tree:
+        type: object
+        description: "Adjacency list: component -> [dependencies]"
+
+  # ==============================================================================
+  # DISCOVER-DESIGN SCHEMA
+  # ==============================================================================
+  design:
+    data:
+      ds_score: { type: integer }
+      design_language: { type: string, description: "glass, material, flat, neumorphism, custom" }
+      classification: { type: enum, values: [solid, emerging, adhoc] }
+      tokens:
+        defined_count: { type: integer }
+        colors:
+          type: array
+          items:
+            name: { type: string }
+            value: { type: string }
+            usage_count: { type: integer }
+        spacing:
+          type: array
+          items:
+            name: { type: string }
+            value: { type: string }
+            usage_count: { type: integer }
+        typography:
+          type: array
+          items:
+            name: { type: string }
+            value: { type: string }
+            usage_count: { type: integer }
+      violations:
+        total_count: { type: integer }
+        hardcoded_colors: { type: integer }
+        hardcoded_spacing: { type: integer }
+        hardcoded_radius: { type: integer }
+        hardcoded_typography: { type: integer }
+      near_duplicates:
+        type: array
+        items:
+          color_a: { type: string }
+          color_b: { type: string }
+          hsl_distance: { type: number }
+
+  # ==============================================================================
+  # DISCOVER-ROUTES SCHEMA
+  # ==============================================================================
+  routes:
+    data:
+      total_routes: { type: integer }
+      routes:
+        type: array
+        items:
+          path: { type: string }
+          component: { type: string }
+          layout: { type: string }
+          params: { type: array, items: { type: string } }
+          guards:
+            type: array
+            items: string
+          is_lazy: { type: boolean }
+          has_title: { type: boolean }
+          has_meta: { type: boolean }
+          has_og_image: { type: boolean }
+          canonical: { type: boolean }
+          structured_data: { type: boolean }
+          robots_meta: { type: string }
+          h1_present: { type: boolean }
+          lang_attribute: { type: boolean }
+          status: { type: enum, values: [healthy, orphan, dead, seo_gap] }
+      orphan_count: { type: integer }
+      dead_count: { type: integer }
+      seo_gap_count: { type: integer }
+      missing_layout_count: { type: integer }
+
+  # ==============================================================================
+  # DISCOVER-DEPENDENCIES SCHEMA
+  # ==============================================================================
+  dependencies:
+    data:
+      total_deps: { type: integer }
+      prod_count: { type: integer }
+      dev_count: { type: integer }
+      outdated:
+        type: array
+        items:
+          name: { type: string }
+          installed: { type: string }
+          latest: { type: string }
+          severity: { type: enum, values: [major, minor, patch] }
+      vulnerable:
+        type: array
+        items:
+          name: { type: string }
+          severity: { type: enum, values: [critical, high, moderate, low] }
+          advisory: { type: string }
+      heavy:
+        type: array
+        items:
+          name: { type: string }
+          size_kb: { type: number }
+          alternative: { type: string }
+      unused:
+        type: array
+        items: { type: string }
+      duplicated:
+        type: array
+        items:
+          name: { type: string }
+          versions: { type: array, items: { type: string } }
+
+  # ==============================================================================
+  # DISCOVER-MOTION SCHEMA
+  # ==============================================================================
+  motion:
+    data:
+      total_animations: { type: integer }
+      animations:
+        type: array
+        items:
+          component: { type: string }
+          type: { type: enum, values: [spring, css_transition, css_animation, keyframe, gesture] }
+          library: { type: string }
+          trigger: { type: enum, values: [mount, hover, click, scroll, gesture, state_change] }
+          properties: { type: array, items: { type: string } }
+          has_exit: { type: boolean }
+          has_reduced_motion: { type: boolean }
+          is_gpu_accelerated: { type: boolean }
+      veto_violations: { type: integer }
+      missing_exit_count: { type: integer }
+      missing_reduced_motion_count: { type: integer }
+      non_gpu_count: { type: integer }
+      css_transition_violations: { type: integer }
+
+  # ==============================================================================
+  # DISCOVER-A11Y SCHEMA
+  # ==============================================================================
+  a11y:
+    data:
+      components_scanned: { type: integer }
+      issues_by_severity:
+        critical: { type: integer }
+        high: { type: integer }
+        medium: { type: integer }
+        low: { type: integer }
+      issues_by_category:
+        missing_alt: { type: integer }
+        missing_label: { type: integer }
+        contrast: { type: integer }
+        keyboard_trap: { type: integer }
+        aria_misuse: { type: integer }
+        heading_structure: { type: integer }
+        focus_management:
+          type: integer
+        touch_targets:
+          type: integer
+      worst_offenders:
+        type: array
+        items:
+          component: { type: string }
+          issue_count: { type: integer }
+          severities: { type: object }
+
+  # ==============================================================================
+  # DISCOVER-PERFORMANCE SCHEMA
+  # ==============================================================================
+  performance:
+    data:
+      components_scanned: { type: integer }
+      lazy_gaps:
+        count: { type: integer }
+        components: { type: array, items: { type: string } }
+      image_issues:
+        count: { type: integer }
+        missing_lazy: { type: integer }
+        missing_dimensions: { type: integer }
+        old_format: { type: integer }
+      rerender_risks:
+        count: { type: integer }
+        inline_objects: { type: integer }
+        unsliced_context: { type: integer }
+      bundle_risks:
+        count: { type: integer }
+        barrel_files: { type: integer }
+        star_imports: { type: integer }
+        heavy_json: { type: integer }
+      third_party_cost:
+        type: array
+        items:
+          script: { type: string }
+          estimated_size_kb: { type: number }
+      cwv_risks:
+        lcp: { type: integer }
+        inp: { type: integer }
+        cls: { type: integer }
+
+  # ==============================================================================
+  # DISCOVER-STATE SCHEMA
+  # ==============================================================================
+  state:
+    data:
+      total_state_sources: { type: integer }
+      by_type:
+        global: { type: integer }
+        atomic: { type: integer }
+        context: { type: integer }
+        local: { type: integer }
+      context_providers: { type: integer }
+      prop_drilling_chains: { type: integer }
+      unused_state_vars: { type: integer }
+      context_no_slice: { type: integer }
+      missing_memoization: { type: integer }
+      state_wrong_layer: { type: integer }
+
+  # ==============================================================================
+  # DISCOVER-TYPES SCHEMA
+  # ==============================================================================
+  types:
+    data:
+      total_files_scanned: { type: integer }
+      strict_mode: { type: boolean }
+      any_count: { type: integer }
+      unsafe_cast_count: { type: integer }
+      ts_ignore_count: { type: integer }
+      ts_nocheck_count: { type: integer }
+      untyped_props_count: { type: integer }
+      type_coverage_percent: { type: number }
+
+  # ==============================================================================
+  # DISCOVER-FORMS SCHEMA
+  # ==============================================================================
+  forms:
+    data:
+      total_forms: { type: integer }
+      with_validation: { type: integer }
+      with_error_display: { type: integer }
+      with_loading_state: { type: integer }
+      with_success_feedback: { type: integer }
+      double_submit_risks: { type: integer }
+      form_a11y_issues: { type: integer }
+
+  # ==============================================================================
+  # DISCOVER-SECURITY SCHEMA
+  # ==============================================================================
+  security:
+    data:
+      total_files_scanned: { type: integer }
+      xss_vectors: { type: integer }
+      exposed_secrets: { type: integer }
+      insecure_storage: { type: integer }
+      insecure_fetch: { type: integer }
+      unvalidated_redirects: { type: integer }
+      missing_security_headers: { type: integer }
+
+# ==============================================================================
+# DIFF CAPABILITY (MELHORIA-03)
+# ==============================================================================
+diff:
+  description: >
+    Compare two discovery outputs of the same type to show what changed.
+    Triggered by: *discover-{type} --diff or *apex-audit --diff
+  algorithm:
+    - step: "Load latest and previous scan from .aios/apex-context/discoveries/"
+      fallback: "If no previous scan exists, show 'First scan — no baseline for comparison'"
+    - step: "Compare health_score delta"
+      output: "Health: {prev_score} → {new_score} ({delta})"
+    - step: "Diff issues arrays (by id)"
+      output: "New issues: {new_count} | Resolved: {resolved_count} | Unchanged: {unchanged_count}"
+    - step: "Diff data fields (discovery-specific)"
+      output: "Show significant changes (e.g., new orphans, new vulnerabilities, new violations)"
+  output_format: |
+    Discovery diff ({discovery_type}): {prev_date} → {new_date}
+    Health: {prev_score} → {new_score} ({delta:+d})
+    New issues: {new_count} | Resolved: {resolved_count}
+    ---
+    {significant_changes}

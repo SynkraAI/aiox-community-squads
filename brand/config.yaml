@@ -1,0 +1,634 @@
+# Brand Squad Configuration
+# ============================================================================
+# Brasil-first: Naming + Branding com expansão metodológica global
+# ============================================================================
+
+pack:
+  name: brand
+  version: "1.1.0"
+  description: "SNP (Igor) + E/F/F (Ana) com 11 especialistas globais para fundamentos, posicionamento e ativação"
+
+version: "1.1.0"
+name: brand
+title: Brand Squad - Naming, Branding e Go-to-Market
+description: "SNP (Igor) + E/F/F (Ana) com 11 especialistas globais para fundamentos, posicionamento e ativação"
+domain: branding
+icon: "\U0001F3A8"
+context: "Brasil-first com cobertura completa de gaps via metodologias internacionais"
+entry_agent: brand-chief
+tested: true
+
+metadata:
+  version: "1.1.0"
+  score: 7.8
+  created: "2026-02-18"
+  created_by: squad-chief
+  last_updated: "2026-02-18"
+  status: active
+  maturity: beta
+
+veto_conditions_config:
+  file: "config/veto-conditions.yaml"
+  enforcement: "runtime"
+  version: "1.0.0"
+
+workspace_integration:
+  level: none
+  rationale: >-
+    Brand squad precisa consumir contexto real do workspace e só pode gravar
+    artefatos canônicos quando existir template correspondente em
+    workspace/_templates/business-template/L2-tactical/brand. O COO valida readiness do namespace
+    antes de qualquer escrita final no workspace.
+  read_paths:
+    - workspace/businesses/
+    - workspace/_templates/business-template/
+    - docs/brand/
+  write_paths:
+    - workspace/businesses/
+    - docs/brand/
+  template_namespace: brand
+  canonical_outputs_root: workspace/businesses/{brand_name}/L2-tactical/brand/
+  custom_outputs_root: docs/brand/{brand_name}/
+  bootstrap:
+    required: true
+    script: "scripts/bootstrap-brand-workspace.sh"
+  essentials_validation:
+    required: true
+    script: "scripts/validate-brand-essentials.sh"
+  readiness_owner: workspace-chief
+  readiness_resolver: workspace/scripts/resolve-squad-workspace-readiness.cjs
+  readiness_context_type: brand
+
+methodologies:
+  primary_brazil:
+    naming:
+      expert: "Igor Pinterich"
+      framework: "SNP - Strategic Naming Process"
+      core_use: "Naming de produtos, serviços e empresas no contexto BR"
+      cases: ["iFood", "Vivo", "Dafiti", "Telefonica"]
+    branding:
+      expert: "Ana Couto"
+      framework: "É, Faz e Fala + Ondas de Valor + Valometry"
+      core_use: "Plataforma de marca e alinhamento estratégico"
+      cases: ["Coca-Cola", "Natura", "Havaianas", "Itaú", "Fiat"]
+
+  global_expansion:
+    foundations:
+      - expert: "Kevin Lane Keller"
+        framework: "CBBE Pyramid"
+        use_for: "Medição de brand equity"
+      - expert: "David Aaker"
+        framework: "Brand Vision Model"
+        use_for: "Arquitetura e identidade de marca"
+      - expert: "Byron Sharp"
+        framework: "Mental + Physical Availability"
+        use_for: "Crescimento orientado por evidência"
+
+    positioning_and_narrative:
+      - expert: "Marty Neumeier"
+        framework: "Zag + Onlyness"
+        use_for: "Diferenciação radical"
+      - expert: "Al & Laura Ries"
+        framework: "Positioning + Visual Hammer"
+        use_for: "Posicionamento competitivo"
+      - expert: "Donald Miller"
+        framework: "StoryBrand SB7"
+        use_for: "Mensagem clara de oferta"
+      - expert: "Mark & Pearson"
+        framework: "12 Archetypes"
+        use_for: "Personalidade e consistência simbólica"
+
+    activation_and_operations:
+      - expert: "Alina Wheeler"
+        framework: "5-Phase Process"
+        use_for: "Sistema de identidade e implementação"
+      - expert: "Denise Lee Yohn"
+        framework: "FUSION"
+        use_for: "Integração cultura + marca"
+      - expert: "Emily Heyward"
+        framework: "Brand Obsession"
+        use_for: "Escala para startup/DTC"
+      - expert: "Jeremy Miller"
+        framework: "Sticky Branding 12.5"
+        use_for: "PME/B2B e diferenciação prática"
+
+capabilities:
+  naming:
+    - brief_estrategico
+    - geracao_candidatos
+    - triagem_funil
+    - validacao_inpi
+    - validacao_dominio
+  branding_foundation:
+    - auditoria_equity_cbbe
+    - identidade_brand_vision
+    - estrategia_disponibilidade
+  positioning_narrative:
+    - onlyness_statement
+    - positioning_architecture
+    - storybrand_messaging
+    - archetype_definition
+  activation:
+    - sistema_identidade
+    - alinhamento_cultura_marca
+    - startup_dtc_brand_build
+    - sticky_branding_smb
+  logo:
+    - logo_brainstorm
+    - logo_intake
+    - logo_strategic_direction
+    - logo_prompt_engineering
+    - logo_generation_cross_squad
+    - logo_curation
+    - logo_refinement_cross_squad
+    - logo_deliverable
+  mockup:
+    - mockup_touchpoint_definition
+    - mockup_prompt_engineering
+    - mockup_consistency_prefixes
+    - mockup_generation_cross_squad
+    - mockup_curation_validation
+    - mockup_refinement_loop
+    - mockup_asset_delivery
+  domain:
+    - domain_check
+    - domain_variations
+    - social_handles
+    - price_estimation
+
+agents:
+  orchestrator: brand-chief
+
+  specialists:
+    - id: naming-strategist
+      executor_profile:
+        sinkra_type: Agent
+        human_in_the_loop: true
+        output_schema: "deliverable definido pela task ativa"
+        story_role: executor
+        can_execute: true
+        core_replaces: null
+        work_contexts: ["general"]
+        can_review: []
+      tier: 1
+      methodology: "SNP (Igor Pinterich)"
+      specialty: "Naming BR + validação"
+
+    - id: brand-strategist
+      executor_profile:
+        sinkra_type: Agent
+        human_in_the_loop: true
+        output_schema: "deliverable definido pela task ativa"
+        story_role: executor
+        can_execute: true
+        core_replaces: null
+        work_contexts: ["general"]
+        can_review: []
+      tier: 1
+      methodology: "É, Faz e Fala (Ana Couto)"
+      specialty: "Estratégia de marca Brasil-first"
+
+    - id: domain-scout
+      executor_profile:
+        sinkra_type: Agent
+        human_in_the_loop: true
+        output_schema: "deliverable definido pela task ativa"
+        story_role: executor
+        can_execute: true
+        core_replaces: null
+        work_contexts: ["general"]
+        can_review: []
+      tier: 2
+      methodology: "Domain scouting"
+      specialty: "Domínio, handles e custo"
+
+    - id: keller-brand-equity
+      executor_profile:
+        sinkra_type: Agent
+        human_in_the_loop: true
+        output_schema: "deliverable definido pela task ativa"
+        story_role: executor
+        can_execute: true
+        core_replaces: null
+        work_contexts: ["general"]
+        can_review: []
+      tier: 0
+      methodology: "CBBE"
+      specialty: "Diagnóstico de equity"
+
+    - id: aaker-brand-identity
+      executor_profile:
+        sinkra_type: Agent
+        human_in_the_loop: true
+        output_schema: "deliverable definido pela task ativa"
+        story_role: executor
+        can_execute: true
+        core_replaces: null
+        work_contexts: ["general"]
+        can_review: []
+      tier: 0
+      methodology: "Brand Vision"
+      specialty: "Arquitetura de identidade"
+
+    - id: sharp-brand-science
+      executor_profile:
+        sinkra_type: Agent
+        human_in_the_loop: true
+        output_schema: "deliverable definido pela task ativa"
+        story_role: executor
+        can_execute: true
+        core_replaces: null
+        work_contexts: ["general"]
+        can_review: []
+      tier: 0
+      methodology: "How Brands Grow"
+      specialty: "Estratégia de crescimento"
+
+    - id: neumeier-differentiation
+      executor_profile:
+        sinkra_type: Agent
+        human_in_the_loop: true
+        output_schema: "deliverable definido pela task ativa"
+        story_role: executor
+        can_execute: true
+        core_replaces: null
+        work_contexts: ["general"]
+        can_review: []
+      tier: 1
+      methodology: "Zag + Onlyness"
+      specialty: "Diferenciação"
+
+    - id: ries-positioning
+      executor_profile:
+        sinkra_type: Agent
+        human_in_the_loop: true
+        output_schema: "deliverable definido pela task ativa"
+        story_role: executor
+        can_execute: true
+        core_replaces: null
+        work_contexts: ["general"]
+        can_review: []
+      tier: 1
+      methodology: "Positioning"
+      specialty: "Posicionamento competitivo"
+
+    - id: storybrand-narrator
+      executor_profile:
+        sinkra_type: Agent
+        human_in_the_loop: true
+        output_schema: "deliverable definido pela task ativa"
+        story_role: executor
+        can_execute: true
+        core_replaces: null
+        work_contexts: ["general"]
+        can_review: []
+      tier: 1
+      methodology: "SB7"
+      specialty: "Narrativa comercial"
+
+    - id: archetype-consultant
+      executor_profile:
+        sinkra_type: Agent
+        human_in_the_loop: true
+        output_schema: "deliverable definido pela task ativa"
+        story_role: executor
+        can_execute: true
+        core_replaces: null
+        work_contexts: ["general"]
+        can_review: []
+      tier: 1
+      methodology: "12 Archetypes"
+      specialty: "Personalidade de marca"
+
+    - id: wheeler-brand-design
+      executor_profile:
+        sinkra_type: Agent
+        human_in_the_loop: true
+        output_schema: "deliverable definido pela task ativa"
+        story_role: executor
+        can_execute: true
+        core_replaces: null
+        work_contexts: ["general"]
+        can_review: []
+      tier: 2
+      methodology: "5-Phase Identity"
+      specialty: "Sistema de identidade"
+
+    - id: yohn-brand-culture
+      executor_profile:
+        sinkra_type: Agent
+        human_in_the_loop: true
+        output_schema: "deliverable definido pela task ativa"
+        story_role: executor
+        can_execute: true
+        core_replaces: null
+        work_contexts: ["general"]
+        can_review: []
+      tier: 2
+      methodology: "FUSION"
+      specialty: "Cultura + marca"
+
+    - id: heyward-dtc-brand
+      executor_profile:
+        sinkra_type: Agent
+        human_in_the_loop: true
+        output_schema: "deliverable definido pela task ativa"
+        story_role: executor
+        can_execute: true
+        core_replaces: null
+        work_contexts: ["general"]
+        can_review: []
+      tier: 2
+      methodology: "Brand Obsession"
+      specialty: "Startup/DTC"
+
+    - id: miller-sticky-brand
+      executor_profile:
+        sinkra_type: Agent
+        human_in_the_loop: true
+        output_schema: "deliverable definido pela task ativa"
+        story_role: executor
+        can_execute: true
+        core_replaces: null
+        work_contexts: ["general"]
+        can_review: []
+      tier: 2
+      methodology: "Sticky Branding"
+      specialty: "PME/B2B"
+
+workflows:
+  default: wf-brand-complete
+
+  available:
+    - id: wf-naming-to-domain
+      file: "workflows/wf-naming-to-domain.yaml"
+      description: "Naming SNP + domínio"
+      agents: ["naming-strategist", "domain-scout"]
+      phases: 3
+
+    - id: wf-brand-foundations
+      file: "workflows/wf-brand-foundations.yaml"
+      description: "Fundamentos de marca: equity, identidade e crescimento"
+      agents: ["keller-brand-equity", "aaker-brand-identity", "sharp-brand-science"]
+      phases: 3
+
+    - id: wf-brand-positioning-narrative
+      file: "workflows/wf-brand-positioning-narrative.yaml"
+      description: "Posicionamento, diferenciação e narrativa"
+      agents: ["neumeier-differentiation", "ries-positioning", "storybrand-narrator", "archetype-consultant"]
+      phases: 4
+
+    - id: wf-brand-activation-system
+      file: "workflows/wf-brand-activation-system.yaml"
+      description: "Implementação, cultura e operação de marca"
+      agents: ["wheeler-brand-design", "yohn-brand-culture", "heyward-dtc-brand", "miller-sticky-brand"]
+      phases: 4
+
+    - id: wf-brand-all-hands
+      file: "workflows/wf-brand-all-hands.yaml"
+      description: "Ativação máxima: passa por todos os especialistas do squad"
+      agents: [
+        "naming-strategist",
+        "domain-scout",
+        "brand-strategist",
+        "keller-brand-equity",
+        "aaker-brand-identity",
+        "sharp-brand-science",
+        "neumeier-differentiation",
+        "ries-positioning",
+        "storybrand-narrator",
+        "archetype-consultant",
+        "wheeler-brand-design",
+        "yohn-brand-culture",
+        "heyward-dtc-brand",
+        "miller-sticky-brand"
+      ]
+      phases: 14
+
+    - id: wf-brand-consulting
+      file: "workflows/wf-brand-consulting.yaml"
+      description: "Consultoria e auditoria interativa com routing matrix (9 rotas necessidade→agente)"
+      agents: ["brand-chief", "storybrand-narrator", "neumeier-differentiation", "aaker-brand-identity", "wheeler-brand-design", "brand-strategist"]
+      phases: 4
+      modes: ["consulting", "audit"]
+
+    - id: wf-brand-epic
+      file: "tasks/create-brand-epic.md"
+      description: "Brand-native story lifecycle: epic/stories com agentes do squad"
+      agents: ["brand-chief", "brand-strategist", "keller-brand-equity"]
+      phases: 5
+      cross_squad: false
+      tasks:
+        - "tasks/create-brand-epic.md"
+        - "tasks/create-brand-story.md"
+        - "tasks/brand-quality-gate.md"
+      templates:
+        - "templates/brand-epic-tmpl.md"
+        - "templates/brand-story-tmpl.md"
+
+    - id: wf-logo-brainstorm
+      file: "workflows/wf-logo-brainstorm.yaml"
+      description: "Brainstorm estratégico + geração visual de logo (cross-squad com Design)"
+      agents: ["wheeler-brand-design", "archetype-consultant", "nano-banana-generator"]
+      phases: 8
+      cross_squad: ["design"]
+
+    - id: wf-brand-mockup-generation
+      file: "workflows/wf-brand-mockup-generation.yaml"
+      description: "Mockups de identidade visual: prompt engineering + geração + curadoria (cross-squad com Design)"
+      agents: ["wheeler-brand-design", "nano-banana-generator"]
+      phases: 6
+      cross_squad: ["design"]
+
+    - id: wf-brand-complete
+      file: "workflows/wf-brand-complete.yaml"
+      description: "Naming + domínio + estratégia completa em 5 macrofases"
+      agents: [
+        "naming-strategist",
+        "domain-scout",
+        "brand-strategist",
+        "keller-brand-equity",
+        "aaker-brand-identity",
+        "sharp-brand-science",
+        "neumeier-differentiation",
+        "ries-positioning",
+        "storybrand-narrator",
+        "archetype-consultant",
+        "wheeler-brand-design",
+        "yohn-brand-culture",
+        "heyward-dtc-brand",
+        "miller-sticky-brand"
+      ]
+      phases: 5
+
+tools:
+  built_in:
+    - whois
+    - dig
+  mcp_on_demand:
+    - name: "vercel-domain-check"
+      tool_id: "mcp__claude_ai_Vercel__check_domain_availability_and_price"
+      purpose: "Bulk domain availability + real pricing (up to 10 domains/call)"
+      status: "on-demand"
+      activation: "Só ativar quando task domain-check solicitar pricing real ou bulk check"
+      used_by: ["domain-scout"]
+  recommended:
+    - name: "inpi-search"
+      purpose: "Busca de marcas no INPI"
+      status: "manual"
+
+activation:
+  prefix: "@brand"
+
+  shortcuts:
+    - command: "@brand"
+      routes_to: "brand-chief"
+    - command: "@brand:brand-chief"
+      routes_to: "brand-chief"
+    - command: "@brand:naming"
+      routes_to: "naming-strategist"
+    - command: "@brand:naming-strategist"
+      routes_to: "naming-strategist"
+    - command: "@brand:domain"
+      routes_to: "domain-scout"
+    - command: "@brand:domain-scout"
+      routes_to: "domain-scout"
+    - command: "@brand:strategy"
+      routes_to: "brand-strategist"
+    - command: "@brand:brand-strategist"
+      routes_to: "brand-strategist"
+    - command: "@brand:keller"
+      routes_to: "keller-brand-equity"
+    - command: "@brand:keller-brand-equity"
+      routes_to: "keller-brand-equity"
+    - command: "@brand:aaker"
+      routes_to: "aaker-brand-identity"
+    - command: "@brand:aaker-brand-identity"
+      routes_to: "aaker-brand-identity"
+    - command: "@brand:sharp"
+      routes_to: "sharp-brand-science"
+    - command: "@brand:sharp-brand-science"
+      routes_to: "sharp-brand-science"
+    - command: "@brand:neumeier"
+      routes_to: "neumeier-differentiation"
+    - command: "@brand:neumeier-differentiation"
+      routes_to: "neumeier-differentiation"
+    - command: "@brand:positioning"
+      routes_to: "ries-positioning"
+    - command: "@brand:ries"
+      routes_to: "ries-positioning"
+    - command: "@brand:ries-positioning"
+      routes_to: "ries-positioning"
+    - command: "@brand:story"
+      routes_to: "storybrand-narrator"
+    - command: "@brand:storybrand-narrator"
+      routes_to: "storybrand-narrator"
+    - command: "@brand:archetype"
+      routes_to: "archetype-consultant"
+    - command: "@brand:archetype-consultant"
+      routes_to: "archetype-consultant"
+    - command: "@brand:wheeler"
+      routes_to: "wheeler-brand-design"
+    - command: "@brand:wheeler-brand-design"
+      routes_to: "wheeler-brand-design"
+    - command: "@brand:yohn"
+      routes_to: "yohn-brand-culture"
+    - command: "@brand:yohn-brand-culture"
+      routes_to: "yohn-brand-culture"
+    - command: "@brand:heyward"
+      routes_to: "heyward-dtc-brand"
+    - command: "@brand:heyward-dtc-brand"
+      routes_to: "heyward-dtc-brand"
+    - command: "@brand:miller"
+      routes_to: "miller-sticky-brand"
+    - command: "@brand:miller-sticky-brand"
+      routes_to: "miller-sticky-brand"
+    - command: "@brand:all-hands"
+      routes_to: "brand-chief"
+
+  routing:
+    - keyword: "logo"
+      workflow: "wf-logo-brainstorm"
+      agents: ["wheeler-brand-design", "nano-banana-generator"]
+    - keyword: "logo brainstorm"
+      workflow: "wf-logo-brainstorm"
+    - keyword: "criar logo"
+      workflow: "wf-logo-brainstorm"
+    - keyword: "gerar logo"
+      workflow: "wf-logo-brainstorm"
+    - keyword: "mockup"
+      workflow: "wf-brand-mockup-generation"
+      agents: ["wheeler-brand-design", "nano-banana-generator"]
+    - keyword: "mockups"
+      workflow: "wf-brand-mockup-generation"
+    - keyword: "brand identity mockup"
+      workflow: "wf-brand-mockup-generation"
+    - keyword: "epic de brand"
+      workflow: "wf-brand-epic"
+      agents: ["brand-chief", "brand-strategist", "keller-brand-equity"]
+    - keyword: "story de brand"
+      workflow: "wf-brand-epic"
+    - keyword: "brand gate"
+      workflow: "wf-brand-epic"
+      agents: ["keller-brand-equity"]
+    - keyword: "brand quality gate"
+      workflow: "wf-brand-epic"
+      agents: ["keller-brand-equity"]
+
+data:
+  - id: brand-mappings
+    name: "Brand Mappings — Canonical Vocabulary"
+    format: yaml
+    description: "Translates vague brand requests into professional terminology. 4 tables: brand_terms, archetype_descriptors, positioning_language, voice_attributes."
+
+keywords:
+  - brand
+  - branding
+  - naming
+  - domain
+  - marca
+  - posicionamento
+  - proposito
+  - equity
+  - inpi
+  - brasil
+  - igor-pinterich
+  - ana-couto
+  - keller
+  - aaker
+  - byron-sharp
+  - neumeier
+  - ries
+  - storybrand
+  - archetypes
+  - wheeler
+  - yohn
+  - heyward
+  - sticky-branding
+  - logo
+  - logotipo
+  - identidade-visual
+  - mockup
+  - mockups
+  - brand-mockup
+
+# SINKRA v3.1 (Story 54.11)
+bu_mapping: "hub-framework"
+artifact_contracts:
+  - artifact_id: "brand-strategy"
+    template_path: "templates/brand-story-tmpl.md"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "brand-epic"
+    template_path: "templates/brand-epic-tmpl.md"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "naming-report"
+    template_path: "templates/naming-report-tmpl.md"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "brandbook"
+    template_path: "templates/brandbook-tmpl.yaml"
+    lifecycle_states: [draft, validated, approved]
+supported_modes:
+  - CRIAR
+  - EXPLORAR
+  - PLANEJAR
+  - VALIDAR

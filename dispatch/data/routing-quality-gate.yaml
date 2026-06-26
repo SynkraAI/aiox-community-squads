@@ -1,0 +1,193 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# ROUTING QUALITY GATE (QG-ROUTE)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Purpose: Validate routing completeness before enrichment and execution
+# Phase: Post-routing (after Phase 2, before Phase 4)
+# Type: Automatic (no human interaction needed)
+# Ported from: squad-creator quality-dimensions-framework + dispatch V1.x vetos
+# Version: 1.0.0
+
+gate:
+  id: "QG-ROUTE-1.0"
+  name: "Routing Completeness Gate"
+  phase: "post-routing"
+  type: "auto"
+  duration: "< 5s"
+  blocking: true  # HARD BLOCK — execution cannot proceed without PASS
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# COMPLETENESS CHECKS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+completeness:
+  required_fields:
+    - field: "domain"
+      check: "Must be a valid domain from domain-registry.yaml"
+      veto_id: "VR.1"
+      on_fail: "Return to task-router for re-classification"
+
+    - field: "agent"
+      check: "Must resolve to an existing agent path (slash notation)"
+      veto_id: "VR.2"
+      on_fail: "Return to task-router for agent assignment"
+
+    - field: "model"
+      check: "Must be one of: worker, haiku, sonnet, opus"
+      veto_id: "VR.3"
+      on_fail: "Apply Q1-Q4 decision tree from model-selection-rules.yaml"
+
+    - field: "enrichment_level"
+      check: "Must be one of: MINIMAL, STANDARD, FULL"
+      veto_id: "VR.4"
+      on_fail: "Apply enrichment-rules.yaml classification"
+
+    - field: "timeout"
+      check: "Must have numeric timeout_ms > 0"
+      veto_id: "VR.5"
+      on_fail: "Apply timeout-rules.yaml defaults"
+
+  threshold: "100%"  # ALL tasks must have ALL fields
+  operator: "=="
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# NOTATION COMPLIANCE
+# ═══════════════════════════════════════════════════════════════════════════════
+
+notation:
+  slash_paths:
+    check: "All agent references use / prefix (not @)"
+    veto_id: "VR.6"
+    pattern: "^/[a-z]"
+    anti_pattern: "^@"
+    on_fail: "Convert @ notation to / notation"
+
+  file_paths:
+    check: "All file paths use forward slashes (not backslashes)"
+    veto_id: "VR.7"
+    pattern: "/"
+    anti_pattern: "\\\\"
+    on_fail: "Convert backslashes to forward slashes"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CONSTRAINT VALIDATION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+constraints:
+  mcp_tasks:
+    check: "Tasks requiring MCP (ActiveCampaign, Beehiiv, ClickUp) flagged as FOREGROUND"
+    veto_id: "VR.8"
+    domains: ["automation_ac", "automation_bh", "automation_clickup"]
+    required_flag: "MCP_FOREGROUND"
+    reason: "MCP tools need main context — cannot run in subagent"
+    on_fail: "Flag task as MCP_FOREGROUND, warn dispatch-chief"
+
+  architecture_tasks:
+    check: "Architecture/strategic tasks flagged as DO_NOT_DISPATCH"
+    veto_id: "VR.9"
+    indicators: ["architecture", "strategic", "PRD", "decision"]
+    required_flag: "DO_NOT_DISPATCH"
+    reason: "Architecture decisions require Opus depth, not parallel execution"
+    on_fail: "Remove from dispatch, redirect to /architect"
+
+  multi_domain_splits:
+    check: "Multi-domain tasks properly split (no single task spans 2+ domains)"
+    veto_id: "VR.10"
+    detection: "task.domains.length > 1"
+    on_fail: "Split task into N sub-tasks, one per domain"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SCORING
+# ═══════════════════════════════════════════════════════════════════════════════
+
+scoring:
+  formula: |
+    completeness_score = tasks_with_all_fields / total_tasks
+    notation_score = tasks_with_correct_notation / total_tasks
+    constraint_score = tasks_with_valid_constraints / total_tasks
+
+    routing_quality = (completeness_score * 0.50) + (notation_score * 0.20) + (constraint_score * 0.30)
+
+  thresholds:
+    pass: ">= 1.00"  # Perfect routing required
+    warn: ">= 0.90"  # Allow execution with warnings
+    fail: "< 0.90"   # Block execution
+
+  output:
+    on_pass: |
+      ✅ QG-ROUTE PASS: {total_tasks} tasks, all fields complete, notation valid
+      Proceed to Phase 4 (Enrichment)
+
+    on_warn: |
+      ⚠️ QG-ROUTE WARN: {issues_count} issues detected
+      {issues_list}
+      Proceeding with warnings. Review post-execution.
+
+    on_fail: |
+      ❌ QG-ROUTE FAIL: {fail_count} blocking issues
+      {veto_list}
+      Return to Phase 2 (Routing) for resolution.
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VETO CONDITIONS SUMMARY
+# ═══════════════════════════════════════════════════════════════════════════════
+
+veto_summary:
+  - id: "VR.1"
+    condition: "Task missing domain assignment"
+    severity: "BLOCKING"
+  - id: "VR.2"
+    condition: "Task missing agent assignment or agent doesn't exist"
+    severity: "BLOCKING"
+  - id: "VR.3"
+    condition: "Task missing model assignment"
+    severity: "BLOCKING"
+  - id: "VR.4"
+    condition: "Task missing enrichment level"
+    severity: "BLOCKING"
+  - id: "VR.5"
+    condition: "Task missing timeout"
+    severity: "BLOCKING"
+  - id: "VR.6"
+    condition: "Agent reference uses @ instead of /"
+    severity: "WARNING (auto-fixable)"
+  - id: "VR.7"
+    condition: "File path uses backslashes"
+    severity: "WARNING (auto-fixable)"
+  - id: "VR.8"
+    condition: "MCP task not flagged FOREGROUND"
+    severity: "BLOCKING"
+  - id: "VR.9"
+    condition: "Architecture task not flagged DO_NOT_DISPATCH"
+    severity: "BLOCKING"
+  - id: "VR.10"
+    condition: "Multi-domain task not split"
+    severity: "BLOCKING"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# IMPLEMENTATION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+implementation:
+  script: "scripts/validate-routing-gate.py"  # TODO: Create this script
+  invocation: |
+    python squads/dispatch/scripts/validate-routing-gate.py \
+      --run-id {run_id} \
+      --tasks-file _temp/dispatch/runs/{run_id}/routed-tasks.json
+
+  integration:
+    workflow: "wf-dispatch-main.yaml"
+    after_phase: 2  # Routing
+    before_phase: 4  # Enrichment
+    checkpoint_name: "routing_completeness_gate"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CHANGELOG
+# ═══════════════════════════════════════════════════════════════════════════════
+changelog:
+  - version: "1.0.0"
+    date: "2026-02-12"
+    changes:
+      - "Initial creation — ported from squad-creator quality-dimensions-framework"
+      - "10 veto conditions (VR.1 through VR.10)"
+      - "3-tier scoring (completeness 50%, notation 20%, constraints 30%)"
+      - "Auto-fix capability for VR.6 and VR.7 (notation issues)"

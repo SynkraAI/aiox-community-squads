@@ -1,0 +1,529 @@
+# Scaling Roadmap Swipefile
+# Source: Acquisition.com 100M Scaling Roadmap (Stages 0-9)
+# Extracted: 2026-02-23
+
+version: "1.0"
+source: "Acquisition.com Scaling Roadmap PDFs"
+total_stages: 10
+
+stages:
+  stage_0:
+    name: "Starting Point"
+    revenue: "$0/yr"
+    subtitle: "Ready, Set, Sell"
+    core_focus: "Get first paying customers"
+
+    metrics:
+      primary: "First dollar earned"
+      target: "Any paying customer"
+
+    constraints:
+      - "No product-market fit yet"
+      - "No proven offer"
+      - "No sales process"
+      - "Analysis paralysis risk"
+
+    actions:
+      - action: "Pick ONE audience"
+        detail: "Stop trying to serve everyone"
+      - action: "Create simple offer"
+        detail: "Solve one problem completely"
+      - action: "Sell before building"
+        detail: "Validate demand with real money"
+      - action: "Use warm outreach"
+        detail: "Friends, family, network first"
+      - action: "Get testimonials"
+        detail: "Social proof from first clients"
+
+    what_to_sell:
+      options:
+        - "Done-For-You service"
+        - "Done-With-You coaching"
+        - "Community access"
+        - "Course/digital product"
+      recommendation: "Start with services (easier to sell, higher prices)"
+
+    next_milestone:
+      target: "$100K/yr ($8.3K/mo)"
+      proof: "Paying customers exist and are happy"
+
+  stage_1:
+    name: "Grind"
+    revenue: "$100K-$300K/yr"
+    subtitle: "More of the Same"
+    core_focus: "Do more of what's working"
+
+    metrics:
+      primary: "Monthly revenue consistency"
+      ltv_to_cac: "Track but don't optimize yet"
+      churn: "Monitor for red flags"
+
+    constraints:
+      - "Owner does everything"
+      - "No systems or processes"
+      - "Inconsistent lead flow"
+      - "Time is the bottleneck"
+
+    actions:
+      - action: "Double down on winning channel"
+        detail: "Don't diversify yet"
+      - action: "Increase volume"
+        detail: "More calls, more outreach, more content"
+      - action: "Raise prices"
+        detail: "Test higher price points"
+      - action: "Document what works"
+        detail: "Start building SOPs"
+      - action: "Track basic metrics"
+        detail: "Revenue, leads, conversions"
+
+    common_mistakes:
+      - "Hiring too early"
+      - "Building systems before proving the model"
+      - "Diversifying lead sources too soon"
+      - "Underpricing services"
+
+    next_milestone:
+      target: "$300K/yr ($25K/mo)"
+      proof: "Consistent monthly revenue, repeatable process"
+
+  stage_2:
+    name: "Foundation"
+    revenue: "$300K-$1M/yr"
+    subtitle: "Build the Machine"
+    core_focus: "Create systems that don't require you"
+
+    metrics:
+      primary: "Revenue per employee"
+      lead_flow: "Consistent and measurable"
+      conversion_rate: "Sales process efficiency"
+      fulfillment_quality: "Client satisfaction scores"
+
+    constraints:
+      - "Owner still key bottleneck"
+      - "No management layer"
+      - "Processes in owner's head"
+      - "Hiring mistakes common"
+
+    actions:
+      - action: "Document ALL processes"
+        detail: "Sales, fulfillment, operations"
+      - action: "First key hire"
+        detail: "Usually sales or fulfillment"
+      - action: "Create training systems"
+        detail: "Onboard without owner"
+      - action: "Standardize delivery"
+        detail: "Same result every time"
+      - action: "Build lead generation system"
+        detail: "Paid ads or content engine"
+
+    hiring_priority:
+      order:
+        - "Sales closer (if you're doing sales)"
+        - "Fulfillment lead (if you're delivering)"
+        - "Admin/ops support"
+      rule: "Hire to replace yourself in bottleneck areas"
+
+    next_milestone:
+      target: "$1M/yr ($83K/mo)"
+      proof: "Business runs without daily owner involvement"
+
+  stage_3:
+    name: "Growth"
+    revenue: "$1M-$3M/yr"
+    subtitle: "Scale What Works"
+    core_focus: "Systematically scale acquisition"
+
+    metrics:
+      primary: "Cost per acquisition (CPA)"
+      ltv_to_cac: "3:1 minimum"
+      monthly_growth_rate: "15-20% target"
+      team_productivity: "Revenue per person"
+
+    constraints:
+      - "Cash flow management critical"
+      - "Quality control challenges"
+      - "Management layer needed"
+      - "Culture starts to matter"
+
+    actions:
+      - action: "Scale winning ad channel"
+        detail: "Increase budget systematically"
+      - action: "Build sales team"
+        detail: "2-3 closers minimum"
+      - action: "Create management layer"
+        detail: "Team leads, not just doers"
+      - action: "Implement CRM/tracking"
+        detail: "Data-driven decisions"
+      - action: "Weekly metrics reviews"
+        detail: "Scorecard culture"
+
+    team_structure:
+      departments:
+        - name: "Sales"
+          roles: ["Sales Manager", "2-3 Closers", "Setter (optional)"]
+        - name: "Fulfillment"
+          roles: ["Delivery Lead", "Specialists"]
+        - name: "Operations"
+          roles: ["Ops Manager", "Admin Support"]
+
+    next_milestone:
+      target: "$3M/yr ($250K/mo)"
+      proof: "Predictable growth with maintained margins"
+
+  stage_4:
+    name: "Optimization"
+    revenue: "$3M-$5M/yr"
+    subtitle: "Tighten the Screws"
+    core_focus: "Maximize efficiency and margins"
+
+    metrics:
+      primary: "Profit margin percentage"
+      ltv: "Maximize lifetime value"
+      employee_efficiency: "Revenue per FTE"
+      cash_conversion_cycle: "Days to profitability"
+
+    constraints:
+      - "Complexity increasing"
+      - "Middle management challenges"
+      - "Process debt accumulating"
+      - "Owner pulled in many directions"
+
+    actions:
+      - action: "Audit all processes"
+        detail: "Find inefficiencies"
+      - action: "Improve LTV"
+        detail: "Upsells, cross-sells, retention"
+      - action: "Reduce CAC"
+        detail: "Optimize ad spend, improve conversion"
+      - action: "Systematize management"
+        detail: "Regular 1:1s, reviews, feedback"
+      - action: "Financial controls"
+        detail: "Budgets, forecasts, cash management"
+
+    profit_optimization:
+      levers:
+        - "Price increases"
+        - "Reducing fulfillment costs"
+        - "Improving close rates"
+        - "Reducing refunds/chargebacks"
+        - "Better vendor negotiations"
+
+    next_milestone:
+      target: "$5M/yr ($417K/mo)"
+      proof: "25%+ profit margins, sustainable growth"
+
+  stage_5:
+    name: "Team Building"
+    revenue: "$5M-$10M/yr"
+    subtitle: "Leadership Development"
+    core_focus: "Build leadership bench"
+
+    metrics:
+      primary: "Leader effectiveness"
+      employee_retention: "Key person turnover"
+      team_nps: "Internal satisfaction"
+      succession_readiness: "Backup for all roles"
+
+    constraints:
+      - "Finding A-players difficult"
+      - "Culture dilution risk"
+      - "Communication complexity"
+      - "Owner identity shift needed"
+
+    actions:
+      - action: "Hire department heads"
+        detail: "True leaders, not just managers"
+      - action: "Create leadership development"
+        detail: "Grow leaders internally"
+      - action: "Implement EOS/OKRs"
+        detail: "Alignment frameworks"
+      - action: "Owner steps back"
+        detail: "Work ON business, not IN it"
+      - action: "Document culture"
+        detail: "Values, expectations, standards"
+
+    leadership_structure:
+      executive_team:
+        - "COO/Integrator"
+        - "Sales Director"
+        - "Marketing Director"
+        - "Operations Director"
+      owner_role: "Visionary, strategic decisions only"
+
+    next_milestone:
+      target: "$10M/yr ($833K/mo)"
+      proof: "Business runs without owner for weeks"
+
+  stage_6:
+    name: "Expansion"
+    revenue: "$10M-$25M/yr"
+    subtitle: "New Growth Vectors"
+    core_focus: "Add new revenue channels"
+
+    metrics:
+      primary: "Revenue by channel/product"
+      new_channel_roi: "Return on expansion investment"
+      market_share: "Category penetration"
+      brand_strength: "Recognition and reputation"
+
+    constraints:
+      - "Core business distraction risk"
+      - "Capital requirements increase"
+      - "Market saturation possible"
+      - "Competition intensifies"
+
+    actions:
+      - action: "Second acquisition channel"
+        detail: "Different from primary"
+      - action: "New product/service line"
+        detail: "Serve existing customers better"
+      - action: "Geographic expansion"
+        detail: "New markets if applicable"
+      - action: "Strategic partnerships"
+        detail: "Leverage others' audiences"
+      - action: "Build brand moat"
+        detail: "Become category leader"
+
+    expansion_options:
+      channels:
+        - "If paid ads primary, add content marketing"
+        - "If content primary, add paid ads"
+        - "Add affiliate/referral programs"
+        - "Add outbound sales"
+      products:
+        - "Higher-ticket offerings"
+        - "Lower-ticket entry points"
+        - "Complementary services"
+        - "Licensing/certification"
+
+    next_milestone:
+      target: "$25M/yr ($2M/mo)"
+      proof: "Multiple proven growth engines"
+
+  stage_7:
+    name: "Infrastructure"
+    revenue: "$25M-$50M/yr"
+    subtitle: "Enterprise Systems"
+    core_focus: "Build scalable infrastructure"
+
+    metrics:
+      primary: "System reliability"
+      tech_debt: "Technical/process debt level"
+      scalability: "Can systems handle 2x volume?"
+      compliance: "Legal/regulatory readiness"
+
+    constraints:
+      - "Legacy systems breaking"
+      - "Data silos forming"
+      - "Security concerns"
+      - "Regulatory requirements"
+
+    actions:
+      - action: "Enterprise tech stack"
+        detail: "CRM, ERP, BI tools upgrade"
+      - action: "Data infrastructure"
+        detail: "Single source of truth"
+      - action: "Security hardening"
+        detail: "SOC2, data protection"
+      - action: "Process automation"
+        detail: "Reduce manual work"
+      - action: "HR systems"
+        detail: "Performance, payroll, benefits"
+
+    tech_investments:
+      critical:
+        - "Enterprise CRM (Salesforce, HubSpot Enterprise)"
+        - "BI/Analytics platform"
+        - "Project management (Monday, Asana)"
+        - "Communication (Slack, Teams)"
+      optional:
+        - "Custom integrations"
+        - "AI/ML capabilities"
+        - "Customer data platform"
+
+    next_milestone:
+      target: "$50M/yr ($4.2M/mo)"
+      proof: "Infrastructure ready for 100M+ scale"
+
+  stage_8:
+    name: "Leverage"
+    revenue: "$50M-$100M/yr"
+    subtitle: "Capital & Acquisitions"
+    core_focus: "Use capital to accelerate growth"
+
+    metrics:
+      primary: "Return on invested capital"
+      acquisition_roi: "M&A performance"
+      enterprise_value: "Multiple on revenue/EBITDA"
+      investor_metrics: "If applicable"
+
+    constraints:
+      - "Capital allocation decisions complex"
+      - "M&A integration challenges"
+      - "Board/investor management"
+      - "Opportunity cost of focus"
+
+    actions:
+      - action: "Consider outside capital"
+        detail: "PE, debt, strategic investors"
+      - action: "Acquire competitors"
+        detail: "Buy market share"
+      - action: "Acquire capabilities"
+        detail: "Tech, talent, products"
+      - action: "International expansion"
+        detail: "New geographies"
+      - action: "Build M&A capability"
+        detail: "Integration playbook"
+
+    capital_strategy:
+      options:
+        - name: "Self-funded"
+          pro: "Keep control"
+          con: "Slower growth"
+        - name: "Debt financing"
+          pro: "Keep equity"
+          con: "Cash flow burden"
+        - name: "Private equity"
+          pro: "Expertise + capital"
+          con: "Loss of control"
+        - name: "Strategic partner"
+          pro: "Synergies"
+          con: "Complex relationship"
+
+    next_milestone:
+      target: "$100M/yr ($8.3M/mo)"
+      proof: "Clear path to market leadership"
+
+  stage_9:
+    name: "Market Leader"
+    revenue: "$100M+/yr"
+    subtitle: "Category King"
+    core_focus: "Dominate and defend"
+
+    metrics:
+      primary: "Market share"
+      brand_value: "Brand equity measurement"
+      innovation_rate: "New product success"
+      ecosystem_strength: "Partner/customer loyalty"
+
+    constraints:
+      - "Disruption risk from startups"
+      - "Organizational complexity"
+      - "Bureaucracy creep"
+      - "Innovation slowdown"
+
+    actions:
+      - action: "Category design"
+        detail: "Define and own the category"
+      - action: "Platform strategy"
+        detail: "Become the ecosystem"
+      - action: "Talent magnetism"
+        detail: "Best people want to work here"
+      - action: "Innovation labs"
+        detail: "Internal startups"
+      - action: "Industry leadership"
+        detail: "Conferences, standards, thought leadership"
+
+    market_leadership:
+      strategies:
+        - "Acquire potential disruptors"
+        - "Create switching costs"
+        - "Build partner ecosystem"
+        - "Invest in R&D"
+        - "Own the narrative"
+
+    exit_options:
+      paths:
+        - name: "IPO"
+          description: "Public markets"
+        - name: "Strategic sale"
+          description: "Sell to larger company"
+        - name: "PE rollup"
+          description: "Platform for acquisitions"
+        - name: "Hold forever"
+          description: "Cash flow machine"
+
+    next_milestone:
+      target: "Market dominance"
+      proof: "Category king status, 10x next competitor"
+
+# Summary progression
+progression_summary:
+  - stage: 0
+    revenue: "$0"
+    theme: "Get first sale"
+    key_action: "Sell before build"
+
+  - stage: 1
+    revenue: "$100K-$300K"
+    theme: "Do more"
+    key_action: "Volume on what works"
+
+  - stage: 2
+    revenue: "$300K-$1M"
+    theme: "Build systems"
+    key_action: "Document and delegate"
+
+  - stage: 3
+    revenue: "$1M-$3M"
+    theme: "Scale acquisition"
+    key_action: "Build sales team"
+
+  - stage: 4
+    revenue: "$3M-$5M"
+    theme: "Optimize"
+    key_action: "Maximize margins"
+
+  - stage: 5
+    revenue: "$5M-$10M"
+    theme: "Build leaders"
+    key_action: "Department heads"
+
+  - stage: 6
+    revenue: "$10M-$25M"
+    theme: "Expand"
+    key_action: "New channels/products"
+
+  - stage: 7
+    revenue: "$25M-$50M"
+    theme: "Infrastructure"
+    key_action: "Enterprise systems"
+
+  - stage: 8
+    revenue: "$50M-$100M"
+    theme: "Leverage capital"
+    key_action: "M&A and fundraising"
+
+  - stage: 9
+    revenue: "$100M+"
+    theme: "Dominate"
+    key_action: "Category king"
+
+agent_usage:
+  hormozi_scale:
+    description: "Diagnostica estágio atual e recomenda ações"
+    instructions:
+      - "Identifique o estágio atual pelo revenue"
+      - "Avalie se constraints do estágio são relevantes"
+      - "Recomende ações específicas do estágio"
+      - "Alerte sobre erros comuns"
+      - "Defina próximo milestone claro"
+
+    diagnostic_questions:
+      - "Qual é o faturamento anual atual?"
+      - "Quantos funcionários tem?"
+      - "Qual o principal canal de aquisição?"
+      - "O dono ainda faz entregas?"
+      - "Há gerentes ou só executores?"
+
+    stage_indicators:
+      stage_0: "Sem clientes pagantes ou primeiros clientes"
+      stage_1: "Dono faz tudo, revenue irregular"
+      stage_2: "Primeiras contratações, processos sendo criados"
+      stage_3: "Time de vendas, scaling ativo"
+      stage_4: "Foco em margens e eficiência"
+      stage_5: "Construindo liderança, owner se afastando"
+      stage_6: "Novos canais e produtos"
+      stage_7: "Sistemas enterprise"
+      stage_8: "Usando capital para M&A"
+      stage_9: "Liderança de mercado"

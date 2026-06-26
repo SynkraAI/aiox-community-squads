@@ -1,0 +1,201 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# HAIKU PROMPT PATTERNS — 6 Validated Patterns (94 tests, 100% success)
+# Source: PRD Section 10.2 + haiku-execution-guide.md + haiku-quick-ref.md
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PATTERN 1: FILL TEMPLATE
+# ═══════════════════════════════════════════════════════════════════════════════
+
+fill_template:
+  id: HP-001
+  name: "Fill Template"
+  use_when: "Output has a defined structure to fill"
+  task_types: [create_file, generate_config, create_agent, create_task]
+  prompt_structure: |
+    ## DATA
+    {context data to use}
+
+    ## TEMPLATE
+    {template structure with placeholders}
+
+    ## INSTRUCTIONS
+    Fill ALL placeholders in the template using the DATA above.
+    DO NOT ask questions. Execute immediately.
+    Write output in {language}.
+    Save to: {output_path}
+
+    ## ACCEPTANCE CRITERIA
+    {criteria list}
+  example_use: "Create agent file from extracted DNA"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PATTERN 2: EXTRACT + TRANSFORM
+# ═══════════════════════════════════════════════════════════════════════════════
+
+extract_transform:
+  id: HP-002
+  name: "Extract + Transform"
+  use_when: "Input data needs to be extracted and restructured"
+  task_types: [extract, transform, parse, convert]
+  prompt_structure: |
+    ## INPUT
+    {source data}
+
+    ## OUTPUT FORMAT
+    ```{format}
+    {expected output structure}
+    ```
+
+    ## INSTRUCTIONS
+    Extract ONLY the fields shown in OUTPUT FORMAT from the INPUT.
+    DO NOT ask questions. Execute immediately.
+    Return ONLY the {format} block. Nothing else.
+    Save to: {output_path}
+  example_use: "Extract domain triggers from agent definition"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PATTERN 3: AUDIT / VALIDATE
+# ═══════════════════════════════════════════════════════════════════════════════
+
+audit_validate:
+  id: HP-003
+  name: "Audit/Validate"
+  use_when: "Check input against criteria or checklist"
+  task_types: [validate, audit, check, verify]
+  prompt_structure: |
+    ## INPUT TO VALIDATE
+    {file or content to check}
+
+    ## CHECKLIST
+    {criteria list — each must be PASS or FAIL}
+
+    ## INSTRUCTIONS
+    Check each criterion against the input.
+    Status is binary: PASS or FAIL. No "partial" or "maybe".
+    DO NOT ask questions. Execute immediately.
+
+    ## OUTPUT FORMAT
+    | # | Criterion | Status | Evidence |
+    |---|-----------|--------|----------|
+    | 1 | {criterion} | PASS/FAIL | {why} |
+
+    Save to: {output_path}
+  example_use: "Validate agent against quality gate SC_AGT_001"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PATTERN 4: CODE GENERATION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+code_generation:
+  id: HP-004
+  name: "Code Generation"
+  use_when: "Generate code from requirements"
+  task_types: [create_script, create_component, generate_code]
+  prompt_structure: |
+    ## REQUIREMENTS
+    {what the code should do}
+
+    ## CONSTRAINTS
+    - Language: {language}
+    - Max lines: {limit}
+    - Dependencies: {allowed libraries}
+    - Style: {coding conventions}
+
+    ## INSTRUCTIONS
+    Generate code that meets ALL requirements.
+    DO NOT ask questions. Execute immediately.
+    Return ONLY the code block.
+    Save to: {output_path}
+  example_use: "Generate Python script for wave optimization"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PATTERN 5: MCP OPERATIONS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+mcp_operations:
+  id: HP-005
+  name: "MCP Operations"
+  use_when: "Execute API calls via MCP tools"
+  task_types: [mcp_create, mcp_update, mcp_delete, mcp_query]
+  prompt_structure: |
+    ## OBJECTIVE
+    {what to achieve}
+
+    ## STEPS
+    1. {step 1 — specific MCP tool call}
+    2. {step 2 — specific MCP tool call}
+    3. Verify result
+
+    ## MCP TOOLS AVAILABLE
+    {list of relevant MCP tools}
+
+    ## INSTRUCTIONS
+    Execute tools in order shown.
+    DO NOT ask questions. Execute immediately.
+    If step fails, retry once. If still fails, report error.
+
+    ## ACCEPTANCE CRITERIA
+    {verification steps}
+  example_use: "Create ActiveCampaign tag and automation"
+  constraint: "MUST run foreground — MCP unavailable in background tasks"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PATTERN 6: SELF-CORRECTION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+self_correction:
+  id: HP-006
+  name: "Self-Correction"
+  use_when: "Improve existing output based on feedback"
+  task_types: [improve, correct, rewrite, fix]
+  prompt_structure: |
+    ## ORIGINAL OUTPUT (V1)
+    {output from previous attempt}
+
+    ## FEEDBACK
+    {specific issues to fix}
+
+    ## CRITERIA FOR V2
+    {what V2 must satisfy}
+
+    ## INSTRUCTIONS
+    Read the original output and feedback.
+    Create V2 that addresses ALL issues in feedback.
+    DO NOT ask questions. Execute immediately.
+    Save V2 to: {output_path}
+  example_use: "Haiku output scored 5/10, Sonnet feedback provided, Haiku creates V2"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PATTERN SELECTION BY TASK TYPE
+# ═══════════════════════════════════════════════════════════════════════════════
+
+selection:
+  task_type_create: fill_template
+  task_type_extract: extract_transform
+  task_type_validate: audit_validate
+  task_type_code: code_generation
+  task_type_mcp: mcp_operations
+  task_type_improve: self_correction
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# HAIKU ALWAYS/NEVER RULES
+# ═══════════════════════════════════════════════════════════════════════════════
+
+always:
+  - "Instructions in ENGLISH"
+  - "Template/structure for outputs > 50 lines"
+  - "'DO NOT ask questions. Execute immediately.' present"
+  - "'Return ONLY [format]. Nothing else.' for structured output"
+  - "1 task = 1 deliverable"
+  - "Output format explicit (```yaml, ```json, ```markdown)"
+  - "Output language specified explicitly if not English"
+
+never:
+  - "Prompts without context"
+  - "'Generate document' without template"
+  - "Code-switching (EN+PT mixed in same prompt)"
+  - "Outputs > 300 lines without template"
+  - "Multiple deliverables in 1 task"
+  - "Implicit instructions ('continue from last time')"
+  - "Inherit model from parent (always set explicitly)"

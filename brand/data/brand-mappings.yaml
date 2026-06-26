@@ -1,0 +1,140 @@
+# Brand Mappings — Canonical Vocabulary
+# Translation tables for refining vague brand requests into professional terminology.
+# All brand squad agents should consult this file before generating output.
+#
+# Based on: Stitch design-mappings pattern (google-labs-code/stitch-skills)
+# Extended with: Aaker brand identity, Ries positioning, Neumeier differentiation
+#
+# Epic: epic-cross-squad-prompt-consistency (Story 2)
+# Version: 1.0.0
+
+metadata:
+  version: "1.0.0"
+  squad: "brand"
+  created: "2026-03-23"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TABLE 1: Brand Terms
+# Translates vague user requests into professional brand terminology.
+# ═══════════════════════════════════════════════════════════════════════════
+brand_terms:
+  - vague: "preciso de uma marca"
+    enhanced: "brand identity system: positioning, naming, visual identity, voice, and brand story"
+  - vague: "criar um nome"
+    enhanced: "naming project with candidate generation, linguistic validation, domain check, and INPI search"
+  - vague: "logo"
+    enhanced: "visual identity mark with primary lockup, clearspace rules, color variations, and usage guidelines"
+  - vague: "identidade visual"
+    enhanced: "visual identity system: logo, color palette, typography, iconography, photography direction, and brand guidelines"
+  - vague: "posicionamento"
+    enhanced: "competitive positioning: category definition, target audience, differentiation, reason to believe, and onlyness statement"
+  - vague: "branding"
+    enhanced: "brand strategy and identity system spanning positioning, naming, visual identity, voice, and activation"
+  - vague: "rebranding"
+    enhanced: "brand evolution: audit current equity, identify gaps, reposition, update identity system, migration plan"
+  - vague: "tom de voz"
+    enhanced: "brand voice system: personality attributes, vocabulary guidelines, sentence patterns, forbidden words, and channel adaptations"
+  - vague: "proposito"
+    enhanced: "brand purpose: reason for existing beyond profit, connection to founder story, and social impact thesis"
+  - vague: "tagline"
+    enhanced: "brand tagline/trueline: memorable phrase that captures positioning, differentiation, and emotional promise"
+  - vague: "brandbook"
+    enhanced: "brand guidelines document: mission, vision, values, positioning, voice, visual identity rules, and usage examples"
+  - vague: "arquitetura de marca"
+    enhanced: "brand architecture: relationship between master brand and sub-brands, endorsement model, naming hierarchy"
+  - vague: "naming"
+    enhanced: "brand naming project: creative exploration, shortlist, linguistic checks, domain availability, trademark search"
+  - vague: "diferenciacao"
+    enhanced: "brand differentiation strategy: onlyness statement, competitive white space, and unique value proposition"
+  - vague: "ativacao"
+    enhanced: "brand activation plan: launch touchpoints, channel strategy, internal alignment, and stakeholder communications"
+  - vague: "equity"
+    enhanced: "brand equity assessment: awareness, associations, perceived quality, loyalty, and proprietary assets (Aaker model)"
+  - vague: "storytelling de marca"
+    enhanced: "brand narrative: origin story, transformation story, and customer success stories aligned to brand archetype"
+  - vague: "persona de marca"
+    enhanced: "brand personality through archetype system: primary archetype, secondary influence, shadow archetype, and behavioral manifestations"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TABLE 2: Archetype Descriptors
+# Maps archetype names to brand personality characteristics.
+# ═══════════════════════════════════════════════════════════════════════════
+archetype_descriptors:
+  - archetype: "outlaw"
+    enhanced: "Rebellious, disruptive, challenges the status quo. Breaking rules is the point. Dark, bold, unapologetic."
+  - archetype: "magician"
+    enhanced: "Transformative, visionary, makes the impossible possible. Sophisticated, knowledge-driven, catalyst of change."
+  - archetype: "explorer"
+    enhanced: "Independent, adventurous, seeks authenticity. Pioneer spirit, freedom-driven, anti-conformist."
+  - archetype: "hero"
+    enhanced: "Courageous, determined, overcomes challenges. Achievement-oriented, inspirational, competitive."
+  - archetype: "creator"
+    enhanced: "Innovative, artistic, expressive. Builds lasting things, imagination-driven, authenticity through creation."
+  - archetype: "sage"
+    enhanced: "Wise, analytical, truth-seeking. Knowledge as power, research-driven, educational authority."
+  - archetype: "caregiver"
+    enhanced: "Nurturing, protective, service-oriented. Empathy-driven, community-focused, trust through care."
+  - archetype: "ruler"
+    enhanced: "Authoritative, organized, responsible. Premium positioning, control-oriented, leadership through structure."
+  - archetype: "jester"
+    enhanced: "Playful, irreverent, joy-bringing. Humor as strategy, lightness, connection through entertainment."
+  - archetype: "everyman"
+    enhanced: "Relatable, honest, belonging. Down-to-earth, inclusive, trust through authenticity and normalcy."
+  - archetype: "lover"
+    enhanced: "Passionate, sensual, intimate. Beauty-driven, aesthetic excellence, connection through desire."
+  - archetype: "innocent"
+    enhanced: "Pure, optimistic, simple. Transparency, nostalgia, trust through simplicity and goodness."
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TABLE 3: Positioning Language
+# Translates positioning concepts into actionable brand language.
+# ═══════════════════════════════════════════════════════════════════════════
+positioning_language:
+  - concept: "category"
+    description: "The mental space your brand owns in the customer's mind"
+    template: "[Brand] is the [category] for [audience] who [need]"
+  - concept: "onlyness"
+    description: "What makes you the ONLY one who does what you do"
+    template: "Only [Brand] [unique capability] for [audience] because [reason]"
+  - concept: "enemy"
+    description: "What your brand stands against (not a competitor, an idea)"
+    template: "[Brand] exists because [enemy/status quo] is unacceptable"
+  - concept: "transformation"
+    description: "The before-and-after state your brand enables"
+    template: "From [before state] to [after state] through [brand mechanism]"
+  - concept: "reason to believe"
+    description: "Proof that your positioning claim is true"
+    template: "[Claim] because [evidence: credential, result, demonstration]"
+  - concept: "white space"
+    description: "The unoccupied competitive territory your brand claims"
+    template: "While competitors focus on [X], we own [Y]"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TABLE 4: Voice Attributes
+# Maps voice descriptors to concrete writing guidelines.
+# ═══════════════════════════════════════════════════════════════════════════
+voice_attributes:
+  - attribute: "authoritative"
+    do: "Use declarative sentences. State facts without hedging. Lead with data."
+    dont: "Use 'maybe', 'perhaps', 'we think'. Ask permission. Over-qualify claims."
+  - attribute: "conversational"
+    do: "Use contractions. Write like you talk. Short sentences. Direct address."
+    dont: "Use formal constructions. Passive voice. Long subordinate clauses."
+  - attribute: "provocative"
+    do: "Challenge assumptions. Use rhetorical questions. Take positions."
+    dont: "Play it safe. Use generic statements. Agree with consensus."
+  - attribute: "technical"
+    do: "Use domain-specific vocabulary. Show depth. Include specific data."
+    dont: "Dumb it down. Use analogies that oversimplify. Avoid jargon your audience knows."
+  - attribute: "warm"
+    do: "Show empathy. Acknowledge struggles. Use inclusive language."
+    dont: "Be clinical. Ignore emotions. Use corporate detachment."
+  - attribute: "bold"
+    do: "Make strong claims. Use short, punchy sentences. Be direct."
+    dont: "Hedge. Use filler words. Bury the lead."
+  - attribute: "playful"
+    do: "Use wit. Break conventions. Surprise with word choice."
+    dont: "Force humor. Use puns that don't land. Be silly in serious contexts."
+  - attribute: "premium"
+    do: "Show restraint. Let whitespace speak. Choose words carefully."
+    dont: "Over-explain. Use exclamation marks. Shout. Use 'amazing' or 'incredible'."

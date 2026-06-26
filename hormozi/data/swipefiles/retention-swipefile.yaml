@@ -1,0 +1,245 @@
+# $100M Retention Playbook Swipefile
+# Source: Alex Hormozi - Acquisition.com Playbooks
+# Extracted: 2026-02-23
+
+version: "1.0"
+source:
+  title: "$100M Retention Playbook"
+  author: "Alex Hormozi"
+  type: "playbook"
+  origin: "acquisition.com"
+
+core_insight: |
+  Com 15% de churn mensal, voce perde 83% dos membros em 1 ano.
+  Isso significa precisar de 208 novos clientes para manter 250.
+  Cortar churn de 9% para 3% = 3.3x mais LTV.
+
+key_metric: |
+  Gym Launch: Churn foi de 10% para 3% em 3 meses.
+  Resultado: 3.3x aumento no LTV.
+  5% mais retencao = 25-95% mais lucro (Harvard Business Review).
+
+frameworks:
+  five_horsemen_of_retention:
+    description: "5 fatores comuns entre academias com <3% churn"
+    source: "Pesquisa com todas academias de baixo churn"
+
+    horsemen:
+      - name: "Rastrear Frequencia"
+        rule: "3x/semana = fica. <2x/semana = sai"
+        pattern: |
+          Semana 1: 3 sessoes
+          Semana 2: 2 sessoes (CONTATAR)
+          Semana 3: 2 sessoes
+          Semana 4: 1 sessao
+          Semana 5: CANCELAR
+        intervention: "Contatar quando cai para 2 sessoes"
+
+      - name: "Contato 2x Por Semana"
+        actions:
+          - "Elogiar sobre participacao e progresso"
+          - "Resolver pequenos problemas"
+
+      - name: "Cartoes Escritos a Mao"
+        occasions:
+          - "Quando se inscreverem"
+          - "Quando pedir indicacoes (3, 6, 12 meses)"
+          - "Feriados e aniversarios"
+
+      - name: "Eventos Para Membros"
+        cadence: "Cada 21, 42 ou 63 dias"
+        rule: "Regular para voce, aleatorio para eles"
+        benefit: "Reduz churn E consegue indicacoes"
+
+      - name: "Entrevistas de Saida"
+        result: "Salva METADE dos cancelamentos"
+        implementation:
+          - "Definir expectativa na integracao"
+          - "Aviso de cancelamento = gatilho para entrevista"
+          - "Falar, resolver problema, colocar de volta"
+
+  inverse_thinking:
+    description: "Pergunte o que faria PERDER 100% dos clientes"
+    lose_all:
+      - "Ignora-los"
+      - "Quebrar promessas"
+      - "Comunicar mal"
+      - "Trata-los mal"
+      - "Definir expectativas irreais"
+      - "Esconder progresso"
+      - "Mante-los longe de clientes felizes"
+      - "Tornar coisas dificeis de usar"
+    keep_all: "Faca o OPOSTO de cada item"
+
+  churn_checklist:
+    description: "9 passos para reduzir churn"
+    steps:
+      - name: "Descobrir Pontos de Ativacao"
+        formula: "Cliente que faz X ou consegue Y fica mais tempo"
+        method:
+          - "Encontrar clientes que sairam"
+          - "Filtrar quem ficou 3+ meses"
+          - "Ordenar por quem gastou mais"
+          - "Pegar top 20%"
+          - "Descobrir fatores comuns"
+
+      - name: "Integrar Clientes"
+        hierarchy:
+          - "Personalizado > Generico"
+          - "Pessoal > Grupo"
+          - "Ao vivo > Gravado"
+          - "Cenouras > Chicotes"
+          - "Algo > Nada"
+        elements:
+          - "Dirigir ao ponto de ativacao"
+          - "Mostrar onde comecar"
+          - "Conectar pessoas juntas"
+          - "Revender valor da compra"
+
+      - name: "Incentivar Ativacao"
+        rewards:
+          - "Cursos que desbloqueiam"
+          - "Ligacoes de consultoria 1-1"
+          - "Ingressos para eventos"
+          - "Acesso a ligacoes de nivel superior"
+          - "Distintivos e indicadores de status"
+          - "Nivel 8 = acesso vitalicio gratis"
+
+      - name: "Ligacao com Comunidade"
+        rule: "Conecte membros entre si, nao a voce"
+        tactics:
+          - "Integracao 1 a 6 (conectar pessoas)"
+          - "Eventos em grupo frequentes"
+          - "Conectar pessoas manualmente"
+          - "Podcast da comunidade"
+          - "Elevar micro-celebridades"
+
+      - name: "Demitir/Corrigir Clientes Ruins"
+        process:
+          - "Delete posts ruins + explique por que"
+          - "3 strikes em postadores ruins"
+          - "Fixe melhores 1-2 novos posts diariamente"
+
+      - name: "Adicionar Opcoes Anuais"
+        pricing: "Acima do LTV medio se <12 meses"
+        alternative: "Grande antecipado + pequeno mensal"
+
+      - name: "Ligacao/Video de Cancelamento"
+        save_rate: "50% dos que entram em ligacao"
+        approaches:
+          - "Salvar com refazer: Deixe-me tentar novamente"
+          - "Salvar com upsell: Voce deveria estar no superior"
+
+      - name: "Pesquisar Clientes 2x/Ano"
+        questions:
+          - "Se removesse tudo exceto um, o que manter?"
+          - "Se mantivesse tudo exceto um, o que remover?"
+        contact: "A cada 2-3 semanas, estrutura ACA"
+
+      - name: "Jornada do Cliente"
+        milestones:
+          - "Ativar"
+          - "Depoimento"
+          - "Indicar"
+          - "Ascender"
+
+strategies:
+  shake_the_three:
+    description: "Churn SOBE no primeiro mes"
+    reasons:
+      - "Pessoas que iam cancelar de qualquer forma"
+      - "Consumidores inativos com cobranca automatica"
+      - "Lembrete ativa cancelamento"
+    pattern:
+      month_1: "10% -> 15% (aumento 50%)"
+      month_2: "15% -> 7% (queda 50%)"
+      month_3: "7% -> 3% (queda 50%)"
+
+  usage_churn:
+    description: "Indicador principal de churn"
+    definition: "Cliente inscrito que para de usar"
+    action: "Interceptar quando param de usar"
+
+  activation_messaging:
+    case: "Gym Launch vs Concorrente"
+    competitor_ltv: "$5.000"
+    gym_launch_ltv: "$42.000"
+    difference: "70x mais lucro"
+    method: "Qualificar prospects pelos fatores do top 20%"
+
+  fast_cash_play:
+    description: "Recuperar investimento nos primeiros 30 dias"
+    result: "Churn de 8% para 3% em 6 meses"
+    insight: "Pessoas que saiam nao recuperavam investimento rapido"
+
+tactics:
+  aca_structure:
+    name: "Contato ACA"
+    components:
+      A1: "Acknowledge - O que voce os viu fazer"
+      C: "Compliment - Elogie sobre algo"
+      A2: "Ask - Faca uma pergunta"
+
+  exit_interview_script:
+    angry_boat: |
+      Deixe desabafar. Fique mais chateado que eles.
+      Isso e completamente ridiculo. Voce esta 100% correto.
+      Voce me dara a oportunidade de fazer certo?
+    clarify: "Se essas coisas acontecessem, voce ficaria feliz?"
+
+  cancellation_video:
+    elements:
+      - "Lembrar por que comecaram"
+      - "Lembrar do que arriscam perder"
+      - "URLs personalizadas, posts, acesso, preco de fundador"
+
+  community_categories:
+    recommended:
+      vitorias: "Depoimentos naturais"
+      diversao: "Mantém leve"
+      descoberto: "Compartilhar com dados/prova"
+      encontros: "Conectar online/offline"
+
+checklists:
+  activation_discovery:
+    - "Quem sao os 10-20% principais?"
+    - "O que eles fizeram? (ponto de ativacao)"
+    - "Atualizar mensagem para atrair esses clientes"
+    - "Atualizar integracao para direcionar ao ponto"
+
+  onboarding:
+    - "Revender valor"
+    - "Dizer nomes multiplas vezes"
+    - "Dizer como obter valor"
+    - "Dizer sobre desbloqueáveis"
+    - "Dar licao de casa com prazo de 7 dias"
+    - "Agendar proxima ligacao"
+
+  unlockables:
+    timing:
+      - "Apos vida util media"
+      - "30 dias depois"
+      - "3 meses depois"
+      - "6 meses depois"
+    options:
+      - "Curso"
+      - "Ligacao 1-1"
+      - "Evento ao vivo/virtual"
+      - "Acesso a ligacoes superiores"
+      - "Distintivo/status"
+
+agent_usage:
+  pm:
+    - "Planejar calendario de eventos"
+    - "Definir marcos de jornada do cliente"
+  analyst:
+    - "Identificar pontos de ativacao"
+    - "Calcular impacto de churn no LTV"
+    - "Segmentar clientes por engajamento"
+  dev:
+    - "Implementar sistema de desbloqueáveis"
+    - "Automacao de alertas de frequencia"
+    - "Dashboard de churn de uso"
+  qa:
+    - "Validar fluxos de integracao"
+    - "Testar gatilhos de retencao"

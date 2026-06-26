@@ -1,0 +1,35 @@
+type: object
+description: "Swarm configuration block for AIOX and SINKRA agents"
+properties:
+  role:
+    type: string
+    enum: [leader, worker, specialist]
+    description: "The role of the agent in the CC Swarm OS."
+  allowed_tools:
+    type: array
+    items:
+      type: string
+    description: "Whitelist of CC-native tools this agent is allowed to execute."
+    examples:
+      - ["Read", "Edit", "Write", "Grep", "Glob", "Bash"]
+      - ["Agent", "TaskStop", "SendMessage", "SyntheticOutput"]
+  disallowed_tools:
+    type: array
+    items:
+      type: string
+    description: "Blacklist of CC-native tools this agent is forbidden to execute."
+  max_turns:
+    type: integer
+    default: 200
+    description: "Maximum number of iterations allowed for this agent in a single task."
+  memory_scope:
+    type: string
+    enum: [project, shared, isolated]
+    description: "How memory and mailbox states are scoped."
+  background:
+    type: boolean
+    default: false
+    description: "Whether the tool runs strictly via async background spawn."
+required:
+  - role
+  - allowed_tools

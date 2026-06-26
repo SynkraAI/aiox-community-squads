@@ -1,0 +1,445 @@
+# ==============================================================================
+# SCAN-SCORE-SUGGEST FRAMEWORK
+# squads/apex/data/scan-score-suggest-framework.yaml
+# ==============================================================================
+# Purpose:  Formalizes the 3-phase diagnostic pattern (Scan -> Score -> Suggest)
+#           implicitly used by all 11 Apex discovery tools.
+# SSoT:     THIS file defines THE reusable discovery pattern. All discovery
+#           tools follow this contract. New discovery tools MUST conform to it.
+# Used by:  *discover-* commands, *apex-full, *apex-audit
+# Owner:    apex-lead (Emil)
+# Origin:   Extracted from 11 implicit discovery tool patterns in Apex squad
+# Reuse:    HIGH — any squad can adopt this for diagnostic operations
+# Version:  1.0.0
+# ==============================================================================
+
+version: "1.0.0"
+
+meta:
+  name: "Scan-Score-Suggest"
+  abbreviation: "SSS"
+  description: >
+    3-phase diagnostic framework: scan codebase (static analysis) ->
+    score health (0-100) -> suggest actions (conditional, never auto-execute).
+    Extracted from 11 implicit discovery tool patterns in the Apex squad.
+  principles:
+    - "Static only — never run the app, never open a browser"
+    - "Deterministic — same codebase = same results"
+    - "Non-destructive — read-only analysis, zero side effects"
+    - "User-controlled — suggestions presented, never auto-executed"
+  reusability: "HIGH — any squad can use this for diagnostic operations"
+
+
+# ==============================================================================
+# PHASE 1: SCAN
+# ==============================================================================
+# Static analysis of the codebase. No runtime, no browser, no network.
+# Time-boxed to prevent runaway analysis on large codebases.
+
+scan:
+  purpose: "Static analysis of codebase — no runtime, no browser"
+  time_limit: "5 seconds max"
+
+  input:
+    required:
+      - "Project root path (auto-detected from cwd)"
+    optional:
+      - "Scope filter (specific files, directories, or glob patterns)"
+      - "Previous scan cache (for delta/incremental analysis)"
+
+  output_format:
+    inventory: >
+      Structured map of discovered entities. Keys vary by discovery type
+      (components, routes, tokens, packages, etc.). Must be enumerable
+      and countable for the scoring phase.
+    violations: >
+      List of issues found, each with: location (file:line), severity
+      (HIGH/MEDIUM/LOW), category, message, and suggested fix reference.
+    metrics: >
+      Quantitative measurements relevant to the discovery domain.
+      Examples: total count, coverage percentage, complexity scores.
+
+  rules:
+    - "ONLY static analysis — never run the app, never start dev server"
+    - "Scan REAL code (source files), not docs, comments, or generated files"
+    - "Output must be machine-parseable (YAML/JSON structure)"
+    - "Respect .gitignore — skip node_modules, dist, build, .next"
+    - "Time-box: abort gracefully if scan exceeds time_limit"
+    - "Idempotent: running twice produces identical results"
+
+  cache:
+    location: ".aios/apex-context/"
+    strategy: "hash-based invalidation (file content hash)"
+    ttl: "Until next file change in scanned scope"
+
+
+# ==============================================================================
+# PHASE 2: SCORE
+# ==============================================================================
+# Calculate a Health Score (0-100) from scan results using an explicit,
+# reproducible formula. The score drives the suggest phase conditions.
+
+score:
+  purpose: "Calculate Health Score 0-100 from scan results"
+
+  ranges:
+    solid:
+      min: 80
+      max: 100
+      label: "Solid"
+      description: "Well-maintained, few or no issues. Safe to ship."
+    emerging:
+      min: 50
+      max: 79
+      label: "Emerging"
+      description: "Functional but has notable gaps. Improvement recommended."
+    adhoc:
+      min: 0
+      max: 49
+      label: "Ad-hoc"
+      description: "Significant issues. Should be addressed before shipping."
+
+  formula_requirements:
+    - "Formula MUST be explicit and documented — not ad-hoc or subjective"
+    - "Each dimension has a weight (all weights MUST sum to 1.0)"
+    - "Each violation subtracts from the score with a defined penalty"
+    - "Score is REPRODUCIBLE — same scan input = same score output"
+    - "Score MUST be an integer (round half-up)"
+    - "Score is clamped to [0, 100] — never negative, never above 100"
+
+  severity_weights:
+    HIGH: -10
+    MEDIUM: -5
+    LOW: -2
+
+  # Example formula (discovery tools customize dimensions and weights):
+  # score = 100 - SUM(violation.severity_weight for each violation)
+  #       + bonus points for coverage/completeness (capped at +10)
+  # score = clamp(score, 0, 100)
+
+  output_format:
+    health_score: "Integer 0-100"
+    classification: "Solid | Emerging | Ad-hoc"
+    dimension_breakdown: >
+      Per-dimension scores showing contribution to total.
+      Example: { coverage: 85, complexity: 72, violations: 90 }
+    violation_summary: >
+      Count by severity: { HIGH: N, MEDIUM: N, LOW: N }
+
+
+# ==============================================================================
+# PHASE 3: SUGGEST
+# ==============================================================================
+# Conditional suggestions based on scan results and health score.
+# NEVER auto-executes. Always presents options and waits for user choice.
+
+suggest:
+  purpose: "Conditional suggestions based on scan results and score"
+
+  rules:
+    - "NEVER auto-execute — always present options and wait for user choice"
+    - "Max 3 suggestions per operation (numbered 1/2/3)"
+    - "Ordered by impact: urgent fix -> improvement -> next discovery in chain"
+    - "ALWAYS include a terminal option ('Done' or equivalent)"
+    - "User can respond by number (1/2/3), natural language, or 'done'"
+    - "'done' / 'pronto' / 'so isso' -> end the chain immediately"
+
+  condition_pattern:
+    description: >
+      Each discovery tool defines IF/THEN conditions that map scan results
+      and health score to specific suggestions. Conditions are evaluated
+      top-to-bottom; first match wins.
+    structure:
+      - field: "if"
+        description: "Boolean expression using scan output variables"
+        examples:
+          - "critical_count > 0"
+          - "health_score >= 80"
+          - "orphan_count > 0 OR untested_count > 3"
+      - field: "suggest_primary"
+        description: "Highest-impact action (fix critical, resolve urgent)"
+      - field: "suggest_primary_pipeline"
+        description: "Command to execute if user picks option 1"
+      - field: "suggest_secondary"
+        description: "Medium-impact action (improvement, cleanup)"
+      - field: "suggest_secondary_pipeline"
+        description: "Command to execute if user picks option 2"
+      - field: "suggest_tertiary"
+        description: "Low-impact or terminal action (next discovery, done)"
+      - field: "suggest_tertiary_pipeline"
+        description: "Command to execute if user picks option 3"
+
+  cross_chain:
+    description: >
+      When health_score >= 80, the tertiary suggestion should point to the
+      next discovery in the chain (see implementations.chain_next). This
+      creates a natural flow through all 11 discoveries without requiring
+      the user to memorize the sequence.
+    rule: "When score >= 80, suggest next discovery in chain as an option"
+
+  output_format:
+    template: |
+      {discovery_name} completa. {summary_line}
+      Health Score: {health_score}/100 ({classification})
+      {key_metrics_line}
+
+      Proximo passo:
+        1. {suggest_primary}
+        2. {suggest_secondary}
+        3. {suggest_tertiary}
+
+      O que prefere?
+
+  max_chain_depth: 5
+  chain_termination:
+    - "User says 'done', 'pronto', or 'so isso'"
+    - "Max chain depth reached (5 operations)"
+    - "All 11 discoveries completed"
+
+
+# ==============================================================================
+# DISCOVERY TOOL TEMPLATE
+# ==============================================================================
+# Fill these slots to create a new discovery tool that conforms to this
+# framework. Copy this template and replace placeholders.
+
+discovery_template:
+  # --- Identity ---
+  name: "{*discover-NAME}"
+  description: "{One-line description of what this discovery does}"
+  domain: "{Frontend domain: components, design, routes, etc.}"
+
+  # --- Phase 1: Scan ---
+  scan_target: "{What to scan — e.g., React components, CSS variables, routes}"
+  scan_dimensions:
+    - "{dimension_1}: {what it measures}"
+    - "{dimension_2}: {what it measures}"
+    - "{dimension_3}: {what it measures}"
+  scan_file_patterns:
+    - "{glob pattern 1 — e.g., src/**/*.tsx}"
+    - "{glob pattern 2}"
+  scan_exclusions:
+    - "node_modules/"
+    - "dist/"
+    - "*.test.*"
+    - "*.spec.*"
+
+  # --- Phase 2: Score ---
+  score_dimensions:
+    - name: "{dimension_1}"
+      weight: 0.0  # All weights must sum to 1.0
+      measures: "{What this dimension evaluates}"
+    - name: "{dimension_2}"
+      weight: 0.0
+      measures: "{What this dimension evaluates}"
+  score_formula: "{Explicit formula using dimensions and violation penalties}"
+  score_bonuses: "{Optional: conditions that add points (capped at +10)}"
+
+  # --- Phase 3: Suggest ---
+  suggest_conditions:
+    - if: "{condition expression}"
+      primary: "{action}"
+      secondary: "{action}"
+      tertiary: "{action}"
+  chain_next: "{Which *discover-* to suggest next when score >= 80}"
+
+  # --- Output ---
+  output_metrics:
+    always_show:
+      - "{metric_1}"
+      - "{metric_2}"
+      - "{metric_3}"
+
+
+# ==============================================================================
+# THE 11 APEX DISCOVERIES
+# ==============================================================================
+# Each entry maps to an existing discovery tool and documents how it
+# implements the Scan-Score-Suggest pattern. chain_next defines the
+# recommended traversal order for *apex-full (all 11 in sequence).
+
+implementations:
+
+  - name: "*discover-components"
+    domain: "React Components"
+    scan: "All React components — map, tree, orphans, quality metrics"
+    score_dimensions:
+      - "coverage (test files exist)"
+      - "orphans (exported but never imported)"
+      - "complexity (LOC, hook count, god components)"
+    key_metrics: ["total_components", "orphaned_count", "untested_count", "god_count"]
+    chain_next: "*discover-design"
+    chain_order: 1
+
+  - name: "*discover-design"
+    domain: "Design System"
+    scan: "Design tokens, CSS variables, theme objects, usage patterns"
+    score_dimensions:
+      - "token coverage (values using tokens vs hardcoded)"
+      - "violations (hardcoded hex/px that should use tokens)"
+      - "near-duplicates (colors within 5% HSL distance)"
+    key_metrics: ["ds_score", "defined_count", "violations_count", "design_language"]
+    chain_next: "*discover-routes"
+    chain_order: 2
+
+  - name: "*discover-routes"
+    domain: "Routes / Pages"
+    scan: "All routes and pages — map, orphans, dead routes, SEO"
+    score_dimensions:
+      - "completeness (all routes have components)"
+      - "reachability (no orphan or dead routes)"
+      - "SEO (title, meta, og:image per page)"
+    key_metrics: ["total_routes", "orphan_routes", "dead_routes", "seo_gaps"]
+    chain_next: "*discover-dependencies"
+    chain_order: 3
+
+  - name: "*discover-dependencies"
+    domain: "npm Packages"
+    scan: "All dependencies — outdated, vulnerable, heavy, unused"
+    score_dimensions:
+      - "security (no known vulnerabilities)"
+      - "freshness (no major versions behind)"
+      - "efficiency (no heavy packages with lighter alternatives)"
+    key_metrics: ["total_deps", "vuln_count", "heavy_count", "unused_count"]
+    chain_next: "*discover-motion"
+    chain_order: 4
+
+  - name: "*discover-motion"
+    domain: "Animations / Transitions"
+    scan: "All animations and transitions — type, lib, trigger, properties"
+    score_dimensions:
+      - "veto compliance (QG-AX-005 reduced-motion, QG-AX-006 CSS->spring)"
+      - "completeness (exit animations present)"
+      - "GPU efficiency (transform/opacity vs layout properties)"
+    key_metrics: ["total_animations", "veto_violations", "missing_exit", "non_gpu"]
+    chain_next: "*discover-a11y"
+    chain_order: 5
+
+  - name: "*discover-a11y"
+    domain: "Accessibility"
+    scan: "Static WCAG analysis — alt text, labels, contrast, keyboard, ARIA"
+    score_dimensions:
+      - "critical (keyboard traps, missing focus management)"
+      - "high (missing alt text, missing labels, contrast)"
+      - "structural (heading hierarchy, ARIA correctness)"
+    key_metrics: ["components_scanned", "critical_count", "high_count", "medium_count"]
+    chain_next: "*discover-performance"
+    chain_order: 6
+
+  - name: "*discover-performance"
+    domain: "Performance"
+    scan: "Static performance analysis — lazy loading, images, re-renders, CWV"
+    score_dimensions:
+      - "loading (lazy loading coverage, code splitting)"
+      - "assets (image optimization, formats, dimensions)"
+      - "runtime (re-render risks, inline objects, context without slice)"
+    key_metrics: ["cwv_risks", "lazy_gaps", "image_issues", "rerender_risks"]
+    chain_next: "*discover-state"
+    chain_order: 7
+
+  - name: "*discover-state"
+    domain: "State Management"
+    scan: "State patterns — context providers, prop drilling, memoization"
+    score_dimensions:
+      - "architecture (context sprawl, provider nesting depth)"
+      - "efficiency (missing memoization, context without slice)"
+      - "simplicity (prop drilling chains, unused state)"
+    key_metrics: ["total_state_sources", "context_providers", "prop_drilling_chains"]
+    chain_next: "*discover-types"
+    chain_order: 8
+
+  - name: "*discover-types"
+    domain: "TypeScript Coverage"
+    scan: "Type safety — any usage, unsafe casts, ts-nocheck, coverage"
+    score_dimensions:
+      - "strictness (any count, ts-nocheck directives)"
+      - "safety (unsafe casts, type assertions)"
+      - "coverage (typed vs untyped exports)"
+    key_metrics: ["any_count", "unsafe_cast_count", "ts_nocheck_count", "type_coverage_percent"]
+    chain_next: "*discover-forms"
+    chain_order: 9
+
+  - name: "*discover-forms"
+    domain: "Form Patterns"
+    scan: "Form UX — validation, error states, submit protection, a11y"
+    score_dimensions:
+      - "validation (forms with client-side validation)"
+      - "protection (double-submit prevention)"
+      - "accessibility (labels, error announcements, focus management)"
+    key_metrics: ["total_forms", "with_validation", "double_submit_risks", "form_a11y_issues"]
+    chain_next: "*discover-security"
+    chain_order: 10
+
+  - name: "*discover-security"
+    domain: "Frontend Security"
+    scan: "Security vectors — XSS, exposed secrets, insecure storage"
+    score_dimensions:
+      - "injection (dangerouslySetInnerHTML, eval, unescaped user input)"
+      - "secrets (API keys, tokens in source code)"
+      - "storage (sensitive data in localStorage, unencrypted cookies)"
+    key_metrics: ["xss_vectors", "exposed_secrets", "insecure_storage"]
+    chain_next: null  # Terminal — last in chain
+    chain_order: 11
+
+
+# ==============================================================================
+# FULL CHAIN ORDER
+# ==============================================================================
+# The recommended traversal for *apex-full. Each discovery's chain_next
+# points to the next one. User can exit at any point with "done".
+#
+#   components -> design -> routes -> dependencies -> motion ->
+#   a11y -> performance -> state -> types -> forms -> security
+#
+# Rationale: starts with structural (what exists), moves to visual
+# (how it looks), then behavioral (how it works), then safety (risks).
+
+chain:
+  name: "Full Discovery Chain"
+  command: "*apex-full"
+  total_discoveries: 11
+  order:
+    - "*discover-components"    # 1. What components exist?
+    - "*discover-design"        # 2. How is the design system?
+    - "*discover-routes"        # 3. What pages/routes exist?
+    - "*discover-dependencies"  # 4. Are dependencies healthy?
+    - "*discover-motion"        # 5. How are animations?
+    - "*discover-a11y"          # 6. Is it accessible?
+    - "*discover-performance"   # 7. Is it fast?
+    - "*discover-state"         # 8. How is state managed?
+    - "*discover-types"         # 9. Is it well-typed?
+    - "*discover-forms"         # 10. Are forms solid?
+    - "*discover-security"      # 11. Is it secure?
+  phases:
+    structural: [1, 2, 3, 4]    # What exists and what it depends on
+    behavioral: [5, 6, 7]       # How it moves, reads, and performs
+    quality: [8, 9, 10, 11]     # Code quality and safety
+
+
+# ==============================================================================
+# AGGREGATION (used by *apex-full and *apex-audit)
+# ==============================================================================
+# When running all 11 discoveries, individual scores are aggregated into
+# a single Unified Health Score.
+
+aggregation:
+  purpose: "Combine 11 individual health scores into a Unified Health Score"
+  formula: "weighted_average(all_discovery_scores, weights)"
+  weights:
+    discover-components: 0.12
+    discover-design: 0.08
+    discover-routes: 0.08
+    discover-dependencies: 0.10
+    discover-motion: 0.06
+    discover-a11y: 0.15
+    discover-performance: 0.12
+    discover-state: 0.08
+    discover-types: 0.08
+    discover-forms: 0.06
+    discover-security: 0.07
+    # Sum: 1.00
+  output:
+    unified_score: "Integer 0-100"
+    classification: "Solid | Emerging | Ad-hoc"
+    worst_dimensions: "Top 3 lowest-scoring discoveries (action priorities)"
+    best_dimensions: "Top 3 highest-scoring discoveries (strengths)"

@@ -1,0 +1,730 @@
+# Managed by materialize-map.py
+# Source: outputs/sinkra-squad/aiox-sop/map/20260329-190639-claude-opus/infrastructure_connections.yaml
+# Category: governance
+
+metadata:
+  phase: 7
+  process_slug: aiox-sop
+  process_name: 'Creates, extracts, analyzes, grades and converts SOPs using the world''s
+    best process documentation methodologies. Dual-output: human-readable and AI/ML-consumable
+    formats.'
+  generated_at: '2026-03-30T03:00:00-03:00'
+  agent: infrastructure-mapper
+  version: 1.0.0
+  methodology: SINKRA Infrastructure Mapping — Reuse-First, Incremental, Fiel ao Design
+  infra_map_consulted: squads/sinkra-squad/data/infrastructure-map.yaml
+  reuse_principle: NUNCA criar infraestrutura nova quando infraestrutura existente
+    serve
+infrastructure:
+  clickup:
+    platform_status: existing
+    workspace_id: '9007008605'
+    target_space:
+      space_id: '901310534476'
+      space_name: sinkra_ai
+      status: existing
+      justification: Space dedicado a AI/automation — domínio correto para AIOX SOP
+        Pipeline
+    lists:
+    - list_name: AIOX SOP Pipeline
+      space: sinkra_ai
+      status: new
+      task_ids:
+      - T1.1
+      - T_REWORK_HUMAN
+      - T6.4
+      purpose: Tracking de SOPs em processamento — intake, rework, aprovação final
+      justification: Nenhuma lista existente mapeia o workflow de SOP transformation.
+        sinkra_ai é o espaço correto por domínio.
+    custom_fields:
+    - field_name: executor_type
+      field_type: dropdown
+      values:
+      - Human
+      - Agent
+      - Worker
+      - Clone
+      task_ids:
+      - T1.1
+      - T1.2
+      - T1.3
+      - T2.1
+      - T2.2
+      - T2.3
+      - T2.4
+      - T3.1
+      - T3.2
+      - T3.3
+      - T3.4
+      - T3.5
+      - T_REWORK_NOTIFY
+      - T_REWORK_HUMAN
+      - T5.4
+      - T5.5
+      - T6.1
+      - T6.3
+      - T6.4
+      - T6.5
+      - T6.6
+      status: existing
+      justification: Campo SINKRA obrigatório — já configurado no workspace per infrastructure-map.yaml
+        sinkra_required_fields
+    - field_name: phase
+      field_type: number
+      range: 1-9
+      task_ids:
+      - T1.1
+      - T1.2
+      - T1.3
+      - T2.1
+      - T2.2
+      - T2.3
+      - T2.4
+      - T3.1
+      - T3.2
+      - T3.3
+      - T3.4
+      - T3.5
+      - T_REWORK_NOTIFY
+      - T_REWORK_HUMAN
+      - T5.4
+      - T5.5
+      - T6.1
+      - T6.3
+      - T6.4
+      - T6.5
+      - T6.6
+      status: existing
+      justification: Campo SINKRA obrigatório — já existe no workspace
+    - field_name: sinkra_primitive
+      field_type: dropdown
+      values:
+      - Token
+      - Atom
+      - Molecule
+      - Organism
+      - Template
+      - Instance
+      task_ids:
+      - T1.1
+      - T1.2
+      - T1.3
+      - T2.1
+      - T2.2
+      - T2.3
+      - T2.4
+      - T3.1
+      - T3.2
+      - T3.3
+      - T3.4
+      - T3.5
+      status: existing
+      justification: Campo SINKRA obrigatório — já existe no workspace
+    - field_name: guardrail_status
+      field_type: checkbox
+      task_ids:
+      - T1.2
+      - T1.3
+      - T2.1
+      - T2.2
+      - T2.3
+      - T2.4
+      - T3.1
+      - T3.2
+      - T3.3
+      - T3.4
+      - T3.5
+      - T6.1
+      - T6.3
+      - T6.5
+      - T6.6
+      status: existing
+      justification: Campo SINKRA obrigatório — já existe no workspace
+    - field_name: quality_gate_result
+      field_type: dropdown
+      values:
+      - APPROVE
+      - REVIEW
+      - VETO
+      - N/A
+      task_ids:
+      - T3.5
+      - T6.1
+      - T6.3
+      - T6.4
+      status: existing
+      justification: Campo SINKRA obrigatório — já existe no workspace
+    - field_name: sop_id
+      field_type: short_text
+      format: SOP-YYYYMMDD-NNN
+      task_ids:
+      - T1.3
+      - T3.5
+      - T6.4
+      - T6.5
+      - T6.6
+      status: new
+      justification: Identificador único do SOP — não existe campo específico para
+        SOPs. Nenhum campo existente tem o formato SOP-YYYYMMDD-NNN.
+    - field_name: sop_tier
+      field_type: dropdown
+      values:
+      - A
+      - B
+      - C
+      - D
+      task_ids:
+      - T3.5
+      - T6.3
+      - T6.4
+      status: new
+      justification: Tier de qualidade AIOX SOP (A/B/C/D). Não existe campo equivalente.
+        Necessário para roteamento condicional T3.5→T6.
+    - field_name: confidence_score
+      field_type: number
+      range: 0-100
+      task_ids:
+      - T2.4
+      - T3.5
+      status: new
+      justification: Score de confiança da extração (T2.4). Campo numérico específico
+        ao pipeline SOP — não existe equivalente.
+    - field_name: rework_count
+      field_type: number
+      task_ids:
+      - T_REWORK_NOTIFY
+      - T_REWORK_HUMAN
+      status: new
+      justification: Contagem de ciclos de rework por SOP. Necessário para enforcement
+        do limite max_rework_loops=2. Sem equivalente existente.
+  supabase:
+    platform_status: existing
+    project_url: ${SUPABASE_URL}
+    tables:
+    - table_name: sop_catalog
+      task_ids:
+      - T1.3
+      - T1.2
+      - T6.5
+      - T6.6
+      purpose: 'Registry central de todos os SOPs: ID, metadata, status, owner, storage
+        path'
+      status: new
+      schema_minimal:
+        id: uuid PRIMARY KEY DEFAULT gen_random_uuid()
+        sop_id: text UNIQUE NOT NULL -- SOP-YYYYMMDD-NNN
+        process_name: text NOT NULL
+        owner_email: text NOT NULL
+        storage_path: text NOT NULL
+        file_type: text
+        completeness_score: numeric(5,2)
+        status: text DEFAULT 'intake' -- intake|extracting|grading|converting|publishing|done|rejected
+        tier: text -- A|B|C|D
+        rework_count: integer DEFAULT 0
+        created_at: timestamptz DEFAULT now()
+        updated_at: timestamptz DEFAULT now()
+      rls_policy: Service role reads/writes. Authenticated users read own SOPs (owner_email
+        = auth.email()).
+      justification: Nenhuma tabela existente mapeia SOPs com seu ciclo de vida. projects
+        e creators são domínios distintos.
+    - table_name: sop_validation_log
+      task_ids:
+      - T1.2
+      - T2.3
+      - T2.4
+      purpose: 'Log de todas as validações: intake completeness, schema validation,
+        confidence scoring'
+      status: new
+      schema_minimal:
+        id: uuid PRIMARY KEY DEFAULT gen_random_uuid()
+        sop_id: text NOT NULL REFERENCES sop_catalog(sop_id)
+        validation_type: text NOT NULL -- completeness|schema|confidence
+        result: boolean NOT NULL
+        score: numeric(5,2)
+        errors: jsonb -- validation errors array
+        task_id: text -- T1.2|T2.3|T2.4
+        created_at: timestamptz DEFAULT now()
+      rls_policy: Service role only (immutable log).
+      justification: 'Mandamento 3: toda automação tem logging. Nenhuma tabela de
+        log existente suporta validações de SOP.'
+    - table_name: sop_quality_reports
+      task_ids:
+      - T3.1
+      - T3.2
+      - T3.3
+      - T3.4
+      - T3.5
+      purpose: 'Relatórios de análise de qualidade: scores, recomendações, tier classification'
+      status: new
+      schema_minimal:
+        id: uuid PRIMARY KEY DEFAULT gen_random_uuid()
+        sop_id: text NOT NULL REFERENCES sop_catalog(sop_id)
+        clarity_score: 'numeric(3,2) -- T3.1: 0-5'
+        completeness_score: 'numeric(5,2) -- T3.2: 0-100'
+        sinkra_adherence: boolean -- T3.3
+        recommendations: 'jsonb -- T3.4: [{issue, severity, fix_suggestion}]'
+        tier: text NOT NULL -- A|B|C|D
+        routing_decision: text -- direct|rework|escalate
+        compiled_at: timestamptz DEFAULT now()
+      rls_policy: Service role writes. Authenticated users read own SOPs.
+      justification: Relatórios de qualidade são específicos ao domínio SOP. Nenhuma
+        tabela existente captura grading multi-dimensional.
+    - table_name: sop_artifacts
+      task_ids:
+      - T4.1
+      - T4.2
+      - T4.3
+      - T4.4
+      - T5.1
+      - T5.2
+      - T5.3
+      - T5.4
+      - T5.5
+      - T6.1
+      purpose: 'Manifesto de artefatos gerados por SOP: ML outputs (JSON-LD, embeddings,
+        GraphML, tokens) + docs (MD, PDF, HTML, Notion)'
+      status: new
+      schema_minimal:
+        id: uuid PRIMARY KEY DEFAULT gen_random_uuid()
+        sop_id: text NOT NULL REFERENCES sop_catalog(sop_id)
+        artifact_type: text NOT NULL -- json_ld|embeddings|graphml|tokens|summary_md|guide_md|tech_md|pdf|html|notion_page
+        storage_path: text
+        notion_url: text
+        file_size_bytes: bigint
+        generated_by_task: text -- T4.1|T5.1|etc
+        status: text DEFAULT 'pending' -- pending|generated|validated|published
+        created_at: timestamptz DEFAULT now()
+      rls_policy: 'Service role only for writes. Read: authenticated users (own SOPs).'
+      justification: Pipeline dual-output gera 9+ artefatos por SOP. Nenhuma tabela
+        existente gerencia manifesto de artefatos heterogêneos.
+    - table_name: sop_audit_log
+      task_ids:
+      - T6.6
+      - T6.5
+      - T6.4
+      - T1.3
+      purpose: 'Trilha de auditoria imutável: todos os eventos do pipeline do intake
+        ao publish'
+      status: new
+      schema_minimal:
+        id: uuid PRIMARY KEY DEFAULT gen_random_uuid()
+        sop_id: text NOT NULL REFERENCES sop_catalog(sop_id)
+        event_type: text NOT NULL -- intake|validation|extraction|grading|rework|sign_off|publish|audit_complete
+        task_id: text
+        executor_type: text -- Human|Agent|Worker|Clone
+        executor_id: text
+        payload: jsonb -- event-specific data
+        result: text -- success|failure|skipped
+        created_at: timestamptz DEFAULT now()
+      rls_policy: INSERT only for service role. NO UPDATE, NO DELETE. Row-level security
+        enforced.
+      immutability_note: 'Mandamento 9: audit trail não pode ser alterado. RLS policy
+        proíbe UPDATE/DELETE.'
+      justification: Mandamento 9 + T6.6 require imutable audit trail. Nenhuma tabela
+        de log existente tem proteção imutável adequada para SOPs.
+    storage:
+      bucket_name: aiox-sop-files
+      purpose: Armazenamento de documentos SOP (raw + converted) e artefatos gerados
+      status: new
+      paths:
+        raw: raw/{sop_id}/original.{ext}
+        converted: converted/{sop_id}/normalized.md
+        artifacts: artifacts/{sop_id}/{artifact_type}.{ext}
+        audit: audit/{sop_id}/audit-trail.json
+      justification: Supabase Storage é a infraestrutura S3-compatible disponível.
+        Bucket dedicado necessário para isolamento de domínio SOP.
+      platform_status: existing
+    edge_functions:
+    - function_name: sop-intake-validator
+      task_ids:
+      - T1.2
+      trigger: HTTP POST /functions/v1/sop-intake-validator
+      status: new
+      spec: 'Valida completeness do formulário de intake. Input: JSON payload. Output:
+        {score, passed, missing_fields}. Logging: sop_validation_log.'
+    - function_name: sop-id-cataloger
+      task_ids:
+      - T1.3
+      trigger: HTTP POST (called by N8N after T1.2 success)
+      status: new
+      spec: Gera SOP-YYYYMMDD-NNN, cria record em sop_catalog, faz upload de arquivo
+        para aiox-sop-files bucket.
+  n8n:
+    platform_status: existing
+    production_url: https://n8n.allfluence.ai
+    note: 'GAP-004 from infrastructure-map.yaml: workflow inventory requires API access.
+      Workflows below are NET NEW — not duplicating unknowns, but cannot verify non-overlap.
+      Recommend N8N API inventory before create.'
+    workflows:
+    - workflow_name: aiox-sop-intake-trigger
+      task_ids:
+      - T1.1
+      - T1.2
+      trigger: 'Webhook: Google Form submission → HTTP POST'
+      action: Receive form payload → call sop-intake-validator Edge Function → route
+        result
+      status: new
+      error_handler: true
+      logging: true
+      logging_target: Supabase sop_validation_log
+    - workflow_name: aiox-sop-document-converter
+      task_ids:
+      - T2.1
+      trigger: 'Event: T1.3 success (Supabase realtime → N8N webhook)'
+      action: Download raw SOP from Supabase Storage → run pandoc/PyPDF2 conversion
+        → upload normalized.md → emit T2.1.success event
+      tools:
+      - pandoc
+      - PyPDF2
+      - charset converter
+      status: new
+      error_handler: true
+      logging: true
+    - workflow_name: aiox-sop-extraction-pipeline
+      task_ids:
+      - T2.2
+      - T2.3
+      - T2.4
+      trigger: 'Event: T2.1.success'
+      action: 'T2.2: call OpenClaw Gateway /schema-mapper → T2.3: validate JSON schema
+        (ajv) → T2.4: calculate confidence score → conditional routing'
+      status: new
+      error_handler: true
+      logging: true
+      retry_logic: T2.2 retries with validation errors injected (max 2 loops)
+    - workflow_name: aiox-sop-quality-grading
+      task_ids:
+      - T3.1
+      - T3.2
+      - T3.3
+      - T3.4
+      - T3.5
+      trigger: 'Event: T2.4 confidence_score >= 70'
+      action: 'Parallel: T3.1 (OpenClaw/Clone clarity), T3.2 (completeness script),
+        T3.3 (SINKRA adherence/Agent) → Join → T3.4 gap analysis (OpenClaw) → T3.5
+        report compiler → tier routing'
+      status: new
+      error_handler: true
+      logging: true
+      parallel_groups:
+      - T3.1
+      - T3.2
+      - T3.3
+    - workflow_name: aiox-sop-rework-notifier
+      task_ids:
+      - T_REWORK_NOTIFY
+      trigger: 'Event: T3.5 tier IN (''B'', ''C'')'
+      action: Create ClickUp task in AIOX SOP Pipeline list → send email notification
+        to SOP owner → set rework deadline
+      status: new
+      error_handler: true
+      logging: true
+    - workflow_name: aiox-sop-ml-conversion
+      task_ids:
+      - T4.1
+      - T4.2
+      - T4.3
+      - T4.4
+      trigger: 'Event: tier == ''A'' OR rework_completed'
+      action: 'Parallel: T4.1 JSON-LD (OpenClaw), T4.2 Embeddings (OpenClaw via text-embedding-3-small),
+        T4.3 GraphML (OpenClaw), T4.4 Tokenization (tiktoken script) → store all in
+        aiox-sop-files/artifacts/'
+      status: new
+      error_handler: true
+      logging: true
+      parallel_groups:
+      - T4.1
+      - T4.2
+      - T4.3
+      - T4.4
+    - workflow_name: aiox-sop-doc-generation
+      task_ids:
+      - T5.1
+      - T5.2
+      - T5.3
+      - T5.4
+      - T5.5
+      trigger: 'Event: concurrent with T4 group (no dependency between T4 and T5)'
+      action: 'Parallel: T5.1 Executive Summary (OpenClaw), T5.2 Operational Guide
+        (OpenClaw), T5.3 Technical Reference (OpenClaw) → T5.4 pandoc render (PDF/HTML)
+        + Notion API → T5.5 metadata injection'
+      integrations:
+      - pandoc
+      - Notion API
+      - OpenClaw Gateway
+      status: new
+      error_handler: true
+      logging: true
+      parallel_groups:
+      - T5.1
+      - T5.2
+      - T5.3
+    - workflow_name: aiox-sop-publishing-qa
+      task_ids:
+      - T6.1
+      - T6.3
+      trigger: 'Event: T5.5 success + T4 group success'
+      action: 'T6.1: coherence validator (checklist script against manifest) → T6.3:
+        feedback incorporation validator → conditional: tier A auto-approve or route
+        to T6.4'
+      status: new
+      error_handler: true
+      logging: true
+    - workflow_name: aiox-sop-sign-off-reminder
+      task_ids:
+      - T6.4
+      trigger: 'Schedule: daily check on pending T6.4 sign-offs'
+      action: 'Day 1: ClickUp reminder task. Day 2: escalate to manager. Day 3: auto-approve
+        with SLA_AUTO_APPROVED flag.'
+      status: new
+      error_handler: true
+      logging: true
+    - workflow_name: aiox-sop-deployment-publisher
+      task_ids:
+      - T6.5
+      trigger: 'Event: T6.4 approved OR T6.3 auto-approved (tier A)'
+      action: Git commit (SOP docs to docs repo) → Supabase record status=done → Notion
+        pages publish → S3 copy to public bucket → emit audit event
+      integrations:
+      - Git SDK
+      - Supabase SDK
+      - Notion API
+      - Supabase Storage SDK
+      status: new
+      error_handler: true
+      logging: true
+    - workflow_name: aiox-sop-audit-trail-writer
+      task_ids:
+      - T6.6
+      trigger: 'Event: T6.5 success'
+      action: Compile full event log → insert immutable record into sop_audit_log
+        → archive JSON to aiox-sop-files/audit/ with server-side encryption
+      status: new
+      error_handler: true
+      logging: true
+      immutability_note: 'Mandamento 9: INSERT only. No UPDATE. SSE encryption on
+        S3.'
+  openclaw_gateway:
+    platform_status: existing
+    monorepo_path: apps/gateway-ai/
+    host: 89.167.3.24
+    access: Tailscale-only
+    justification: OpenClaw Gateway é a infraestrutura AI existente da AllFluence.
+      TODOS os Agent e Clone tasks devem roteá-los via Gateway — não criar novas integrações
+      LLM diretas.
+    agent_routes_needed:
+    - route_name: /aiox-sop/schema-mapper
+      task_ids:
+      - T2.2
+      executor_type: Agent
+      model: sonnet
+      tier: standard
+      prompt_template: schema-mapper-sop-v1
+      input: Normalized Markdown + SINKRA schema definition
+      output: SINKRA Schema JSON
+      status: new_route
+      platform_status: existing
+    - route_name: /aiox-sop/clarity-evaluator
+      task_ids:
+      - T3.1
+      executor_type: Clone
+      model: opus
+      tier: quality
+      prompt_template: clarity-evaluator-v1
+      clone_persona: Process Documentation Expert
+      input: SINKRA Schema JSON
+      output: Clarity score 0-5 + justification
+      status: new_route
+      platform_status: existing
+    - route_name: /aiox-sop/sinkra-adherence-checker
+      task_ids:
+      - T3.3
+      executor_type: Clone
+      model: sonnet
+      tier: standard
+      prompt_template: sinkra-adherence-v1
+      clone_persona: SINKRA Methodology Expert
+      input: SINKRA Schema JSON
+      output: Adherence check result (boolean + findings)
+      status: new_route
+      platform_status: existing
+    - route_name: /aiox-sop/gap-analyzer
+      task_ids:
+      - T3.4
+      executor_type: Agent
+      model: sonnet
+      tier: standard
+      prompt_template: gap-analyzer-v1
+      input: SINKRA Schema JSON + all T3 scores
+      output: Recommendations JSON [{issue, severity, fix_suggestion}]
+      status: new_route
+      platform_status: existing
+    - route_name: /aiox-sop/jsonld-converter
+      task_ids:
+      - T4.1
+      executor_type: Agent
+      model: sonnet
+      tier: standard
+      prompt_template: jsonld-converter-v1
+      input: SINKRA Schema JSON
+      output: JSON-LD with @context
+      status: new_route
+      platform_status: existing
+    - route_name: /aiox-sop/embeddings-generator
+      task_ids:
+      - T4.2
+      executor_type: Worker
+      model: text-embedding-3-small
+      tier: budget
+      tool: OpenAI Embeddings API via OpenClaw Gateway
+      input: SINKRA Schema JSON sections
+      output: Vector embeddings array (1536-dim)
+      storage: Supabase pgvector (sop_artifacts table)
+      status: new_route
+      platform_status: existing
+    - route_name: /aiox-sop/graphml-generator
+      task_ids:
+      - T4.3
+      executor_type: Agent
+      model: sonnet
+      tier: standard
+      prompt_template: graphml-generator-v1
+      input: SINKRA Schema JSON (steps, dependencies)
+      output: GraphML dependency graph (valid XML)
+      status: new_route
+      platform_status: existing
+    - route_name: /aiox-sop/tokenizer
+      task_ids:
+      - T4.4
+      executor_type: Worker
+      tool: tiktoken Python script
+      input: SINKRA Schema JSON
+      output: Token sequences for fine-tuning
+      status: new_route
+      note: tiktoken is CPU-only — pode rodar como N8N Execute Command step, not requiring
+        OpenClaw
+      platform_status: existing
+    - route_name: /aiox-sop/executive-summary-writer
+      task_ids:
+      - T5.1
+      executor_type: Agent
+      model: opus
+      tier: quality
+      prompt_template: executive-summary-v1
+      input: SINKRA Schema JSON
+      output: Executive Summary Markdown (min 200w)
+      status: new_route
+      platform_status: existing
+    - route_name: /aiox-sop/operational-guide-writer
+      task_ids:
+      - T5.2
+      executor_type: Agent
+      model: sonnet
+      tier: standard
+      prompt_template: operational-guide-v1
+      input: SINKRA Schema JSON
+      output: Operational Guide Markdown (min 500w)
+      status: new_route
+      platform_status: existing
+    - route_name: /aiox-sop/technical-reference-writer
+      task_ids:
+      - T5.3
+      executor_type: Agent
+      model: sonnet
+      tier: standard
+      prompt_template: technical-reference-v1
+      input: SINKRA Schema JSON
+      output: Technical Reference Markdown (min 1000w)
+      status: new_route
+      platform_status: existing
+  google_drive:
+    platform_status: existing
+    service_adapter: services/google-drive/
+    capabilities:
+    - files
+    - folders
+    - sheets
+    - templates
+    - watch
+    folders_needed:
+    - folder_path: AllFluence/AIOX SOP Pipeline/Intake
+      purpose: Raw SOP documents received via form submission
+      task_ids:
+      - T1.1
+      status: new
+      justification: 'GAP-003: sem taxonomia de pastas documentada. Esta estrutura
+        é nova mas usa serviço existente.'
+    - folder_path: AllFluence/AIOX SOP Pipeline/Published
+      purpose: Artefatos human-readable publicados (MD, PDF)
+      task_ids:
+      - T6.5
+      status: new
+      justification: Repositório de SOPs publicados para acesso da equipe.
+  notion:
+    platform_status: new_integration
+    purpose: Knowledge Hub — SOPs publicados em formato navegável para consulta da
+      equipe
+    task_ids:
+    - T5.4
+    - T5.5
+    - T6.5
+    database_needed:
+      database_name: AIOX SOP Knowledge Hub
+      properties:
+      - SOP ID
+      - Title
+      - Owner
+      - Tier
+      - Last Updated
+      - Tags
+      - Process Phase
+      status: new
+    justification: Notion não está mapeado como integração existente em infrastructure-map.yaml.
+      Necessário para T5.4 (renderização de Notion pages como saída human-readable).
+      Gap crítico para o design do processo.
+    alternative_note: Se Notion API não viável no curto prazo, T5.4 pode ser simplificado
+      para HTML apenas. Design mantido, implementação incremental.
+  google_forms:
+    platform_status: new_integration
+    purpose: Portal de intake de SOPs — formulário padronizado para SOP owners
+    task_ids:
+    - T1.1
+    form_fields:
+    - Process Name
+    - SOP Owner (email)
+    - Scope (free text)
+    - Target Audience
+    - SOP Document Upload
+    - Context notes
+    status: new
+    justification: 'Formulário de intake não existe. Usando Google Forms por já ter
+      integração Google Drive disponível (services/google-drive/). Alternativa: portal
+      web customizado em apps/ — decisão pós-validação.'
+summary:
+  total_connections_mapped: 47
+  existing_platforms_reused: 6
+  existing_resources_reused: 10
+  new_resources_to_create: 37
+  reuse_breakdown:
+    clickup_platform: REUSE — workspace + sinkra_ai space + 5 SINKRA required fields
+    supabase_platform: REUSE — infrastructure exists, 5 new tables + 1 bucket + 2
+      edge functions needed
+    n8n_platform: REUSE — n8n.allfluence.ai exists, 11 new workflows needed
+    openclaw_gateway: 'REUSE — major platform reuse: all 11 Agent/Clone tasks route
+      through existing gateway'
+    google_drive_service: REUSE — services/google-drive/ adapter exists, new folder
+      taxonomy needed
+    langfuse_observability: REUSE — existing OpenClaw observability covers Agent task
+      tracing automatically
+  reuse_ratio: 0.22
+  reuse_note: 22% resource-level reuse. Platform-level reuse is 100% — zero new platforms
+    proposed. All gaps are within existing infrastructure (new tables, workflows,
+    routes on existing systems).
+  critical_blockers:
+  - sop_catalog table (blocks T1.3 — cannot assign IDs without DB)
+  - aiox-sop-intake-trigger N8N workflow (blocks entire pipeline entry)
+  - Google Form (blocks T1.1 — human intake entry point)
+  openclaw_note: OpenClaw Gateway is the SINGLE most important existing infrastructure
+    for this pipeline. 11 of 20 automated tasks use it. No new LLM integrations proposed.
+  design_integrity_note: Ferramenta nao alterou design. Notion API gap documentado
+    como gap, nao como motivo para remover T5.4 da spec.

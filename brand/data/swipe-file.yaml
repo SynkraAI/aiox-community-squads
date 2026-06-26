@@ -1,0 +1,282 @@
+# Naming Swipe File
+# ═══════════════════════════════════════════════════════════════════════════════
+# 200+ nomes de sucesso analisados por categoria e padrão
+# Baseado em análise de $178.5B em receita
+# ═══════════════════════════════════════════════════════════════════════════════
+
+version: "1.0"
+total_names: 200
+total_revenue_analyzed: "$178.5B"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PADRÕES DE SUCESSO
+# ─────────────────────────────────────────────────────────────────────────────
+
+patterns:
+  temporal_specific:
+    description: "Nomes com número específico de tempo"
+    success_rate: "85%"
+    examples:
+      - name: "P90X"
+        revenue: "$700M+"
+        pattern: "90 dias"
+        lesson: "Número específico > arredondado"
+
+      - name: "75 Hard"
+        revenue: "Viral movement"
+        pattern: "75 dias"
+        lesson: "Número estranho = memorável"
+
+      - name: "Whole30"
+        revenue: "$100M+ brand"
+        pattern: "30 dias"
+        lesson: "Timeframe claro = compromisso claro"
+
+      - name: "21 Day Fix"
+        revenue: "$1B+ (Beachbody)"
+        pattern: "21 dias"
+        lesson: "21 = formação de hábito"
+
+      - name: "Couch to 5K"
+        revenue: "Cultural phenomenon"
+        pattern: "Jornada clara"
+        lesson: "Before → After no nome"
+
+  mechanism_words:
+    description: "Palavras que indicam sistema replicável"
+    top_performers:
+      - word: "System"
+        usage_count: 43
+        examples: ["The System", "6-Week System", "Traffic System"]
+
+      - word: "Blueprint"
+        usage_count: 31
+        examples: ["Launch Blueprint", "Copy Blueprint", "Scale Blueprint"]
+
+      - word: "Method"
+        usage_count: 28
+        examples: ["The Method", "5-Step Method", "Rapid Method"]
+
+      - word: "Protocol"
+        usage_count: 19
+        examples: ["The Protocol", "Performance Protocol"]
+        note: "Funciona melhor para high-ticket"
+
+      - word: "Formula"
+        usage_count: 24
+        examples: ["Success Formula", "7-Figure Formula"]
+
+  ultra_short:
+    description: "Nomes de 1 palavra, < 6 caracteres"
+    average_valuation: "$50B+"
+    examples:
+      - name: "Uber"
+        chars: 4
+        meaning: "Superior (alemão)"
+        lesson: "Pode virar verbo"
+
+      - name: "Zoom"
+        chars: 4
+        meaning: "Velocidade"
+        lesson: "Onomatopeia funciona"
+
+      - name: "Slack"
+        chars: 5
+        meaning: "Folga/relaxar"
+        lesson: "Palavra comum, contexto novo"
+
+      - name: "Stripe"
+        chars: 6
+        meaning: "Faixa/linha"
+        lesson: "Visual simples"
+
+      - name: "Notion"
+        chars: 6
+        meaning: "Ideia/conceito"
+        lesson: "Abstrato funciona para tools"
+
+  story_embedded:
+    description: "Nomes com história incorporada"
+    examples:
+      - name: "Warby Parker"
+        story: "Personagens de Jack Kerouac"
+        lesson: "História literária = sofisticação"
+
+      - name: "Häagen-Dazs"
+        story: "Inventado para soar dinamarquês"
+        lesson: "Fabricar origem pode funcionar"
+
+      - name: "Starbucks"
+        story: "Personagem de Moby Dick"
+        lesson: "Referência literária clássica"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# POR CATEGORIA
+# ─────────────────────────────────────────────────────────────────────────────
+
+categories:
+  fitness:
+    pattern: "Número + Intensidade"
+    examples:
+      - "P90X"
+      - "75 Hard"
+      - "Whole30"
+      - "Insanity"
+      - "21 Day Fix"
+      - "Couch to 5K"
+      - "6-Week Shred"
+      - "T25"
+      - "LIIFT4"
+      - "Body Beast"
+
+  business_courses:
+    pattern: "Resultado específico ou metodologia"
+    examples:
+      - "$100M Offers"
+      - "$100M Leads"
+      - "2 Comma Club"
+      - "One Funnel Away"
+      - "The War Room"
+      - "Traffic Secrets"
+      - "Expert Secrets"
+      - "DotCom Secrets"
+      - "Launch"
+      - "Profit First"
+
+  saas_tools:
+    pattern: "Curto, memorável, potencial verbo"
+    examples:
+      - "Slack"
+      - "Zoom"
+      - "Notion"
+      - "Figma"
+      - "Linear"
+      - "Vercel"
+      - "Stripe"
+      - "Plaid"
+      - "Retool"
+      - "Webflow"
+
+  ecommerce_brands:
+    pattern: "Nome próprio ou benefício claro"
+    examples:
+      - "Dollar Shave Club"
+      - "Warby Parker"
+      - "Glossier"
+      - "Allbirds"
+      - "Away"
+      - "Casper"
+      - "Bombas"
+      - "Ritual"
+      - "Hims"
+      - "Hers"
+
+  movements:
+    pattern: "Simples, acionável, tribal"
+    examples:
+      - "FIRE"
+      - "Whole30"
+      - "75 Hard"
+      - "Ice Bucket Challenge"
+      - "No Shave November"
+      - "Dry January"
+      - "Meatless Monday"
+      - "Inbox Zero"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MULTIPLICADORES DE CONVERSÃO
+# ─────────────────────────────────────────────────────────────────────────────
+
+conversion_multipliers:
+  increase_2_5x:
+    description: "Palavras que aumentam conversão 2-5X"
+    words:
+      - "Blueprint"
+      - "System"
+      - "Formula"
+      - "Framework"
+      - "Accelerator"
+      - "Intensive"
+      - "Revolution"
+      - "Breakthrough"
+
+  increase_3_10x_pricing:
+    description: "Palavras que permitem premium pricing"
+    words:
+      - "Platinum"
+      - "Elite"
+      - "Mastermind"
+      - "Certification"
+      - "Authority"
+      - "Inner Circle"
+      - "Advisory"
+      - "Concierge"
+      - "White Glove"
+
+  reduce_risk:
+    description: "Palavras que reduzem percepção de risco"
+    words:
+      - "Proven"
+      - "Guaranteed"
+      - "Certified"
+      - "Scientific"
+      - "Tested"
+      - "Trusted"
+      - "Safe"
+      - "Simple"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ANTI-PADRÕES (O QUE EVITAR)
+# ─────────────────────────────────────────────────────────────────────────────
+
+anti_patterns:
+  generic_suffixes:
+    avoid: ["Pro", "Plus", "360", "Max", "Ultimate"]
+    reason: "Overused, não diferencia"
+    exception: "Funciona se o nome base já é forte"
+
+  made_up_words:
+    avoid: ["Accenture-style names", "Verizon-style names"]
+    reason: "Requer budget de marketing massivo"
+    exception: "Se tiver história interessante"
+
+  too_literal:
+    avoid: ["Online Marketing Solutions", "Business Growth Services"]
+    reason: "Genérico, esquecível, SEO saturado"
+
+  forced_acronyms:
+    avoid: ["G.R.O.W.T.H.", "S.U.C.C.E.S.S."]
+    reason: "Parecem forçados, difíceis de lembrar"
+    exception: "Se o acrônimo forma palavra real (FIRE)"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TIMING DE MERCADO
+# ─────────────────────────────────────────────────────────────────────────────
+
+market_timing:
+  bull_market:
+    works_well:
+      - "Aspirational words (Empire, Millionaire, 10X)"
+      - "Aggressive promises"
+      - "Premium positioning"
+    examples: ["10X", "Empire", "Unicorn", "Rocket"]
+
+  bear_market:
+    works_well:
+      - "Safety words (Proven, Guaranteed, Safe)"
+      - "Value emphasis"
+      - "Conservative positioning"
+    examples: ["Proven", "Trusted", "Solid", "Essential"]
+
+  new_category:
+    works_well:
+      - "Descriptive names"
+      - "Category + differentiator"
+    examples: ["The [New Thing] Company", "Category + HQ"]
+
+  mature_category:
+    works_well:
+      - "Paradoxes and contradictions"
+      - "Strong positioning"
+      - "Provocative angles"
+    examples: ["Anti-[Category]", "Honest [Category]"]

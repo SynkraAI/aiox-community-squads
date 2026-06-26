@@ -1,0 +1,18 @@
+version: "1.0.0"
+artifact_id: mcp-config
+lifecycle: draft
+
+mcp_server:
+  name:
+  command:
+  args: []
+  env: []
+  service_ref:
+  endpoint:
+  integration_type:
+  permissions:
+    allow: []
+    deny: []
+  validation:
+    connectivity_threshold:
+    context_budget_threshold:

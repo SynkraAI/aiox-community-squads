@@ -1,0 +1,864 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# WF-DISPATCH-FREE: Free Text Dispatch (Backward Compatible)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Purpose: Backward-compatible workflow for *dispatch-free command.
+#          Same as wf-dispatch-main but adds Phase 0.5 for input conversion.
+# Trigger: *dispatch-free {text}
+# Difference: Phase 0 accepts free text; Phase 0.5 converts to structured input.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+workflow:
+  id: wf-dispatch-free
+  name: "Free Text Dispatch (Legacy)"
+  version: "1.0.0"
+  description: |
+    Backward-compatible workflow for the legacy *dispatch-free command.
+    Accepts free text input instead of a story file, converts it into a
+    structured task list via tasks/convert-input.md, then follows the
+    same Phase 1-6 pipeline as wf-dispatch-main.yaml.
+
+    WARNING: Free text dispatch produces lower-quality decompositions than
+    story-driven dispatch. Consider using *dispatch with a story file for
+    better traceability and reproducibility.
+
+  backward_compat: true
+  deprecation_notice: |
+    *dispatch-free is LEGACY. Prefer *dispatch {story-file} for:
+    - Better acceptance criteria
+    - Full traceability (story → tasks → outputs)
+    - Higher sufficiency gate pass rate
+    - Reproducible dispatches
+
+  input:
+    type: free_text
+    format: "Inline text description of work to be done"
+    minimum_words: 10
+    examples:
+      - "Create 3 newsletters about AI trends, productivity, and mindset for Output/Newsletters/"
+      - "Write 5 email sequence for product launch, warm audience, Output/emails/sequences/"
+      - "Generate INDEX.md for all 4 squad directories"
+
+  output:
+    execution_report: "_temp/dispatch/runs/{run_id}/report.md"
+    cost_report: "_temp/dispatch/runs/{run_id}/cost-report.md"
+    state: "_temp/dispatch/runs/{run_id}/state.json"
+    events: "_temp/dispatch/runs/{run_id}/events.jsonl"
+
+  triggers:
+    commands:
+      - "*dispatch-free"
+    agents:
+      - dispatch-chief
+
+  estimated_duration: "Variable (depends on task count and complexity)"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# WORKFLOW RULES
+# ═══════════════════════════════════════════════════════════════════════════════
+
+rules:
+  fail_fast: true
+  circuit_breaker: 5  # consecutive failures → HALT
+  max_fix_iterations: 2
+  state_persistence: true
+  checkpoint_policy: always_active
+  allow_manual_override: false
+  backward_compat: true
+
+  warnings:
+    - level: WARN
+      message: "Free text dispatch — consider using story for better traceability"
+      trigger: "on_workflow_start"
+      log_to: "events.jsonl"
+
+  state_management:
+    persist_after: "every_phase"
+    state_file: "_temp/dispatch/runs/{run_id}/state.json"
+    resumable: true
+    resume_command: "*resume"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 0: INPUT CLASSIFICATION
+# ═══════════════════════════════════════════════════════════════════════════════
+# Agent: dispatch-chief (inline — this is the ONE thing orchestrator does directly)
+# Purpose: Validate free text input has sufficient detail to proceed
+# Duration: < 30 seconds
+# ═══════════════════════════════════════════════════════════════════════════════
+
+phases:
+  - id: PHASE-0
+    name: "Input Classification"
+    agent: dispatch-chief
+    executor: inline  # dispatch-chief evaluates directly (fast, no subagent)
+    duration: "< 30 seconds"
+    description: |
+      Accept free text input and run sufficiency checks.
+      Free text has stricter sufficiency requirements than story files
+      because it lacks structured acceptance criteria by default.
+
+    pre_actions:
+      - action: "Log workflow start"
+        script: "python scripts/log-task-start.py --run-id {run_id} --phase 0 --type free_text"
+      - action: "Log legacy warning"
+        log: "WARN: Free text dispatch — consider using story for better traceability"
+
+    tasks:
+      - id: "T-0.1"
+        name: "Word Count Check"
+        description: "Verify input has >= 10 words"
+        veto_condition: V0.2
+        check: "word_count >= 10"
+        on_fail:
+          action: "REDIRECT"
+          message: |
+            Input too vague (< 10 words, no deliverables).
+            Dispatch CANNOT proceed with this input.
+
+            Options:
+            1. Redirect to /po — Create story with acceptance criteria (recommended)
+            2. Redirect to /pm — Create PRD with requirements
+            3. Expand your input with specifics and try again
+            4. Other
+          redirect_targets:
+            - agent: "/po"
+              reason: "Needs story with acceptance criteria"
+            - agent: "/pm"
+              reason: "Needs PRD with requirements"
+
+      - id: "T-0.2"
+        name: "Deliverables Detection"
+        description: "Detect quantities and deliverable types in free text"
+        veto_condition: V0.3
+        check: "quantity_patterns matched >= 1 OR explicit deliverables mentioned"
+        reference: "data/enrichment-rules.yaml → quantity_patterns"
+        on_fail:
+          action: "ASK"
+          message: |
+            Input mentions no specific deliverables.
+            What EXACTLY should dispatch produce?
+            Need: quantity + type + output location
+            Example: '3 emails in Output/emails/, 1 automation in AC'
+
+            Options:
+            1. Specify deliverables now
+            2. Let dispatch infer from context (risky — may produce wrong outputs)
+            3. Cancel
+            4. Other
+
+      - id: "T-0.3"
+        name: "Ambiguity Check"
+        description: "Detect vague verbs and ambiguous instructions"
+        check: "no vague verbs detected (improve, optimize, enhance, update without specifics)"
+        on_fail:
+          action: "ASK"
+          message: |
+            Input contains ambiguous instructions.
+            Vague verbs detected: {detected_verbs}
+            Dispatch needs specific, measurable instructions.
+
+            Options:
+            1. Rewrite with specific instructions
+            2. Proceed anyway (dispatch will infer — lower quality)
+            3. Cancel
+            4. Other
+
+    checkpoint:
+      name: "Sufficiency Gate"
+      condition: "All T-0.* checks passed OR user overrode with --force"
+      on_pass: "Proceed to Phase 0.5 (Input Conversion)"
+      on_fail: "REDIRECT to appropriate agent"
+
+    post_actions:
+      - action: "Persist phase state"
+        script: "python scripts/save-dispatch-state.py --run-id {run_id} --phase 0 --status {result}"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 0.5: INPUT CONVERSION (NEW — unique to wf-dispatch-free)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Agent: wave-planner (subagent, Sonnet)
+# Purpose: Convert free text → structured task list with acceptance criteria
+# Task: tasks/convert-input.md
+# This phase does NOT exist in wf-dispatch-main.yaml
+# ═══════════════════════════════════════════════════════════════════════════════
+
+  - id: PHASE-0.5
+    name: "Input Conversion"
+    agent: wave-planner
+    executor: subagent
+    model: sonnet
+    duration: "30-60 seconds"
+    description: |
+      Convert free text input into a temporary story-format structure
+      with acceptance criteria, deliverables, and output paths.
+      This is the KEY DIFFERENCE from wf-dispatch-main — it bridges
+      unstructured human input to the structured pipeline.
+
+    pre_actions:
+      - action: "Load quantity patterns"
+        file: "data/enrichment-rules.yaml"
+        section: "quantity_patterns"
+      - action: "Load acceptance templates"
+        file: "data/enrichment-rules.yaml"
+        section: "acceptance_by_type"
+
+    tasks:
+      - id: "T-0.5.1"
+        name: "Extract Quantities and Types"
+        task_file: tasks/convert-input.md
+        agent: wave-planner
+        model: sonnet
+        timeout: 120
+        description: |
+          Parse free text using quantity_patterns from enrichment-rules.yaml.
+          Extract:
+          - Number of deliverables per type (e.g., "3 newsletters", "5 emails")
+          - Deliverable types (newsletter, email, tag, automation, etc.)
+          - Output locations (if mentioned)
+          - Domain hints (copy, automation, development, etc.)
+        input:
+          free_text: "{user_input}"
+          quantity_patterns: "data/enrichment-rules.yaml → quantity_patterns"
+        output:
+          format: "structured_task_list"
+          fields:
+            - deliverables: "List of {quantity, type, output_path}"
+            - domains_detected: "List of domain keywords"
+            - total_tasks_estimated: "Integer"
+
+      - id: "T-0.5.2"
+        name: "Generate Acceptance Criteria"
+        agent: wave-planner
+        model: sonnet
+        timeout: 120
+        description: |
+          For each extracted deliverable, generate operational acceptance criteria.
+          Criteria MUST be:
+          - Measurable (numbers, paths, existence checks)
+          - Binary (PASS or FAIL, no "mostly good")
+          - Verifiable by script (not by human judgment)
+
+          Use acceptance_by_type from enrichment-rules.yaml as templates.
+          Apply V1.2 veto: NO subjective criteria allowed
+          (no "good quality", "well-written", "appropriate tone").
+        input:
+          deliverables: "{T-0.5.1.output.deliverables}"
+          acceptance_templates: "data/enrichment-rules.yaml → acceptance_by_type"
+        output:
+          format: "acceptance_criteria_per_task"
+
+      - id: "T-0.5.3"
+        name: "Assemble Temporary Story Structure"
+        agent: wave-planner
+        model: sonnet
+        timeout: 60
+        description: |
+          Combine extracted deliverables and acceptance criteria into a
+          temporary story-format structure that the rest of the pipeline
+          can consume identically to a real story file.
+
+          Structure:
+          - Title: Auto-generated from free text
+          - Acceptance Criteria: From T-0.5.2
+          - Deliverables: From T-0.5.1
+          - Status: "auto-generated" (flagged as non-human story)
+
+          NOTE: This does NOT create a file. It creates an in-memory
+          structure passed to Phase 1. If user wants persistence,
+          they should use *dispatch with a real story file.
+        input:
+          deliverables: "{T-0.5.1.output}"
+          criteria: "{T-0.5.2.output}"
+          original_text: "{user_input}"
+        output:
+          format: "temporary_story_structure"
+          fields:
+            - title: "string"
+            - acceptance_criteria: "list"
+            - deliverables: "list"
+            - output_paths: "list"
+            - status: "auto-generated"
+
+    checkpoint:
+      name: "Conversion Gate"
+      condition: "Converted input has tasks with acceptance criteria AND all criteria are operational (measurable, binary)"
+      on_pass: "Proceed to Phase 1 (Decomposition)"
+      on_fail: "HALT — conversion failed. Ask user to provide a story file instead."
+      veto_on_fail:
+        - V1.2  # subjective criteria
+        - V1.3  # placeholders
+
+    post_actions:
+      - action: "Persist phase state"
+        script: "python scripts/save-dispatch-state.py --run-id {run_id} --phase 0.5 --status {result}"
+      - action: "Log conversion metrics"
+        log: "Converted free text ({word_count} words) → {task_count} tasks with {criteria_count} acceptance criteria"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 1: DECOMPOSITION
+# ═══════════════════════════════════════════════════════════════════════════════
+# Agent: wave-planner (subagent, Sonnet)
+# Purpose: Break structured input into atomic tasks with dependency graph
+# Same as wf-dispatch-main.yaml Phase 1
+# ═══════════════════════════════════════════════════════════════════════════════
+
+  - id: PHASE-1
+    name: "Decomposition"
+    agent: wave-planner
+    executor: subagent
+    model: sonnet
+    duration: "30-120 seconds"
+    description: |
+      Decompose the converted input (from Phase 0.5) into atomic sub-tasks
+      with dependency graph. Each task = 1 deliverable. No exceptions.
+
+    pre_actions:
+      - action: "Load veto conditions"
+        file: "data/veto-conditions.yaml"
+        section: "pre_execution"
+
+    tasks:
+      - id: "T-1.1"
+        name: "Atomic Task Decomposition"
+        task_file: tasks/decompose-to-waves.md
+        agent: wave-planner
+        model: sonnet
+        timeout: 300
+        description: |
+          Break input into atomic tasks following the decomposition algorithm:
+          1. Parse input → extract deliverables
+          2. Apply 1:1 rule (V1.7: 1 task = 1 deliverable)
+          3. Map dependencies (depends_on per task)
+          4. Assign task IDs (T001, T002, ...)
+          5. Validate atomicity (single deliverable, clear output path,
+             measurable criteria, no placeholders, timeout assignable)
+          6. Output execution plan
+        input:
+          structured_input: "{PHASE-0.5.output}"
+        output:
+          template: "templates/execution-plan-tmpl.yaml"
+          fields:
+            - tasks: "List of atomic tasks with depends_on"
+            - dependency_graph: "Adjacency list"
+            - domain_summary: "Task count per domain"
+
+    checkpoint:
+      name: "Decomposition Gate"
+      condition: "All tasks atomic (V1.7), all have output_path (V1.1), no placeholders (V1.3), no circular deps (V1.4)"
+      on_pass: "Proceed to Phase 2"
+      on_fail: "Fix and resubmit (max 2 iterations)"
+
+    post_actions:
+      - action: "Persist phase state"
+        script: "python scripts/save-dispatch-state.py --run-id {run_id} --phase 1 --status {result}"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 2: ROUTING
+# ═══════════════════════════════════════════════════════════════════════════════
+# Agent: task-router (subagent, Haiku)
+# Purpose: Assign agent, model, and enrichment level to each task
+# Same as wf-dispatch-main.yaml Phase 2
+# ═══════════════════════════════════════════════════════════════════════════════
+
+  - id: PHASE-2
+    name: "Routing"
+    agent: task-router
+    executor: subagent
+    model: haiku
+    duration: "15-30 seconds"
+    description: |
+      Assign agent, model, and enrichment level to each atomic task.
+      Consult domain-registry, model-selection-rules, enrichment-rules,
+      and command-registry for all routing decisions.
+
+    pre_actions:
+      - action: "Load routing data"
+        files:
+          - "data/domain-registry.yaml"
+          - "data/model-selection-rules.yaml"
+          - "data/enrichment-rules.yaml"
+          - "data/timeout-rules.yaml"
+
+    tasks:
+      - id: "T-2.1"
+        name: "Domain Detection"
+        task_file: tasks/route-tasks.md
+        agent: task-router
+        model: haiku
+        timeout: 120
+        description: |
+          For each task:
+          1. Detect domain via weighted keyword match (data/domain-registry.yaml)
+          2. Assign agent via domain-to-agent mapping
+          3. Assign model via decision tree Q1-Q6 (data/model-selection-rules.yaml)
+          4. Assign enrichment level (data/enrichment-rules.yaml)
+          5. Assign timeout (data/timeout-rules.yaml)
+          6. Resolve command path (REUSE > ADAPT > CREATE)
+        input:
+          execution_plan: "{PHASE-1.output}"
+        output:
+          format: "execution-plan-with-routing"
+          fields_added:
+            - agent: "Assigned agent per task"
+            - model: "haiku | sonnet"
+            - enrichment_level: "MINIMAL | STANDARD | FULL"
+            - timeout: "seconds"
+            - command_path: "/{squad}:{type}:{name}"
+
+    checkpoint:
+      name: "Routing Gate"
+      condition: "Every task has agent (V1.11), model (V1.10), timeout (V1.8)"
+      on_pass: "Proceed to Phase 3"
+      on_fail: "Fix missing assignments"
+
+    post_actions:
+      - action: "Persist phase state"
+        script: "python scripts/save-dispatch-state.py --run-id {run_id} --phase 2 --status {result}"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 3: WAVE OPTIMIZATION
+# ═══════════════════════════════════════════════════════════════════════════════
+# Agent: wave-planner OR scripts/wave-optimizer.py (CODE > LLM)
+# Purpose: Group tasks into DAG-optimized waves for maximum parallelism
+# Same as wf-dispatch-main.yaml Phase 3
+# ═══════════════════════════════════════════════════════════════════════════════
+
+  - id: PHASE-3
+    name: "Wave Optimization"
+    agent: wave-planner
+    executor: script_preferred  # Use script when possible, subagent for complex cases
+    script: "scripts/wave-optimizer.py"
+    model: sonnet  # fallback if script insufficient
+    duration: "10-30 seconds"
+    description: |
+      Group tasks into DAG-optimized waves using Kahn's topological sort.
+      Maximize parallelism — ALL independent tasks in the same wave.
+      Apply WIP limits, batch size optimization, and wave balancing.
+
+    pre_actions:
+      - action: "Run DAG sort"
+        script: "python scripts/wave-optimizer.py --input {execution_plan_path}"
+
+    tasks:
+      - id: "T-3.1"
+        name: "DAG Topological Sort"
+        description: |
+          1. Run Kahn's algorithm on dependency graph
+          2. Group independent tasks into waves
+          3. Apply WIP limits (max 7 tasks per wave)
+          4. Apply batch size optimization (Reinertsen U-curve)
+          5. Balance waves by estimated duration (reduce CV)
+          6. Group by model when possible (homogeneous waves)
+          7. Identify critical chain
+          8. Add predictions (Deming PDSA) per wave
+        input:
+          routed_plan: "{PHASE-2.output}"
+        output:
+          template: "templates/wave-manifest-tmpl.yaml"
+          fields:
+            - waves: "Ordered list of waves with task assignments"
+            - critical_path: "Longest dependency chain"
+            - reinertsen_metrics: "batch_size, wip_limit, flow_efficiency"
+            - predictions: "Per-wave expected outputs, failures, cost, duration"
+
+    checkpoint:
+      name: "Wave Optimization Gate"
+      condition: "No circular deps (V1.4), all waves <= max_parallel, all tasks assigned to a wave, critical chain identified"
+      on_pass: "Proceed to Phase 4"
+      on_fail: "Rebalance waves"
+
+    post_actions:
+      - action: "Persist phase state"
+        script: "python scripts/save-dispatch-state.py --run-id {run_id} --phase 3 --status {result}"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 4: ENRICHMENT
+# ═══════════════════════════════════════════════════════════════════════════════
+# Agent: Worker script (scripts/enrich-task.py) — CODE > LLM
+# Purpose: Inject KB context into each task prompt at the assigned level
+# Same as wf-dispatch-main.yaml Phase 4
+# ═══════════════════════════════════════════════════════════════════════════════
+
+  - id: PHASE-4
+    name: "Enrichment"
+    agent: worker
+    executor: script
+    script: "scripts/enrich-task.py"
+    duration: "10-20 seconds"
+    description: |
+      Inject knowledge base context into each task prompt at the assigned
+      enrichment level (MINIMAL / STANDARD / FULL). Static sections first,
+      dynamic sections last — maximizes prompt cache hit rate.
+
+    tasks:
+      - id: "T-4.1"
+        name: "KB Injection"
+        description: |
+          For each task in execution plan:
+          1. Read enrichment level from routing (Phase 2)
+          2. Load appropriate KB sections per enrichment-rules.yaml
+          3. Assemble prompt: STATIC header → STATIC KB → DYNAMIC task → STATIC closing
+          4. Verify prompt token count within budget
+        script: "python scripts/enrich-task.py --plan {wave_manifest_path} --rules data/enrichment-rules.yaml"
+        input:
+          wave_manifest: "{PHASE-3.output}"
+          enrichment_rules: "data/enrichment-rules.yaml"
+          haiku_patterns: "data/haiku-patterns.yaml"
+        output:
+          format: "enriched_task_prompts"
+          per_task:
+            - enriched_prompt: "string"
+            - token_count: "integer"
+            - enrichment_level: "MINIMAL | STANDARD | FULL"
+
+    checkpoint:
+      name: "Enrichment Gate"
+      condition: "All tasks have enriched prompts, token counts within budget"
+      on_pass: "Proceed to Phase 4.5"
+      on_fail: "Re-run enrichment for failed tasks"
+
+    post_actions:
+      - action: "Persist phase state"
+        script: "python scripts/save-dispatch-state.py --run-id {run_id} --phase 4 --status {result}"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 4.5: PRE-EXECUTION QUALITY GATE
+# ═══════════════════════════════════════════════════════════════════════════════
+# Agent: quality-gate (subagent, Sonnet)
+# Purpose: Validate all enriched prompts before execution
+# Same as wf-dispatch-main.yaml Phase 4.5
+# ═══════════════════════════════════════════════════════════════════════════════
+
+  - id: PHASE-4.5
+    name: "Pre-Execution Quality Gate"
+    agent: quality-gate
+    executor: subagent
+    model: sonnet
+    duration: "30-60 seconds"
+    description: |
+      Final validation before any work is executed. Checks ALL V1.* veto
+      conditions against enriched task prompts. This is a HARD BLOCK —
+      if ANY V1.* fires, execution is stopped until fixed.
+
+    pre_actions:
+      - action: "Load veto conditions"
+        file: "data/veto-conditions.yaml"
+        section: "pre_execution"
+      - action: "Load pre-execution checklist"
+        file: "checklists/pre-execution-gate.md"
+
+    tasks:
+      - id: "T-4.5.1"
+        name: "Veto Condition Scan"
+        agent: quality-gate
+        model: sonnet
+        timeout: 120
+        checklist: "checklists/pre-execution-gate.md"
+        description: |
+          Check ALL V1.* veto conditions:
+          V1.1:  Task has no output path
+          V1.2:  Subjective acceptance criterion
+          V1.3:  Prompt has placeholders
+          V1.4:  Circular dependency in DAG
+          V1.5:  Haiku prompt without template for output > 50 lines
+          V1.6:  Code-switching (EN+PT mixed in prompt)
+          V1.7:  Multiple deliverables in single task
+          V1.8:  No timeout defined
+          V1.9:  Vague verbs without specifics
+          V1.10: No model assigned
+          V1.11: No agent assigned (non-worker task)
+        input:
+          enriched_prompts: "{PHASE-4.output}"
+          wave_manifest: "{PHASE-3.output}"
+        output:
+          format: "gate_result"
+          fields:
+            - result: "PASS | BLOCK"
+            - violations: "List of {veto_id, task_id, description}"
+
+    checkpoint:
+      name: "Pre-Execution Gate"
+      type: hard_block
+      condition: "ZERO V1.* violations across all tasks"
+      on_pass: "Proceed to Phase 5 (Execution)"
+      on_fail:
+        action: "Return to wave-planner for fix"
+        rework_limit: 2
+        on_rework_exceeded: "HALT — present options to user"
+
+    post_actions:
+      - action: "Persist phase state"
+        script: "python scripts/save-dispatch-state.py --run-id {run_id} --phase 4.5 --status {result}"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 5: EXECUTION
+# ═══════════════════════════════════════════════════════════════════════════════
+# Agent: dispatch-chief coordinates subagents (Task tool)
+# Purpose: Execute waves in parallel via subagents
+# Same as wf-dispatch-main.yaml Phase 5
+# ═══════════════════════════════════════════════════════════════════════════════
+
+  - id: PHASE-5
+    name: "Execution"
+    agent: dispatch-chief
+    executor: subagent_coordinator
+    duration: "Variable (depends on wave count and task complexity)"
+    description: |
+      Execute all waves via subagents. Each wave launches tasks in parallel.
+      After each wave: verify results, persist state, then launch next wave.
+      PULL system — next wave starts ONLY when current wave fully completes.
+
+    tasks:
+      - id: "T-5.1"
+        name: "Wave Execution Loop"
+        description: |
+          For each wave in wave_manifest (in order):
+            1. PREDICT (Deming PDSA): Record expected outputs, quality, cost
+            2. EXECUTE: Launch all tasks via Task tool (parallel subagents)
+               - model: per-task assignment from Phase 2
+               - prompt: enriched prompt from Phase 4
+               - timeout: per-task from Phase 2
+               - max_turns: 15 (Haiku) or 20 (Sonnet)
+            3. COLLECT: Gather results from all subagents
+            4. VERIFY: Run Phase 5.5 post-execution gate for this wave
+            5. PERSIST: Save wave state via lib/pipeline_state.py
+            6. LOG: Record event in events.jsonl via lib/event_log.py
+            7. STUDY (Deming PDSA): Compare actual vs predicted
+            8. ACT (Deming PDSA): Adjust parameters for next wave if needed
+
+          Subagent constraints:
+          - Max concurrent: 10
+          - Nesting: FORBIDDEN
+          - Background MCP: UNAVAILABLE
+          - Max result tokens: 500
+
+        input:
+          wave_manifest: "{PHASE-3.output}"
+          enriched_prompts: "{PHASE-4.output}"
+        output:
+          per_wave:
+            - wave_num: "integer"
+            - tasks_completed: "integer"
+            - tasks_failed: "integer"
+            - actual_cost: "float"
+            - actual_duration: "seconds"
+            - files_created: "list of paths"
+
+    checkpoint:
+      name: "Execution Complete"
+      condition: "All waves executed, all post-execution gates passed"
+      on_pass: "Proceed to Phase 6"
+      on_fail:
+        action: "Triage failures"
+        rules:
+          - condition: "Single task failed"
+            action: "Retry with same prompt (max 2 attempts)"
+          - condition: "3+ tasks in same wave failed"
+            action: "HALT wave, show failures, ask user"
+          - condition: "Circuit breaker (5 consecutive failures)"
+            action: "HALT entire dispatch, preserve state, notify user"
+          - condition: "Cost exceeded 5x estimate"
+            action: "HALT, show cost breakdown"
+          - condition: "Rate limit hit"
+            action: "Pause 60s, retry"
+
+    post_actions:
+      - action: "Persist execution state"
+        script: "python scripts/save-dispatch-state.py --run-id {run_id} --phase 5 --status {result}"
+      - action: "Track costs"
+        script: "python scripts/cost-tracker.py --run-id {run_id}"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 5.5: POST-EXECUTION QUALITY GATE
+# ═══════════════════════════════════════════════════════════════════════════════
+# Agent: quality-gate (subagent, Sonnet)
+# Purpose: Verify outputs after each wave completes
+# Same as wf-dispatch-main.yaml Phase 5.5
+# NOTE: This runs INSIDE Phase 5's wave loop, after each wave
+# ═══════════════════════════════════════════════════════════════════════════════
+
+  - id: PHASE-5.5
+    name: "Post-Execution Quality Gate"
+    agent: quality-gate
+    executor: subagent
+    model: sonnet
+    duration: "15-30 seconds per wave"
+    description: |
+      Verify wave outputs after each wave completes.
+      This phase runs INSIDE the Phase 5 wave loop.
+      Checks V2.* veto conditions.
+
+    tasks:
+      - id: "T-5.5.1"
+        name: "Output Verification"
+        agent: quality-gate
+        model: sonnet
+        timeout: 120
+        checklist: "checklists/post-execution-gate.md"
+        description: |
+          For each completed task in wave:
+          V2.1: Output file exists at declared path
+          V2.2: Output file is non-empty (> 0 bytes)
+          V2.3: Cost within 3x estimate (warning if exceeded)
+          V2.4: Output contains no placeholder text
+
+          Self-healing for simple failures:
+          - Single task failed: Retry with same prompt (max 2 attempts)
+          - Output under word count: Retry with explicit minimum
+          - File in wrong path: Move via script
+          - Missing section: Retry with section explicitly listed
+
+          Escalation for complex failures:
+          - 3+ tasks in same wave failed: HALT wave
+          - Quality gate fails after 2 fix iterations: HALT
+          - Cost exceeded 5x estimate: HALT
+        input:
+          wave_results: "{current_wave.output}"
+          acceptance_criteria: "{per_task.acceptance_criteria}"
+        output:
+          format: "gate_result"
+          fields:
+            - result: "PASS | RETRY | HALT"
+            - passed_tasks: "list"
+            - failed_tasks: "list with reasons"
+            - self_healed: "list of auto-fixed issues"
+
+    checkpoint:
+      name: "Post-Execution Gate"
+      type: hard_block
+      condition: "All V2.* checks pass for all tasks in wave"
+      on_pass: "Continue to next wave or Phase 6"
+      on_fail:
+        action: "Self-heal or escalate"
+        rework_limit: 3
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 6: REPORTING
+# ═══════════════════════════════════════════════════════════════════════════════
+# Agent: dispatch-chief (using templates)
+# Purpose: Generate execution report, cost report, health score
+# Same as wf-dispatch-main.yaml Phase 6
+# ═══════════════════════════════════════════════════════════════════════════════
+
+  - id: PHASE-6
+    name: "Reporting"
+    agent: dispatch-chief
+    executor: inline
+    duration: "15-30 seconds"
+    description: |
+      Generate final reports: execution report, cost report, health score.
+      Present results to user with file list and numbered next steps.
+
+    tasks:
+      - id: "T-6.1"
+        name: "Generate Execution Report"
+        template: "templates/execution-report-tmpl.md"
+        description: |
+          Fill execution report template with:
+          - Run summary (tasks completed, waves executed, total time)
+          - File list (every file created/modified with full paths)
+          - Per-wave breakdown (tasks, model, cost, duration)
+          - Failures and retries log
+        output:
+          path: "_temp/dispatch/runs/{run_id}/report.md"
+
+      - id: "T-6.2"
+        name: "Generate Cost Report"
+        template: "templates/cost-report-tmpl.md"
+        description: |
+          Fill cost report template with:
+          - Token usage per task, per wave, total
+          - Estimated vs actual cost comparison
+          - Model breakdown (Haiku vs Sonnet spend)
+          - Cost per deliverable
+        output:
+          path: "_temp/dispatch/runs/{run_id}/cost-report.md"
+
+      - id: "T-6.3"
+        name: "Compute Health Score"
+        script: "python scripts/dispatch-health-score.py --run-id {run_id}"
+        description: |
+          Run 12-point health assessment:
+          1. Story-driven input? (or legacy free text)
+          2. Sufficiency gate passed without override?
+          3. All tasks atomic?
+          4. DAG sort via script (CODE > LLM)?
+          5. Wave sizes within limits?
+          6. No Opus as executor?
+          7. All quality gates passed first try?
+          8. Zero circuit breaker activations?
+          9. Cost within 3x estimate?
+          10. All output files exist and non-empty?
+          11. State persisted and resumable?
+          12. Health score computed?
+
+          NOTE: Item #1 will always be marked LEGACY for wf-dispatch-free
+          (free text input, not story-driven). This is expected.
+        output:
+          format: "health_score"
+          fields:
+            - score: "X/12"
+            - items: "list of {item, status, note}"
+            - assessment: "Exemplary | Good | Needs Improvement | Poor"
+
+      - id: "T-6.4"
+        name: "Present Results"
+        description: |
+          Present to user:
+          1. Summary: tasks completed, waves executed, total time
+          2. File list: every file created/modified with full paths
+          3. Cost breakdown: estimated vs actual, per model
+          4. Health score: X/12 with breakdown
+          5. Next steps: numbered options (1, 2, 3, 4=other)
+
+    checkpoint:
+      name: "Reporting Complete"
+      condition: "Execution report generated, cost report generated, health score computed"
+      on_pass: "Workflow complete"
+      on_fail: "Generate partial report with available data"
+
+    post_actions:
+      - action: "Final state persistence"
+        script: "python scripts/save-dispatch-state.py --run-id {run_id} --phase 6 --status complete"
+      - action: "Log workflow completion"
+        script: "python scripts/log-task-start.py --run-id {run_id} --phase 6 --type completion"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+metadata:
+  version: "1.0.0"
+  created: "2026-02-10"
+  squad: dispatch
+  total_phases: 8  # Phase 0, 0.5, 1, 2, 3, 4, 4.5, 5, 5.5, 6
+  key_difference: "Phase 0.5 converts free text → structured input (unique to this workflow)"
+  backward_compat: true
+  deprecation_target: null  # No current deprecation plan, but story-driven preferred
+  agents_used:
+    - dispatch-chief  # Phase 0, 5 (coordination), 6
+    - wave-planner    # Phase 0.5, 1, 3
+    - task-router     # Phase 2
+    - quality-gate    # Phase 4.5, 5.5
+  scripts_used:
+    - scripts/wave-optimizer.py      # Phase 3
+    - scripts/enrich-task.py         # Phase 4
+    - scripts/cost-tracker.py        # Phase 5, 6
+    - scripts/dispatch-health-score.py  # Phase 6
+    - scripts/save-dispatch-state.py # All phases
+    - scripts/log-task-start.py      # Phase 0, 6
+  templates_used:
+    - templates/execution-plan-tmpl.yaml   # Phase 1
+    - templates/wave-manifest-tmpl.yaml    # Phase 3
+    - templates/execution-report-tmpl.md   # Phase 6
+    - templates/cost-report-tmpl.md        # Phase 6
+  checklists_used:
+    - checklists/pre-execution-gate.md     # Phase 4.5
+    - checklists/post-execution-gate.md    # Phase 5.5
+  data_files_used:
+    - data/veto-conditions.yaml       # Phase 0, 4.5, 5.5
+    - data/domain-registry.yaml       # Phase 2
+    - data/model-selection-rules.yaml  # Phase 2
+    - data/enrichment-rules.yaml       # Phase 0.5, 2, 4
+    - data/timeout-rules.yaml          # Phase 2
+    - data/haiku-patterns.yaml         # Phase 4
+    - data/dispatch-heuristics.yaml    # Phase 5, 6

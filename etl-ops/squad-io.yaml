@@ -1,0 +1,61 @@
+# Squad IO Contract — etl-ops
+# Story: 55.15 | Date: 2026-03-24
+
+inputs:
+  - "Source URL (YouTube, web page, PDF)"
+  - "Source file (audio, ebook, document)"
+  - "Processing mode (single/batch/rag)"
+  - "Routing profile configuration"
+
+outputs:
+  - "Processed transcript"
+  - "Enriched transcript with metadata"
+  - "Extracted keyframes"
+  - "Compiled knowledge base"
+  - "Cross-domain handoff"
+
+triggers:
+  - "Manual activation via @etl-chief"
+  - "Batch processing request"
+  - "Upstream squad handoff (mega-brain, mmos)"
+
+dependencies:
+  - "services/etl/ (ETLService infrastructure)"
+  - "External tools: ffmpeg, whisper, scenedetect"
+
+artifacts_produced:
+  - "etl-pipeline-output"
+  - "enriched-transcript"
+  - "cross-domain-handoff"
+
+artifacts_consumed:
+  - "Source URLs and files"
+
+data_sources:
+  - "squads/etl-ops/data/process.schema.json"
+  - "squads/etl-ops/data/routing-profiles.yaml"
+  - "squads/etl-ops/data/checkpoints.yaml"
+  - "squads/etl-ops/data/token-registry.yaml"
+  - "squads/etl-ops/data/quality-gates.yaml"
+
+integrations:
+  - squad: mega-brain
+    type: downstream
+    purpose: "ETL output feeds knowledge pipeline"
+  - squad: mmos
+    type: downstream
+    purpose: "Transcripts feed mind cloning"
+  - service: "services/etl/"
+    type: infrastructure
+    purpose: "CLI tools and collectors"
+  - service: "outputs/etl/"
+    type: runtime
+    purpose: "Persistência de runs ETL legados"
+  - service: "workspace/businesses/{slug}/etl/"
+    type: canonical
+    purpose: "Persistência canônica em modo workspace-first"
+
+observability:
+  checkpoint_policy: "always_active"
+  fail_fast: true
+  local_quality_gate: "npm run validate:etl-ops"

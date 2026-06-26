@@ -1,0 +1,917 @@
+# ============================================================
+# squad-io.yaml — hormozi squad
+# Version: 2.0.0
+# Generated: 2026-03-09
+# Author: CSO (Chief Sinkra Officer)
+# ============================================================
+#
+# Contract I/O formal do hormozi-squad.
+# Diferente dos squads c-level e brand, o hormozi é um squad de
+# EXECUÇÃO — consome docs do workspace como contexto mas NÃO
+# escreve de volta ao document-registry. Seus outputs são
+# artifacts de campanha (ofertas, copies, scripts, audits).
+#
+# Arquitetura: 16 agents (4 tiers), 0 task files separados
+# (tasks = comandos embutidos nos agents), 43 checklists,
+# 18 veto conditions, 3 validation scripts, 1 workflow formal.
+# ============================================================
+
+squad: hormozi
+version: "2.0.0"
+schema: squad-io-v2
+entry_agent: hormozi-chief
+source_mind: alex_hormozi
+
+# ============================================================
+# INPUTS — Workspace docs consumed as context
+# ============================================================
+# O hormozi lê docs do workspace para contexto de negócio,
+# ICP, pricing e brand — mas NÃO os modifica.
+# ============================================================
+
+inputs:
+
+  workspace:
+    # L0 - Identity (contexto de negócio e credibilidade)
+    - path: workspace/{spoke}/L0-identity/company-dna.yaml
+      doc_id: L0-001
+      min_state: POPULATED
+      usage: reference
+      consumed_by_agents: [hormozi-chief, hormozi-offers, hormozi-advisor, hormozi-audit]
+      rationale: "Entender DNA do negócio para contextualizar oferta"
+
+    - path: workspace/{spoke}/L0-identity/founder-dna.yaml
+      doc_id: L0-002
+      min_state: POPULATED
+      usage: reference
+      consumed_by_agents: [hormozi-offers, hormozi-copy, hormozi-advisor]
+      rationale: "Credenciais do fundador para proof stack e authority"
+
+    # L1 - Strategy (inputs críticos para engenharia de ofertas)
+    - path: workspace/{spoke}/L1-strategy/offerbook.yaml
+      doc_id: L1-001
+      min_state: POPULATED
+      usage: reference
+      consumed_by_agents: [hormozi-chief, hormozi-offers, hormozi-models, hormozi-pricing, hormozi-audit]
+      rationale: "Offerbook é o input primário — ofertas existentes, tickets, bundles"
+
+    - path: workspace/{spoke}/L1-strategy/icp.yaml
+      doc_id: L1-002
+      min_state: POPULATED
+      usage: reference
+      consumed_by_agents: [hormozi-chief, hormozi-offers, hormozi-leads, hormozi-copy, hormozi-hooks, hormozi-ads, hormozi-content]
+      rationale: "ICP define avatar, dores, desejos — base de toda comunicação"
+
+    - path: workspace/{spoke}/L1-strategy/pricing-strategy.yaml
+      doc_id: L1-005
+      min_state: POPULATED
+      usage: reference
+      consumed_by_agents: [hormozi-pricing, hormozi-models, hormozi-offers]
+      rationale: "Estratégia de pricing existente para calibrar recomendações"
+
+    # L2 - Tactical (brand context para comunicação)
+    - path: workspace/{spoke}/L2-tactical/brand/brand-platform.yaml
+      doc_id: L2-001
+      min_state: DRAFT
+      usage: reference
+      consumed_by_agents: [hormozi-copy, hormozi-content, hormozi-hooks, hormozi-ads]
+      rationale: "Tom de voz e brand guidelines para consistência de copy"
+
+    - path: workspace/{spoke}/L2-tactical/brand/positioning.yaml
+      doc_id: L2-002
+      min_state: DRAFT
+      usage: reference
+      consumed_by_agents: [hormozi-offers, hormozi-copy, hormozi-advisor]
+      rationale: "Posicionamento de mercado para diferenciação de oferta"
+
+  # Databases internas do squad (READ-ONLY por todos os agents)
+  squad_data:
+    shared:
+      - path: squads/hormozi/data/minds/hormozi-voice-dna.yaml
+        usage: database
+        consumed_by_agents: ALL
+        description: "Voice DNA compartilhado — identidade Alex Hormozi"
+
+      - path: squads/hormozi/data/minds/hormozi-thinking-dna.yaml
+        usage: database
+        consumed_by_agents: [hormozi-chief, hormozi-audit, hormozi-advisor]
+        description: "Thinking DNA — frameworks de decisão e diagnóstico"
+
+      - path: squads/hormozi/data/hormozi-case-library.yaml
+        usage: database
+        consumed_by_agents: [hormozi-chief, hormozi-offers, hormozi-leads, hormozi-models, hormozi-pricing, hormozi-audit, hormozi-advisor]
+        description: "8 case studies com Value Equation — proof e evidência"
+
+      - path: squads/hormozi/data/antipatterns-database.yaml
+        usage: database
+        consumed_by_agents: [hormozi-audit, hormozi-offers]
+        description: "Catálogo de antipatterns de oferta/pricing/copy"
+
+    # DNA especializado por agente (cada agent lê apenas o seu)
+    agent_dna:
+      - path: squads/hormozi/data/minds/hormozi-offers_dna.yaml
+        agent: hormozi-offers
+      - path: squads/hormozi/data/minds/hormozi-leads_dna.yaml
+        agent: hormozi-leads
+      - path: squads/hormozi/data/minds/hormozi-models_dna.yaml
+        agent: hormozi-models
+      - path: squads/hormozi/data/minds/hormozi-hooks_dna.yaml
+        agent: hormozi-hooks
+      - path: squads/hormozi/data/minds/hormozi-ads_dna.yaml
+        agent: hormozi-ads
+      - path: squads/hormozi/data/minds/hormozi-pricing_dna.yaml
+        agent: hormozi-pricing
+      - path: squads/hormozi/data/minds/hormozi-copy_dna.yaml
+        agent: hormozi-copy
+      - path: squads/hormozi/data/minds/hormozi-launch_dna.yaml
+        agent: hormozi-launch
+      - path: squads/hormozi/data/minds/hormozi-retention_dna.yaml
+        agent: hormozi-retention
+      - path: squads/hormozi/data/minds/hormozi-advisor_dna.yaml
+        agent: hormozi-advisor
+      - path: squads/hormozi/data/minds/hormozi-audit_dna.yaml
+        agent: hormozi-audit
+      - path: squads/hormozi/data/minds/hormozi-closer_dna.yaml
+        agent: hormozi-closer
+      - path: squads/hormozi/data/minds/hormozi-scale_dna.yaml
+        agent: hormozi-scale
+      - path: squads/hormozi/data/minds/hormozi-workshop_dna.yaml
+        agent: hormozi-workshop
+      - path: squads/hormozi/data/minds/hormozi-content_dna.yaml
+        agent: hormozi-content
+
+  # Validation configs (lidos por validation scripts)
+  config:
+    - path: squads/hormozi/config/veto-conditions.yaml
+      usage: enforcement
+      description: "18 veto conditions centralizadas (4 tiers)"
+
+    - path: squads/hormozi/templates/handoff-context-tmpl.yaml
+      usage: template
+      description: "Template obrigatório para handoff entre agents (VT3-001)"
+
+# ============================================================
+# OUTPUTS — Artifacts produzidos (NÃO registry-tracked)
+# ============================================================
+# O hormozi squad NÃO escreve no document-registry.
+# Seus outputs são artifacts de campanha entregues ao usuário
+# ou consumidos por outros squads (copy-squad, brand, etc.)
+# ============================================================
+
+artifacts_produced:
+  - offer-analysis
+  - grand-slam-offer
+  - money-model-architecture
+
+outputs:
+
+  # Nenhum output vai para o workspace canônico
+  workspace: []
+
+  # Artifacts produzidos por domínio
+  artifacts:
+    # Offer Engineering (hormozi-offers)
+    - id: grand-slam-offer
+      description: "Grand Slam Offer completa (value stack, naming, pricing, guarantee)"
+      produced_by_agents: [hormozi-offers]
+      format: structured_text
+      contains: [dream_outcome, value_stack, guarantee, scarcity, urgency, naming_magico]
+
+    - id: value-equation-diagnostic
+      description: "Diagnóstico Value Equation (4 variáveis scored)"
+      produced_by_agents: [hormozi-offers, hormozi-audit]
+      format: structured_text
+
+    - id: mvn-data-sheet
+      description: "Minimum Viable Numbers coletados (7 core + vertical)"
+      produced_by_agents: [hormozi-offers, hormozi-models]
+      format: structured_data
+
+    # Money Models (hormozi-models)
+    - id: money-model-architecture
+      description: "Arquitetura de monetização (upsells, downsells, continuity)"
+      produced_by_agents: [hormozi-models]
+      format: structured_text
+
+    - id: ltgp-cac-analysis
+      description: "Análise LTGP:CAC com base do cálculo"
+      produced_by_agents: [hormozi-models, hormozi-retention]
+      format: structured_data
+
+    # Lead Generation (hormozi-leads)
+    - id: core-four-strategy
+      description: "Estratégia Core Four (warm, content, cold, paid)"
+      produced_by_agents: [hormozi-leads]
+      format: structured_text
+
+    - id: lead-magnet-spec
+      description: "Especificação de lead magnet"
+      produced_by_agents: [hormozi-leads]
+      format: structured_text
+
+    # Sales Copy (hormozi-copy)
+    - id: sales-page-copy
+      description: "Copy completa de sales page (30+ seções)"
+      produced_by_agents: [hormozi-copy]
+      format: long_form_text
+
+    - id: vsl-script
+      description: "Script de Video Sales Letter"
+      produced_by_agents: [hormozi-copy]
+      format: long_form_text
+
+    - id: landing-page-copy
+      description: "Copy de landing page (hook-to-CTA)"
+      produced_by_agents: [hormozi-copy]
+      format: structured_text
+
+    - id: email-sequences
+      description: "Sequências de email (launch, nurture, winback)"
+      produced_by_agents: [hormozi-copy, hormozi-launch]
+      format: structured_text
+
+    # Hooks & Ads (hormozi-hooks, hormozi-ads)
+    - id: hook-variations
+      description: "10+ variações de hook por campanha"
+      produced_by_agents: [hormozi-hooks]
+      format: list
+
+    - id: ad-scripts
+      description: "Scripts de anúncio (video + static)"
+      produced_by_agents: [hormozi-ads]
+      format: structured_text
+
+    - id: ad-variations
+      description: "10+ variações de ad creative"
+      produced_by_agents: [hormozi-ads]
+      format: list
+
+    # Pricing (hormozi-pricing)
+    - id: pricing-recommendation
+      description: "Recomendação de preço com value anchor e base do cálculo"
+      produced_by_agents: [hormozi-pricing]
+      format: structured_data
+
+    - id: price-raise-strategy
+      description: "Estratégia de aumento de preço"
+      produced_by_agents: [hormozi-pricing]
+      format: structured_text
+
+    # Launch (hormozi-launch)
+    - id: launch-blueprint
+      description: "Blueprint completo de lançamento (timeline, emails, cart strategy)"
+      produced_by_agents: [hormozi-launch]
+      format: structured_text
+
+    - id: war-room-playbook
+      description: "Playbook de war room (contingências, escalação)"
+      produced_by_agents: [hormozi-launch]
+      format: structured_text
+
+    # Sales (hormozi-closer)
+    - id: sales-scripts
+      description: "Scripts de venda word-for-word (CLOSER framework)"
+      produced_by_agents: [hormozi-closer]
+      format: long_form_text
+
+    - id: objection-handling
+      description: "Respostas por tipo de objeção"
+      produced_by_agents: [hormozi-closer]
+      format: structured_text
+
+    # Retention (hormozi-retention)
+    - id: retention-strategy
+      description: "Estratégia de retenção (churn diagnosis, onboarding, win-back)"
+      produced_by_agents: [hormozi-retention]
+      format: structured_text
+
+    - id: onboarding-30-day
+      description: "Sequência de onboarding 30 dias"
+      produced_by_agents: [hormozi-retention]
+      format: structured_text
+
+    # Scale (hormozi-scale)
+    - id: scaling-roadmap
+      description: "Roadmap de 9 estágios de crescimento"
+      produced_by_agents: [hormozi-scale]
+      format: structured_text
+
+    - id: bottleneck-diagnostic
+      description: "Diagnóstico de gargalos e constrangimentos"
+      produced_by_agents: [hormozi-scale]
+      format: structured_text
+
+    # Content (hormozi-content)
+    - id: content-strategy
+      description: "Estratégia de conteúdo por plataforma"
+      produced_by_agents: [hormozi-content]
+      format: structured_text
+
+    - id: content-calendar
+      description: "Calendário de conteúdo (30/90/365 dias)"
+      produced_by_agents: [hormozi-content]
+      format: structured_text
+
+    # Workshop (hormozi-workshop)
+    - id: workshop-blueprint
+      description: "Blueprint de workshop (3-4h, live selling)"
+      produced_by_agents: [hormozi-workshop]
+      format: structured_text
+
+    # Audit (hormozi-audit)
+    - id: audit-report
+      description: "Relatório de auditoria (offer, LP, sales, retention)"
+      produced_by_agents: [hormozi-audit]
+      format: structured_text
+
+    - id: antipattern-screening-result
+      description: "Resultado de screening de antipatterns (PASS/VETO)"
+      produced_by_agents: [hormozi-audit]
+      format: structured_data
+
+    # Advisor (hormozi-advisor)
+    - id: strategic-recommendation
+      description: "Recomendação estratégica de alto nível"
+      produced_by_agents: [hormozi-advisor]
+      format: structured_text
+
+# ============================================================
+# AGENTS — 16 agents, 4 tiers
+# ============================================================
+
+agents:
+  - id: hormozi-chief
+    role: "Master Orchestrator — routing, strategy, coordination"
+    is_lead: true
+    tier: 0
+    commands: [route, diagnose]
+    databases:
+      - squads/hormozi/data/minds/hormozi-voice-dna.yaml
+      - squads/hormozi/data/minds/hormozi-thinking-dna.yaml
+      - squads/hormozi/data/hormozi-case-library.yaml
+    reads_at_runtime:
+      - squads/hormozi/config/veto-conditions.yaml
+    checklists:
+      - checklists/antipattern-screening.md
+      - checklists/golden-ratios-veto.md
+      - checklists/market-validation-veto.md
+
+  - id: hormozi-offers
+    role: "Grand Slam Offers, Value Equation, offer engineering"
+    tier: 1
+    commands: ["*offer", "*value-equation", "*grand-slam", "*dream-outcome", "*value-stack", "*naming", "*mvn-check", "*scarcity", "*urgency", "*bonuses", "*guarantees", "*headline-mode", "*diagnose"]
+    databases:
+      - squads/hormozi/data/minds/hormozi-voice-dna.yaml
+      - squads/hormozi/data/minds/hormozi-offers_dna.yaml
+      - squads/hormozi/data/hormozi-case-library.yaml
+    reads_at_runtime:
+      - squads/hormozi/data/antipatterns-database.yaml
+    checklists:
+      - checklists/value-equation-checklist.md
+      - checklists/guarantees-checklist.md
+      - checklists/naming-framework-checklist.md
+      - checklists/bonuses-checklist.md
+      - checklists/scarcity-urgency-checklist.md
+      - checklists/offer-architecture-checklist.md
+    veto_gates: [VT0-001, VT0-002, VT0-003, VT1-001, VT1-002, VT1-003, VT1-004, VT1-005, VT1-006, VT1-007, VT1-008, VT2-OFF-001, VT2-OFF-002]
+    handoff_to: [hormozi-models, hormozi-copy, hormozi-audit, hormozi-pricing]
+    handoff_from: [hormozi-chief, hormozi-leads]
+
+  - id: hormozi-leads
+    role: "Core Four, lead magnets, content strategy"
+    tier: 1
+    commands: ["*core-four", "*lead-magnet", "*warm-outreach", "*cold-outreach", "*content-strategy", "*paid-ads", "*rule-of-100", "*lead-audit", "*channel-mix"]
+    databases:
+      - squads/hormozi/data/minds/hormozi-voice-dna.yaml
+      - squads/hormozi/data/minds/hormozi-leads_dna.yaml
+      - squads/hormozi/data/hormozi-case-library.yaml
+    checklists:
+      - checklists/core-four-checklist.md
+      - checklists/lead-magnet-checklist.md
+      - checklists/marketing-machine-checklist.md
+      - checklists/fast-cash-checklist.md
+    handoff_to: [hormozi-models, hormozi-pricing, hormozi-scale, hormozi-audit]
+    handoff_from: [hormozi-chief, hormozi-ads, hormozi-content]
+
+  - id: hormozi-models
+    role: "Money Models, upsells, downsells, continuity"
+    tier: 1
+    commands: ["*money-model", "*health-check", "*die-framework", "*cash-first", "*upsell", "*downsell", "*continuity", "*payment-plan", "*decoy", "*attraction", "*win-back", "*giveaway", "*buy-x-get-y", "*pay-less-now"]
+    databases:
+      - squads/hormozi/data/minds/hormozi-voice-dna.yaml
+      - squads/hormozi/data/minds/hormozi-models_dna.yaml
+      - squads/hormozi/data/hormozi-case-library.yaml
+    checklists:
+      - checklists/money-model-checklist.md
+      - checklists/upsell-strategy-checklist.md
+      - checklists/upsell-sequence-checklist.md
+      - checklists/downsell-strategy-checklist.md
+      - checklists/subscription-model-checklist.md
+    veto_gates: [VT0-001, VT0-002, VT0-003, VT2-PRI-001, VT2-PRI-002]
+    handoff_to: [hormozi-pricing, hormozi-scale, hormozi-copy, hormozi-offers]
+    handoff_from: [hormozi-leads, hormozi-offers, hormozi-retention]
+
+  - id: hormozi-advisor
+    role: "Strategic counsel, Q&A, philosophy"
+    tier: 1
+    commands: ["*advisor", "*philosophy", "*qa", "*brand-audit", "*model-selection", "*positioning", "*exit-planning", "*portfolio-strategy"]
+    databases:
+      - squads/hormozi/data/minds/hormozi-voice-dna.yaml
+      - squads/hormozi/data/minds/hormozi-thinking-dna.yaml
+      - squads/hormozi/data/minds/hormozi-advisor_dna.yaml
+      - squads/hormozi/data/hormozi-case-library.yaml
+    handoff_to: [all]
+    handoff_from: [hormozi-chief]
+
+  - id: hormozi-hooks
+    role: "Hook creation, 121 formulas, first 5 seconds"
+    tier: 2
+    commands: ["*hook", "*hook-types", "*121-hooks", "*hook-audit", "*rewrite", "*platform-hooks", "*rmkt-hooks", "*event-hooks"]
+    databases:
+      - squads/hormozi/data/minds/hormozi-voice-dna.yaml
+      - squads/hormozi/data/minds/hormozi-hooks_dna.yaml
+    checklists:
+      - checklists/hooks-checklist.md
+    veto_gates: [VT0-001, VT0-002, VT0-003, VT2-HOO-001]
+    handoff_to: [hormozi-ads, hormozi-copy]
+    handoff_from: [hormozi-ads, hormozi-copy]
+
+  - id: hormozi-ads
+    role: "GOATed ads, scripts, angles"
+    tier: 2
+    commands: ["*ad", "*ad-script", "*goated", "*ad-angles", "*retarget", "*ad-audit", "*ad-swipe", "*split-test", "*native-ad"]
+    databases:
+      - squads/hormozi/data/minds/hormozi-voice-dna.yaml
+      - squads/hormozi/data/minds/hormozi-ads_dna.yaml
+    checklists:
+      - checklists/goated-ads-checklist.md
+      - checklists/ad-angles-checklist.md
+    handoff_to: [hormozi-leads, hormozi-audit]
+    handoff_from: [hormozi-chief, hormozi-copy, hormozi-hooks]
+
+  - id: hormozi-pricing
+    role: "Pricing strategy, anchoring, raises"
+    tier: 2
+    commands: ["*pricing", "*anchor", "*raise", "*premium", "*payment-plan", "*price-audit", "*value-price", "*commoditization"]
+    databases:
+      - squads/hormozi/data/minds/hormozi-voice-dna.yaml
+      - squads/hormozi/data/minds/hormozi-pricing_dna.yaml
+      - squads/hormozi/data/hormozi-case-library.yaml
+    checklists:
+      - checklists/pricing-checklist.md
+      - checklists/pricing-framework-checklist.md
+      - checklists/price-raise-checklist.md
+    veto_gates: [VT0-001, VT0-002, VT0-003, VT2-PRI-001, VT2-PRI-002]
+    handoff_to: [hormozi-copy, hormozi-closer, hormozi-scale]
+    handoff_from: [hormozi-models, hormozi-offers]
+
+  - id: hormozi-copy
+    role: "Sales copy, LPs, VSLs"
+    tier: 2
+    commands: ["*sales-page", "*vsl", "*landing-page", "*email-copy", "*proof-stack", "*lp-audit", "*headline", "*subject-line", "*registration", "*upsell-page"]
+    databases:
+      - squads/hormozi/data/minds/hormozi-voice-dna.yaml
+      - squads/hormozi/data/minds/hormozi-copy_dna.yaml
+    checklists:
+      - checklists/landing-page-checklist.md
+      - checklists/sales-page-checklist.md
+      - checklists/vsl-script-checklist.md
+      - checklists/email-campaign-checklist.md
+      - checklists/registration-page-checklist.md
+      - checklists/upsell-page-checklist.md
+    handoff_to: [hormozi-launch, hormozi-pricing, hormozi-closer]
+    handoff_from: [hormozi-offers, hormozi-audit, hormozi-chief]
+
+  - id: hormozi-launch
+    role: "Launch sequences, timelines"
+    tier: 2
+    commands: ["*launch", "*email-sequence", "*cart-strategy", "*war-room", "*contingency", "*post-mortem", "*affiliates", "*timeline"]
+    databases:
+      - squads/hormozi/data/minds/hormozi-voice-dna.yaml
+      - squads/hormozi/data/minds/hormozi-launch_dna.yaml
+    checklists:
+      - checklists/launch-checklist.md
+      - checklists/affiliates-referrals-checklist.md
+    handoff_to: [hormozi-audit, hormozi-closer]
+    handoff_from: [hormozi-copy, hormozi-models, hormozi-chief]
+
+  - id: hormozi-retention
+    role: "LTV, retention, nurture, continuity"
+    tier: 2
+    commands: ["*retention", "*churn", "*ltv", "*nurture", "*onboarding", "*win-back", "*continuity", "*engagement"]
+    databases:
+      - squads/hormozi/data/minds/hormozi-voice-dna.yaml
+      - squads/hormozi/data/minds/hormozi-retention_dna.yaml
+    checklists:
+      - checklists/retention-checklist.md
+      - checklists/churn-diagnosis-checklist.md
+      - checklists/customer-journey-checklist.md
+      - checklists/lead-nurture-checklist.md
+      - checklists/ltv-checklist.md
+      - checklists/onboarding-30-day-checklist.md
+      - checklists/exit-interview-checklist.md
+      - checklists/engagement-scoring-checklist.md
+      - checklists/activation-point-checklist.md
+      - checklists/5-horsemen-checklist.md
+    handoff_to: [hormozi-models]
+    handoff_from: [hormozi-closer, hormozi-models]
+
+  - id: hormozi-closer
+    role: "Sales scripts, objection handling"
+    tier: 2
+    commands: ["*closer", "*sales", "*script", "*objection"]
+    databases:
+      - squads/hormozi/data/minds/hormozi-voice-dna.yaml
+      - squads/hormozi/data/minds/hormozi-closer_dna.yaml
+    handoff_to: [hormozi-retention, hormozi-models]
+    handoff_from: [hormozi-copy, hormozi-launch, hormozi-chief]
+
+  - id: hormozi-audit
+    role: "Offer/LP audits, diagnostics, antipattern screening"
+    tier: 2
+    commands: ["*audit", "*diagnose"]
+    databases:
+      - squads/hormozi/data/minds/hormozi-voice-dna.yaml
+      - squads/hormozi/data/minds/hormozi-thinking-dna.yaml
+      - squads/hormozi/data/minds/hormozi-audit_dna.yaml
+      - squads/hormozi/data/hormozi-case-library.yaml
+      - squads/hormozi/data/antipatterns-database.yaml
+    checklists:
+      - checklists/antipattern-screening.md
+    veto_gates: [VT0-001, VT0-002, VT0-003, VT2-AUD-001]
+    handoff_to: [all]
+    handoff_from: [all]
+
+  - id: hormozi-scale
+    role: "Scaling strategy, 9-stage roadmap"
+    tier: 3
+    commands: ["*scale", "*growth", "*constraint"]
+    databases:
+      - squads/hormozi/data/minds/hormozi-voice-dna.yaml
+      - squads/hormozi/data/minds/hormozi-scale_dna.yaml
+    handoff_to: [hormozi-models, hormozi-leads]
+    handoff_from: [hormozi-models, hormozi-leads, hormozi-chief]
+
+  - id: hormozi-content
+    role: "Content strategy, creation"
+    tier: 2
+    commands: ["*content", "*platform", "*audience", "*repurpose", "*calendar", "*thumbnail", "*headline", "*newsletter", "*podcast"]
+    databases:
+      - squads/hormozi/data/minds/hormozi-voice-dna.yaml
+      - squads/hormozi/data/minds/hormozi-content_dna.yaml
+    checklists:
+      - checklists/content-creation-checklist.md
+      - checklists/branding-checklist.md
+    handoff_to: [hormozi-leads]
+    handoff_from: [hormozi-leads, hormozi-chief]
+
+  - id: hormozi-workshop
+    role: "Workshop design, frameworks"
+    tier: 2
+    commands: ["*workshop", "*webinar", "*launch-event", "*slides", "*live-selling"]
+    databases:
+      - squads/hormozi/data/minds/hormozi-voice-dna.yaml
+      - squads/hormozi/data/minds/hormozi-workshop_dna.yaml
+    checklists:
+      - checklists/workshop-launch-checklist.md
+    handoff_to: [hormozi-closer, hormozi-models]
+    handoff_from: [hormozi-offers, hormozi-chief]
+
+# ============================================================
+# WORKFLOW — Grand Slam Offer Creation (único workflow formal)
+# ============================================================
+
+workflows:
+  - id: wf-grand-slam-offer
+    name: "Grand Slam Offer Creation"
+    duration: "3-5 days"
+    phases: 5
+    agents_involved: [hormozi-chief, hormozi-offers, hormozi-pricing, hormozi-copy, hormozi-audit]
+    flow: |
+      Phase 0: MVN Discovery Sprint (hormozi-offers)
+        → Coleta 7 MVN_CORE + vertical-specific
+        → GATE: VT1-001 (7/7 items) + VT1-002 (market >=7/10)
+
+      Phase 1: Dream Outcome + Problem Mapping (hormozi-offers)
+        → Dream Outcome com STATUS component
+        → Problem-Solution Matrix
+        → GATE: VT1-003 (status) + VT1-004 (leverage point)
+
+      Phase 2: Offer Architecture (hormozi-offers + hormozi-pricing)
+        → Value Stack (5+ components)
+        → Pricing com anchor (stack >= 3x price)
+        → Guarantee design
+        → Scarcity/Urgency (genuine only)
+        → GATE: VT1-005 (5+ components) + VT1-006 (3x anchor)
+
+      Phase 3: Naming + Packaging (hormozi-offers)
+        → MAGICO formula (5/6 components)
+        → GATE: VT1-007 (MAGICO check)
+
+      Phase 4: Audit + Launch Prep (hormozi-audit → hormozi-copy)
+        → Antipattern screening
+        → GATE: VT1-008 (antipattern PASS)
+        → Handoff to hormozi-copy for sales page/VSL
+
+# ============================================================
+# VALIDATION SCRIPTS — Enforcement automatizado
+# ============================================================
+
+validation_scripts:
+  - id: validate-mvn
+    path: squads/hormozi/scripts/validate-mvn.py
+    trigger: "Before any calculation involving price, ROI, LTV, CAC"
+    enforces: [VT0-001, VT1-001, VT2-OFF-001]
+    returns: "PASS (exit 0) or FAIL (exit 1)"
+
+  - id: validate-antipattern
+    path: squads/hormozi/scripts/validate-antipattern.py
+    trigger: "Before approving offer for launch"
+    enforces: [VT1-008, VT2-AUD-001]
+    returns: "PASS (exit 0) or VETO (exit 1)"
+
+  - id: validate-handoff
+    path: squads/hormozi/scripts/validate-handoff.py
+    trigger: "Before any specialist-to-specialist handoff"
+    enforces: [VT3-001]
+    returns: "PASS (exit 0) or FAIL (exit 1)"
+
+# ============================================================
+# VETO CONDITIONS — 18 gates, 4 tiers (referência)
+# ============================================================
+
+veto_conditions:
+  source: squads/hormozi/config/veto-conditions.yaml
+  summary:
+    tier_0_universal: 3     # VT0-001 (no MVN=no calc), VT0-002 (no fake scarcity), VT0-003 (no numbers without base)
+    tier_1_workflow: 8      # VT1-001 to VT1-008 (Grand Slam Offer phases)
+    tier_2_agent_specific: 6 # VT2-OFF-001/002, VT2-PRI-001/002, VT2-HOO-001, VT2-AUD-001
+    tier_3_handoff: 1       # VT3-001 (handoff context required)
+    total: 18
+
+# ============================================================
+# CHECKLISTS — 43 checklists mapeados
+# ============================================================
+
+checklists:
+  total: 43
+  veto_checklists:
+    - checklists/antipattern-screening.md
+    - checklists/market-validation-veto.md
+    - checklists/golden-ratios-veto.md
+  offer_checklists:
+    - checklists/value-equation-checklist.md
+    - checklists/offer-architecture-checklist.md
+    - checklists/guarantees-checklist.md
+    - checklists/bonuses-checklist.md
+    - checklists/scarcity-urgency-checklist.md
+    - checklists/naming-framework-checklist.md
+  sales_copy_checklists:
+    - checklists/landing-page-checklist.md
+    - checklists/sales-page-checklist.md
+    - checklists/vsl-script-checklist.md
+    - checklists/email-campaign-checklist.md
+    - checklists/registration-page-checklist.md
+    - checklists/upsell-page-checklist.md
+  lead_gen_checklists:
+    - checklists/core-four-checklist.md
+    - checklists/lead-magnet-checklist.md
+    - checklists/lead-nurture-checklist.md
+    - checklists/marketing-machine-checklist.md
+    - checklists/fast-cash-checklist.md
+  pricing_checklists:
+    - checklists/pricing-checklist.md
+    - checklists/pricing-framework-checklist.md
+    - checklists/price-raise-checklist.md
+  money_model_checklists:
+    - checklists/money-model-checklist.md
+    - checklists/upsell-strategy-checklist.md
+    - checklists/upsell-sequence-checklist.md
+    - checklists/downsell-strategy-checklist.md
+    - checklists/subscription-model-checklist.md
+  retention_checklists:
+    - checklists/retention-checklist.md
+    - checklists/churn-diagnosis-checklist.md
+    - checklists/customer-journey-checklist.md
+    - checklists/ltv-checklist.md
+    - checklists/onboarding-30-day-checklist.md
+    - checklists/exit-interview-checklist.md
+    - checklists/engagement-scoring-checklist.md
+    - checklists/activation-point-checklist.md
+    - checklists/5-horsemen-checklist.md
+  ads_hooks_checklists:
+    - checklists/goated-ads-checklist.md
+    - checklists/ad-angles-checklist.md
+    - checklists/hooks-checklist.md
+  launch_checklists:
+    - checklists/launch-checklist.md
+    - checklists/affiliates-referrals-checklist.md
+    - checklists/workshop-launch-checklist.md
+  content_checklists:
+    - checklists/content-creation-checklist.md
+    - checklists/branding-checklist.md
+
+# ============================================================
+# CROSS-DOMAIN — Relações com outros squads e sistemas
+# ============================================================
+
+cross_domain:
+
+  cross_squad:
+    # Squads que CONSOMEM outputs do hormozi
+    - squad: copy-squad
+      relationship: consumer
+      description: "Copy-squad pode consumir offer architecture e headlines do hormozi como input"
+      shared_artifacts: [grand-slam-offer, hook-variations, sales-page-copy]
+
+    - squad: brand
+      relationship: consumer
+      description: "Brand pode usar naming e positioning outputs do hormozi"
+      shared_artifacts: [grand-slam-offer]
+
+    - squad: acceleration-squad
+      relationship: bidirectional
+      description: "Acceleration fornece BMC/Lean Canvas; hormozi fornece offer engineering"
+      hormozi_consumes: ["BMC outputs", "Lean Canvas"]
+      hormozi_provides: [grand-slam-offer, money-model-architecture]
+
+    - squad: media-buy-squad
+      relationship: consumer
+      description: "Media-buy consome ad scripts e hook variations do hormozi"
+      shared_artifacts: [ad-scripts, ad-variations, hook-variations]
+
+    - squad: traffic-masters
+      relationship: consumer
+      description: "Traffic masters consome ad creatives e lead strategies"
+      shared_artifacts: [ad-scripts, core-four-strategy]
+
+    - squad: storytelling-squad
+      relationship: consumer
+      description: "Storytelling pode usar proof stacks e case studies"
+      shared_artifacts: [value-equation-diagnostic]
+
+  # Sem dependências diretas de apps/infra
+  apps: []
+  infrastructure: []
+  packages: []
+
+# ============================================================
+# ENFORCEMENT — Gap-zero e gates
+# ============================================================
+
+enforcement:
+
+  required_inputs:
+    - doc_id: L1-001
+      min_state: POPULATED
+      rationale: "Offerbook é o input primário — sem ele, oferta é no escuro"
+
+    - doc_id: L1-002
+      min_state: POPULATED
+      rationale: "ICP define o avatar — sem ICP, comunicação é genérica"
+
+  # O hormozi usa veto_conditions.yaml como enforcement principal
+  # (18 gates), não task_gates como os outros squads
+  enforcement_model: veto_conditions
+  veto_config: squads/hormozi/config/veto-conditions.yaml
+
+  # Validação adicional: workspace docs recomendados mas não bloqueantes
+  recommended_inputs:
+    - doc_id: L0-001
+      min_state: POPULATED
+      rationale: "Company DNA melhora contexto mas não bloqueia execução"
+
+    - doc_id: L0-002
+      min_state: DRAFT
+      rationale: "Founder DNA para proof stacks — útil mas não obrigatório"
+
+    - doc_id: L1-005
+      min_state: POPULATED
+      rationale: "Pricing strategy existente para calibração"
+
+    - doc_id: L2-001
+      min_state: DRAFT
+      rationale: "Brand guidelines para consistência de voz"
+
+    - doc_id: L2-002
+      min_state: DRAFT
+      rationale: "Positioning para diferenciação"
+
+# ============================================================
+# HANDOFF MATRIX — Fluxo entre agents
+# ============================================================
+
+handoff_matrix:
+  template: squads/hormozi/templates/handoff-context-tmpl.yaml
+  mandatory_fields: [source_agent, target_agent, mvn_status, current_phase, key_decisions, blockers]
+
+  primary_flows:
+    - name: "Offer → Monetization"
+      from: hormozi-offers
+      to: hormozi-models
+      context: "Offer architecture + value stack + pricing anchor"
+
+    - name: "Offer → Sales Copy"
+      from: hormozi-offers
+      to: hormozi-copy
+      context: "Complete offer + dream outcome + guarantee + naming"
+
+    - name: "Offer → Audit"
+      from: hormozi-offers
+      to: hormozi-audit
+      context: "Offer for antipattern screening before launch"
+
+    - name: "Copy → Launch"
+      from: hormozi-copy
+      to: hormozi-launch
+      context: "Email sequences + sales page copy + registration page"
+
+    - name: "Closer → Retention"
+      from: hormozi-closer
+      to: hormozi-retention
+      context: "Post-sale customer data + contract details"
+
+    - name: "Retention → Models"
+      from: hormozi-retention
+      to: hormozi-models
+      context: "LTV data + churn metrics for model recalibration"
+
+    - name: "Models → Scale"
+      from: hormozi-models
+      to: hormozi-scale
+      context: "Unit economics + LTGP:CAC + capacity constraints"
+
+# ============================================================
+# AUDIT NOTES — Achados da auditoria CSO
+# ============================================================
+
+audit_notes:
+  audited_by: CSO
+  audited_at: "2026-03-09"
+  squad_io_version: "2.0.0"
+  previous_version: null  # Primeiro squad-io.yaml para hormozi
+
+  findings:
+    - id: HZ-001
+      severity: INFO
+      finding: "Squad não tem task files separados — tasks são comandos dentro dos agents"
+      impact: "Padrão diferente dos outros squads (c-level, brand)"
+      recommendation: "Documentar como variação aceita do schema v2"
+
+    - id: HZ-002
+      severity: INFO
+      finding: "Squad não escreve no document-registry — é puramente de execução"
+      impact: "Outputs não são rastreados no governance cycle"
+      recommendation: "Considerar criar doc-registry entries para artifacts mais importantes (grand-slam-offer, money-model)"
+
+    - id: HZ-003
+      severity: LOW
+      finding: "3 validation scripts referenciados (validate-mvn.py, validate-antipattern.py, validate-handoff.py) — existência não verificada"
+      impact: "Se scripts não existem, enforcement é apenas conceptual"
+      recommendation: "Verificar existência dos scripts e implementar se necessário"
+
+    - id: HZ-004
+      severity: LOW
+      finding: "handoff-context-tmpl.yaml referenciado em templates/ — existência não verificada"
+      impact: "VT3-001 (handoff context required) depende deste template"
+      recommendation: "Verificar e criar template se não existe"
+
+    - id: HZ-005
+      severity: MEDIUM
+      finding: "43 checklists existem nos paths esperados mas não foram validados individualmente"
+      impact: "Checklists podem estar vazios ou incompletos"
+      recommendation: "Rodar validação de conteúdo dos checklists prioritários (antipattern, market-validation, golden-ratios)"
+
+    - id: HZ-006
+      severity: LOW
+      finding: "MMOS integration habilitada (mmos_integration.enabled: true) — source mind path referencia outputs/minds/alex_hormozi que pode não existir neste repo"
+      impact: "Agents podem falhar ao carregar MMOS artifacts"
+      recommendation: "Verificar se path outputs/minds/alex_hormozi existe ou atualizar para path correto"
+
+    - id: HZ-007
+      severity: INFO
+      finding: "Cross-squad relationships identificadas com 6 squads (copy-squad, brand, acceleration, media-buy, traffic-masters, storytelling) — nenhuma formalizada com squad-io"
+      impact: "Handoffs cross-squad são informais"
+      recommendation: "Quando esses squads receberem squad-io.yaml v2, formalizar as bridges"
+
+# ============================================================
+# SCHEMA REFERENCE (v2.0)
+# ============================================================
+# squad-io.yaml v2.0 — Formal I/O contract schema
+#
+# SECTIONS:
+#   inputs.workspace[]   — doc_id, path, min_state, usage, consumed_by_agents
+#   inputs.squad_data    — shared databases, agent-specific DNA
+#   inputs.config        — enforcement configs, templates
+#   outputs.workspace[]  — docs escritos no workspace canônico (vazio para squads de execução)
+#   outputs.artifacts[]  — artifacts produzidos pelo squad
+#   agents[]             — id, role, tier, commands, databases, checklists, veto_gates, handoffs
+#   workflows[]          — workflows formais com phases e gates
+#   validation_scripts[] — scripts de enforcement automatizado
+#   veto_conditions      — referência ao config centralizado
+#   checklists           — inventário completo de checklists
+#   cross_domain         — cross_squad, apps, infrastructure, packages
+#   enforcement          — required_inputs, recommended_inputs, enforcement_model
+#   handoff_matrix       — template, mandatory_fields, primary_flows
+#   audit_notes          — findings da auditoria CSO
+# ============================================================

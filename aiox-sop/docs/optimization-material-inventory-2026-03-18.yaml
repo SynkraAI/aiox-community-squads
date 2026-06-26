@@ -1,0 +1,73 @@
+date: "2026-03-18"
+squad: aiox-sop
+status: completed
+active:
+  - path: squads/aiox-sop/config.yaml
+    reason: Canonical manifest and distribution contract.
+  - path: squads/aiox-sop/agents/sop-chief.md
+    reason: Public routing contract for extraction and conversion ownership.
+  - path: squads/aiox-sop/tasks/check-environment.md
+    reason: Canonical runtime preflight task.
+  - path: squads/aiox-sop/tasks/convert-sop-format.md
+    reason: Active worker-first hybrid conversion contract.
+  - path: squads/aiox-sop/workflows/wf-sop-extraction-pipeline.yaml
+    reason: Canonical extraction workflow after convergence.
+  - path: squads/aiox-sop/README.md
+    reason: Operator-facing runtime and output contract.
+  - path: squads/aiox-sop/ARCHITECTURE.md
+    reason: Architecture-level output zone and runtime contract reference.
+  - path: squads/aiox-sop/examples/README.md
+    reason: Explains production-readiness samples versus retained references.
+  - path: squads/aiox-sop/outputs/README.md
+    reason: Canonical classification for retained reference packages.
+  - path: docs/squad/aiox-sop/operational-projection.yaml
+    reason: Portable docs source of truth for runtime detection.
+  - path: squads/aiox-sop/examples/sample-human-sop.md
+    reason: Representative smoke input for worker conversion.
+  - path: squads/aiox-sop/examples/sample-ml-sop.yaml
+    reason: Representative smoke input for worker conversion.
+  - path: squads/aiox-sop/docs/optimization-yolo-plan-2026-03-18.md
+    reason: Approved execution plan for the YOLO cycle.
+  - path: squads/aiox-sop/docs/optimization-yolo-report-2026-03-18.md
+    reason: Final optimization report.
+  - path: squads/aiox-sop/docs/optimization-economy-2026-03-18.md
+    reason: Post-run economy analysis.
+  - path: squads/aiox-sop/docs/optimization-environment-2026-03-18.json
+    reason: Machine-readable environment contract evidence.
+  - path: squads/aiox-sop/docs/optimization-repo-baseline-2026-03-18.json
+    reason: Repo-global preflight baseline summary.
+  - path: squads/aiox-sop/docs/optimization-validation-2026-03-18.json
+    reason: Consolidated post-run validation evidence.
+  - path: squads/aiox-sop/docs/optimization-workflow-contracts-2026-03-18.json
+    reason: Strict workflow contract evidence for changed workflow topology.
+  - path: squads/aiox-sop/docs/optimization-doc-drift-2026-03-18.json
+    reason: Structural documentation drift evidence.
+  - path: squads/aiox-sop/docs/optimization-runtime-smoke-2026-03-18.json
+    reason: Runtime smoke evidence for changed execution surfaces.
+  - path: squads/aiox-sop/docs/optimization-validation-fallback-2026-03-18.json
+    reason: Explicit record that fallback validation was not needed.
+  - path: squads/aiox-sop/docs/optimization-split-verdict-2026-03-18.json
+    reason: Machine-readable local/global verdict summary.
+integrate_next: []
+archive:
+  - path: squads/aiox-sop/workflows/wf-sop-extraction-pipeline.yaml.bak
+    reason: Rollback snapshot retained after workflow convergence.
+  - path: squads/aiox-sop/outputs/SOP-SLIDES-001.md
+    reason: Retained reference package, not canonical runtime output.
+  - path: squads/aiox-sop/outputs/SOP-SLIDES-001.yaml
+    reason: Retained reference package, not canonical runtime output.
+  - path: squads/aiox-sop/outputs/SOP-SLIDES-002.md
+    reason: Retained reference package, not canonical runtime output.
+  - path: squads/aiox-sop/outputs/SOP-SLIDES-002.yaml
+    reason: Retained reference package, not canonical runtime output.
+  - path: squads/aiox-sop/outputs/SOP-SLIDES-003.md
+    reason: Retained reference package, not canonical runtime output.
+  - path: squads/aiox-sop/outputs/SOP-SLIDES-003.yaml
+    reason: Retained reference package, not canonical runtime output.
+  - path: squads/aiox-sop/outputs/SOP-SLIDES-004.md
+    reason: Retained reference package, not canonical runtime output.
+  - path: squads/aiox-sop/outputs/SOP-SLIDES-004.yaml
+    reason: Retained reference package, not canonical runtime output.
+notes:
+  - No support material was moved outside `squads/aiox-sop/` during this run.
+  - Canonical generated artifacts remain under `outputs/aiox-sop/`.

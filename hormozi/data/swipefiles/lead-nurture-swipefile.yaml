@@ -1,0 +1,191 @@
+# $100M Lead Nurture Playbook Swipefile
+# Source: Alex Hormozi - Acquisition.com
+# Extracted: 2026-02-23
+
+version: "1.0"
+source:
+  title: "$100M Lead Nurture Playbook"
+  author: "Alex Hormozi"
+  publisher: "Acquisition.com"
+  year: 2025
+
+core_concept:
+  principle: "If they do not show, they cannot buy"
+  focus: "Maximizing 30-day show rates"
+  metrics:
+    schedule_rate: "Percentage of engaged leads who schedule appointment"
+    show_rate: "Percentage of scheduled leads that show up"
+    throughput: "Total percentage of engaged leads that show up"
+
+frameworks:
+  four_pillars:
+    - name: "Availability"
+      description: "Number of open appointment slots you have"
+      correlation: "Almost perfect correlation with throughput"
+    - name: "Speed"
+      description: "How fast you respond to leads"
+      stats:
+        - "391% increase in conversions when contacted within 60 seconds"
+        - "78% of customers buy from company that responds first"
+    - name: "Personalization"
+      description: "Making communication useful and relevant"
+      effect: "More personal = more likely to respond and show"
+    - name: "Volume"
+      description: "Number of times you reach out before giving up"
+      problem: "44% of salespeople stop after first attempt"
+
+strategies:
+  pillar_1_availability:
+    more_days:
+      principle: "Take appointments 7 days per week"
+      math: "40% more availability = potential 40% more sales"
+    more_hours:
+      recommendation: "6am to 6pm PST covers highest US percentage"
+      principle: "Be available when customers are available to buy"
+    flexible_times:
+      recommendation: "4 scheduling options per hour (every 15 minutes)"
+      note: "Convenient for lead, not just business"
+    multiple_channels:
+      options: ["Inbound calls", "Outbound calls", "Self-scheduling online"]
+
+  pillar_2_speed:
+    speed_to_first_contact:
+      goal: "Contact leads within 5 minutes"
+      litmus_test: "If you aren't getting 'man that was fast!' at least once a day, you're too slow"
+    speed_to_first_appointment:
+      max_scheduling: "3 days out maximum"
+      ideal: "Same day, next day, day after"
+      reason: "Appointments closer = higher show rates"
+    speed_of_response:
+      principle: "Respond to messages quickly between scheduling and appointment"
+      impact: "Leads often make buying decisions before the sales call"
+
+  pillar_3_personalization:
+    communication_method:
+      approach: "Start everywhere, continue where they respond"
+      channels: ["Text", "Email", "DM", "Phone call"]
+    qualify_leads:
+      benefit: "Spend time on promising prospects, cancel poor fits"
+    best_leads_to_best_closers:
+      steps:
+        - "Look at best customers' actions and demographics"
+        - "Ask those questions in opt-ins and applications"
+        - "Score leads (1-5 or red-yellow-green)"
+        - "Route best leads to best closers"
+    segment_messaging:
+      easy: "Research leads before contact - 5 min prep"
+      hard: "Set up sequences for each lead category"
+    incentives:
+      push: "Give gift before appointment (reciprocity)"
+      pull: "A/B choice that assumes they'll show"
+    proof:
+      approach: "Match testimonials to lead demographics"
+
+  pillar_4_volume:
+    scheduling_sequence:
+      day_1:
+        - "Call within 5 min of opt-in"
+        - "Double-dial if no answer"
+        - "Leave voicemail"
+        - "Text immediately after"
+        - "Double dial and text 2 more times"
+      day_2_3: "Call 2x per day + text after second call"
+      day_4_7: "Call and text once per day"
+      after_week: "Transition to long-term nurture"
+    automated_reminders:
+      - "Immediately: confirmation of time, date, caller number"
+      - "24 hours before"
+      - "12 hours before"
+      - "3 hours before"
+    manual_reminders:
+      - "Night before"
+      - "Morning of"
+      - "60 minutes before"
+    bamfam:
+      name: "Book A Meeting From A Meeting"
+      rule: "NEVER get off call without scheduling next appointment"
+
+tactics:
+  pull_appointments_forward:
+    script: |
+      Hey, this is [Name] calling from XYZ on a recorded line...
+      I saw you booked a time for our X on Monday.
+      Just calling to confirm some details.
+      [Qualify: WHO they are, WHAT they want, WHAT they're struggling with]
+      Good news: I think we can help you out.
+      Better news: I have an opening that canceled today at 4pm...
+      unless now is a good time?
+
+  hot_handoff:
+    script: |
+      You're in luck. You're going to speak with one of our top experts.
+      He's been in this game for a while and helped [similar people] achieve [thing they want].
+      Let me check his calendar... Yep, you're all confirmed.
+      I'm going to introduce you via text message.
+
+  gift_card_incentive:
+    script: |
+      Hey [Name]! I wanted to make sure you're caffeinated for our meeting.
+      Check your email - I just sent you a $5 gift card.
+
+  ab_incentive:
+    script: |
+      Since you're a first-time client, I'm setting aside some free products.
+      Would you want face cream or hand lotion?
+
+execution:
+  culture_principles:
+    - "Be a garbage man - don't judge leads"
+    - "Yellows are the new gold - work less qualified leads"
+    - "Volume negates luck"
+    - "BAMFAM as a way of life"
+    - "Every sale is opportunity for free practice"
+
+  tracking:
+    rank_by:
+      - "Show rate"
+      - "Close rate"
+      - "Lead-to-close percentage"
+    note: "Best closers are typically best setters"
+
+checklist:
+  availability:
+    - "Schedule appointments 7 days per week"
+    - "Schedule as many hours as possible (9am-9pm EST goal)"
+    - "Give 4 scheduling options per hour (every 15 min)"
+    - "Add automated self-scheduling"
+    - "Remove steps from self-scheduling process"
+  speed:
+    - "Respond to leads in under 5 minutes"
+    - "Book appointments same day, next day, or day after"
+    - "Pull appointments forward when possible"
+    - "Outbound dial all interested leads"
+    - "Respond to messages quickly"
+  personalization:
+    - "Contact everywhere, focus where they respond"
+    - "Use applications and demographic info to qualify"
+    - "Segment messaging based on lead info"
+    - "Send best leads to best closers"
+    - "Incentivize showing up (gifts, A/B offers)"
+    - "Show proof matching their situation"
+  volume:
+    - "Double-dial + text 3x first day"
+    - "2x second and third day"
+    - "1x days 4-7"
+    - "Automated reminders: 24h, 12h, 3h out"
+    - "Manual reminders: night before, morning of, 60 min prior"
+    - "BAMFAM - always book next meeting"
+
+agent_usage:
+  pm:
+    - "Design lead nurture sequences"
+    - "Structure availability policies"
+  po:
+    - "Define lead qualification criteria"
+    - "Prioritize personalization features"
+  dev:
+    - "Build automated reminder systems"
+    - "Implement lead scoring and routing"
+  analyst:
+    - "Track show rates by sales rep"
+    - "Measure conversion at each nurture stage"

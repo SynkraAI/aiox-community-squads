@@ -1,0 +1,65 @@
+# Market Categories — Revenue Range Taxonomy
+# Source of truth for business categorization by market segment.
+# Referenced by tasks/map-core-sop-backlog.md
+# Values here are domain data, not squad-specific pricing.
+
+categories:
+  - id: CAT-01
+    name: "EdTech / Educação Online"
+    slug: edtech
+    businesses: [eu_medico_residente, nexos_educacao, ecossistema_builder, omni_hypnosis, academia_lendaria, aiox]
+    revenue_range: "R$1M-R$20M+"
+
+  - id: CAT-02
+    name: "Desenvolvimento Pessoal / Coaching"
+    slug: personal-dev
+    businesses: [grupo_scalco, vida_lendaria, mentoria_andre_franco]
+    revenue_range: "R$3M-R$5M+"
+
+  - id: CAT-03
+    name: "SaaS / Tecnologia"
+    slug: saas-tech
+    businesses: [youfront, optimus_isystem, ecossistema_builder]
+    revenue_range: "<R$500K-R$3M"
+
+  - id: CAT-04
+    name: "Agência / Serviços de Marketing"
+    slug: marketing-agency
+    businesses: [grupo_fabio_avelar, youfront, nutraself]
+    revenue_range: "R$5M+"
+
+  - id: CAT-05
+    name: "Gaming / Entretenimento"
+    slug: gaming
+    businesses: [level8_herobase]
+    revenue_range: "R$5M+"
+
+  - id: CAT-06
+    name: "Healthcare / MedTech"
+    slug: healthcare-medtech
+    businesses: [conta_magic, eu_medico_residente]
+    revenue_range: "R$20M-R$120M"
+
+  - id: CAT-07
+    name: "Turismo / Gastronomia"
+    slug: tourism-gastronomy
+    businesses: [brasil_em_dobro]
+    revenue_range: "R$1.7M+"
+
+  - id: CAT-08
+    name: "Telecom / Multi-negócios"
+    slug: telecom-multi
+    businesses: [grupo_wv]
+    revenue_range: "R$35M+"
+
+  - id: CAT-09
+    name: "Cripto / Investimentos"
+    slug: crypto-finance
+    businesses: [mentoria_andre_franco]
+    revenue_range: "R$3-16M"
+
+  - id: CAT-10
+    name: "Direct Response / eCommerce"
+    slug: direct-response
+    businesses: [nutraself]
+    revenue_range: "R$5M+"

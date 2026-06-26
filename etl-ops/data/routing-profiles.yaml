@@ -1,0 +1,239 @@
+version: 1
+default_profile: web_page
+
+# RAG mode defaults: when mode=rag and no chunk_strategy provided,
+# use source-aware defaults for optimal chunking.
+rag_defaults:
+  youtube_video: { chunk_strategy: sentence }
+  youtube_channel: { chunk_strategy: sentence }
+  url: { chunk_strategy: paragraph }
+  file: { chunk_strategy: paragraph }
+  ebook_epub: { chunk_strategy: chapter, document_strategy: book_progressive }
+
+profiles:
+  youtube_video:
+    match:
+      source_kind: ["youtube_video"]
+      hints: ["youtube.com/watch", "youtu.be/", "11-char video id"]
+    extractor:
+      tool: node services/etl/bin/youtube-transcript.js
+      args: ["{videoId}"]
+    fallback_chain:
+      - "retry with alternate language"
+    veto_conditions:
+      - "video private or deleted"
+      - "no captions available"
+
+  youtube_channel:
+    match:
+      source_kind: ["youtube_channel"]
+      hints: ["youtube.com/@", "youtube.com/c/"]
+    extractor:
+      tool: node services/etl/bin/youtube-pipeline.js
+      args: ["@{handle}", "--limit", "{constraints.max_items|10}"]
+    fallback_chain:
+      - "retry with lower limit"
+      - "skip cleanup if llm unavailable"
+    veto_conditions:
+      - "channel not found"
+      - "0 public videos"
+
+  youtube_metadata:
+    match:
+      source_kind: ["youtube_video"]
+      when: "source.metadata_only == true"
+    extractor:
+      tool: node services/etl/bin/youtube-metadata.js
+      args: ["{videoId}"]
+    fallback_chain:
+      - "innertube basic metadata"
+    veto_conditions:
+      - "invalid video id"
+
+  web_page:
+    match:
+      source_kind: ["url"]
+      hints: ["http://", "https://"]
+    extractor:
+      tool: node services/etl/bin/fetch-page.js
+      args: ["{url}", "--format", "markdown"]
+    fallback_chain:
+      - "retry with --format json"
+    veto_conditions:
+      - "domain blocked"
+      - "timeout"
+      - "empty/minimal content"
+
+  ebook_epub:
+    match:
+      source_kind: ["file"]
+      extensions: [".epub"]
+    extractor:
+      tool: node services/etl/bin/ebook-to-markdown.js
+      args: ["{filePath}"]
+    fallback_chain: []
+    veto_conditions:
+      - "file not found"
+      - "invalid epub"
+    transform_defaults:
+      document_strategy: book_progressive
+      preferred_summary_path: summarize-book
+
+  audio_transcription:
+    match:
+      source_kind: ["file"]
+      extensions: [".mp3", ".wav", ".m4a", ".ogg"]
+    extractor:
+      tool: node services/etl/bin/transcribe.js
+      args: ["{filePath}"]
+    fallback_chain: []
+    veto_conditions:
+      - "file not found"
+      - "unsupported audio format"
+
+  pdf_document:
+    match:
+      source_kind: ["file"]
+      extensions: [".pdf"]
+    extractor:
+      api: services/etl/collectors/pdf-collector.js
+      call: "new PDFCollector().collect(filePath)"
+    fallback_chain: []
+    veto_conditions:
+      - "file not found"
+      - "parse returned empty"
+    warnings:
+      - "prefer epub when available for structure-aware summarization"
+
+  generic_document:
+    match:
+      source_kind: ["file"]
+    extractor:
+      api: services/etl/collectors/document-collector.js
+      call: "new DocumentCollector().collect(filePath)"
+    fallback_chain: []
+    veto_conditions:
+      - "file not found"
+      - "unsupported document type"
+
+  # ============================================================================
+  # VIDEO PROFILES (non-YouTube)
+  # ============================================================================
+
+  direct_video_url:
+    match:
+      source_kind: ["url"]
+      extensions: [".mp4", ".mov", ".webm", ".mkv", ".avi"]
+      hints: ["direct video url", "cdn video", "hosted video"]
+    extractor:
+      tool: "wget + ffmpeg + whisper"
+      mode: sequential
+      steps:
+        - cmd: "wget -q -O {temp_dir}/{filename} {url}"
+          checkpoint: "file downloaded"
+        - cmd: "ffmpeg -i {temp_dir}/{filename} -vn -acodec pcm_s16le -ar 16000 -ac 1 {temp_dir}/{basename}.wav -y -loglevel quiet"
+          checkpoint: "audio extracted"
+        - cmd: "whisper {temp_dir}/{basename}.wav --model base --language {constraints.language|en} --output_format txt --output_dir {output_dir}"
+          checkpoint: "transcription complete"
+      cleanup:
+        - "{temp_dir}/{filename}"
+        - "{temp_dir}/{basename}.wav"
+    fallback_chain:
+      - "retry with --model small"
+      - "retry with --model medium"
+    veto_conditions:
+      - "download failed"
+      - "invalid video format"
+      - "audio extraction failed"
+      - "transcription returned empty"
+
+  video_transcription:
+    match:
+      source_kind: ["file"]
+      extensions: [".mp4", ".mov", ".webm", ".mkv", ".avi"]
+    extractor:
+      tool: "ffmpeg + whisper"
+      mode: sequential
+      steps:
+        - cmd: "ffmpeg -i {filePath} -vn -acodec pcm_s16le -ar 16000 -ac 1 {temp_dir}/{basename}.wav -y -loglevel quiet"
+          checkpoint: "audio extracted"
+        - cmd: "whisper {temp_dir}/{basename}.wav --model base --language {constraints.language|en} --output_format txt --output_dir {output_dir}"
+          checkpoint: "transcription complete"
+      cleanup:
+        - "{temp_dir}/{basename}.wav"
+    fallback_chain:
+      - "retry with --model small"
+    veto_conditions:
+      - "file not found"
+      - "invalid video format"
+      - "audio extraction failed"
+      - "transcription returned empty"
+
+  # ============================================================================
+  # MULTIMODAL VIDEO EXTRACTION (keyframes + transcript)
+  # ============================================================================
+
+  video_multimodal:
+    match:
+      source_kind: ["file", "url"]
+      extensions: [".mp4", ".mov", ".webm", ".mkv", ".avi"]
+      when: "constraints.extract_keyframes == true"
+    extractor:
+      mode: parallel
+      streams:
+        audio:
+          tool: "whisper"
+          cmd: "whisper {input} --model {constraints.whisper_model|base} --language {constraints.language|en} --word_timestamps true --output_format json --output_dir {output_dir}"
+          output: "transcript.json"
+          checkpoint: "transcript exists AND word_count > 0"
+
+        visual:
+          tool: "pyscenedetect"
+          strategy: "{constraints.keyframe_strategy|scene_detection}"
+          # THRESHOLD GUIDE (from acquisition_training learnings):
+          # - 0.3 (default): Edited videos, slides, courses with clear cuts
+          # - 0.1-0.15: Talking-head videos (subtle expression changes)
+          # - 0.4-0.5: High-motion content (sports, action)
+          # WARNING: Using 0.3 on talking-head = 0 frames extracted
+          strategies:
+            scene_detection:
+              cmd: "scenedetect -i {input} -o {output_dir} save-images"
+              threshold: "{constraints.scene_threshold|0.3}"
+            interval:
+              cmd: "ffmpeg -i {input} -vf \"fps=1/{constraints.interval_seconds|5}\" {output_dir}/frame_%05d.jpg"
+            ffmpeg_scene:
+              cmd: "ffmpeg -i {input} -vf \"select='gt(scene,{constraints.scene_threshold|0.3})'\" -vsync vfr {output_dir}/frame_%05d.jpg"
+          output: "keyframes/*.jpg"
+          checkpoint: "keyframe_count > 0"
+
+      post_process:
+        - name: "ssim_filter"
+          when: "constraints.filter_duplicates == true"
+          threshold: "{constraints.ssim_threshold|0.85}"
+          description: "Remove frames with SSIM similarity > threshold"
+
+        - name: "merge_av"
+          description: "Align keyframes with transcript timestamps"
+          output: "chunks.jsonl"
+
+    fallback_chain:
+      - strategy: "ffmpeg_scene"
+        when: "pyscenedetect not available"
+      - strategy: "interval"
+        when: "scene detection returns 0 frames"
+
+    veto_conditions:
+      - "file not found"
+      - "invalid video format"
+      - "0 keyframes extracted AND 0 transcript words"
+
+    output_artifacts:
+      - kind: "keyframes"
+        path: "{output_dir}/keyframes/"
+        format: "jpg"
+      - kind: "transcript"
+        path: "{output_dir}/transcript.json"
+        format: "json"
+      - kind: "chunks"
+        path: "{output_dir}/chunks.jsonl"
+        format: "jsonl"

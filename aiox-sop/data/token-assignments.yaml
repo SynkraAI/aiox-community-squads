@@ -1,0 +1,304 @@
+# Managed by materialize-map.py
+# Source: outputs/sinkra-squad/aiox-sop/map/20260329-190639-claude-opus/token_assignments.yaml
+# Category: governance
+
+metadata:
+  phase: 5
+  process_slug: aiox-sop
+  process_name: 'Creates, extracts, analyzes, grades and converts SOPs using the world''s
+    best process documentation methodologies. Dual-output: human-readable and AI/ML-consumable
+    formats.'
+  token_registry_version: 1.2.0
+  generated_at: '2026-03-30'
+  generated_by: sinkra-chief (manual fill)
+tokens:
+- family: Time
+  tokens:
+  - name: sla_intake
+    value: 4
+    unit: hours
+    consumed_by:
+    - T1.1
+    - T1.2
+    description: SLA para intake e classificação da solicitação
+  - name: sla_extraction
+    value: 2
+    unit: hours
+    consumed_by:
+    - T2.1
+    - T2.2
+    - T2.3
+    description: SLA para extração e mineralização de processo
+  - name: sla_quality
+    value: 4
+    unit: hours
+    consumed_by:
+    - T3.1
+    - T3.2
+    - T3.3
+    - T3.4
+    description: SLA para ciclo completo de qualidade e grading
+  - name: sla_audit
+    value: 72
+    unit: hours
+    consumed_by:
+    - T4.1
+    - T4.2
+    description: SLA para auditoria e sign-off final
+  - name: sla_ml_conversion
+    value: 1
+    unit: hours
+    consumed_by:
+    - T5.1
+    - T5.2
+    description: SLA para conversão ML/AI-ready
+- family: Capacity
+  tokens:
+  - name: max_concurrent_sops
+    value: 5
+    unit: instances
+    consumed_by:
+    - T1.1
+    description: Máximo de SOPs em processamento simultâneo
+  - name: max_retries_extraction
+    value: 3
+    unit: attempts
+    consumed_by:
+    - T2.1
+    - T2.2
+    description: Tentativas máximas de extração antes de escalar
+  - name: batch_size_suite
+    value: 10
+    unit: sops
+    consumed_by:
+    - T6.2
+    description: Tamanho do lote para geração de suite operacional
+- family: Threshold
+  tokens:
+  - name: quality_score_min
+    value: 7.0
+    unit: score_0_10
+    consumed_by:
+    - T3.1
+    - T3.2
+    - T3.4
+    description: Score mínimo para SOP passar para publicação
+  - name: confidence_min_extraction
+    value: 0.7
+    unit: float_0_1
+    consumed_by:
+    - T2.1
+    - T2.3
+    description: Confiança mínima para extraction package sem human review
+  - name: compliance_threshold
+    value: 80.0
+    unit: percent
+    consumed_by:
+    - T3.3
+    - T4.1
+    description: Score SINKRA mínimo para compliance gate passar
+  - name: audit_approval_threshold
+    value: 0.9
+    unit: float_0_1
+    consumed_by:
+    - T4.2
+    description: Threshold para auditoria automática sem re-audit
+- family: Priority
+  tokens:
+  - name: default_priority
+    value: P2
+    consumed_by:
+    - T1.1
+    description: Prioridade padrão para solicitações sem urgência declarada
+  - name: urgent_priority
+    value: P1
+    consumed_by:
+    - T1.1
+    description: Prioridade para solicitações urgentes declaradas pelo requestor
+  - name: critical_findings_priority
+    value: P0
+    consumed_by:
+    - T4.1
+    - T4.2
+    description: Prioridade para findings críticos de auditoria
+- family: Permission
+  tokens:
+  - name: can_publish_canonical
+    value: false
+    consumed_by:
+    - T5.3
+    description: false = portable_docs_mode default; true = full_workspace_mode exige
+      COO readiness
+  - name: can_approve_release
+    value: true
+    required_role: sop_auditor
+    consumed_by:
+    - T4.2
+    description: Apenas sop-auditor pode liberar release após auditoria
+  - name: can_bypass_audit
+    value: false
+    consumed_by:
+    - T4.1
+    description: Nunca permitir bypass de auditoria
+- family: Taxonomy
+  tokens:
+  - name: executor_type
+    value: Agent
+    consumed_by:
+    - T1.2
+    - T2.1
+    - T3.1
+    - T3.3
+    - T5.1
+    description: Tasks executadas por Agent SINKRA
+  - name: executor_type_worker
+    value: Worker
+    consumed_by:
+    - T1.3
+    - T5.2
+    description: Tasks executadas por Worker determinístico
+  - name: executor_type_clone
+    value: Clone
+    consumed_by:
+    - T3.1
+    - T3.3
+    description: Tasks executadas por mind clone (Pedro Valerio)
+  - name: domain_operational
+    value: Operational
+    consumed_by:
+    - T1.1
+    - T2.1
+    - T2.2
+    - T2.3
+    - T5.1
+    - T5.2
+    - T5.3
+    description: Tasks de execução direta
+  - name: domain_tactical
+    value: Tactical
+    consumed_by:
+    - T1.2
+    - T3.4
+    - T4.2
+    - T6.4
+    description: Tasks de decisão e coordenação
+- family: Behavior
+  tokens:
+  - name: retry_policy_extraction
+    value:
+      count: 3
+      backoff: exponential
+      max_wait: PT5M
+      idempotency_key: sop_id + extraction_attempt_hash
+      idempotency_strategy: upsert_on_conflict
+    consumed_by:
+    - T2.1
+    - T2.2
+    description: Retry policy para extração com fonte imperfeita — idempotente por
+      sop_id+hash
+  - name: execution_mode_conversion
+    value: sync
+    consumed_by:
+    - T5.2
+    description: Conversão ML roda em modo síncrono (worker determinístico)
+  - name: fallback_action_audit
+    value: escalate
+    consumed_by:
+    - T4.1
+    description: Em falha de auditoria, escalar para sop-auditor
+  - name: timeout_llm_call
+    value: PT30M
+    unit: ISO8601_duration
+    consumed_by:
+    - T2.1
+    - T3.1
+    - T3.3
+    description: Timeout máximo por chamada LLM em extração e grading
+- family: Mode
+  tokens:
+  - name: mode_create
+    value: CRIAR
+    consumed_by:
+    - T2.2
+    - T2.3
+    description: 'Intenção: criar SOP humano e ML do zero'
+  - name: mode_validate
+    value: VALIDAR
+    consumed_by:
+    - T3.1
+    - T3.2
+    - T3.3
+    - T3.4
+    - T4.1
+    - T4.2
+    description: 'Intenção: validar qualidade, compliance e auditoria'
+  - name: mode_gerenciar
+    value: GERENCIAR
+    consumed_by:
+    - T1.1
+    - T1.2
+    - T6.1
+    - T6.2
+    description: 'Intenção: gerenciar backlog e pipeline de SOPs'
+  - name: mode_resolver
+    value: RESOLVER
+    consumed_by:
+    - T4.2
+    description: 'Intenção: resolver findings e re-audit após remediação'
+- family: Accountability
+  tokens:
+  - name: acc_intake
+    accountable_id: Human:Process_Owner
+    accountability_scope: review_only
+    escalation_priority: medium
+    consumed_by:
+    - T1.1
+    - T1.2
+    - T1.3
+    description: Requestor é accountable pelo intake e contexto correto
+  - name: acc_extraction
+    accountable_id: Human:Process_Owner
+    accountability_scope: review_only
+    escalation_priority: medium
+    consumed_by:
+    - T2.1
+    - T2.2
+    - T2.3
+    description: Process owner valida extraction package gerado
+  - name: acc_quality
+    accountable_id: Human:Quality_Analyst
+    accountability_scope: full
+    escalation_priority: high
+    consumed_by:
+    - T3.1
+    - T3.2
+    - T3.3
+    - T3.4
+    description: Quality analyst supervisiona ciclo completo de grading
+  - name: acc_audit
+    accountable_id: Human:COO
+    accountability_scope: full
+    escalation_priority: critical
+    consumed_by:
+    - T4.1
+    - T4.2
+    description: COO é accountable pelo release gate e compliance final
+  - name: acc_publication
+    accountable_id: Human:Process_Owner
+    accountability_scope: review_only
+    escalation_priority: low
+    consumed_by:
+    - T5.1
+    - T5.2
+    - T5.3
+    description: Process owner confirma publicação nos roots corretos
+  - name: acc_portfolio
+    accountable_id: Human:COO
+    accountability_scope: escalation_target
+    escalation_priority: medium
+    consumed_by:
+    - T6.1
+    - T6.2
+    - T6.3
+    - T6.4
+    description: COO é acionado em decisões de portfolio e cross-squad

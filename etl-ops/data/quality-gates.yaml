@@ -1,0 +1,40 @@
+quality_gates:
+  preflight:
+    workspace_bootstrap_success:
+      threshold: 1.0
+    essentials_validation_success:
+      threshold: 1.0
+    route_resolution_success:
+      threshold: 1.0
+  extraction:
+    source_accessibility:
+      threshold: 1.0
+    extraction_non_empty:
+      threshold: 1.0
+    checkpoint_coverage:
+      threshold: 1.0
+  transformation:
+    fidelity_threshold:
+      threshold: 0.9
+    schema_validation:
+      threshold: 1.0
+    speaker_integrity:
+      threshold: 0.95
+  delivery:
+    output_contract_valid:
+      threshold: 1.0
+    local_quality_gate:
+      threshold: 1.0
+    traceability_coverage:
+      threshold: 0.9
+
+veto_conditions:
+  - id: ETL_QG_001
+    condition: "workspace_bootstrap_success < 1.0"
+    action: "HALT canonical execution"
+  - id: ETL_QG_002
+    condition: "extraction_non_empty < 1.0"
+    action: "HALT extraction"
+  - id: ETL_QG_003
+    condition: "output_contract_valid < 1.0"
+    action: "Block delivery"

@@ -1,0 +1,302 @@
+# ═══════════════════════════════════════════════════════════════
+# Apex Pro — Extension Pack Specification
+# ═══════════════════════════════════════════════════════════════
+#
+# Type: upgrade-pack (enhances base Apex squad, does NOT replace it)
+# Requires: apex >= 1.3.0
+# Degradation: Removing apex-pro/ reverts to base functionality
+#
+# This spec defines WHAT Apex Pro adds. Implementation follows
+# the squad-creator-pro pattern (separate directory, extends base).
+#
+# SSoT: This file is the source of truth for Apex Pro scope.
+# ═══════════════════════════════════════════════════════════════
+
+meta:
+  name: "Apex Pro"
+  version: "1.0.0-spec"
+  type: "upgrade-pack"
+  enhances: "apex"
+  base_requirement: ">=1.3.0"
+  status: "SPECIFICATION — not yet implemented"
+  author: "Pedro Valério (Process Absolutist)"
+  created: "2026-03-11"
+
+# ═══════════════════════════════════════════════════════════════
+# WHAT APEX PRO ADDS (vs base)
+# ═══════════════════════════════════════════════════════════════
+
+capabilities:
+
+  # ─── 1. ML-Assisted Detection ─────────────────────────────
+  ml_assisted_detection:
+    description: >
+      Upgrade visual analysis from pattern-matching to ML-assisted
+      classification. Uses pre-trained models for more accurate
+      structure detection, component identification, and accessibility
+      issue detection from screenshots.
+    base_behavior: "Regex + heuristic pattern matching"
+    pro_behavior: "ML model classifies with confidence scores"
+    components:
+      - name: "Visual Classifier"
+        purpose: "Classify page regions from screenshots with >90% accuracy"
+        model: "Pre-trained on web UI datasets (not user data)"
+        fallback: "Base heuristic detection if model unavailable"
+
+      - name: "Component Recognizer"
+        purpose: "Identify component types from visual appearance"
+        examples: "Detect card, modal, table, form from screenshot alone"
+
+      - name: "A11y Issue Detector"
+        purpose: "Detect a11y issues from visual inspection"
+        examples: "Low contrast, small touch targets, missing focus indicators"
+        accuracy_target: ">85% precision, >75% recall"
+
+  # ─── 2. State Machine Navigator ────────────────────────────
+  state_machine_navigator:
+    description: >
+      Replace the current Navigator's if/else routing with a
+      formal state machine (XState or similar). Enables:
+      - Deterministic state transitions
+      - Persistent state across sessions
+      - Undo/redo navigation history
+      - Parallel sweep tracking
+    base_behavior: "If/else navigator with breadcrumb tracking"
+    pro_behavior: "XState state machine with full history and undo"
+    states:
+      - IDLE
+      - SWEEPING
+      - NAVIGATING_OVERVIEW
+      - NAVIGATING_DOMAIN
+      - NAVIGATING_REGION
+      - NAVIGATING_FINDING
+      - FIXING
+      - BATCH_FIXING
+      - COMPARING
+      - COMPLETED
+    transitions:
+      - "IDLE → SWEEPING (on: start_sweep)"
+      - "SWEEPING → NAVIGATING_OVERVIEW (on: sweep_complete)"
+      - "NAVIGATING_* → FIXING (on: fix_selected)"
+      - "FIXING → NAVIGATING_* (on: fix_complete, re-score)"
+      - "NAVIGATING_* → NAVIGATING_* (on: navigate, back, overview)"
+      - "Any → IDLE (on: done, exit)"
+    persistence: "State serialized to .aios/apex-context/navigator-state.json"
+    undo_depth: 10
+
+  # ─── 3. Bayesian Scoring ────────────────────────────────────
+  bayesian_scoring:
+    description: >
+      Upgrade Apex Score from static weighted sum to Bayesian model
+      that learns from fix patterns. Score adjusts based on:
+      - Historical fix acceptance rates
+      - User preference patterns
+      - Project-specific severity calibration
+    base_behavior: "Static weighted sum (a11y=18%, perf=15%, etc.)"
+    pro_behavior: "Bayesian posterior updating based on user feedback"
+    learning_signals:
+      - "User fixes HIGH finding → increase weight for that domain"
+      - "User ignores MEDIUM finding → decrease weight"
+      - "User always fixes a11y first → a11y weight increases"
+    prior: "Base Apex Score weights as initial prior"
+    update_frequency: "After each fix decision"
+    storage: ".aios/apex-context/scoring-model.json"
+    reset: "*apex-score --reset returns to base weights"
+
+  # ─── 4. Preference Engine ───────────────────────────────────
+  preference_engine:
+    description: >
+      Learn user preferences across sessions: which domains they
+      prioritize, which suggestions they accept/reject, preferred
+      fix depth (quick vs thorough), and communication style.
+    base_behavior: "No preference memory across sessions"
+    pro_behavior: "Persistent preference model influencing all operations"
+    tracked_preferences:
+      - category: "Domain priority"
+        signal: "Which findings user fixes first"
+        effect: "Prioritize those domains in future sweeps"
+
+      - category: "Fix depth"
+        signal: "Quick fix vs thorough pipeline frequency"
+        effect: "Default pipeline selection"
+
+      - category: "Suggestion acceptance"
+        signal: "Which suggestion types are accepted/rejected"
+        effect: "Filter future suggestions"
+
+      - category: "Communication verbosity"
+        signal: "How much detail user reads before acting"
+        effect: "Adjust output verbosity"
+    storage: ".aios/apex-context/user-preferences.json"
+    privacy: "All data local, never transmitted"
+
+  # ─── 5. Industry Benchmarks ─────────────────────────────────
+  industry_benchmarks:
+    description: >
+      Compare Apex Score against industry benchmarks for the
+      project's sector (healthcare, fintech, SaaS, e-commerce, etc.)
+    base_behavior: "Score 0-100 with interpretation ranges"
+    pro_behavior: "Score contextualized against sector benchmarks"
+    sectors:
+      healthcare:
+        a11y_weight: "25% (higher than default 18%)"
+        perf_threshold: "LCP < 1.0s (stricter)"
+        compliance: "HIPAA UI patterns"
+      fintech:
+        security_weight: "20% (higher than default 8%)"
+        a11y_weight: "20%"
+        perf_threshold: "INP < 100ms"
+      saas:
+        perf_weight: "20%"
+        ux_weight: "15%"
+      ecommerce:
+        perf_weight: "25% (conversion-critical)"
+        a11y_weight: "15%"
+    source: "data/industry-benchmarks.yaml"
+
+  # ─── 6. CI Integration ──────────────────────────────────────
+  ci_integration:
+    description: >
+      Run Apex sweeps in CI/CD pipeline. Fail builds that
+      regress below threshold. Generate sweep reports as PR comments.
+    base_behavior: "Manual sweep only (interactive)"
+    pro_behavior: "Automated sweep in CI + PR reporting"
+    features:
+      - name: "GitHub Action"
+        purpose: "Run *apex-full in CI on every PR"
+        config: ".github/workflows/apex-sweep.yml"
+        threshold: "Configurable minimum score"
+        output: "PR comment with score delta"
+
+      - name: "Score regression guard"
+        purpose: "Block merge if score drops below threshold"
+        config: "apex-pro.config.yaml → ci.min_score: 70"
+
+      - name: "Visual regression"
+        purpose: "Screenshot comparison in CI via Playwright"
+        storage: "Baseline screenshots in git LFS"
+
+  # ─── 7. Report Export ───────────────────────────────────────
+  report_export:
+    description: >
+      Export sweep results as formatted reports for stakeholders,
+      clients, or compliance documentation.
+    base_behavior: "Results displayed in terminal only"
+    pro_behavior: "Export to PDF, HTML, JSON, Markdown"
+    formats:
+      - "PDF (branded, printable, with charts)"
+      - "HTML (interactive, shareable link)"
+      - "JSON (machine-readable, CI integration)"
+      - "Markdown (for GitHub issues/PRs)"
+    sections:
+      - "Executive summary (score, top findings)"
+      - "Domain breakdown (per-domain score + findings)"
+      - "Recommendations (prioritized fix list)"
+      - "Comparison (if previous sweep exists, show delta)"
+    command: "*apex-export --format pdf --output report.pdf"
+
+  # ─── 8. Multi-Project Support ───────────────────────────────
+  multi_project_support:
+    description: >
+      Track and compare Apex scores across multiple projects
+      in the same organization.
+    base_behavior: "Single project context only"
+    pro_behavior: "Cross-project dashboard and comparison"
+    features:
+      - "Project registry (list all projects with last score)"
+      - "Cross-project comparison (which project needs attention)"
+      - "Shared design system enforcement (same tokens across projects)"
+      - "Org-wide benchmarks (average score, trend)"
+    storage: "~/.apex-pro/projects.json"
+    command: "*apex-projects"
+
+# ═══════════════════════════════════════════════════════════════
+# PRO AGENTS (new or enhanced)
+# ═══════════════════════════════════════════════════════════════
+
+pro_agents:
+  - name: "apex-ml"
+    role: "ML-assisted visual analysis"
+    new: true
+    depends_on: "ml_assisted_detection capability"
+
+  - name: "apex-benchmark"
+    role: "Industry benchmark comparison"
+    new: true
+    depends_on: "industry_benchmarks capability"
+
+  enhanced_agents:
+    - agent: "apex-lead"
+      enhancement: "State machine navigator, preference engine, Bayesian scoring"
+    - agent: "qa-visual"
+      enhancement: "ML-assisted visual comparison, CI screenshot regression"
+
+# ═══════════════════════════════════════════════════════════════
+# PRO COMMANDS (new)
+# ═══════════════════════════════════════════════════════════════
+
+pro_commands:
+  - name: "*apex-benchmark"
+    description: "Compare score against industry benchmarks"
+    requires: "industry_benchmarks"
+
+  - name: "*apex-export"
+    description: "Export sweep report (PDF, HTML, JSON, Markdown)"
+    requires: "report_export"
+
+  - name: "*apex-projects"
+    description: "Cross-project score dashboard"
+    requires: "multi_project_support"
+
+  - name: "*apex-ci-setup"
+    description: "Configure Apex sweep in CI pipeline"
+    requires: "ci_integration"
+
+  - name: "*apex-preferences"
+    description: "View/reset learned user preferences"
+    requires: "preference_engine"
+
+  - name: "*apex-score --bayesian"
+    description: "Show Bayesian-adjusted score vs base score"
+    requires: "bayesian_scoring"
+
+# ═══════════════════════════════════════════════════════════════
+# INSTALLATION PATTERN
+# ═══════════════════════════════════════════════════════════════
+
+installation:
+  directory: "squads/apex-pro/"
+  relationship: "Extends squads/apex/ (reads its agents, tasks, data)"
+  activation: "Auto-detected if directory exists"
+  deactivation: "Delete squads/apex-pro/ → base-only"
+  conflict_resolution: "Pro overrides base for enhanced commands only"
+  version_check: "Pro reads squads/apex/README.md for version compatibility"
+
+# ═══════════════════════════════════════════════════════════════
+# IMPLEMENTATION PRIORITY
+# ═══════════════════════════════════════════════════════════════
+
+implementation_priority:
+  phase_1:
+    - "preference_engine (most impactful, simplest)"
+    - "report_export (high stakeholder value)"
+    - "state_machine_navigator (UX improvement)"
+  phase_2:
+    - "bayesian_scoring (builds on preference data)"
+    - "industry_benchmarks (data file + comparison logic)"
+    - "ci_integration (GitHub Action + threshold)"
+  phase_3:
+    - "ml_assisted_detection (requires model training/selection)"
+    - "multi_project_support (requires cross-project infrastructure)"
+
+# ═══════════════════════════════════════════════════════════════
+# NON-GOALS (explicitly out of scope)
+# ═══════════════════════════════════════════════════════════════
+
+non_goals:
+  - "Replacing base Apex agents (Pro enhances, never replaces)"
+  - "Backend/API analysis (Apex is frontend-only)"
+  - "Code generation from screenshots (design-to-code is a different tool)"
+  - "Real-time collaboration features"
+  - "Cloud-hosted analysis (everything runs locally)"
+  - "Paid/licensed features (Apex Pro is part of the open framework)"

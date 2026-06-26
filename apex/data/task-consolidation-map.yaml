@@ -1,0 +1,267 @@
+# ═══════════════════════════════════════════════════════════════
+# Task Consolidation Map — Apex Squad
+# ═══════════════════════════════════════════════════════════════
+# SSoT for task organization after PODAR (pruning) operation.
+# Documents which tasks were merged, moved, or converted.
+# ═══════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+date: "2026-03-11"
+operation: "PODAR"
+before: 148
+after_core: 86
+after_extensions: 22
+reduction_pct: 42
+
+# ─── MERGE CLUSTERS ─────────────────────────────────────────────
+# Primary task absorbs the scope of deprecated tasks.
+# Deprecated tasks get a header note pointing to primary.
+
+merge_clusters:
+
+  - name: "Motion System"
+    primary: "animation-architecture.md"
+    absorbs:
+      - animation-design.md
+      - choreography-design.md
+      - micro-interaction-design.md
+      - layout-animation-patterns.md
+      - scroll-driven-animation.md
+      - spring-config.md
+      - gesture-animation-system.md
+    retains_separately:
+      - motion-audit.md  # audit mode
+      - apex-discover-motion.md  # discovery mode
+
+  - name: "CSS Architecture"
+    primary: "css-architecture-audit.md"
+    absorbs:
+      - cascade-layers-architecture.md
+      - css-custom-property-api.md
+      - defensive-css-patterns.md
+      - defensive-css-review.md
+
+  - name: "Token & Theme"
+    primary: "token-architecture.md"
+    absorbs:
+      - token-audit.md
+      - token-migration-strategy.md
+      - theme-audit.md
+      - multi-brand-theming.md
+    retains_separately:
+      - apex-export-tokens.md  # distinct export operation
+      - apex-dark-mode-audit.md  # scoped audit
+
+  - name: "Monorepo"
+    primary: "monorepo-architecture-design.md"
+    absorbs:
+      - monorepo-structure.md
+      - monorepo-setup.md
+
+  - name: "Performance Audit"
+    primary: "performance-audit.md"
+    absorbs:
+      - performance-budget-review.md
+
+  - name: "Load Optimization"
+    primary: "bundle-optimization.md"
+    absorbs:
+      - code-splitting-architecture.md
+      - barrel-file-optimization.md
+      - hydration-optimization.md
+
+  - name: "Visual Testing"
+    primary: "visual-regression-audit.md"
+    absorbs:
+      - responsive-visual-testing.md
+      - theme-visual-testing.md
+      - screenshot-comparison-automation.md
+      - cross-browser-validation.md
+
+  - name: "Accessibility Audit"
+    primary: "accessibility-audit.md"
+    absorbs:
+      - color-contrast-automation.md
+      - touch-target-audit.md
+      - screen-reader-testing.md
+
+  - name: "Accessibility Patterns"
+    primary: "keyboard-navigation-patterns.md"
+    absorbs:
+      - focus-management-design.md
+      - aria-live-region-design.md
+      - aria-pattern-implementation.md
+
+  - name: "RSC System"
+    primary: "rsc-architecture.md"
+    absorbs:
+      - rsc-boundary-audit.md
+      - rsc-data-fetching.md
+      - server-component-patterns.md
+      - suspense-architecture.md
+
+  - name: "Component Design"
+    primary: "component-design.md"
+    absorbs:
+      - design-component.md
+      - component-maturation.md
+      - component-state-visual-matrix.md
+
+  - name: "Gesture System"
+    primary: "gesture-design.md"
+    absorbs:
+      - gesture-animation-system.md  # also in Motion cluster
+
+  - name: "DS Documentation"
+    primary: "storybook-docs.md"
+    absorbs:
+      - ds-documentation-automation.md
+
+  - name: "Responsive Layout"
+    primary: "layout-strategy.md"
+    absorbs:
+      - responsive-audit.md
+
+  - name: "Offline Resilience"
+    primary: "offline-detection-recovery.md"
+    absorbs:
+      - recovery-ux-patterns.md
+
+  - name: "Sweep System"
+    primary: "visual-intelligence-sweep.md"
+    absorbs:
+      - full-codebase-sweep.md
+
+# ─── EXTENSIONS (ultra-niche, moved) ────────────────────────────
+# Tasks moved to tasks/extensions/ — lazy-loaded by profile only.
+
+extensions:
+  react_native:
+    - expo-eas-setup.md
+    - jsi-binding-development.md
+    - native-module-setup.md
+    - rn-navigation-architecture.md
+    - rn-performance-optimization.md
+    - reanimated-worklet-patterns.md
+    - screen-transition-architecture.md
+  cross_platform:
+    - moti-animation-architecture.md
+    - nativewind-setup.md
+    - solito-navigation-setup.md
+    - universal-deep-linking.md
+    - platform-adapter-patterns.md
+    - shared-tokens-setup.md
+    - cross-platform-test-setup.md
+  spatial_3d:
+    - 3d-performance-audit.md
+    - r3f-component-patterns.md
+    - scene-architecture.md
+    - shader-design.md
+    - spatial-ui-design.md
+    - webxr-session-setup.md
+  mobile_testing:
+    - gesture-test-suite.md
+    - offline-test-suite.md
+
+# ─── SETUP → CHECKLIST conversions ──────────────────────────────
+# One-time setup tasks that should be checklists, not workflows.
+
+setup_conversions:
+  - task: "fluid-type-setup.md"
+    convert_to: "checklist"
+    status: "converted"
+    note: "One-time CSS clamp() type scale setup"
+  - task: "container-queries-setup.md"
+    convert_to: "checklist"
+    status: "converted"
+    note: "One-time @container introduction"
+  - task: "figma-sync-setup.md"
+    convert_to: "template"
+    status: "converted"
+    note: "One-time Figma→Style Dictionary pipeline bootstrap"
+  - task: "visual-regression-setup.md"
+    convert_to: "checklist"
+    status: "converted"
+    note: "One-time tool selection + baseline capture"
+  - task: "perf-budget-setup.md"
+    convert_to: "checklist"
+    status: "converted"
+    note: "One-time budget definition + Lighthouse CI config"
+
+# ─── CORE TASKS (retained, no changes) ──────────────────────────
+# These are the ESSENTIAL tasks that remain in the main task list.
+# Pipeline, entry, discovery, and unique-scope tasks.
+
+core_untouched:
+  pipeline:
+    - apex-entry.md
+    - apex-pipeline-executor.md
+    - apex-fix.md
+    - apex-quick.md
+    - apex-build-flow.md
+    - apex-design-flow.md
+    - apex-ship-flow.md
+    - apex-dry-run.md
+    - apex-pivot.md
+    - apex-rollback.md
+    - apex-route-request.md
+    - apex-handoff-protocol.md
+    - apex-suggest.md
+    - sweep-navigator.md
+  discovery:
+    - apex-discover-a11y.md
+    - apex-discover-components.md
+    - apex-discover-dependencies.md
+    - apex-discover-design.md
+    - apex-discover-forms.md
+    - apex-discover-motion.md
+    - apex-discover-performance.md
+    - apex-discover-routes.md
+    - apex-discover-security.md
+    - apex-discover-state.md
+    - apex-discover-types.md
+  vision:
+    - apex-visual-analyze.md
+    - visual-intelligence-sweep.md
+    - apex-compare.md
+    - apex-consistency-audit.md
+  audit:
+    - apex-audit.md
+    - apex-code-review.md
+    - apex-dark-mode-audit.md
+    - apex-design-critique.md
+    - apex-error-boundary.md
+    - apex-i18n-audit.md
+    - motion-audit.md
+  style:
+    - apex-inspire.md
+    - apex-transform.md
+    - apex-export-tokens.md
+  meta:
+    - apex-agents.md
+    - apex-gate-status.md
+    - apex-scan.md
+    - project-dna-extraction.md
+  unique_scope:
+    - architecture-decision.md
+    - custom-hook-library.md
+    - dependency-injection-patterns.md
+    - device-matrix-design.md
+    - empty-state-design.md
+    - font-loading-strategy.md
+    - form-architecture.md
+    - image-optimization.md
+    - integration-test-setup.md
+    - loading-state-patterns.md
+    - module-federation-design.md
+    - naming-convention.md
+    - onboarding-flow-design.md
+    - prototype-interaction.md
+    - stacking-context-debug.md
+    - tech-stack-evaluation.md
+    - testing-strategy.md
+    - universal-component-design.md
+    - user-flow-design.md
+    - i18n-date-number-formatting.md
+    - icu-message-format.md
+    - rtl-layout-patterns.md

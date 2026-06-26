@@ -1,0 +1,58 @@
+time:
+  - review_ttl
+capacity:
+  - batch_size_limit
+threshold:
+  - fidelity_threshold
+priority:
+  - processing_priority
+permission:
+  - canonical_write_permission
+taxonomy:
+  - routing_profile_taxonomy
+behavior:
+  - fail_fast_etl
+accountability:
+  - etl_steward
+mode:
+  - CRIAR
+  - CONFIGURAR
+  - RESOLVER
+
+tokens:
+  - token_name: review_ttl
+    family: Time
+    semantic: "Janela de revisão e reaproveitamento de runs ETL"
+  - token_name: batch_size_limit
+    family: Capacity
+    semantic: "Limite operacional de itens processados por lote"
+  - token_name: fidelity_threshold
+    family: Threshold
+    semantic: "Threshold mínimo de fidelidade, enriquecimento e entrega"
+  - token_name: processing_priority
+    family: Priority
+    semantic: "Prioridade operacional da execução ETL"
+  - token_name: canonical_write_permission
+    family: Permission
+    semantic: "Permissão necessária para gravar em workspace canônico"
+  - token_name: routing_profile_taxonomy
+    family: Taxonomy
+    semantic: "Vocabulário controlado dos perfis de roteamento e source kinds"
+  - token_name: fail_fast_etl
+    family: Behavior
+    semantic: "Falha explícita em bloqueios de preflight, source ou contract"
+  - token_name: etl_steward
+    family: Accountability
+    semantic: "Responsável humano final pela execução e aprovação do ETL"
+  - token_name: CRIAR
+    family: Mode
+    semantic: "Modo de criação de outputs ETL"
+  - token_name: CONFIGURAR
+    family: Mode
+    semantic: "Modo de bootstrap e configuração de ambiente"
+  - token_name: RESOLVER
+    family: Mode
+    semantic: "Modo de diagnóstico e resolução de falhas de ETL"
+  - token_name: workspace_route_guard
+    family: Permission
+    semantic: "Guarda de rota entre workspace canônico, docs e outputs legados"

@@ -1,0 +1,483 @@
+workflow:
+  id: wf-full-course-creation
+  name: "Full Course Creation Pipeline"
+  version: "1.0"
+  squad: education
+  description: "Complete pipeline: domain triage → research → diagnosis → architecture → lesson design → validation → delivery"
+  orchestrator: education-chief
+  estimated_duration: "4-8 hours"
+
+  metadata:
+    author: "AIOS Education Squad"
+    created: "2026-02-14"
+    updated: "2026-02-14"
+    tags: [course-design, evidence-based, mec-compliant]
+
+phases:
+  - id: phase_0_triage
+    name: "Triage & Compliance Gate"
+    description: "Determine if knowledge intervention is appropriate and classify course type"
+    agents:
+      - moore-filter
+      - mec-compliance
+
+    tasks:
+      - id: filter-action-mapping
+        description: "Apply Moore's Action Mapping — is this a knowledge problem?"
+        dependencies: []
+        inputs:
+          - user_request
+          - performance_gap_description
+        outputs:
+          - triage_report
+          - performance_support_recommendation (if not a course)
+
+      - id: classify-course-type
+        description: "Classify MEC course type (livre, aperfeiçoamento, qualificação, técnico)"
+        dependencies: [filter-action-mapping]
+        inputs:
+          - triage_report
+        outputs:
+          - course_type_classification
+
+      - id: load-mec-requirements
+        description: "Load specific MEC requirements for classified type"
+        dependencies: [classify-course-type]
+        inputs:
+          - course_type_classification
+        outputs:
+          - mec_requirements_document
+
+    checkpoint:
+      gate: "Is this a knowledge problem? Course type classified?"
+      validation_criteria:
+        - "Moore filter completed"
+        - "Course type assigned (livre|aperfeiçoamento|qualificação|técnico)"
+        - "MEC requirements loaded"
+      veto_conditions:
+        - condition: "Performance problem (not knowledge)"
+          action: "EXIT with performance support recommendation"
+        - condition: "Course type not classified"
+          action: "BLOCK pipeline, request human decision"
+      output_artifacts:
+        - "Triage report"
+        - "MEC requirements document"
+
+    exit_condition:
+      trigger: "Moore filter says NOT a course"
+      action: "Generate performance support, EXIT pipeline"
+
+  - id: phase_1_research
+    name: "Domain Research"
+    description: "Deep curriculum research and knowledge mapping"
+    agents:
+      - novak-mapper
+
+    tasks:
+      - id: diagnose-domain
+        description: "Investigate domain — find 5+ curricula, identify gaps"
+        dependencies: []
+        inputs:
+          - domain_name
+          - target_audience
+        outputs:
+          - research_report
+          - curriculum_sources (5+ URLs/files)
+
+      - id: compare-curricula
+        description: "Matrix comparison of curricula"
+        dependencies: [diagnose-domain]
+        inputs:
+          - curriculum_sources
+        outputs:
+          - curriculum_matrix
+          - gap_analysis
+
+      - id: create-knowledge-map
+        description: "Novak concept map — hierarchical knowledge structure"
+        dependencies: [compare-curricula]
+        inputs:
+          - curriculum_matrix
+          - gap_analysis
+        outputs:
+          - knowledge_map (Mermaid diagram)
+          - concept_relationships
+
+    checkpoint:
+      gate: "5+ curricula compared? Knowledge map complete?"
+      validation_criteria:
+        - "At least 3 curricula analyzed (5+ preferred)"
+        - "Curriculum matrix complete"
+        - "Knowledge map generated with hierarchical relationships"
+        - "Gaps identified and documented"
+      checklist: domain-research-quality.md
+      veto_conditions:
+        - condition: "Fewer than 3 curricula found"
+          action: "BLOCK, request human input or additional research"
+        - condition: "Knowledge map incomplete"
+          action: "BLOCK, complete mapping before proceeding"
+      output_artifacts:
+        - "minds/{domain}/knowledge-map.md"
+        - "minds/{domain}/curriculum-matrix/"
+        - "minds/{domain}/gap-analysis.md"
+      human_review: true
+      review_focus: "Knowledge map accuracy and completeness"
+
+  - id: phase_2_diagnosis
+    name: "Diagnostic Foundation"
+    description: "Classify objectives, analyze cognitive load, create diagnostic assessments"
+    agents:
+      - bloom-diagnostician
+      - sweller-analyst
+
+    tasks:
+      - id: classify-objectives
+        description: "Bloom taxonomy classification — measurable objectives"
+        dependencies: []
+        inputs:
+          - knowledge_map
+          - learning_goals
+        outputs:
+          - competency_matrix
+          - bloom_classified_objectives
+
+      - id: analyze-cognitive-load
+        description: "Sweller CLT analysis — intrinsic/extraneous/germane"
+        dependencies: [classify-objectives]
+        inputs:
+          - competency_matrix
+          - target_audience_profile
+        outputs:
+          - cognitive_load_report
+          - load_reduction_strategies
+
+      - id: create-diagnostic
+        description: "Pre-assessment to measure entry knowledge"
+        dependencies: [classify-objectives]
+        inputs:
+          - bloom_classified_objectives
+        outputs:
+          - learner_diagnostic_assessment
+          - mastery_criteria
+
+    checkpoint:
+      gate: "All objectives classified? Cognitive load analyzed?"
+      validation_criteria:
+        - "All objectives use measurable Bloom verbs"
+        - "Cognitive load analyzed for each module"
+        - "Diagnostic assessment created"
+        - "Mastery criteria defined"
+      checklist: mastery-criteria-check.md
+      veto_conditions:
+        - condition: "Objectives without measurable verbs"
+          action: "BLOCK, rewrite objectives"
+        - condition: "Cognitive load not analyzed"
+          action: "BLOCK, complete CLT analysis"
+      output_artifacts:
+        - "competency-matrix.yaml"
+        - "cognitive-load-report.md"
+        - "learner-diagnostic.yaml"
+
+  - id: phase_3_architecture
+    name: "Curriculum Architecture"
+    description: "Backward design + motivation design (ARCS)"
+    agents:
+      - wiggins-architect
+      - keller-motivator
+
+    tasks:
+      - id: design-curriculum
+        description: "Wiggins UbD — backward design from outcomes"
+        dependencies: []
+        inputs:
+          - competency_matrix
+          - knowledge_map
+          - mec_requirements
+        outputs:
+          - curriculum_architecture
+          - essential_questions
+          - assessment_plan
+
+      - id: design-motivation
+        description: "Keller ARCS — attention, relevance, confidence, satisfaction per module"
+        dependencies: [design-curriculum]
+        inputs:
+          - curriculum_architecture
+          - target_audience_profile
+        outputs:
+          - arcs_strategy_per_module
+          - motivation_hooks
+
+    checkpoint:
+      gate: "Backward design complete? ARCS per module?"
+      validation_criteria:
+        - "Outcomes defined BEFORE activities"
+        - "Essential questions formulated"
+        - "Assessment plan aligned with outcomes"
+        - "ARCS elements present in each module"
+      checklist: curriculum-architecture-quality.md
+      veto_conditions:
+        - condition: "Outcomes not defined before activities"
+          action: "BLOCK, apply backward design"
+        - condition: "No essential questions"
+          action: "BLOCK, formulate essential questions"
+        - condition: "ARCS missing from any module"
+          action: "BLOCK, complete motivation design"
+      output_artifacts:
+        - "curriculum-master-architecture.yaml"
+        - "essential-questions.md"
+        - "arcs-strategy.yaml"
+      human_review: true
+      review_focus: "Curriculum coherence and motivation strategy"
+
+  - id: phase_4_lesson_design
+    name: "Lesson Design"
+    description: "Evidence-based lesson design with retention engineering"
+    agents:
+      - merrill-designer
+      - rosenshine-teacher
+      - mayer-presenter
+      - clark-validator
+      - bjork-engineer
+      - ericsson-coach
+      - fsrs-scheduler
+
+    parallelizable: true
+    parallel_strategy: "Each module can be designed in parallel"
+
+    tasks:
+      - id: design-module
+        description: "Merrill First Principles — problem-centered instruction"
+        dependencies: []
+        inputs:
+          - curriculum_architecture
+          - module_objectives
+        outputs:
+          - module_design (problem→activation→demo→application→integration)
+
+      - id: design-lesson
+        description: "Rosenshine 10 Principles — explicit instruction"
+        dependencies: [design-module]
+        inputs:
+          - module_design
+        outputs:
+          - lesson_plan_with_rosenshine
+
+      - id: design-media-format
+        description: "Mayer Multimedia Principles — format decision"
+        dependencies: [design-lesson]
+        inputs:
+          - lesson_plan
+          - cognitive_load_report
+        outputs:
+          - media_format_spec
+          - multimedia_guidelines
+
+      - id: validate-evidence
+        description: "Clark Evidence Alignment — research-backed only"
+        dependencies: [design-media-format]
+        inputs:
+          - lesson_plan
+          - media_format_spec
+        outputs:
+          - evidence_validation_report
+          - unsubstantiated_claims_flagged
+
+      - id: design-practice
+        description: "Bjork Desirable Difficulties + Ericsson Deliberate Practice"
+        dependencies: [validate-evidence]
+        inputs:
+          - lesson_plan
+          - mastery_criteria
+        outputs:
+          - practice_activities
+          - difficulty_calibration
+
+      - id: design-coaching
+        description: "Ericsson deliberate practice scaffolding"
+        dependencies: [design-practice]
+        inputs:
+          - practice_activities
+        outputs:
+          - coaching_protocol
+          - feedback_mechanisms
+
+      - id: schedule-repetition
+        description: "FSRS spaced repetition scheduling"
+        dependencies: [design-practice]
+        inputs:
+          - practice_activities
+          - retention_targets
+        outputs:
+          - fsrs_schedule
+          - review_intervals
+
+    checkpoint:
+      gate: "All lessons designed with evidence-based methods?"
+      validation_criteria:
+        - "Merrill 5 phases present in each module"
+        - "Rosenshine principles applied"
+        - "Mayer multimedia principles followed"
+        - "All claims evidence-backed (Clark validation)"
+        - "Desirable difficulties designed"
+        - "Deliberate practice with feedback"
+        - "FSRS schedule generated"
+      checklists:
+        - lesson-quality.md
+        - cognitive-load-check.md
+        - multimedia-principles-check.md
+        - retention-design-check.md
+        - evidence-based-check.md
+      veto_conditions:
+        - condition: "Lesson without application phase"
+          action: "BLOCK, complete Merrill application"
+        - condition: "No retrieval practice"
+          action: "BLOCK, add retrieval practice"
+        - condition: "Unsubstantiated claims"
+          action: "BLOCK, remove or validate claims"
+      output_artifacts:
+        - "lesson-templates/{module-id}.yaml (all modules)"
+        - "fsrs-schedules/{module-id}.yaml"
+        - "coaching-protocols/{module-id}.md"
+
+  - id: phase_5_validation
+    name: "Validation"
+    description: "Transfer assessment + MEC compliance verification"
+    agents:
+      - thalheimer-assessor
+      - bloom-diagnostician
+      - sweller-analyst
+      - mec-compliance
+
+    tasks:
+      - id: assess-transfer
+        description: "LTEM tier 5+ verification — realistic transfer"
+        dependencies: []
+        inputs:
+          - lesson_templates
+          - practice_activities
+        outputs:
+          - ltem_assessment_per_module
+          - transfer_gaps
+
+      - id: validate-mastery
+        description: "Bloom mastery criteria verification"
+        dependencies: [assess-transfer]
+        inputs:
+          - competency_matrix
+          - lesson_templates
+        outputs:
+          - mastery_validation_report
+
+      - id: audit-cognitive-load
+        description: "Final CLT audit — extraneous load minimized?"
+        dependencies: [assess-transfer]
+        inputs:
+          - lesson_templates
+          - media_format_specs
+        outputs:
+          - cognitive_load_audit
+
+      - id: validate-mec-compliance
+        description: "MEC compliance check against loaded requirements"
+        dependencies: [validate-mastery, audit-cognitive-load]
+        inputs:
+          - mec_requirements
+          - curriculum_architecture
+          - lesson_templates
+        outputs:
+          - mec_compliance_report
+          - gap_list
+
+    checkpoint:
+      gate: "LTEM tier 5+ achieved? MEC compliant?"
+      validation_criteria:
+        - "All modules achieve LTEM tier 5 or higher"
+        - "Mastery criteria met"
+        - "Cognitive load audit passed"
+        - "MEC compliance: PASS"
+      checklists:
+        - transfer-validation-check.md
+        - "mec-{type}-check.md (based on classified course type)"
+      veto_conditions:
+        - condition: "Any module below LTEM tier 5"
+          action: "BLOCK, redesign module for realistic transfer"
+        - condition: "MEC compliance FAIL"
+          action: "BLOCK, list gaps, return to Phase 3"
+      output_artifacts:
+        - "validation-report.md"
+        - "mec-compliance-report.md"
+        - "ltem-scores.yaml"
+
+  - id: phase_6_delivery
+    name: "Assembly & Delivery"
+    description: "Final assembly, progression adaptation, deliverable generation"
+    agents:
+      - education-chief
+
+    tasks:
+      - id: adapt-progression
+        description: "Customize progression for audience profile"
+        dependencies: []
+        inputs:
+          - curriculum_architecture
+          - target_audience_profile
+          - fsrs_schedules
+        outputs:
+          - adapted_progression
+
+      - id: generate-deliverables
+        description: "Generate final course package"
+        dependencies: [adapt-progression]
+        inputs:
+          - all_phase_outputs
+        outputs:
+          - course_package
+          - instructor_guide
+          - learner_materials
+
+      - id: store-domain-mind
+        description: "Archive domain knowledge for future reuse"
+        dependencies: [generate-deliverables]
+        inputs:
+          - knowledge_map
+          - curriculum_architecture
+          - all_artifacts
+        outputs:
+          - "minds/{domain}/ (complete archive)"
+
+    checkpoint:
+      gate: "All deliverables assembled? Domain mind stored?"
+      validation_criteria:
+        - "Course package complete"
+        - "Instructor guide present"
+        - "Learner materials generated"
+        - "Domain mind stored in minds/{domain}/"
+      output_artifacts:
+        - "Complete course package"
+        - "minds/{domain}/ (persistent knowledge base)"
+
+    stores: "minds/{domain}/"
+
+success_criteria:
+  - "Moore filter applied and documented"
+  - "MEC compliance verified"
+  - "All modules achieve LTEM tier 5+"
+  - "Evidence-based methods throughout"
+  - "Retention engineering applied"
+  - "Complete deliverable package"
+
+failure_modes:
+  - "Performance problem misdiagnosed as knowledge problem → EXIT at Phase 0"
+  - "MEC compliance fail → VETO at Phase 5"
+  - "Transfer assessment fail (LTEM <5) → VETO at Phase 5"
+
+dependencies:
+  - squads/education/agents/
+  - squads/education/tasks/
+  - squads/education/checklists/
+  - squads/education/templates/
+
+handoff_protocol:
+  - "If interrupted: Save phase completion state"
+  - "Resume: Load from last completed checkpoint"

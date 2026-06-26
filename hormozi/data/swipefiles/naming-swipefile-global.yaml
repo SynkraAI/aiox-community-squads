@@ -1,0 +1,543 @@
+# Global Naming Swipefile
+# 500+ Analyses of Names That Sold Millions
+# Total documented revenue: $178.5+ billion
+# Source: swipefile-master-integrado.md
+
+version: "1.0"
+extraction_date: "2026-02-23"
+source: "swipefile-master-integrado.md"
+total_cases: "500+"
+total_revenue_documented: "$178.5B+"
+
+# =============================================================================
+# CATEGORY 1: NAMES THAT BECAME VERBS (Holy Grail of Branding)
+# =============================================================================
+category_verbs:
+  description: "Names that became cultural verbs - maximum brand dominance"
+
+  cases:
+    - name: "Google"
+      phrase: "Just Google it"
+      valuation: "$2 trillion market cap"
+      etymology: "Derived from 'Googol' (10^100)"
+      why_works: "Playful sound, suggests infinite search, non-intimidating for non-tech users in 1998"
+      icp_original: "Academics and researchers"
+      icp_current: "All humanity with internet"
+      psychology: "Transformed complex act (internet search) into something simple and fun"
+      positioning: "Organize world's information"
+      lesson: "Invented name can dominate if product creates category"
+
+    - name: "Uber"
+      phrase: "Let's Uber there"
+      valuation: "$150B current"
+      etymology: "German 'über' (above/superior)"
+      why_works: "Short, strong, masculine, suggests premium service"
+      icp_original: "SF executives"
+      icp_evolved: "Anyone without car"
+      psychology: "Status + convenience. Uber Black stayed premium while UberX democratized"
+      positioning: "Started luxury, pivoted to utility"
+      lesson: "Premium name can democratize without losing brand value"
+
+    - name: "Zoom"
+      phrase: "Let's Zoom"
+      valuation: "$160B peak (2020)"
+      etymology: "Onomatopoeia of speed"
+      why_works: "Suggests instant closeness. More human than 'Skype' or 'WebEx'"
+      icp_pandemic: "Companies forced remote + separated families"
+      psychology: "Fun name reduced tech anxiety during crisis"
+      positioning: "Video conferencing that actually works"
+      lesson: "Simplicity wins in moments of stress"
+
+    - name: "Photoshop"
+      phrase: "That's photoshopped"
+      valuation: "$260B (Adobe market cap)"
+      etymology: "Photo + Shop (photo workshop)"
+      why_works: "Literal but transformative"
+      icp_original: "Professional photographers ($20K software)"
+      icp_current: "Any content creator"
+      psychology: "Made professional editing psychologically accessible"
+      lesson: "Being a verb = cultural dominance > legal protection"
+
+    - name: "Venmo"
+      phrase: "Just Venmo me"
+      valuation: "$800M (PayPal acquisition 2013)"
+      etymology: "Ven(der) + Mo(ney)"
+      why_works: "Sold as social, not financial"
+      icp: "Millennials splitting bills"
+      psychology: "Social feed removed shame of asking friends for money"
+      positioning: "Social network that moves money vs payment app"
+      lesson: "Reframe difficult category (finance) as easy category (social)"
+
+# =============================================================================
+# CATEGORY 2: BILLION-DOLLAR SAAS - Name Architecture
+# =============================================================================
+category_saas:
+  description: "SaaS names that built billion-dollar companies"
+
+  cases:
+    - name: "Canva"
+      valuation: "$32B, $2.55B ARR (2024)"
+      why_works: "'Canvas' simplified. Removes blank canvas intimidation. Soft, feminine, accessible."
+      icp: "Non-designers who need to create (teachers, SMBs, marketers)"
+      psychology: "Artistic but non-intimidating. Democratizes creativity."
+      positioning_vs_adobe: "Design for normal humans"
+      lesson: "Simplifying complex category name = 100X market expansion"
+
+    - name: "HubSpot"
+      valuation: "$2.63B revenue, 247,939 clients"
+      why_works: "Hub (center) + Spot (place). Communicates consolidation instantly."
+      icp: "SMBs overwhelmed with 20+ marketing tools"
+      psychology: "Promises simplification and central control"
+      positioning: "'All-in-one' before it became cliché"
+      lesson: "Name that IS strategy (hub) allows natural expansion"
+
+    - name: "Notion"
+      valuation: "$10B, $400M ARR"
+      why_works: "Real word with abstract meaning. Suggests ideas, not features."
+      icp: "Knowledge workers tired of switching between 10 apps"
+      psychology: "Philosophical name attracts intellectual early adopters"
+      positioning: "Lego for productivity"
+      lesson: "Abstraction allows pivots without rebrand"
+
+    - name: "Slack"
+      valuation: "$27.7B (Salesforce acquisition)"
+      why_works: "Means relaxation - opposite of stressful work"
+      icp: "Startups that hate email"
+      psychology: "Promises frictionless work"
+      backronym: "Searchable Log of All Communication and Knowledge"
+      lesson: "Counter-intuitive name can redefine category"
+
+    - name: "ClickFunnels"
+      valuation: "$265M ARR, 150,000 active clients"
+      why_works: "Click (simple action) + Funnels (conversion concept). Ultra literal."
+      icp: "Non-technical entrepreneurs who want to sell online"
+      psychology: "Removes mystery of 'funnel building'"
+      lesson: "Extreme literality works for non-technical audience"
+
+    - name: "Zapier"
+      valuation: "$5B, $310M ARR"
+      why_works: "'Zap' suggests instant, magic connection. Energetic sound."
+      icp: "Non-programmers needing automation"
+      psychology: "Makes complex (APIs, webhooks) into simple (Zaps)"
+      cultural_verb: "Just zap it together"
+      lesson: "Energetic invented word > technical description"
+
+    - name: "Stripe"
+      valuation: "$95B, processes $1 trillion/year"
+      why_works: "Simple, technical, reliable. A 'stripe' of code."
+      icp: "Developers who hate traditional gateways"
+      psychology: "Technical but not intimidating"
+      positioning: "7 lines of code to accept payments"
+      lesson: "For technical ICP, simplicity > creativity"
+
+# =============================================================================
+# CATEGORY 3: HIGH-TICKET COACHING ($10K-$250K) - Status Psychology
+# =============================================================================
+category_high_ticket:
+  description: "Names that justify $10K-$250K price points"
+
+  cases:
+    - name: "Tony Robbins Platinum Partnership"
+      price_range: "$65K-200K/year"
+      revenue: "$50M+ just this program"
+      why_works: "Platinum = metal more valuable than gold. Partnership = you're not a client, you're a partner."
+      icp: "Entrepreneurs $1M-10M wanting to scale to $100M"
+      psychology: "Maximum status + belonging + direct access to Tony"
+      scarcity: "Maximum 300 members globally"
+      lesson: "Precious metal + relationship = extreme pricing justified"
+
+    - name: "Grant Cardone 10X"
+      valuation: "$5B+ company valuation"
+      why_works: "Simple math formula. Promises multiplication, not addition."
+      icp: "Aggressive salespeople and entrepreneurs, mostly men"
+      psychology: "Appeals to 'more is more' mentality, anti-minimalism"
+      ecosystem: "10X Conference (35,000 people), 10X University, 10X Stages"
+      lesson: "Multiplier number creates viral mental framework"
+
+    - name: "Russell Brunson Inner Circle"
+      price_tiers: "$50K, $150K, $250K/year"
+      why_works: "'Inner' = exclusive access, 'Circle' = community/protection"
+      icp: "Only those already making $1M+ ('Two Comma Club')"
+      psychology: "Creates aspirational hierarchy within community"
+      qualification: "You need to financially 'qualify'"
+      lesson: "Pre-qualification increases desire and reduces refunds"
+
+    - name: "Knowledge Business Blueprint"
+      revenue: "$33M in 2 weeks, 25,000 students at $1,997"
+      creators: "Dean Graziosi & Tony Robbins"
+      why_works: "Knowledge (trend) + Business (goal) + Blueprint (clear plan)"
+      icp: "Experts who don't know how to monetize knowledge"
+      psychology: "'Blueprint' removes fear of not knowing where to start"
+      lesson: "[Trend] + [Goal] + [Plan] = massive conversion"
+
+    - name: "Sam Ovens Consulting Accelerator"
+      revenue: "$20M+, created 52 documented millionaires"
+      why_works: "Consulting (high-value skill) + Accelerator (speed)"
+      icp: "Professionals wanting to leave job for consulting"
+      psychology: "'Accelerator' promises time shortcut"
+      lesson: "Document specific results > vague promises"
+
+# =============================================================================
+# CATEGORY 4: DIRECT-TO-CONSUMER - Disrupting Incumbents
+# =============================================================================
+category_dtc:
+  description: "DTC names that disrupted billion-dollar incumbents"
+
+  cases:
+    - name: "Dollar Shave Club"
+      outcome: "$1B Unilever acquisition (2016)"
+      why_works: "Price in name = instant positioning. 'Club' = recurring."
+      icp: "Men tired of paying $20+ for Gillette blades"
+      launch_video: "'Our blades are f***ing great' - 26M views"
+      psychology: "Demystified overcomplicated category"
+      lesson: "Putting price in name can be positioning genius"
+
+    - name: "Harry's"
+      outcome: "$1.37B Edgewell acquisition attempt (blocked)"
+      why_works: "Personal masculine name, casual. Humanizes cold category."
+      icp: "Urban millennials wanting quality without Gillette prices"
+      psychology: "'Harry' = your trustworthy friend, not corporation"
+      lesson: "Personal name creates instant trust in commoditized category"
+
+    - name: "Warby Parker"
+      valuation: "$6.8B IPO valuation"
+      why_works: "Sounds heritage but is invented. Combines two literary names."
+      icp: "Educated urban millennials who think glasses are too expensive"
+      psychology: "Name sounds established, trustworthy, intellectual"
+      lesson: "Invented name can sound heritage and create instant trust"
+
+    - name: "Bombas"
+      valuation: "$3.42B, $325M revenue"
+      why_works: "'Bomba' in Latin = pump, also energetic sound"
+      icp: "Conscious consumers willing to pay more"
+      psychology: "Buying = donating (1-for-1 model)"
+      impact: "150M+ items donated"
+      lesson: "Energetic name + real mission = premium pricing justified"
+
+    - name: "Gymshark"
+      valuation: "$1.3B+, $709M revenue"
+      why_works: "Gym (obvious) + Shark (alpha predator)"
+      icp: "Young men 18-25 wanting to look muscular"
+      psychology: "Shark = aggressive, alpha, apex predator"
+      strategy: "Created 'athlete influencer' category"
+      lesson: "Aggressive name for aggressive audience = perfect cultural fit"
+
+# =============================================================================
+# CATEGORY 5: MOBILE APPS - Battle for Thumb Zone
+# =============================================================================
+category_mobile:
+  description: "Mobile app names that generated billions"
+
+  cases:
+    - name: "Candy Crush Saga"
+      revenue: "$7.69B all-time, still $1B/year after decade"
+      why_works: "Candy (dopamine) + Crush (satisfaction) + Saga (infinite journey)"
+      icp: "Women 35-55 with fragmented time"
+      psychology: "'Candy' = reward, 'Crush' = power/control"
+      lesson: "Name promising dopamine works for casual games"
+
+    - name: "Honor of Kings"
+      revenue: "$13.25B total - most profitable mobile game ever"
+      why_works: "'Honor' resonates deeply in Asian culture"
+      icp: "Chinese gamers 16-30"
+      psychology: "Honor > Money in collectivist cultures"
+      lesson: "Culturally precise name > generic global name"
+
+    - name: "Clash of Clans"
+      revenue: "$10B+ lifetime"
+      why_works: "'Clash' = conflict, 'Clans' = tribes/community"
+      icp: "Men 18-35 wanting competition and community"
+      psychology: "Tribal warfare instincts"
+      lesson: "Conflict + Community = eternal engagement"
+
+    - name: "Angry Birds"
+      revenue: "$1B+ franchise, $775M Rovio acquisition"
+      why_works: "Unexpected emotion (anger) + cute animal"
+      icp: "Anyone with smartphone (2009)"
+      psychology: "Catharsis through virtual destruction"
+      lesson: "Contradictory emotion (angry + cute) = memorable"
+
+# =============================================================================
+# THE 10 ARCHETYPES OF BILLION-DOLLAR NAMES
+# =============================================================================
+archetypes:
+  - archetype: "THE EXTREME LITERAL"
+    examples: ["ClickFunnels", "Dollar Shave Club", "5-Hour Energy"]
+    works_when: "Non-technical audience, complex category"
+    psychology: "Removes mystery, reduces mental friction"
+    icp: "People wanting solution, not education"
+    risk: "Limits category expansion"
+
+  - archetype: "THE CULTURAL VERB"
+    examples: ["Google", "Uber", "Photoshop", "Venmo"]
+    works_when: "Product creates new behavior"
+    psychology: "Language integration = dominance"
+    icp: "Early adopters who evangelize"
+    value: "Worth 10-100X category"
+
+  - archetype: "THE DESIRED STATE"
+    examples: ["Calm", "Fit", "Rich", "Free", "Smart"]
+    works_when: "Result is emotional"
+    psychology: "Name is desire manifestation"
+    icp: "People buying transformation, not product"
+    power: "Impossible to forget what it promises"
+
+  - archetype: "THE SPECIFIC NUMBER"
+    examples: ["7-Eleven", "5-Hour Energy", "P90X", "75 Hard"]
+    works_when: "Time or quantity is differentiator"
+    psychology: "Specificity = credibility"
+    icp: "People wanting certainty/predictability"
+    hack: "'Broken' numbers (19, 67, 93) convert more"
+
+  - archetype: "THE INTRIGUING PARADOX"
+    examples: ["Liquid Death", "Drunk Elephant", "The Boring Company"]
+    works_when: "Category is commodity"
+    psychology: "Contradiction generates curiosity"
+    icp: "People wanting to stand out"
+    viral: "Paradox = conversation = free marketing"
+
+  - archetype: "THE TRIBAL IDENTIFIER"
+    examples: ["CrossFit", "Gymshark", "The Brotherhood"]
+    works_when: "Community > product"
+    psychology: "Primitive tribal belonging"
+    icp: "People buying identity"
+    ltv: "Tribes retain forever"
+
+  - archetype: "THE VISUAL METAPHOR"
+    examples: ["Gorilla Glue", "Red Bull", "Angry Birds"]
+    works_when: "Benefit is visual/physical"
+    psychology: "Instant mental image"
+    icp: "Quick/impulse decisions"
+    memorability: "Visual > verbal always"
+
+  - archetype: "THE STATUS SIGNAL"
+    examples: ["Platinum", "Elite", "Premier", "Masterclass"]
+    works_when: "Price is premium"
+    psychology: "Purchase = social elevation"
+    icp: "People buying to show"
+    pricing_power: "Status justifies 2-10X price"
+
+  - archetype: "THE FRIENDLY INVENTOR"
+    examples: ["Canva", "Figma", "Zapier", "Spotify"]
+    works_when: "Category doesn't exist"
+    psychology: "Pleasant sound > meaning"
+    icp: "Early adopters who educate market"
+    expansion: "Neutral name allows pivots"
+
+  - archetype: "THE FABRICATED HERITAGE"
+    examples: ["Warby Parker", "Brooks Brothers", "Restoration Hardware"]
+    works_when: "Trust is main barrier"
+    psychology: "Age = reliability"
+    icp: "Conservative/premium consumers"
+    trick: "Two proper names = instant heritage"
+
+# =============================================================================
+# FORMULAS BY PRICE POINT
+# =============================================================================
+formulas_by_price:
+  micro_0_to_10:
+    patterns:
+      - "Quick [Result]"
+      - "Instant [Solution]"
+      - "[Number] Minute [Result]"
+    psychology: "Impulse, no thinking"
+    icp: "Buying out of curiosity"
+
+  low_ticket_10_to_97:
+    patterns:
+      - "The [Result] Cheatsheet"
+      - "[Result] Hacks"
+      - "[Number] Ways to [Result]"
+    psychology: "Low risk, high curiosity"
+    icp: "Beginners wanting taste"
+
+  mid_ticket_97_to_997:
+    patterns:
+      - "[Result] Accelerator"
+      - "The [Result] System"
+      - "[Result] Mastery"
+    psychology: "Serious transformation investment"
+    icp: "Committed but not all-in"
+
+  high_ticket_997_to_10k:
+    patterns:
+      - "[Result] Intensive"
+      - "[Result] Certification"
+      - "[Industry] Authority Program"
+    psychology: "Buying new professional identity"
+    icp: "Professionals investing in career"
+
+  ultra_high_10k_to_100k:
+    patterns:
+      - "Inner Circle"
+      - "Mastermind"
+      - "Partnership Program"
+    psychology: "Access and network > content"
+    icp: "Already successful entrepreneurs"
+
+  extreme_100k_plus:
+    patterns:
+      - "Equity Partner Program"
+      - "Board Advisory"
+      - "Legacy Builder"
+    psychology: "Legacy and meaning"
+    icp: "Ultra-high net worth with specific problem"
+
+# =============================================================================
+# CONVERSION MULTIPLIER WORDS
+# =============================================================================
+conversion_words:
+  increase_2_to_5x:
+    - "Blueprint"
+    - "System"
+    - "Formula"
+    - "Framework"
+    - "Accelerator"
+    - "Intensive"
+    - "Revolution"
+    - "Breakthrough"
+
+  increase_perceived_price_3_to_10x:
+    - "Platinum"
+    - "Elite"
+    - "Mastermind"
+    - "Certification"
+    - "Authority"
+    - "Inner Circle"
+    - "Advisory"
+    - "Concierge"
+
+  reduce_risk_perception:
+    - "Proven"
+    - "Guaranteed"
+    - "Certified"
+    - "Scientific"
+    - "Tested"
+    - "Trusted"
+    - "Safe"
+    - "Simple"
+
+# =============================================================================
+# BIGGEST FAILURES (AND HOW MUCH THEY COST)
+# =============================================================================
+failures:
+  - name: "Quibi"
+    loss: "$1.75B"
+    problem: "Name explained format, not benefit"
+    lesson: "Feature name ≠ benefit name"
+
+  - name: "Google Glass"
+    loss: "$1B+"
+    problem: "Too technical, 'Glass' = voyeurism connotation"
+    lesson: "Consider negative connotations"
+
+  - name: "New Coke"
+    loss: "$4M direct, billions in brand damage"
+    problem: "'New' invalidated heritage"
+    lesson: "Never invalidate what works"
+
+  - name: "Microsoft Zune"
+    loss: "$289M"
+    problem: "Meaningless sound, communicated nothing vs iPod"
+    lesson: "Empty name vs descriptive name"
+
+  - name: "CNN+"
+    loss: "$300M in 3 weeks"
+    problem: "'Plus' fatigue, no clear value"
+    lesson: "Copied model ≠ success"
+
+# =============================================================================
+# THE 20-QUESTION BILLION TEST
+# =============================================================================
+billion_test:
+  basic:
+    - "Passes 'drunk test'? (easy to say/spell?)"
+    - "Available as .com for <$10K?"
+    - "Trademark free globally?"
+    - "Works in 3+ languages?"
+    - "Social media @exact available?"
+
+  strategic:
+    - "Communicates category OR creates new one?"
+    - "Allows product expansion?"
+    - "Different from everything on Google page 1?"
+    - "Possible to become cultural verb?"
+    - "Pleasant sound when spoken?"
+
+  psychological:
+    - "Evokes instant emotion?"
+    - "Suggests desired transformation?"
+    - "Reduces purchase anxiety?"
+    - "Creates immediate curiosity?"
+    - "Memorable after 1 mention?"
+
+  commercial:
+    - "Allows premium pricing?"
+    - "Works on billboard/audio?"
+    - "Viral hashtag potential?"
+    - "Interesting origin story?"
+    - "Desire scale 1-10: 8+?"
+
+  scoring:
+    20_of_20: "Potential unicorn"
+    15_to_19: "Launch and optimize"
+    10_to_14: "Needs refinement"
+    under_10: "Back to brainstorm"
+
+# =============================================================================
+# THE 7 IMMUTABLE LAWS OF MILLION-DOLLAR NAMES
+# =============================================================================
+immutable_laws:
+  - law: "SIMPLICITY > CREATIVITY"
+    explanation: "Simple names dominate because human brain is lazy"
+    example: "Google > BackRub, Apple > Apple Computer Inc."
+
+  - law: "BENEFIT > FEATURE"
+    explanation: "What you get, not what it does"
+    example: "Dollar Shave Club (benefit) > Razor Subscription Service (feature)"
+
+  - law: "EMOTION > LOGIC"
+    explanation: "People buy feelings"
+    example: "Nike (victory) > Athletic Shoe Company"
+
+  - law: "SPECIFIC > GENERIC"
+    explanation: "Details create credibility"
+    example: "P90X > 'Fitness Program', 75 Hard > 'Challenge'"
+
+  - law: "SHORT > LONG"
+    explanation: "Average unicorn: 7.3 characters"
+    example: "Uber > Underground Passenger Enhancement Route"
+
+  - law: "STORY > DESCRIPTION"
+    explanation: "Narrative beats explanation"
+    example: "Warby Parker (literary characters) > Affordable Eyewear Direct"
+
+  - law: "TIMING > PERFECTION"
+    explanation: "80% good name launched today > 100% perfect never launched"
+    example: "Execute now, refine later"
+
+# =============================================================================
+# AGENT USAGE GUIDELINES
+# =============================================================================
+agent_usage:
+  naming_strategist:
+    - "Use archetypes as starting framework"
+    - "Match archetype to client ICP"
+    - "Apply price-point formulas"
+    - "Run 20-question test before presenting"
+    - "Study failures to avoid patterns"
+
+  hormozi_offers:
+    - "Use conversion words in offer names"
+    - "Apply status signal archetype for premium"
+    - "Study specific number pattern"
+
+  hormozi_copy:
+    - "Reference case studies for proof"
+    - "Use failure examples as warnings"
+    - "Apply immutable laws to headlines"
+
+  brand_chief:
+    - "Orchestrate naming with this reference"
+    - "Validate against billion test"
+    - "Match cultural timing to archetype"

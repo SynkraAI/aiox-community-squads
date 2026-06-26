@@ -1,0 +1,813 @@
+# Managed by materialize-map.py
+# Source: outputs/sinkra-squad/aiox-sop/map/20260329-190639-claude-opus/workflow_definition.yaml
+# Category: workflow
+
+metadata:
+  phase: 4
+  process_slug: aiox-sop
+  process_name: Creates, extracts, analyzes, grades and converts SOPs using the world's
+    best process documentation methodologies
+  generated_at: '2026-03-29T22:10:00-03:00'
+  agent: composition-engineer
+  checkpoint: PV_PM_001
+  version: 2.0.0
+  methodology: SINKRA Workflow Composition — Atoms to Organisms, Guardrail-enforced
+workflow_definition:
+  template_id: TPL_AIOX_SOP_PIPELINE
+  template_name: AIOX SOP Transformation Pipeline
+  description: 'End-to-end SOP processing pipeline: intake → extraction → quality
+    grading → dual-format conversion → publishing. Target: 15+ SOPs/week, 5-7 day
+    turnaround, 60%+ automation.'
+  global_kpis:
+    throughput_target: 15 SOPs/semana
+    latency_target_days: 7
+    automation_target_percent: 60
+    rework_rate_target_percent: 10
+    cost_per_sop_target_usd: 100
+
+  baseline_kpis:
+    measured_at: "2026-03-30"
+    source: "as_is_doc.md — estado atual antes da implementação do pipeline"
+    throughput_current: "3-5 SOPs/semana"
+    latency_current_days: "14-28"
+    automation_current_percent: 20
+    rework_rate_current_percent: null
+    cost_per_sop_current_usd: null
+    improvement_targets:
+      throughput_multiplier: "3-5x"
+      latency_reduction_percent: 75
+      automation_increase_points: 40
+    notes: "Baseline coletado da fase de discovery. Medir novamente após 30 dias de operação do pipeline."
+
+  workflows:
+  - workflow_id: wf_intake_validation
+    name: Intake & Validation
+    organism: org_intake_validation
+    trigger: webhook
+    trigger_details: Google Form submission → Supabase webhook → N8N trigger
+    frequency: on-demand
+    sla_hours: 4
+    steps:
+    - step_id: step_t1_1
+      task_id: T1.1
+      executor_type: Human
+      role: SOP Owner / Process Requestor
+      action: Submeter SOP via portal padronizado (Google Form ou Knowledge Hub portal)
+      inputs:
+      - Raw SOP document
+      - Context form (process name, owner, scope, target audience)
+      outputs:
+      - Contextualized SOP payload (JSON)
+      - Owner metadata
+      sla_hours: 1
+      guardrails:
+        pre_conditions:
+        - Form portal accessible
+        - SOP document exists (PDF/DOCX/MD)
+        post_conditions:
+        - Payload delivered to webhook endpoint
+        - Owner confirmed via email
+        error_handling:
+          strategy: retry
+          max_retries: 1
+          fallback: Coordinator manual intake (email)
+          alert: slack-ops
+    - step_id: step_t1_2
+      task_id: T1.2
+      executor_type: Worker
+      role: Intake Validator (Node.js Supabase Function)
+      action: Validar completude obrigatória do formulário via checklist determinístico
+      inputs:
+      - Contextualized SOP payload (JSON)
+      outputs:
+      - Validation result (pass/fail)
+      - Completeness score (0-100)
+      - Missing fields list
+      sla_minutes: 2
+      guardrails:
+        pre_conditions:
+        - Payload format is valid JSON
+        - All required form fields present in schema
+        post_conditions:
+        - Validation result logged to Supabase
+        - Missing fields enumerated if failed
+        error_handling:
+          strategy: fallback
+          max_retries: 0
+          fallback: Route to T1.1 with error message
+          alert: slack-ops
+      conditionals:
+      - condition: completeness_score < 70
+        then: Set status=INCOMPLETE_SUBMISSION. CLOSE current card. Trigger wf_rework_feedback
+          with rejection_reason=MISSING_FIELDS and missing_fields_list. Notify SOP
+          Owner via Supabase webhook. New submission required — no backward routing.
+        else: Proceed to step_t1_3
+    - step_id: step_t1_3
+      task_id: T1.3
+      executor_type: Worker
+      role: ID Cataloger (Supabase Edge Function)
+      action: Gerar ID único, catalogar no Supabase e rotear para próxima fase
+      inputs:
+      - Validated SOP payload
+      outputs:
+      - SOP with unique ID (SOP-YYYYMMDD-NNN)
+      - Supabase record created
+      - Storage path assigned
+      sla_minutes: 1
+      guardrails:
+        pre_conditions:
+        - Validation score >= 70
+        - SOP payload not already cataloged (idempotency check)
+        post_conditions:
+        - Unique ID assigned
+        - Record created in sop_catalog table
+        - File stored in S3/Drive
+        error_handling:
+          strategy: retry
+          max_retries: 3
+          fallback: Alert Process Owner + Coordinator
+          alert: slack-ops
+      on_success:
+        trigger_workflow: wf_extraction_grading
+        trigger_via: N8N webhook → Supabase event sop_cataloged
+        alert_if_not_triggered_in_minutes: 15
+        alert_channel: slack-ops
+    error_handling:
+      global_fallback: Documentation Coordinator manual review
+      alert_channels:
+      - slack-ops
+      - email-coordinator
+      escalation_sla_hours: 2
+  - workflow_id: wf_extraction_grading
+    name: Extraction, Structuring & Quality Grading
+    organism: org_extraction_grading
+    trigger: event
+    trigger_details: T1.3 success event via Supabase realtime → N8N pipeline
+    frequency: on-demand
+    sla_hours: 6
+    steps:
+    - step_id: step_t2_1
+      task_id: T2.1
+      executor_type: Worker
+      role: Document Converter (PyPDF2 / pandoc script)
+      action: Converter documento bruto para Markdown normalizado (OCR se necessário)
+      inputs:
+      - Raw SOP file (PDF/DOCX/TXT/MD/image)
+      outputs:
+      - Normalized Markdown text
+      - Conversion metadata (format, encoding, page count)
+      sla_minutes: 10
+      guardrails:
+        pre_conditions:
+        - File exists in storage
+        - File size < 50MB
+        - MIME type in whitelist
+        post_conditions:
+        - Markdown output is UTF-8 valid
+        - Minimum 100 characters extracted
+        - Conversion logged
+        error_handling:
+          strategy: retry
+          max_retries: 2
+          fallback: Escalate to Extraction Lead for manual conversion
+          alert: slack-qa
+    - step_id: step_t2_2
+      task_id: T2.2
+      executor_type: Agent
+      role: Schema Mapper (Claude API via Gateway AI)
+      action: Mapear Markdown para schema SINKRA estruturado via Claude API com prompt
+        calibrado
+      inputs:
+      - Normalized Markdown text
+      - SINKRA schema definition (from token-registry)
+      outputs:
+      - SINKRA Schema JSON
+      - Extraction confidence metadata
+      - Field coverage report
+      sla_minutes: 15
+      guardrails:
+        pre_conditions:
+        - Markdown content available
+        - Gateway AI (OpenClaw) accessible
+        - SINKRA schema loaded
+        post_conditions:
+        - Output is valid JSON
+        - All mandatory SINKRA fields mapped (or explicitly null)
+        - Output schema validated against JSON schema
+        error_handling:
+          strategy: retry
+          max_retries: 2
+          fallback: Escalate to Extraction Lead for manual schema mapping
+          alert: slack-qa
+    - step_id: step_t2_3
+      task_id: T2.3
+      executor_type: Worker
+      role: Schema Validator (jsonschema library)
+      action: Validar JSON extraído contra schema SINKRA formal (ajv/jsonschema)
+      inputs:
+      - SINKRA Schema JSON from T2.2
+      outputs:
+      - Schema validation result (pass/fail)
+      - Validation errors list
+      sla_minutes: 1
+      guardrails:
+        pre_conditions:
+        - JSON payload received from T2.2
+        - SINKRA JSON schema definition loaded
+        post_conditions:
+        - Validation result logged
+        - Error list empty if pass
+        error_handling:
+          strategy: fallback
+          max_retries: 0
+          fallback: Return to T2.2 with validation error context (max 2 loops)
+          alert: slack-qa
+      conditionals:
+      - condition: schema_invalid == true AND retry_count < 2
+        then: Retry T2.2 with validation errors injected in prompt
+        else_if: schema_invalid == true AND retry_count >= 2
+        then_2: Escalate to Extraction Lead
+        else: Proceed to step_t2_4
+    - step_id: step_t2_4
+      task_id: T2.4
+      executor_type: Worker
+      role: Confidence Scorer (Node.js script)
+      action: Calcular score de confiança da extração via fórmula determinística
+      inputs:
+      - Validated SINKRA Schema JSON
+      - Field coverage report from T2.2
+      outputs:
+      - Extraction confidence score (0-100)
+      - Routing decision (Agent review vs direct)
+      sla_minutes: 1
+      guardrails:
+        pre_conditions:
+        - Schema validation passed (T2.3)
+        - Field coverage report available
+        post_conditions:
+        - Confidence score in range 0-100
+        - Routing decision logged
+        error_handling:
+          strategy: fallback
+          max_retries: 0
+          fallback: Default confidence = 0 → escalate to Extraction Lead
+          alert: slack-qa
+      conditionals:
+      - condition: confidence_score < 70
+        then: Flag for Agent review. Route to Extraction Lead (add to review queue).
+        else: Proceed to parallel grading group (step_t3_parallel)
+    - step_id: step_t3_parallel
+      task_id: T3_PARALLEL_GROUP
+      executor_type: System
+      action: 'Executar avaliações de qualidade em paralelo: T3.1 (Clareza - Clone),
+        T3.2 (Completude - Worker), T3.3 (Aderência SINKRA - Clone)'
+      parallel: true
+      parallel_tasks:
+      - T3.1
+      - T3.2
+      - T3.3
+      inputs:
+      - Validated SINKRA Schema JSON
+      outputs:
+      - Clarity score (0-5)
+      - Completeness score (0-100)
+      - SINKRA adherence check result
+      sla_minutes: 8
+      guardrails:
+        pre_conditions:
+        - Schema validation passed
+        - Confidence score >= 70 (or manual override)
+        post_conditions:
+        - All 3 grading tasks completed
+        - No task timed out
+        - Scores in expected range
+        error_handling:
+          strategy: retry
+          max_retries: 2
+          fallback: Escalate to Quality Analyst for manual grading
+          alert: slack-qa
+    - step_id: step_t3_4
+      task_id: T3.4
+      executor_type: Agent
+      role: Gap Analyzer (Claude API via Gateway AI)
+      action: Identificar lacunas e gerar recomendações de melhoria baseadas nos scores
+      inputs:
+      - Validated SINKRA Schema JSON
+      - Clarity score
+      - Completeness score
+      - SINKRA adherence result
+      outputs:
+      - Recommendations JSON (array of actionable items)
+      - Gap severity classification
+      sla_minutes: 5
+      guardrails:
+        pre_conditions:
+        - All T3.1, T3.2, T3.3 scores available
+        - Agent accessible via Gateway AI
+        post_conditions:
+        - Recommendations are actionable (not vague)
+        - 'Each rec has: issue, severity, fix_suggestion'
+        - Schema validated
+        error_handling:
+          strategy: retry
+          max_retries: 2
+          fallback: Escalate to Quality Analyst
+          alert: slack-qa
+    - step_id: step_t3_5
+      task_id: T3.5
+      executor_type: Worker
+      role: Report Compiler (Handlebars template engine)
+      action: Compilar relatório de análise de qualidade com scores, recomendações
+        e tier classification
+      inputs:
+      - Clarity score
+      - Completeness score
+      - SINKRA adherence result
+      - Recommendations JSON
+      outputs:
+      - Quality Analysis Report JSON
+      - Tier classification (A/B/C/D)
+      - Routing decision
+      sla_minutes: 2
+      guardrails:
+        pre_conditions:
+        - All T3.1-T3.4 outputs available
+        - Tier thresholds configured (A≥4.5, B≥4.0, C≥3.0, D<3.0)
+        post_conditions:
+        - Report JSON schema valid
+        - Tier assigned
+        - Routing decision logged
+        error_handling:
+          strategy: fallback
+          max_retries: 0
+          fallback: Default tier = D → manual escalation
+          alert: slack-qa
+      conditionals:
+      - condition: tier == 'A'
+        then: Route to wf_format_conversion (auto-approved path). Skip T6.4 human
+          sign-off.
+        else_if: tier == 'B' OR tier == 'C'
+        then_2: Route to wf_rework_feedback first, then wf_format_conversion after
+          rework.
+        else: tier == 'D' → Escalate to Quality Analyst for manual review and possible
+          SOP rejection.
+    error_handling:
+      global_fallback: Quality Analyst manual intervention
+      alert_channels:
+      - slack-qa
+      - email-coordinator
+      escalation_sla_hours: 4
+  - workflow_id: wf_rework_feedback
+    name: Rework & Feedback Loop (Tier B/C)
+    organism: org_extraction_grading
+    trigger: event
+    trigger_details: 'T3.5 tier routing: tier IN (''B'', ''C'') → triggers rework
+      loop'
+    frequency: on-demand
+    sla_days: 5
+    description: 'For Tier B/C SOPs: communicate recommendations to SOP owner, track
+      rework, re-trigger grading after corrections.'
+    steps:
+    - step_id: step_rework_notify
+      task_id: T_REWORK_NOTIFY
+      executor_type: Worker
+      role: Notification Worker (N8N + ClickUp)
+      action: Notificar SOP Owner das recomendações e criar task de rework no ClickUp
+        com prazo
+      inputs:
+      - Quality Analysis Report JSON
+      - Recommendations JSON
+      - SOP Owner contact
+      outputs:
+      - ClickUp task ID
+      - Email notification sent
+      - Rework deadline set
+      sla_minutes: 5
+      guardrails:
+        pre_conditions:
+        - Tier is B or C
+        - SOP Owner email available
+        - ClickUp API accessible
+        post_conditions:
+        - ClickUp task created with due date
+        - Email sent to owner
+        - Rework status = PENDING
+        error_handling:
+          strategy: retry
+          max_retries: 3
+          fallback: Manual notification via Coordinator
+          alert: slack-qa
+    - step_id: step_rework_human
+      task_id: T_REWORK_HUMAN
+      executor_type: Human
+      role: SOP Owner
+      action: Incorporar recomendações, corrigir SOP e resubmeter via portal
+      inputs:
+      - Original SOP
+      - Quality Analysis Report JSON
+      - ClickUp task with recommendations
+      outputs:
+      - Revised SOP document
+      - Rework notes (what was changed)
+      sla_days: 5
+      guardrails:
+        pre_conditions:
+        - ClickUp task assigned and acknowledged
+        - Owner has access to Quality Report
+        post_conditions:
+        - Revised SOP submitted via portal
+        - Rework notes documented
+        error_handling:
+          strategy: retry
+          max_retries: 1
+          fallback: Escalate to manager + Quality Analyst after SLA miss
+          alert: slack-qa
+      conditionals:
+      - condition: rework_submitted_within_sla
+        then: Re-trigger wf_extraction_grading from T2.1 with revised SOP
+        else: 'Manager escalation. Log SLA breach. Option: reject or extend deadline.'
+    error_handling:
+      global_fallback: Quality Analyst + Manager escalation
+      alert_channels:
+      - slack-qa
+      - email-manager
+      escalation_sla_days: 2
+      max_rework_loops: 2
+  - workflow_id: wf_format_conversion
+    name: Dual-Format Conversion (ML + Human-Readable)
+    organism: org_format_conversion
+    trigger: event
+    trigger_details: 'T3.5 tier routing: tier == ''A'' (direct) OR rework completed
+      for Tier B/C'
+    frequency: on-demand
+    sla_hours: 2
+    steps:
+    - step_id: step_t4_parallel
+      task_id: T4_PARALLEL_GROUP
+      executor_type: System
+      action: 'Executar conversões ML em paralelo: T4.1 (JSON-LD), T4.2 (Embeddings),
+        T4.3 (GraphML), T4.4 (Tokenização)'
+      parallel: true
+      parallel_tasks:
+      - T4.1
+      - T4.2
+      - T4.3
+      - T4.4
+      inputs:
+      - Validated SINKRA Schema JSON
+      outputs:
+      - JSON-LD with @context
+      - Vector embeddings (1536-dim)
+      - GraphML dependency graph
+      - Token sequences
+      sla_minutes: 30
+      guardrails:
+        pre_conditions:
+        - SINKRA Schema JSON available and validated
+        - Gateway AI accessible
+        - Cache layer available (Redis/Supabase pgvector)
+        post_conditions:
+        - All 4 ML artifacts generated
+        - JSON-LD schema valid
+        - Embeddings dimension = 1536
+        - GraphML valid XML
+        - Token count > 0
+        error_handling:
+          strategy: retry
+          max_retries: 2
+          fallback: Escalate to AI Engineer. Log individual task failure.
+          alert: slack-devops
+    - step_id: step_t5_parallel
+      task_id: T5_PARALLEL_GROUP
+      executor_type: System
+      action: 'Gerar documentação human-readable em paralelo: T5.1 (Executive Summary),
+        T5.2 (Operational Guide), T5.3 (Technical Reference)'
+      parallel: true
+      parallel_tasks:
+      - T5.1
+      - T5.2
+      - T5.3
+      inputs:
+      - Validated SINKRA Schema JSON
+      outputs:
+      - Executive Summary Markdown
+      - Operational Guide Markdown
+      - Technical Reference Markdown
+      sla_minutes: 30
+      guardrails:
+        pre_conditions:
+        - SINKRA Schema JSON available
+        - Gateway AI accessible
+        - Document templates loaded
+        post_conditions:
+        - All 3 Markdown documents generated
+        - 'Minimum word count met (Summary: 200w, Guide: 500w, Tech: 1000w)'
+        - Schemas validated
+        error_handling:
+          strategy: retry
+          max_retries: 2
+          fallback: Escalate to Tech Writer Lead
+          alert: slack-devops
+      note: T4 and T5 parallel groups can run concurrently (no dependency between
+        them)
+    - step_id: step_t5_4
+      task_id: T5.4
+      executor_type: Worker
+      role: Multi-Format Renderer (pandoc + Notion API)
+      action: 'Renderizar Markdown em múltiplos formatos: PDF, HTML, Notion page'
+      inputs:
+      - Executive Summary MD
+      - Operational Guide MD
+      - Technical Reference MD
+      outputs:
+      - PDF files (3)
+      - HTML files (3)
+      - Notion pages (3)
+      sla_minutes: 8
+      guardrails:
+        pre_conditions:
+        - All 3 Markdown documents generated (T5.1-T5.3)
+        - pandoc installed
+        - Notion API key configured
+        post_conditions:
+        - All 9 output files generated (3 docs × 3 formats)
+        - PDF valid (no rendering errors)
+        - Notion pages accessible
+        error_handling:
+          strategy: retry
+          max_retries: 2
+          fallback: Escalate to Tech Writer Lead
+          alert: slack-devops
+    - step_id: step_t5_5
+      task_id: T5.5
+      executor_type: Worker
+      role: Metadata Injector (Node.js template script)
+      action: Injetar metadados, TOC, breadcrumbs e navigation links em HTML/Notion
+      inputs:
+      - HTML files
+      - Notion pages
+      - SOP metadata (ID, version, owner, date)
+      outputs:
+      - HTML files with TOC and navigation
+      - Notion pages with breadcrumbs
+      sla_minutes: 3
+      guardrails:
+        pre_conditions:
+        - HTML and Notion outputs available from T5.4
+        - SOP metadata available
+        post_conditions:
+        - TOC present in all HTML files
+        - Breadcrumbs in Notion pages
+        - Metadata injected (SOP ID, version, date)
+        error_handling:
+          strategy: fallback
+          max_retries: 0
+          fallback: Escalate to Tech Writer Lead
+          alert: slack-devops
+      on_success:
+        trigger_workflow: wf_publishing_qa
+        trigger_via: N8N webhook → Supabase event format_conversion_complete
+        alert_if_not_triggered_in_minutes: 20
+        alert_channel: slack-devops
+    error_handling:
+      global_fallback: Tech Writer Lead + AI Engineer review
+      alert_channels:
+      - slack-devops
+      escalation_sla_hours: 2
+  - workflow_id: wf_publishing_qa
+    name: Publishing & QA
+    organism: org_publishing_qa
+    trigger: event
+    trigger_details: wf_format_conversion completed → triggers publishing QA
+    frequency: on-demand
+    sla_days: 3
+    steps:
+    - step_id: step_t6_1
+      task_id: T6.1
+      executor_type: Worker
+      role: Coherence Validator (Node.js script)
+      action: Validar coerência entre todos os artefatos gerados (ML + Docs + Estrutura)
+      inputs:
+      - All generated artifacts (JSON-LD, embeddings, GraphML, tokens, MD files, PDFs,
+        Notion pages)
+      - SINKRA Schema JSON (source of truth)
+      outputs:
+      - Coherence validation result (pass/fail)
+      - Discrepancy report (if failed)
+      sla_minutes: 5
+      guardrails:
+        pre_conditions:
+        - All T4 and T5 artifacts present in storage
+        - Manifest file available
+        post_conditions:
+        - Validation result logged
+        - All artifacts accounted for
+        - No orphaned or missing files
+        error_handling:
+          strategy: fallback
+          max_retries: 0
+          fallback: Escalate to Deployment Lead. Block publishing.
+          alert: slack-deployment
+      conditionals:
+      - condition: coherence_failed == true
+        then: Halt pipeline. Alert Deployment Lead with discrepancy report. Manual
+          fix required.
+        else: Proceed to step_t6_3
+    - step_id: step_t6_3
+      task_id: T6.3
+      executor_type: Worker
+      role: Feedback Validator (Node.js checklist script)
+      action: Verificar se recomendações do T3 foram incorporadas, rejeitadas ou documentadas
+      inputs:
+      - Quality Analysis Report (T3.5)
+      - Final artifacts (T5)
+      - Rework notes (if applicable)
+      outputs:
+      - Feedback incorporation result (pass/fail)
+      - Unaddressed recommendations list
+      sla_minutes: 3
+      guardrails:
+        pre_conditions:
+        - Quality Analysis Report available
+        - Final artifacts generated
+        post_conditions:
+        - 'Each recommendation status: incorporated/rejected/documented'
+        - Validation result logged
+        error_handling:
+          strategy: fallback
+          max_retries: 0
+          fallback: Escalate to Deployment Lead
+          alert: slack-deployment
+      conditionals:
+      - condition: tier == 'A' AND unaddressed_critical_recs == 0
+        then: Skip T6.4 (Human sign-off). Auto-approve. Proceed to T6.5.
+        else_if: tier IN ('B', 'C') OR unaddressed_critical_recs > 0
+        then_2: Route to T6.4 for Human sign-off.
+        else: Tier D → Escalate to Quality Analyst. Do not publish.
+    - step_id: step_t6_4
+      task_id: T6.4
+      executor_type: Human
+      role: SOP Owner (formal accountability sign-off)
+      action: Revisar artefatos finais e aprovar formalmente via ClickUp task
+      inputs:
+      - All generated artifacts
+      - Quality Analysis Report
+      - Validation reports (T6.1, T6.3)
+      outputs:
+      - Approval decision (approve/reject)
+      - Review notes
+      sla_days: 3
+      sla_business_days: 2
+      guardrails:
+        pre_conditions:
+        - All validations passed (T6.1, T6.3)
+        - Sign-off request sent via ClickUp
+        - SOP Owner notified
+        post_conditions:
+        - Approval status logged in Supabase
+        - Decision timestamped
+        - Notes attached
+        error_handling:
+          strategy: retry
+          max_retries: 1
+          fallback: 'Day 1: auto-reminder. Day 2: escalate to manager. Day 3: auto-approve
+            with manager countersign.'
+          alert: slack-deployment
+      conditionals:
+      - condition: approval_rejected == true
+        then: Route to wf_rework_feedback with owner rejection notes. Max 1 rejection
+          loop.
+        else: Proceed to step_t6_5
+      - condition: sla_days_elapsed >= 3 AND manager_response == null
+        then: 'Auto-approve with audit trail flag: SLA_AUTO_APPROVED'
+        else: Normal flow
+    - step_id: step_t6_5
+      task_id: T6.5
+      executor_type: Worker
+      role: Deployment Worker (Git + Supabase + Notion + S3 SDK)
+      action: Publicar todos os artefatos aprovados nos repositórios definidos
+      inputs:
+      - All approved artifacts
+      - Deployment manifest
+      - Target repository configs
+      outputs:
+      - Git commit hash
+      - Supabase record ID
+      - Notion page URLs
+      - S3 object keys
+      - Publish status JSON
+      sla_minutes: 10
+      guardrails:
+        pre_conditions:
+        - Approval status = approved
+        - All deployment credentials configured
+        - Network accessible to all targets
+        post_conditions:
+        - Git commit pushed
+        - Supabase record active
+        - Notion pages published
+        - S3 files accessible
+        - All publish statuses = success
+        error_handling:
+          strategy: retry
+          max_retries: 3
+          fallback: Escalate to Deployment Lead with detailed publish log
+          alert: slack-deployment
+    - step_id: step_t6_6
+      task_id: T6.6
+      executor_type: Worker
+      role: Audit Trail Writer (Supabase + S3 logger)
+      action: Gerar e arquivar trilha de auditoria imutável do processo completo
+      inputs:
+      - Publish status JSON
+      - All process events and logs
+      - SOP metadata
+      - Approval decision
+      outputs:
+      - Audit trail record in Supabase (sop_audit_log table)
+      - Archived JSON in S3 (immutable)
+      - Process completion event
+      sla_minutes: 2
+      guardrails:
+        pre_conditions:
+        - Deployment successful (T6.5)
+        - All process logs collected
+        post_conditions:
+        - Audit record created with timestamp
+        - Record immutable (row-level security, no UPDATE)
+        - S3 object with server-side encryption
+        error_handling:
+          strategy: retry
+          max_retries: 3
+          fallback: 'Critical: alert Deployment Lead. Manual audit entry required.'
+          alert: slack-deployment
+    error_handling:
+      global_fallback: Deployment Lead manual intervention
+      alert_channels:
+      - slack-deployment
+      - email-coordinator
+      escalation_sla_hours: 24
+  removed_tasks:
+  - task_id: T6.2
+    name: Readability test
+    reason: 'ELIMINATE — Removed in TO-BE. Expensive, subjective, low value. Replaced
+      by T3 scoring pipeline (objective rubric) + T5 Agent-generated documentation
+      + T6.1 coherence check. Net improvement: faster, cheaper, more consistent.'
+  cross_workflow_dependencies:
+  - from: wf_intake_validation
+    to: wf_extraction_grading
+    trigger: T1.3 success event
+  - from: wf_extraction_grading
+    to: wf_rework_feedback
+    trigger: 'T3.5 tier routing: tier IN (''B'', ''C'')'
+  - from: wf_extraction_grading
+    to: wf_format_conversion
+    trigger: 'T3.5 tier routing: tier == ''A'''
+  - from: wf_rework_feedback
+    to: wf_extraction_grading
+    trigger: Rework submitted — re-enter from T2.1
+  - from: wf_format_conversion
+    to: wf_publishing_qa
+    trigger: T5.5 success event
+  parallel_execution_groups:
+  - group_id: pg_ml_vs_docs
+    description: T4 ML conversion and T5 documentation generation run concurrently
+      (no dependency)
+    tasks:
+    - T4.1
+    - T4.2
+    - T4.3
+    - T4.4
+    - T5.1
+    - T5.2
+    - T5.3
+    estimated_time_saved_minutes: 30
+  - group_id: pg_quality_grading
+    description: T3.1, T3.2, T3.3 run concurrently (independent evaluations of same
+      input)
+    tasks:
+    - T3.1
+    - T3.2
+    - T3.3
+    estimated_time_saved_minutes: 8
+checkpoint_pv_pm_001:
+  checkpoint_id: PV_PM_001
+  nome: Automation Tipping Point
+  executor: Pedro Valerio Mind Clone
+  evaluated_at: '2026-03-29T22:10:00-03:00'
+  verdict: APPROVE
+  overall_score: 0.97
+  summary: Nenhuma task automatizada sem guardrails. VETO não ativado. 19 tasks AUTOMATE/DELEGATE
+    com guardrails completos. 2 tasks KEEP_MANUAL com justificativa válida. 1 task
+    ELIMINATE documentada.
+  veto_checks:
+    guardrails_missing_in_automated: false
+    cycles_in_workflow_dag: false
+    undefined_conditionals: false
+    orphaned_tasks: false
+  dimension_scores:
+    guardrails_completeness: 1.0
+    conditional_coverage: 0.95
+    sla_definition: 0.98
+    parallel_optimization: 0.95
+    error_handling_depth: 0.97

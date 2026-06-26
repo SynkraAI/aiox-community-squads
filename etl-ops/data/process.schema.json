@@ -1,0 +1,293 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lendario.ai/squads/etl-ops/process.schema.json",
+  "title": "ETL Process Input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source",
+    "desired_output",
+    "mode"
+  ],
+  "properties": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "youtube_video",
+            "youtube_channel",
+            "url",
+            "file"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "metadata_only": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "desired_output": {
+      "type": "string",
+      "enum": [
+        "raw",
+        "clean",
+        "filtered",
+        "chunks",
+        "book_summary"
+      ]
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "single",
+        "batch",
+        "rag"
+      ]
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_items": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "timeout_sec": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 3600
+        },
+        "language": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 10
+        },
+        "speaker": {
+          "type": "string",
+          "minLength": 1
+        },
+        "chunk_strategy": {
+          "type": "string",
+          "enum": [
+            "paragraph",
+            "sentence",
+            "size",
+            "heading",
+            "chapter"
+          ]
+        },
+        "document_strategy": {
+          "type": "string",
+          "enum": [
+            "generic",
+            "book_progressive"
+          ],
+          "default": "generic"
+        },
+        "summary_strategy": {
+          "type": "string",
+          "enum": [
+            "deterministic",
+            "progressive_llm"
+          ],
+          "default": "progressive_llm"
+        },
+        "prefer_epub": {
+          "type": "boolean",
+          "default": true
+        },
+        "chapter_target_chars": {
+          "type": "integer",
+          "minimum": 500,
+          "maximum": 50000
+        },
+        "rolling_summary_window": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "default": 3
+        },
+        "context_sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "value"],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": ["url", "text"]
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "extract_keyframes": {
+          "type": "boolean",
+          "default": false
+        },
+        "keyframe_strategy": {
+          "type": "string",
+          "enum": [
+            "scene_detection",
+            "interval",
+            "ffmpeg_scene"
+          ]
+        },
+        "scene_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "interval_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600
+        },
+        "filter_duplicates": {
+          "type": "boolean",
+          "default": false
+        },
+        "ssim_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "whisper_model": {
+          "type": "string",
+          "enum": [
+            "tiny",
+            "base",
+            "small",
+            "medium",
+            "large"
+          ]
+        },
+        "use_llm_cleanup": {
+          "type": "boolean",
+          "default": false
+        },
+        "persist_output": {
+          "type": "boolean",
+          "default": true
+        },
+        "business_slug": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80,
+          "pattern": "^[a-z0-9_\\-]+$"
+        },
+        "workspace_mode": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "canonical",
+            "legacy"
+          ],
+          "default": "auto"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "mode": {
+            "const": "batch"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "source": {
+            "required": [
+              "items"
+            ]
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "source": {
+            "required": [
+              "value"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "desired_output": {
+            "const": "book_summary"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "constraints"
+        ],
+        "properties": {
+          "constraints": {
+            "required": [
+              "document_strategy"
+            ],
+            "properties": {
+              "document_strategy": {
+                "const": "book_progressive"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "desired_output": {
+            "const": "filtered"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "source",
+          "desired_output",
+          "mode",
+          "constraints"
+        ],
+        "properties": {
+          "constraints": {
+            "required": [
+              "speaker"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,460 @@
+# SOP Factory - Elite Standard Operating Procedures Squad v1.0
+# Squad Configuration
+
+name: aiox-sop
+version: "1.0.0"
+description: "Elite SOP creation, extraction, analysis, grading and AI-optimization squad. Creates world-class SOPs for humans and AI agents based on Deming, Gawande, Juran, Toyota, ISO 9001, FDA/GMP, and Six Sigma methodologies."
+entry_agent: sop-chief
+author: "AIOX Team"
+created_at: "2026-03-09"
+tested: true
+
+pack:
+  name: aiox-sop
+  title: "SOP Factory - Elite Process Documentation Squad"
+  version: "1.0.0"
+  author: "AIOX Team"
+  description: "Creates, extracts, analyzes, grades and converts SOPs using the world's best process documentation methodologies. Dual-output: human-readable and AI/ML-consumable formats."
+  icon: "&#x2699;"
+  slash_prefix: "sop"
+
+metadata:
+  version: "1.0.0"
+  score: 9.0
+
+# ==============================================================================
+# SQUAD TYPE & INTEGRATION
+# ==============================================================================
+squad_type: pipeline
+# pipeline = Sequential flow: Input -> Process -> Quality Gate -> Output
+
+expert_dna_sources:
+  - name: "W. Edwards Deming"
+    domain: "Quality Management, PDCA Cycle, System of Profound Knowledge"
+    applied_to: "Overall squad philosophy, continuous improvement loops"
+  - name: "Atul Gawande"
+    domain: "Checklist Manifesto, surgical safety checklists"
+    applied_to: "Checklist design, simplicity principles, safety-critical SOPs"
+  - name: "Joseph Juran"
+    domain: "Quality Trilogy (Planning, Control, Improvement)"
+    applied_to: "SOP lifecycle management, quality gates"
+  - name: "Taiichi Ohno"
+    domain: "Toyota Production System, Lean Manufacturing, Gemba"
+    applied_to: "Process extraction, waste elimination, standardized work"
+  - name: "Michael Gerber"
+    domain: "E-Myth, Business Systematization"
+    applied_to: "Franchise-ready SOPs, work ON the system"
+  - name: "Philip Crosby"
+    domain: "Zero Defects, Quality is Free"
+    applied_to: "SOP quality auditing, conformance standards"
+  - name: "ISO 9001:2015"
+    domain: "Quality Management Systems"
+    applied_to: "Document control, process approach, risk-based thinking"
+  - name: "FDA 21 CFR Part 11 / GMP"
+    domain: "Pharmaceutical SOP Gold Standard"
+    applied_to: "Regulated SOP format, version control, approval workflows"
+  - name: "Six Sigma DMAIC"
+    domain: "Define-Measure-Analyze-Improve-Control"
+    applied_to: "SOP analysis methodology, statistical process control"
+
+mmos_integration:
+  enabled: false
+  fallback_behavior: "graceful"
+
+workspace_integration:
+  level: none
+  rationale: >-
+    SOP Factory remains shared-safe by default, but it can consume canonical
+    business operations context when the COO resolves readiness for an explicit
+    business. Markdown SOPs remain share-safe under squad-local docs, while
+    machine-readable SOPs may publish into the canonical business `sops/`
+    namespace only after runtime readiness is proven. Portable docs mode
+    remains the default whenever readiness is not proven or the command has no
+    business context.
+  read_paths:
+    - workspace/_system/config.yaml
+    - workspace/businesses/
+    - workspace/_templates/business-template/L0-identity/
+    - workspace/_templates/business-template/L1-strategy/
+    - workspace/_templates/business-template/L2-tactical/
+    - workspace/_templates/sops/
+  write_paths:
+    - workspace/businesses/{business}/sops/
+  template_namespace: sops
+  canonical_outputs_root: workspace/businesses/{business}/sops/
+  custom_outputs_root: docs/sops/
+  readiness_owner: workspace-chief
+  readiness_resolver: squads/c-level/scripts/resolve-squad-workspace-readiness.cjs
+  readiness_context_type: operations
+
+distribution_contract:
+  shared_default_access_tier: opensource
+  environment_contract_script: squads/aiox-sop/scripts/resolve-environment-contract.cjs
+  default_runtime_mode: portable_docs_mode
+  docs_projection_path: docs/squad/aiox-sop/operational-projection.yaml
+  shared_safe_outputs_root: docs/sops/
+  full_workspace_requires:
+    - access tier resolved to pro or enterprise
+    - canonical COO readiness support for the operations context
+    - explicit business context for canonical YAML/JSON publication
+  enterprise_assumptions_allowed: false
+
+# ==============================================================================
+# AGENTS
+# ==============================================================================
+agents:
+  - id: sop-chief
+    executor_profile:
+      sinkra_type: Agent
+      human_in_the_loop: true
+      output_schema: "deliverable definido pela task ativa"
+      story_role: executor
+      can_execute: true
+      core_replaces: null
+      work_contexts: ["general"]
+      can_review: []
+    name: "SOP Chief"
+    role: "Squad orchestrator and SOP lifecycle coordinator"
+    tier: orchestrator
+    specialty: "Routes requests, coordinates agents, enforces quality standards"
+
+  - id: sop-analyst
+    executor_profile:
+      sinkra_type: Agent
+      human_in_the_loop: true
+      output_schema: "deliverable definido pela task ativa"
+      story_role: executor
+      can_execute: true
+      core_replaces: null
+      work_contexts: ["general"]
+      can_review: []
+    name: "SOP Analyst"
+    role: "Analyzes and grades existing SOPs"
+    tier: 1
+    specialty: "Multi-dimensional SOP scoring, gap detection, compliance assessment"
+
+  - id: sop-creator
+    executor_profile:
+      sinkra_type: Agent
+      human_in_the_loop: true
+      output_schema: "deliverable definido pela task ativa"
+      story_role: executor
+      can_execute: true
+      core_replaces: null
+      work_contexts: ["general"]
+      can_review: []
+    name: "SOP Creator"
+    role: "Creates human-readable SOPs from scratch"
+    tier: 1
+    specialty: "FDA/GMP-grade process documentation, visual SOPs, decision trees"
+
+  - id: sop-ml-architect
+    executor_profile:
+      sinkra_type: Agent
+      human_in_the_loop: true
+      output_schema: "deliverable definido pela task ativa"
+      story_role: executor
+      can_execute: true
+      core_replaces: null
+      work_contexts: ["general"]
+      can_review: []
+    name: "SOP ML Architect"
+    role: "Creates machine-readable/AI-consumable SOPs"
+    tier: 1
+    specialty: "YAML/JSON structured SOPs, state machines, agent-executable procedures"
+
+  - id: sop-extractor
+    executor_profile:
+      sinkra_type: Agent
+      human_in_the_loop: true
+      output_schema: "deliverable definido pela task ativa"
+      story_role: executor
+      can_execute: true
+      core_replaces: null
+      work_contexts: ["general"]
+      can_review: []
+    name: "SOP Extractor"
+    role: "Extracts SOPs from existing processes"
+    tier: 1
+    specialty: "Process mining, tribal knowledge capture, unstructured-to-structured conversion"
+
+  - id: sop-auditor
+    executor_profile:
+      sinkra_type: Agent
+      human_in_the_loop: true
+      output_schema: "deliverable definido pela task ativa"
+      story_role: executor
+      can_execute: true
+      core_replaces: null
+      work_contexts: ["general"]
+      can_review: []
+    name: "SOP Auditor"
+    role: "Quality gate and compliance validation"
+    tier: 2
+    specialty: "ISO 9001/FDA audit, zero-defect validation, remediation planning"
+
+# ==============================================================================
+# TASKS
+# ==============================================================================
+tasks:
+  # --- Creation ---
+  - id: create-sop-human
+    name: "Create Human-Readable SOP"
+    category: creation
+    description: "Create a complete SOP optimized for human consumption"
+
+  - id: create-sop-ml
+    name: "Create AI/ML-Readable SOP"
+    category: creation
+    description: "Create a structured SOP for AI agent consumption (YAML/JSON)"
+
+  - id: create-checklist
+    name: "Create Checklist from SOP"
+    category: creation
+    description: "Generate operational checklist from existing SOP"
+
+  # --- Analysis ---
+  - id: load-workspace-context
+    name: "Load Workspace Context"
+    category: governance
+    description: "Load canonical company + operations business context before business-aware analysis"
+
+  - id: analyze-sop
+    name: "Analyze & Grade SOP"
+    category: analysis
+    description: "Multi-dimensional analysis and scoring of an existing SOP"
+
+  - id: benchmark-sop
+    name: "Benchmark SOP Against Standards"
+    category: analysis
+    description: "Compare SOP against ISO/FDA/industry gold standards"
+
+  # --- Extraction ---
+  - id: extract-sop
+    name: "Extract SOP from Process"
+    category: extraction
+    description: "Extract structured SOP from unstructured process description"
+
+  - id: extract-from-video
+    name: "Extract SOP from Video/Transcript"
+    category: extraction
+    description: "Convert video tutorial or transcript into structured SOP"
+
+  - id: structured-interview
+    name: "Structured Interview for Process Extraction"
+    category: extraction
+    description: "5-phase structured interview protocol for extracting SOP-ready process knowledge"
+
+  # --- Conversion ---
+  - id: convert-sop-format
+    name: "Convert SOP Format"
+    category: conversion
+    description: "Convert between human-readable and ML formats"
+
+  # --- Audit ---
+  - id: audit-sop
+    name: "Full SOP Audit"
+    category: audit
+    description: "Comprehensive compliance and quality audit"
+
+  - id: audit-batch
+    name: "Batch SOP Audit"
+    category: audit
+    description: "Audit multiple SOPs at once with comparative scoring"
+
+  # --- Cross-Squad Integration (C-Level → SOP) ---
+  - id: create-sop-operations-suite
+    name: "Create Operations SOP Suite"
+    category: creation
+    description: "Creates SOPs from C-Level operations YAMLs (team-structure, pricing, KPIs, commissions)"
+
+  - id: compliance-check
+    name: "Compliance Check"
+    category: audit
+    description: "Check SOP against a specific compliance standard"
+
+  - id: re-audit
+    name: "Re-Audit SOP"
+    category: audit
+    description: "Re-audit after remediation and compare findings"
+
+  - id: certify-sop
+    name: "Certify SOP"
+    category: audit
+    description: "Issue formal SOP certification when audit gates pass"
+
+  # --- Backlog & Research ---
+  - id: map-core-sop-backlog
+    name: "Map Core SOP Backlog by Business Category"
+    category: research
+    description: "Analyzes all workspace businesses, categorizes by market type, and generates prioritized SOP backlog with research context per segment"
+
+# ==============================================================================
+# OPERATIONS INTEGRATION (C-Level handoff)
+# ==============================================================================
+operations_integration:
+  enabled: true
+  description: "Mapeamento de YAMLs operacionais do C-Level para SOPs"
+  canonical_sources:
+    - path: "workspace/_templates/business-template/L1-strategy/team-structure.yaml"
+      context: "Estrutura organizacional definida pelo COO"
+    - path: "workspace/_templates/business-template/L1-strategy/pricing-strategy.yaml"
+      context: "Estratégia de pricing definida pelo CMO"
+    - path: "workspace/_templates/business-template/L1-strategy/kpi-scorecards.yaml"
+      context: "KPIs definidos pelo COO"
+    - path: "workspace/_templates/business-template/L1-strategy/commission-design.yaml"
+      context: "Comissões definidas pelo COO"
+  output_paths:
+    - path: "workspace/businesses/{business}/sops/"
+      access: "write (after COO readiness)"
+  standard_sop_types:
+    - id: SOP-OPS-TEAM
+      source: "L1-strategy/team-structure.yaml"
+      sop_type: "Estrutura Organizacional"
+      generator: "sop-creator"
+    - id: SOP-OPS-PRICING
+      source: "L1-strategy/pricing-strategy.yaml"
+      sop_type: "Decisões de Pricing"
+      generator: "sop-creator"
+    - id: SOP-OPS-KPI
+      source: "L1-strategy/kpi-scorecards.yaml"
+      sop_type: "Gestão de KPIs"
+      generator: "sop-creator"
+    - id: SOP-OPS-COMMISSION
+      source: "L1-strategy/commission-design.yaml"
+      sop_type: "Cálculo de Comissões"
+      generator: "sop-creator"
+
+
+# ==============================================================================
+# WORKFLOWS
+# ==============================================================================
+workflows:
+  - id: wf-sop-creation-pipeline
+    name: "SOP Creation Pipeline"
+    category: creation
+    description: "End-to-end SOP creation: gather requirements -> draft -> review -> refine -> validate -> publish"
+
+  - id: wf-sop-audit-pipeline
+    name: "SOP Audit Pipeline"
+    category: audit
+    description: "Full audit: ingest -> analyze -> score -> benchmark -> remediate -> certify"
+
+  - id: wf-sop-extraction-pipeline
+    name: "SOP Extraction Pipeline"
+    category: extraction
+    description: "Extract: capture input -> identify steps -> structure -> validate -> format -> publish"
+
+# ==============================================================================
+# TEMPLATES
+# ==============================================================================
+templates:
+  - id: sop-human-tmpl
+    name: "Human-Readable SOP Template"
+
+  - id: sop-ml-tmpl
+    name: "AI/ML-Readable SOP Template"
+
+  - id: sop-analysis-report-tmpl
+    name: "SOP Analysis Report Template"
+
+  - id: sop-scorecard-tmpl
+    name: "SOP Scorecard Template"
+
+  - id: checklist-from-sop-tmpl
+    name: "Checklist Generation Template"
+
+  - id: certification-template
+    name: "SOP Certification Template"
+
+# ==============================================================================
+# CHECKLISTS
+# ==============================================================================
+checklists:
+  - id: sop-quality-checklist
+    name: "SOP Quality Checklist"
+
+  - id: sop-completeness-checklist
+    name: "SOP Completeness Checklist"
+
+  - id: sop-ml-validation-checklist
+    name: "SOP ML/AI Validation Checklist"
+
+# ==============================================================================
+# DATA (Knowledge Bases)
+# ==============================================================================
+data:
+  - id: sop-scoring-rubric
+    name: "SOP Scoring Rubric"
+    description: "10-dimension scoring rubric with weights and signal definitions"
+
+  - id: sop-standards-reference
+    name: "SOP Standards Reference"
+    description: "Cross-reference of ISO 9001, FDA/GMP, TPS, Six Sigma requirements"
+
+  - id: sop-ml-schema
+    name: "SOP ML Schema Definition"
+    description: "YAML/JSON schema for machine-readable SOPs"
+
+  - id: category-map
+    name: "Business Category Map"
+    description: "Knowledge base estática: categorias de negócio → SOPs mínimas por tipo de indústria. Fonte de análise do sop-chief para saber quais SOPs básicas cada tipo de negócio precisa."
+
+# ==============================================================================
+# DEPENDENCIES & TAGS
+# ==============================================================================
+dependencies:
+  squads:
+    - aiox-core
+
+tags:
+  - sop
+  - standard-operating-procedures
+  - process-documentation
+  - quality-management
+  - iso-9001
+  - fda-gmp
+  - six-sigma
+  - lean
+  - toyota-production-system
+  - checklist
+  - ai-readable-sop
+  - machine-learning
+  - process-extraction
+  - compliance
+  - audit
+  - deming
+  - gawande
+  - juran
+
+# SINKRA v3.1 (Story 54.11)
+bu_mapping: "hub-framework"
+artifact_contracts:
+  - artifact_id: "sop-human"
+    template_path: "templates/sop-human-tmpl.md"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "sop-ml"
+    template_path: "templates/sop-ml-tmpl.md"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "sop-analysis-report"
+    template_path: "templates/sop-analysis-report-tmpl.md"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "sop-scorecard"
+    template_path: "templates/sop-scorecard-tmpl.md"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "checklist-from-sop"
+    template_path: "templates/checklist-from-sop-tmpl.md"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "sop-certification"
+    template_path: "templates/certification-template.md"
+    lifecycle_states: [draft, validated, approved]
+supported_modes:
+  - CRIAR
+  - VALIDAR
+  - RESOLVER
+  - ENTENDER
+# BEGIN MAP MATERIALIZATION: supported_domains
+materialized_supported_domains: [Operational, Tactical, Strategic]
+materialized_supported_domains_ptbr: [Operacional, Tático, Estratégico]
+# Source: outputs/sinkra-squad/aiox-sop/map/20260329-190639-claude-opus/domain_map.json
+# END MAP MATERIALIZATION: supported_domains

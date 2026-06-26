@@ -1,0 +1,90 @@
+# Risk Register — aiox-sop Squad
+# Cenários mapeados: GW-001 (Gateway AI), N8N-001 (Orchestrator), DEPLOY-001 (Rollback)
+# Referência: outputs/sinkra-squad/aiox-sop/map/20260329-190639-claude-opus/axioma_report.md
+
+version: "1.0.0"
+created_at: "2026-03-30"
+process_slug: aiox-sop
+
+risks:
+  - id: GW-001
+    title: "Gateway AI downtime — Claude API indisponível durante extração/grading"
+    category: availability
+    probability: low
+    impact: high
+    score: high
+    owner: "AI Engineer"
+    affected_tasks: [T2.2, T3.1, T3.3, T3.4, T4.3, T5.1, T5.2, T5.3]
+    contingency: >
+      Queue SOPs no N8N com retry a cada 30min (máx 3x).
+      Se persistir após 90min: escalate para AI Engineer via slack-devops.
+      Fallback: pausar pipeline, manter SOP em status PENDING_AI com SLA estendido automaticamente.
+    detection: "Timeout em chamada LLM após PT30M (token timeout_llm_call). Alert: slack-devops."
+    circuit_breaker:
+      threshold_failures: 3
+      window_minutes: 30
+      action: "pause_pipeline + alert_ai_engineer"
+
+  - id: N8N-001
+    title: "N8N indisponível — orquestrador de triggers entre workflows offline"
+    category: availability
+    probability: low
+    impact: critical
+    score: high
+    owner: "Tech Lead"
+    affected_workflows: [wf_intake_validation, wf_extraction_grading, wf_format_conversion, wf_publishing_qa]
+    contingency: >
+      Fallback imediato: disparar steps diretamente via Supabase Edge Functions (cada workflow
+      tem trigger alternativo por Supabase event). SOPs em trânsito ficam em status ORCHESTRATOR_UNAVAILABLE.
+      Retomar N8N → reprocessar via replay de Supabase events (idempotente por sop_id).
+    detection: "on_success trigger não disparado em 15-20min (alert_if_not_triggered_in_minutes nos steps T1.3 e T5.5)."
+    circuit_breaker:
+      threshold_failures: 1
+      window_minutes: 20
+      action: "switch_to_supabase_fallback + alert_tech_lead"
+
+  - id: DEPLOY-001
+    title: "Falha parcial em T6.5 — deployment incompleto para Git/Supabase/Notion"
+    category: data_integrity
+    probability: medium
+    impact: high
+    score: high
+    owner: "Tech Lead"
+    affected_tasks: [T6.5, T6.6]
+    contingency: >
+      Rollback via git revert do commit de publicação + Supabase soft delete
+      (campo published=false, archived=true). Notion pages revertidas via API versioning.
+      T6.6 (audit trail) registra o rollback com timestamp e motivo.
+      Re-execução de T6.5 é idempotente: verifica published=false antes de re-publicar.
+    detection: "T6.5 error_handling detecta falha parcial — alert: slack-devops. T6.6 audit trail registra estado inconsistente."
+    circuit_breaker:
+      threshold_failures: 1
+      window_minutes: 5
+      action: "rollback + alert_tech_lead + create_incident_ticket"
+
+  - id: CLONE-001
+    title: "Pedro Valério Clone drift — degradação silenciosa de T3.1 e T3.3"
+    category: quality
+    probability: medium
+    impact: high
+    score: medium
+    owner: "Quality Analyst"
+    affected_tasks: [T3.1, T3.3]
+    contingency: >
+      human_review_trigger ativo em T3.1 (clarity_score outlier) e T3.3 (veto_triggered).
+      Revisão trimestral de amostras de output do Clone contra voice_dna.
+      Recalibrar via /clone-mind se fidelidade < 85%.
+    detection: "clarity_score < 1.5 ou > 4.8 (T3.1) / veto_triggered=true (T3.3) aciona Quality Analyst."
+
+  - id: SUPABASE-001
+    title: "Supabase storage saturado — uploads de SOP bloqueados"
+    category: capacity
+    probability: low
+    impact: medium
+    score: medium
+    owner: "Tech Lead"
+    affected_tasks: [T1.3, T6.5]
+    contingency: >
+      Alert automático em 80% de capacidade via Supabase dashboard.
+      Fallback: roteamento temporário para S3 bucket (já declarado em infrastructure_connections).
+    detection: "Storage usage > 80% — alert: slack-devops."

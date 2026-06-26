@@ -1,0 +1,1489 @@
+# ==============================================================================
+# APEX SQUAD — Design Presets Catalog (Premium Extension)
+# data/design-presets-premium.yaml
+# ==============================================================================
+# Purpose:  Premium design presets extending the main catalog. Each preset
+#           defines a complete design language — colors, typography, spacing,
+#           motion, effects, and component patterns.
+#
+# Usage:    *apex-transform --style {preset_id}
+#           *apex-inspire --category {category}
+#
+# Owner:    apex-lead + design-sys-eng
+# Version:  1.0.0
+# ==============================================================================
+
+version: "1.0.0"
+total_presets: 15
+
+# ==============================================================================
+# 8. LUXURY & HAUTE
+# ==============================================================================
+luxury_haute:
+
+  - id: luxury-maison
+    name: "Luxury Maison"
+    category: luxury
+    contrast_validated: true
+    composable: [luxury-atelier, luxury-artisan, dark-elegant, minimalist]
+    description: >
+      Essence of Montblanc, Hermès, Cartier. Serif typography with dignified
+      presence, champagne gold accents on generous white space, subtle paper
+      textures, and understated elegance that whispers rather than shouts.
+      Every element breathes with intentional restraint.
+    reference: ["montblanc.com", "hermes.com", "cartier.com"]
+    tokens:
+      colors:
+        light:
+          background: "#FDFAF5"
+          surface: "#F5F0E8"
+          surface-elevated: "#FFFFFF"
+          primary: "#C9A96E"
+          secondary: "#8B7355"
+          accent: "#1A1A1A"
+          text-primary: "#0A0A0A"
+          text-secondary: "#3D3D3D"
+          text-tertiary: "#7A7A7A"
+          border: "rgba(201, 169, 110, 0.25)"
+          separator: "#E8E0D4"
+          destructive: "#8B2500"
+          success: "#2D5A27"
+          warning: "#8B6914"
+        dark:
+          background: "#0A0A0A"
+          surface: "#161412"
+          surface-elevated: "#1E1B18"
+          primary: "#D4B87A"
+          secondary: "#A08E6F"
+          accent: "#F5F0E8"
+          text-primary: "#F5F0E8"
+          text-secondary: "#B8AFA2"
+          text-tertiary: "#6E655A"
+          border: "rgba(212, 184, 122, 0.20)"
+          separator: "#2A2520"
+          destructive: "#D4745A"
+          success: "#6B9E65"
+          warning: "#D4A830"
+      typography:
+        font_display: "'Playfair Display', 'Georgia', serif"
+        font_family: "'Inter', 'Lato', 'Helvetica Neue', sans-serif"
+        font_mono: "'JetBrains Mono', 'Menlo', monospace"
+        scale: [11, 13, 15, 17, 20, 24, 30, 38, 48, 60, 72]
+        weights: [300, 400, 500, 600, 700]
+        line_height: 1.6
+        letter_spacing: "0.02em"
+        title_tracking: "0.04em"
+        heading_style: "serif display, uppercase optional, generous tracking"
+      spacing:
+        base: 8
+        scale: [0, 4, 8, 16, 24, 32, 48, 64, 80, 96, 120, 160]
+      radius:
+        sm: 2
+        md: 4
+        lg: 6
+        xl: 8
+        full: 9999
+      shadows:
+        sm: "0 1px 3px rgba(0,0,0,0.04)"
+        md: "0 4px 16px rgba(0,0,0,0.06)"
+        lg: "0 8px 32px rgba(0,0,0,0.08)"
+        gold: "0 4px 20px rgba(201,169,110,0.15)"
+        elevated: "0 16px 48px rgba(0,0,0,0.10)"
+      motion:
+        spring_default: { stiffness: 120, damping: 20, mass: 1.2 }
+        spring_gentle: { stiffness: 80, damping: 18, mass: 1.5 }
+        spring_reveal: { stiffness: 60, damping: 15, mass: 1.8 }
+        reduced_motion: "crossfade 0.4s ease"
+        parallax_intensity: 0.03
+        reveal_delay_step: "0.1s"
+      effects:
+        texture: "subtle paper grain via CSS noise filter"
+        gold_shimmer: "linear-gradient(135deg, #C9A96E 0%, #E8D5A8 50%, #C9A96E 100%)"
+        border_accent: "1px solid rgba(201,169,110,0.20)"
+        hover_glow: "0 0 20px rgba(201,169,110,0.10)"
+    component_patterns:
+      card: "white surface, hairline gold border on hover, generous padding (48px), subtle shadow"
+      button_primary: "solid black, uppercase, letter-spacing 0.15em, hover gold underline"
+      button_secondary: "transparent, gold border, uppercase, letter-spacing 0.12em"
+      input: "bottom-border only, gold focus border, serif label above"
+      modal: "white surface, centered, max-width 560px, serif title, generous padding"
+      nav: "transparent, serif logo, sparse links, uppercase, thin separator bottom"
+    css_variables_prefix: "--maison"
+    tailwind_extend:
+      colors:
+        maison-gold: "#C9A96E"
+        maison-cream: "#F5F0E8"
+        maison-charcoal: "#0A0A0A"
+
+  - id: luxury-atelier
+    name: "Luxury Atelier"
+    category: luxury
+    contrast_validated: true
+    composable: [luxury-maison, luxury-artisan, dark-elegant]
+    description: >
+      Essence of Chanel and Dior. Monochromatic elegance with surgical
+      precision, high contrast black and white, editorial typography with
+      condensed uppercase headings, and an occasional rouge accent that
+      punctuates like a red lip on a monochrome portrait.
+    reference: ["chanel.com", "dior.com", "ysl.com"]
+    tokens:
+      colors:
+        light:
+          background: "#FFFFFF"
+          surface: "#F7F7F7"
+          surface-elevated: "#FFFFFF"
+          primary: "#000000"
+          secondary: "#8C8C8C"
+          accent: "#C41E3A"
+          text-primary: "#000000"
+          text-secondary: "#4A4A4A"
+          text-tertiary: "#8C8C8C"
+          border: "rgba(0,0,0,0.10)"
+          separator: "#E5E5E5"
+          destructive: "#C41E3A"
+          success: "#1A1A1A"
+          warning: "#8C8C8C"
+        dark:
+          background: "#000000"
+          surface: "#0D0D0D"
+          surface-elevated: "#171717"
+          primary: "#FFFFFF"
+          secondary: "#8C8C8C"
+          accent: "#E63950"
+          text-primary: "#FFFFFF"
+          text-secondary: "#B3B3B3"
+          text-tertiary: "#666666"
+          border: "rgba(255,255,255,0.10)"
+          separator: "#1A1A1A"
+          destructive: "#E63950"
+          success: "#FFFFFF"
+          warning: "#8C8C8C"
+      typography:
+        font_display: "'Bebas Neue', 'Oswald', 'Impact', sans-serif"
+        font_family: "'Inter', 'Helvetica Neue', 'Arial', sans-serif"
+        font_mono: "'Space Mono', 'Courier New', monospace"
+        scale: [11, 12, 14, 16, 20, 24, 32, 40, 56, 72, 96]
+        weights: [300, 400, 500, 700]
+        line_height: 1.3
+        letter_spacing: "0.08em"
+        title_tracking: "0.12em"
+        heading_style: "condensed sans, uppercase, wide tracking, dramatic scale contrast"
+      spacing:
+        base: 8
+        scale: [0, 4, 8, 16, 24, 32, 48, 64, 80, 120, 160, 200]
+      radius:
+        sm: 0
+        md: 0
+        lg: 0
+        xl: 2
+        full: 9999
+      shadows:
+        sm: "none"
+        md: "0 2px 8px rgba(0,0,0,0.06)"
+        lg: "0 8px 24px rgba(0,0,0,0.10)"
+        elevated: "0 20px 60px rgba(0,0,0,0.12)"
+      motion:
+        spring_default: { stiffness: 200, damping: 30, mass: 1 }
+        spring_gentle: { stiffness: 100, damping: 25, mass: 1 }
+        fade_duration: "0.3s"
+        reduced_motion: "crossfade 0.2s ease"
+        transition_style: "fade-only, no bounce, no overshoot"
+      effects:
+        border_accent: "1px solid #000000"
+        hover_line: "2px solid underline, rouge accent"
+        contrast_separator: "1px solid rgba(0,0,0,0.08)"
+    component_patterns:
+      card: "no border-radius, thin border, generous white space, uppercase label"
+      button_primary: "solid black, no radius, uppercase, letter-spacing 0.15em, hover invert"
+      button_secondary: "transparent, black border, no radius, uppercase, hover fill black"
+      input: "no radius, thin bottom border, uppercase label, precise spacing"
+      modal: "full-width on mobile, no radius, stark black/white, editorial layout"
+      nav: "centered logo, sparse mono links, uppercase, zero radius"
+    css_variables_prefix: "--atelier"
+    tailwind_extend:
+      colors:
+        atelier-black: "#000000"
+        atelier-rouge: "#C41E3A"
+        atelier-gray: "#8C8C8C"
+
+  - id: luxury-artisan
+    name: "Luxury Artisan"
+    category: luxury
+    contrast_validated: true
+    composable: [luxury-maison, luxury-atelier, organic]
+    description: >
+      Essence of Aesop and Diptyque. Warm earth tones drawn from terracotta,
+      forest canopy, and aged parchment. Tactile textures that evoke natural
+      materials — linen, stone, pressed botanicals. Classic serif typography
+      with generous line height invites slow, considered reading.
+    reference: ["aesop.com", "diptyqueparis.com", "lecreuset.com"]
+    tokens:
+      colors:
+        light:
+          background: "#F2EDE4"
+          surface: "#E8E0D4"
+          surface-elevated: "#FAF6F0"
+          primary: "#C75B39"
+          secondary: "#2D4A3E"
+          accent: "#8B6914"
+          text-primary: "#2C2C2C"
+          text-secondary: "#4A4540"
+          text-tertiary: "#7A756E"
+          border: "rgba(44,44,44,0.12)"
+          separator: "#D4CCC0"
+          destructive: "#A0301E"
+          success: "#2D4A3E"
+          warning: "#8B6914"
+        dark:
+          background: "#1A1814"
+          surface: "#242018"
+          surface-elevated: "#2E2A22"
+          primary: "#D4775A"
+          secondary: "#5A9E82"
+          accent: "#C4A040"
+          text-primary: "#EAE4DA"
+          text-secondary: "#B8AFA2"
+          text-tertiary: "#706A60"
+          border: "rgba(234,228,218,0.12)"
+          separator: "#332E26"
+          destructive: "#D4745A"
+          success: "#5A9E82"
+          warning: "#C4A040"
+      typography:
+        font_display: "'EB Garamond', 'Garamond', 'Georgia', serif"
+        font_family: "'EB Garamond', 'Garamond', 'Georgia', serif"
+        font_body: "'Inter', 'Lato', sans-serif"
+        font_mono: "'IBM Plex Mono', monospace"
+        scale: [12, 14, 16, 18, 21, 24, 30, 36, 44, 54]
+        weights: [400, 500, 600, 700]
+        line_height: 1.7
+        letter_spacing: "0.01em"
+        title_tracking: "0.02em"
+        heading_style: "classic serif, sentence case, generous line height"
+      spacing:
+        base: 8
+        scale: [0, 4, 8, 16, 24, 32, 40, 56, 72, 96, 120]
+      radius:
+        sm: 4
+        md: 8
+        lg: 12
+        xl: 16
+        full: 9999
+      shadows:
+        sm: "0 1px 4px rgba(44,44,44,0.06)"
+        md: "0 4px 12px rgba(44,44,44,0.08)"
+        lg: "0 8px 28px rgba(44,44,44,0.10)"
+        warm: "0 6px 20px rgba(199,91,57,0.10)"
+      motion:
+        spring_default: { stiffness: 100, damping: 18, mass: 1.3 }
+        spring_gentle: { stiffness: 60, damping: 14, mass: 1.5 }
+        spring_organic: { stiffness: 80, damping: 16, mass: 1.4 }
+        reduced_motion: "crossfade 0.5s ease"
+        easing: "cubic-bezier(0.25, 0.1, 0.25, 1.0)"
+      effects:
+        texture: "linen or paper grain overlay at 3% opacity"
+        warm_gradient: "linear-gradient(180deg, #F2EDE4 0%, #E8E0D4 100%)"
+        botanical_accent: "subtle leaf/botanical SVG pattern at 2% opacity"
+        border_organic: "1px solid rgba(44,44,44,0.10)"
+    component_patterns:
+      card: "warm cream surface, subtle shadow, generous padding (40px), serif heading"
+      button_primary: "solid terracotta, rounded-md, sentence case, warm hover glow"
+      button_secondary: "transparent, terracotta border, sentence case, hover fill subtle"
+      input: "cream background, rounded-md, serif label, warm focus border"
+      modal: "cream surface, rounded-lg, serif title, botanical accent optional"
+      nav: "transparent, serif logo, sentence case links, warm separator bottom"
+    css_variables_prefix: "--artisan"
+    tailwind_extend:
+      colors:
+        artisan-terracotta: "#C75B39"
+        artisan-forest: "#2D4A3E"
+        artisan-cream: "#F2EDE4"
+        artisan-parchment: "#E8E0D4"
+
+# ==============================================================================
+# 9. PREMIUM TECH
+# ==============================================================================
+premium_tech:
+
+  - id: premium-audio
+    name: "Premium Audio"
+    category: premium-tech
+    contrast_validated: true
+    composable: [dark-elegant, minimalist, luxury-maison]
+    description: >
+      Essence of Bang & Olufsen and Bose. Sleek matte dark surfaces with
+      precision-machined aesthetics. Silver and amber accents punctuate an
+      otherwise monochromatic palette. Thin typography at large scales
+      conveys engineering confidence. Every pixel feels CNC-milled.
+    reference: ["bang-olufsen.com", "bose.com", "sonos.com"]
+    tokens:
+      colors:
+        light:
+          background: "#F5F5F0"
+          surface: "#EAEAE5"
+          surface-elevated: "#FFFFFF"
+          primary: "#1A1A1A"
+          secondary: "#C0C0C0"
+          accent: "#E8A838"
+          text-primary: "#1A1A1A"
+          text-secondary: "#4D4D4D"
+          text-tertiary: "#808080"
+          border: "rgba(26,26,26,0.10)"
+          separator: "#D5D5D0"
+          destructive: "#B03020"
+          success: "#2D5A27"
+          warning: "#E8A838"
+        dark:
+          background: "#0E0E0E"
+          surface: "#1A1A1A"
+          surface-elevated: "#242424"
+          primary: "#F5F5F0"
+          secondary: "#C0C0C0"
+          accent: "#E8A838"
+          text-primary: "#F5F5F0"
+          text-secondary: "#A0A0A0"
+          text-tertiary: "#606060"
+          border: "rgba(245,245,240,0.08)"
+          separator: "#2A2A2A"
+          destructive: "#E06050"
+          success: "#6B9E65"
+          warning: "#E8A838"
+      typography:
+        font_family: "'Inter', 'Helvetica Neue', 'Arial', sans-serif"
+        font_mono: "'JetBrains Mono', 'SF Mono', monospace"
+        scale: [11, 13, 15, 18, 22, 28, 36, 48, 64, 80]
+        weights: [200, 300, 400, 500, 600]
+        line_height: 1.4
+        letter_spacing: "0.01em"
+        title_tracking: "0.03em"
+        heading_style: "thin/light weight, large sizes, precise letter-spacing"
+      spacing:
+        base: 8
+        scale: [0, 4, 8, 16, 24, 32, 48, 64, 80, 96, 128]
+      radius:
+        sm: 4
+        md: 8
+        lg: 12
+        xl: 16
+        full: 9999
+      shadows:
+        sm: "0 1px 2px rgba(0,0,0,0.08)"
+        md: "0 4px 12px rgba(0,0,0,0.12)"
+        lg: "0 12px 36px rgba(0,0,0,0.16)"
+        amber: "0 4px 20px rgba(232,168,56,0.12)"
+        elevated: "0 20px 50px rgba(0,0,0,0.20)"
+      motion:
+        spring_default: { stiffness: 250, damping: 28, mass: 1 }
+        spring_precise: { stiffness: 300, damping: 35, mass: 0.8 }
+        spring_smooth: { stiffness: 150, damping: 25, mass: 1 }
+        reduced_motion: "crossfade 0.2s ease"
+        transition_style: "linear reveals, mechanical precision, no bounce"
+      effects:
+        matte_surface: "background with subtle noise grain at 2% opacity"
+        silver_edge: "1px solid rgba(192,192,192,0.15)"
+        amber_indicator: "2px solid #E8A838"
+        precision_line: "0.5px solid rgba(192,192,192,0.20)"
+    component_patterns:
+      card: "matte dark surface, precision silver border, thin typography, generous padding"
+      button_primary: "solid dark, thin font weight, rounded-md, subtle silver border"
+      button_secondary: "transparent, silver border, thin weight, hover amber accent"
+      input: "matte surface, thin border, amber focus indicator, mono labels for data"
+      modal: "dark surface, rounded-lg, precision borders, amber accent header line"
+      nav: "matte surface, thin silver separator, spaced links, amber active indicator"
+    css_variables_prefix: "--audio"
+    tailwind_extend:
+      colors:
+        audio-matte: "#1A1A1A"
+        audio-silver: "#C0C0C0"
+        audio-amber: "#E8A838"
+
+  - id: premium-optics
+    name: "Premium Optics"
+    category: premium-tech
+    contrast_validated: true
+    composable: [premium-audio, dark-elegant, minimalist]
+    description: >
+      Essence of Leica and Hasselblad. Documentary aesthetic built around
+      photographic grids and precision engineering. Red accent as signature
+      brand mark, monospace for technical data, strict grid alignment.
+      The interface itself feels like a well-engineered instrument.
+    reference: ["leica-camera.com", "hasselblad.com", "fujifilm-x.com"]
+    tokens:
+      colors:
+        light:
+          background: "#F0F0F0"
+          surface: "#E8E8E8"
+          surface-elevated: "#FFFFFF"
+          primary: "#333333"
+          secondary: "#999999"
+          accent: "#E32119"
+          text-primary: "#1A1A1A"
+          text-secondary: "#555555"
+          text-tertiary: "#888888"
+          border: "rgba(0,0,0,0.10)"
+          separator: "#D0D0D0"
+          destructive: "#E32119"
+          success: "#2D6B30"
+          warning: "#CC8800"
+        dark:
+          background: "#141414"
+          surface: "#1E1E1E"
+          surface-elevated: "#282828"
+          primary: "#E8E8E8"
+          secondary: "#888888"
+          accent: "#E32119"
+          text-primary: "#ECECEC"
+          text-secondary: "#A0A0A0"
+          text-tertiary: "#606060"
+          border: "rgba(255,255,255,0.08)"
+          separator: "#2A2A2A"
+          destructive: "#E32119"
+          success: "#5A9E5F"
+          warning: "#E0A030"
+      typography:
+        font_family: "'DIN 2014', 'Inter', 'Helvetica Neue', sans-serif"
+        font_mono: "'JetBrains Mono', 'SF Mono', monospace"
+        scale: [10, 12, 14, 16, 18, 22, 28, 36, 48, 60]
+        weights: [300, 400, 500, 600, 700]
+        line_height: 1.45
+        letter_spacing: "0.02em"
+        title_tracking: "0.04em"
+        heading_style: "German-style sans, strict grid, mixed with monospace for data"
+        data_font: "monospace for technical specs, EXIF data, serial numbers"
+      spacing:
+        base: 8
+        scale: [0, 4, 8, 12, 16, 24, 32, 48, 64, 80, 96]
+        grid: "strict 8px grid, photographic aspect ratios (3:2, 4:3, 16:9)"
+      radius:
+        sm: 2
+        md: 4
+        lg: 6
+        xl: 8
+        full: 9999
+      shadows:
+        sm: "0 1px 3px rgba(0,0,0,0.06)"
+        md: "0 4px 12px rgba(0,0,0,0.08)"
+        lg: "0 8px 28px rgba(0,0,0,0.12)"
+        red: "0 2px 12px rgba(227,33,25,0.15)"
+      motion:
+        spring_default: { stiffness: 280, damping: 30, mass: 0.9 }
+        spring_precise: { stiffness: 350, damping: 35, mass: 0.8 }
+        shutter_duration: "0.15s"
+        reduced_motion: "crossfade 0.15s ease"
+        transition_style: "shutter-like, precise, clipped timing"
+      effects:
+        grid_overlay: "strict photographic grid lines at 2% opacity"
+        red_dot: "8px circle #E32119 — signature brand mark"
+        precision_border: "0.5px solid rgba(0,0,0,0.12)"
+        viewfinder: "subtle vignette effect at edges"
+    component_patterns:
+      card: "strict grid, thin border, photo-centric layout, monospace metadata"
+      button_primary: "solid dark, minimal radius, uppercase, red accent on hover"
+      button_secondary: "transparent, thin border, uppercase, precise spacing"
+      input: "thin border, minimal radius, monospace value display, red focus"
+      modal: "strict grid, photo-centered, monospace specs, red accent header"
+      nav: "strict horizontal grid, red dot logo accent, monospace links optional"
+    css_variables_prefix: "--optics"
+    tailwind_extend:
+      colors:
+        optics-red: "#E32119"
+        optics-gray: "#333333"
+        optics-light: "#E8E8E8"
+
+# ==============================================================================
+# 10. AUTOMOTIVE PREMIUM
+# ==============================================================================
+automotive_premium:
+
+  - id: auto-electric
+    name: "Auto Electric"
+    category: automotive
+    contrast_validated: true
+    composable: [vercel-style, minimalist, premium-audio]
+    description: >
+      Essence of Tesla, Rivian, and Lucid Motors. Clean energy meets digital
+      precision. Expansive white space with bold electric blue accents,
+      futuristic geometric sans typography at hero scale, and smooth parallax
+      that evokes the silent glide of an electric powertrain.
+    reference: ["tesla.com", "rivian.com", "lucidmotors.com"]
+    tokens:
+      colors:
+        light:
+          background: "#FFFFFF"
+          surface: "#F4F4F4"
+          surface-elevated: "#FFFFFF"
+          primary: "#3E68FF"
+          secondary: "#6B7280"
+          accent: "#10B981"
+          text-primary: "#0C0C0C"
+          text-secondary: "#4B5563"
+          text-tertiary: "#9CA3AF"
+          border: "rgba(0,0,0,0.06)"
+          separator: "#E5E7EB"
+          destructive: "#EF4444"
+          success: "#10B981"
+          warning: "#F59E0B"
+        dark:
+          background: "#0C0C0C"
+          surface: "#151515"
+          surface-elevated: "#1F1F1F"
+          primary: "#5B82FF"
+          secondary: "#9CA3AF"
+          accent: "#34D399"
+          text-primary: "#F9FAFB"
+          text-secondary: "#D1D5DB"
+          text-tertiary: "#6B7280"
+          border: "rgba(255,255,255,0.06)"
+          separator: "#1F1F1F"
+          destructive: "#F87171"
+          success: "#34D399"
+          warning: "#FBBF24"
+      typography:
+        font_family: "'Inter', 'Gotham', 'Helvetica Neue', sans-serif"
+        font_mono: "'JetBrains Mono', monospace"
+        scale: [12, 14, 16, 20, 24, 32, 40, 56, 72, 96]
+        weights: [300, 400, 500, 600, 700]
+        line_height: 1.35
+        letter_spacing: "-0.01em"
+        title_tracking: "-0.02em"
+        heading_style: "clean geometric sans, large hero text, minimal weight contrast"
+      spacing:
+        base: 8
+        scale: [0, 4, 8, 16, 24, 32, 48, 64, 96, 128, 160, 200]
+      radius:
+        sm: 6
+        md: 10
+        lg: 14
+        xl: 20
+        full: 9999
+      shadows:
+        sm: "0 1px 3px rgba(0,0,0,0.04)"
+        md: "0 4px 16px rgba(0,0,0,0.06)"
+        lg: "0 12px 40px rgba(0,0,0,0.10)"
+        blue: "0 8px 30px rgba(62,104,255,0.12)"
+        elevated: "0 24px 64px rgba(0,0,0,0.12)"
+      motion:
+        spring_default: { stiffness: 180, damping: 22, mass: 1 }
+        spring_glide: { stiffness: 120, damping: 20, mass: 1.2 }
+        spring_hero: { stiffness: 80, damping: 18, mass: 1.5 }
+        reduced_motion: "crossfade 0.3s ease"
+        parallax_intensity: 0.08
+        transition_style: "smooth glides, parallax scrolling, subtle 3D transforms"
+      effects:
+        hero_gradient: "radial-gradient(ellipse at top, rgba(62,104,255,0.06) 0%, transparent 60%)"
+        glass_nav: "backdrop-filter: blur(20px) saturate(1.4)"
+        electric_glow: "0 0 40px rgba(62,104,255,0.10)"
+        clean_border: "1px solid rgba(0,0,0,0.06)"
+    component_patterns:
+      card: "clean white, subtle shadow, generous padding, rounded-xl, blue accent on hover"
+      button_primary: "solid electric blue, rounded-lg, medium weight, smooth hover darken"
+      button_secondary: "transparent, thin border, rounded-lg, hover blue tint"
+      input: "light gray surface, rounded-lg, blue focus ring, clean label"
+      modal: "white surface, rounded-2xl, centered, blue accent header, spring enter"
+      nav: "glass effect, sticky, clean separator, blue active indicator"
+    css_variables_prefix: "--electric"
+    tailwind_extend:
+      colors:
+        electric-blue: "#3E68FF"
+        electric-dark: "#0C0C0C"
+        electric-green: "#10B981"
+
+  - id: auto-heritage
+    name: "Auto Heritage"
+    category: automotive
+    contrast_validated: true
+    composable: [auto-electric, premium-audio, dark-elegant]
+    description: >
+      Essence of Porsche and BMW. Performance heritage distilled into digital
+      form. Deep navy and racing white with precision red accents, bold
+      headings that command attention like a tachometer, tabular numbers
+      for specs, and fast decisive transitions that mirror the driving
+      experience.
+    reference: ["porsche.com", "bmw.com", "mercedes-benz.com"]
+    tokens:
+      colors:
+        light:
+          background: "#FAFAFA"
+          surface: "#F0F0F0"
+          surface-elevated: "#FFFFFF"
+          primary: "#001428"
+          secondary: "#9EA3A7"
+          accent: "#D5001C"
+          text-primary: "#001428"
+          text-secondary: "#4A5568"
+          text-tertiary: "#9EA3A7"
+          border: "rgba(0,20,40,0.10)"
+          separator: "#E2E4E6"
+          destructive: "#D5001C"
+          success: "#006633"
+          warning: "#CC7700"
+        dark:
+          background: "#0A0E14"
+          surface: "#141A22"
+          surface-elevated: "#1C2430"
+          primary: "#FFFFFF"
+          secondary: "#9EA3A7"
+          accent: "#E8102E"
+          text-primary: "#F5F5F5"
+          text-secondary: "#B0B4B8"
+          text-tertiary: "#6B7075"
+          border: "rgba(255,255,255,0.08)"
+          separator: "#1C2430"
+          destructive: "#E8102E"
+          success: "#34D399"
+          warning: "#FBBF24"
+      typography:
+        font_family: "'Inter', 'Porsche Next', 'BMW Type Next', sans-serif"
+        font_mono: "'JetBrains Mono', monospace"
+        scale: [11, 13, 15, 18, 22, 28, 36, 44, 56, 72]
+        weights: [400, 500, 600, 700, 800]
+        line_height: 1.35
+        letter_spacing: "0em"
+        title_tracking: "-0.01em"
+        heading_style: "bold sans headings, engineering-precise body, tabular numbers for specs"
+        number_style: "tabular-nums, lining-nums"
+      spacing:
+        base: 8
+        scale: [0, 4, 8, 16, 24, 32, 48, 64, 80, 96, 128]
+      radius:
+        sm: 4
+        md: 8
+        lg: 12
+        xl: 16
+        full: 9999
+      shadows:
+        sm: "0 1px 3px rgba(0,20,40,0.06)"
+        md: "0 4px 16px rgba(0,20,40,0.08)"
+        lg: "0 12px 36px rgba(0,20,40,0.12)"
+        red: "0 4px 20px rgba(213,0,28,0.12)"
+        elevated: "0 20px 50px rgba(0,20,40,0.15)"
+      motion:
+        spring_default: { stiffness: 350, damping: 25, mass: 0.8 }
+        spring_fast: { stiffness: 500, damping: 30, mass: 0.6 }
+        spring_decisive: { stiffness: 400, damping: 28, mass: 0.7 }
+        reduced_motion: "crossfade 0.15s ease"
+        transition_style: "performance-inspired, fast springs, decisive, no wobble"
+      effects:
+        navy_gradient: "linear-gradient(180deg, #001428 0%, #0A1E32 100%)"
+        red_accent_line: "3px solid #D5001C"
+        precision_grid: "strict 8px engineering grid"
+        performance_stripe: "diagonal stripe pattern at 1% opacity"
+    component_patterns:
+      card: "clean surface, navy or white, red accent line top/left, bold heading, tabular specs"
+      button_primary: "solid navy, rounded-md, bold uppercase, red hover underline"
+      button_secondary: "transparent, navy border, rounded-md, uppercase, hover fill"
+      input: "clean surface, rounded-md, navy focus border, tabular number input"
+      modal: "white/navy surface, rounded-lg, red accent header line, bold serif title"
+      nav: "navy surface (dark), white surface (light), red active indicator, bold links"
+    css_variables_prefix: "--heritage"
+    tailwind_extend:
+      colors:
+        heritage-navy: "#001428"
+        heritage-red: "#D5001C"
+        heritage-silver: "#9EA3A7"
+
+# ==============================================================================
+# 11. HEALTHCARE PREMIUM
+# ==============================================================================
+healthcare_premium:
+
+  - id: health-clinical
+    name: "Health Clinical"
+    category: healthcare
+    contrast_validated: true
+    composable: [health-wellness, minimalist, education-friendly]
+    description: >
+      Premium clinical and hospital design. Built on trust blue and calm
+      green, with clinical white backgrounds that feel clean without feeling
+      cold. Humanist sans typography prioritizes readability at every size.
+      Motion is gentle and reassuring — never sudden, never startling.
+      Accessibility is not a feature, it is the foundation.
+    reference: ["mayoclinic.org", "onemedical.com", "clevelandclinic.org"]
+    tokens:
+      colors:
+        light:
+          background: "#FAFCFF"
+          surface: "#F0F4F8"
+          surface-elevated: "#FFFFFF"
+          primary: "#0057B8"
+          secondary: "#00875A"
+          accent: "#6B46C1"
+          text-primary: "#1A202C"
+          text-secondary: "#4A5568"
+          text-tertiary: "#6B7280"
+          border: "rgba(0,87,184,0.12)"
+          separator: "#E2E8F0"
+          destructive: "#DC2626"
+          success: "#00875A"
+          warning: "#D97706"
+          alert: "#FF6B6B"
+          info: "#0057B8"
+        dark:
+          background: "#0F1318"
+          surface: "#1A202C"
+          surface-elevated: "#2D3748"
+          primary: "#60A5FA"
+          secondary: "#34D399"
+          accent: "#A78BFA"
+          text-primary: "#F7FAFC"
+          text-secondary: "#CBD5E0"
+          text-tertiary: "#718096"
+          border: "rgba(96,165,250,0.12)"
+          separator: "#2D3748"
+          destructive: "#FCA5A5"
+          success: "#34D399"
+          warning: "#FBBF24"
+          alert: "#FCA5A5"
+          info: "#60A5FA"
+      typography:
+        font_family: "'Source Sans 3', 'Nunito', 'Segoe UI', system-ui, sans-serif"
+        font_mono: "'Source Code Pro', monospace"
+        scale: [12, 14, 16, 18, 20, 24, 28, 34, 40]
+        weights: [400, 500, 600, 700]
+        line_height: 1.6
+        letter_spacing: "0em"
+        title_tracking: "-0.01em"
+        heading_style: "humanist sans, highly readable, clear hierarchy, semibold not bold"
+      spacing:
+        base: 4
+        scale: [0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80]
+      radius:
+        sm: 6
+        md: 10
+        lg: 14
+        xl: 20
+        full: 9999
+      shadows:
+        sm: "0 1px 3px rgba(0,0,0,0.04)"
+        md: "0 4px 12px rgba(0,0,0,0.06)"
+        lg: "0 8px 24px rgba(0,0,0,0.08)"
+        blue: "0 4px 16px rgba(0,87,184,0.10)"
+      motion:
+        spring_default: { stiffness: 150, damping: 22, mass: 1.2 }
+        spring_gentle: { stiffness: 80, damping: 18, mass: 1.5 }
+        spring_reassuring: { stiffness: 100, damping: 20, mass: 1.3 }
+        reduced_motion: "crossfade 0.4s ease"
+        transition_style: "gentle, reassuring, no sudden movements, accessibility-first"
+      effects:
+        trust_gradient: "linear-gradient(135deg, rgba(0,87,184,0.03) 0%, rgba(0,135,90,0.03) 100%)"
+        calm_border: "1px solid rgba(0,87,184,0.10)"
+        status_glow_success: "0 0 12px rgba(0,135,90,0.15)"
+        status_glow_alert: "0 0 12px rgba(255,107,107,0.15)"
+    component_patterns:
+      card: "white surface, subtle blue shadow, rounded-xl, clear heading, status indicator"
+      button_primary: "solid trust blue, rounded-lg, semibold, gentle hover darken"
+      button_secondary: "transparent, blue border, rounded-lg, hover blue tint"
+      button_alert: "solid coral, rounded-lg, semibold, used sparingly for urgent actions"
+      input: "white surface, rounded-lg, blue focus ring, clear label above, helper text below"
+      modal: "white surface, rounded-2xl, gentle spring enter, clear close button 44x44"
+      nav: "white surface, blue active indicator, clear labels, always accessible"
+    css_variables_prefix: "--clinical"
+    tailwind_extend:
+      colors:
+        clinical-blue: "#0057B8"
+        clinical-green: "#00875A"
+        clinical-alert: "#FF6B6B"
+        clinical-bg: "#FAFCFF"
+
+  - id: health-wellness
+    name: "Health Wellness"
+    category: healthcare
+    contrast_validated: true
+    composable: [health-clinical, organic, luxury-artisan]
+    description: >
+      Premium wellness, spa, and mindfulness design. Soft sage greens, warm
+      sand, and sky blues create a serene palette drawn from nature. Rounded
+      typography feels inviting, not clinical. Motion mimics breathing
+      rhythms and gentle waves — the UI itself feels like a calming
+      experience.
+    reference: ["calm.com", "headspace.com", "ritualvitamins.com"]
+    tokens:
+      colors:
+        light:
+          background: "#F5F7F2"
+          surface: "#EDF0E8"
+          surface-elevated: "#FAFCF8"
+          primary: "#4A7C5C"
+          secondary: "#87CEEB"
+          accent: "#FFCBA4"
+          text-primary: "#1B3A2D"
+          text-secondary: "#3D5A4A"
+          text-tertiary: "#728E7F"
+          border: "rgba(74,124,92,0.12)"
+          separator: "#D8E0D4"
+          destructive: "#C0392B"
+          success: "#4A7C5C"
+          warning: "#D4A040"
+        dark:
+          background: "#141E18"
+          surface: "#1E2E24"
+          surface-elevated: "#283830"
+          primary: "#7CB08C"
+          secondary: "#87CEEB"
+          accent: "#FFCBA4"
+          text-primary: "#E8F0EC"
+          text-secondary: "#B0C4B8"
+          text-tertiary: "#6E8A7A"
+          border: "rgba(124,176,140,0.12)"
+          separator: "#283830"
+          destructive: "#E8756A"
+          success: "#7CB08C"
+          warning: "#E8C070"
+      typography:
+        font_family: "'Nunito', 'Quicksand', 'Rounded Mplus 1c', system-ui, sans-serif"
+        font_mono: "'Fira Code', monospace"
+        scale: [12, 14, 16, 18, 22, 26, 32, 40, 48]
+        weights: [300, 400, 500, 600, 700]
+        line_height: 1.7
+        letter_spacing: "0.01em"
+        title_tracking: "0em"
+        heading_style: "rounded sans, soft, inviting, generous spacing between elements"
+      spacing:
+        base: 8
+        scale: [0, 4, 8, 16, 24, 32, 40, 56, 72, 96, 120]
+      radius:
+        sm: 10
+        md: 16
+        lg: 24
+        xl: 32
+        full: 9999
+      shadows:
+        sm: "0 2px 6px rgba(27,58,45,0.04)"
+        md: "0 4px 14px rgba(27,58,45,0.06)"
+        lg: "0 8px 28px rgba(27,58,45,0.08)"
+        sage: "0 6px 20px rgba(74,124,92,0.10)"
+      motion:
+        spring_default: { stiffness: 80, damping: 16, mass: 1.5 }
+        spring_gentle: { stiffness: 50, damping: 14, mass: 1.8 }
+        spring_breathing: { stiffness: 30, damping: 10, mass: 2.0 }
+        reduced_motion: "crossfade 0.5s ease"
+        breathing_animation: "scale 1.0→1.02→1.0 over 4s, infinite, ease-in-out"
+        wave_animation: "translateY 0→-4px→0 over 3s, infinite, ease-in-out"
+      effects:
+        sage_gradient: "linear-gradient(180deg, #F5F7F2 0%, #EDF0E8 100%)"
+        nature_blur: "backdrop-filter: blur(16px) saturate(1.2)"
+        organic_border: "1px solid rgba(74,124,92,0.12)"
+        sunrise_accent: "linear-gradient(135deg, #FFCBA4 0%, #87CEEB 100%)"
+    component_patterns:
+      card: "soft sage surface, large radius, gentle shadow, generous padding, breathing hover"
+      button_primary: "solid sage green, rounded-full, soft weight, gentle hover glow"
+      button_secondary: "transparent, sage border, rounded-full, hover sage tint"
+      input: "soft surface, rounded-xl, sage focus ring, rounded label, helper text"
+      modal: "nature surface, rounded-2xl, breathing enter animation, organic border"
+      nav: "transparent, nature blur, rounded pill links, sage active indicator"
+    css_variables_prefix: "--wellness"
+    tailwind_extend:
+      colors:
+        wellness-sage: "#B8C9B8"
+        wellness-forest: "#1B3A2D"
+        wellness-sky: "#87CEEB"
+        wellness-peach: "#FFCBA4"
+        wellness-sand: "#E8DDD0"
+
+# ==============================================================================
+# 12. DIGITAL MARKETING
+# ==============================================================================
+digital_marketing:
+
+  - id: marketing-saas
+    name: "Marketing SaaS"
+    category: marketing
+    contrast_validated: true
+    composable: [marketing-creative, stripe-style, saas-dashboard]
+    description: >
+      Essence of HubSpot, Intercom, and Webflow. Conversion-optimized design
+      with vibrant gradient heroes, prominent CTAs, social proof sections,
+      and bold typography that scans fast. Purple-to-blue gradients signal
+      innovation, green signals success, and every element serves the
+      conversion funnel.
+    reference: ["hubspot.com", "webflow.com", "intercom.com"]
+    tokens:
+      colors:
+        light:
+          background: "#FFFFFF"
+          surface: "#F8F9FC"
+          surface-elevated: "#FFFFFF"
+          primary: "#4F46E5"
+          primary-gradient: "linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)"
+          secondary: "#6366F1"
+          accent: "#10B981"
+          text-primary: "#1E1E2E"
+          text-secondary: "#4B5563"
+          text-tertiary: "#9CA3AF"
+          border: "rgba(79,70,229,0.10)"
+          separator: "#E5E7EB"
+          destructive: "#EF4444"
+          success: "#10B981"
+          warning: "#F59E0B"
+          cta: "#7C3AED"
+        dark:
+          background: "#0F0F1A"
+          surface: "#1A1A2E"
+          surface-elevated: "#252540"
+          primary: "#818CF8"
+          primary-gradient: "linear-gradient(135deg, #818CF8 0%, #A78BFA 100%)"
+          secondary: "#A5B4FC"
+          accent: "#34D399"
+          text-primary: "#F9FAFB"
+          text-secondary: "#D1D5DB"
+          text-tertiary: "#6B7280"
+          border: "rgba(129,140,248,0.12)"
+          separator: "#252540"
+          destructive: "#FCA5A5"
+          success: "#34D399"
+          warning: "#FBBF24"
+          cta: "#A78BFA"
+      typography:
+        font_family: "'Inter', 'DM Sans', system-ui, sans-serif"
+        font_mono: "'Fira Code', monospace"
+        scale: [12, 14, 16, 18, 22, 28, 36, 48, 60, 72]
+        weights: [400, 500, 600, 700, 800]
+        line_height: 1.5
+        letter_spacing: "-0.01em"
+        title_tracking: "-0.02em"
+        heading_style: "bold sans headings, large sizes, impactful, strong hierarchy for scanning"
+      spacing:
+        base: 4
+        scale: [0, 4, 8, 12, 16, 24, 32, 48, 64, 80, 96, 120]
+      radius:
+        sm: 6
+        md: 10
+        lg: 14
+        xl: 20
+        2xl: 28
+        full: 9999
+      shadows:
+        sm: "0 1px 3px rgba(0,0,0,0.06)"
+        md: "0 4px 16px rgba(0,0,0,0.08)"
+        lg: "0 12px 40px rgba(0,0,0,0.12)"
+        purple: "0 8px 30px rgba(79,70,229,0.15)"
+        cta: "0 4px 20px rgba(124,58,237,0.25)"
+        elevated: "0 24px 50px rgba(0,0,0,0.15)"
+      motion:
+        spring_default: { stiffness: 300, damping: 22, mass: 0.9 }
+        spring_bouncy: { stiffness: 400, damping: 15, mass: 0.7 }
+        spring_reveal: { stiffness: 200, damping: 20, mass: 1 }
+        reduced_motion: "crossfade 0.2s ease"
+        scroll_reveal: "fade-up with stagger 0.1s"
+        hover_lift: "translateY(-4px) + shadow increase"
+        cta_pulse: "subtle scale pulse 1.0→1.02→1.0, 2s infinite"
+      effects:
+        hero_gradient: "linear-gradient(135deg, rgba(79,70,229,0.06) 0%, rgba(124,58,237,0.04) 50%, rgba(16,185,129,0.03) 100%)"
+        gradient_border: "1px solid transparent, background-image gradient"
+        glass_surface: "backdrop-filter: blur(20px) saturate(1.3)"
+        dot_pattern: "radial-gradient dots at 3% opacity for hero backgrounds"
+    component_patterns:
+      card: "white surface, hover lift, purple shadow, rounded-xl, gradient accent top"
+      button_primary: "gradient purple→indigo, rounded-lg, bold, shadow-cta, bouncy hover"
+      button_secondary: "transparent, gradient border, rounded-lg, hover fill gradient"
+      button_cta: "large, gradient, rounded-xl, shadow-cta, pulse animation, full-width on mobile"
+      input: "white surface, rounded-lg, purple focus ring, clean label"
+      modal: "white surface, rounded-2xl, spring enter, gradient accent header"
+      nav: "glass surface, sticky, gradient active indicator, CTA button in nav"
+    css_variables_prefix: "--saas"
+    tailwind_extend:
+      colors:
+        saas-indigo: "#4F46E5"
+        saas-purple: "#7C3AED"
+        saas-green: "#10B981"
+        saas-dark: "#1E1E2E"
+
+  - id: marketing-creative
+    name: "Marketing Creative"
+    category: marketing
+    contrast_validated: true
+    composable: [marketing-saas, neubrutalism, y2k-retro]
+    description: >
+      Essence of Mailchimp, Figma, and Framer. Playful and personality-rich,
+      with warm yellows, coral pops, and electric purple accents. Friendly
+      rounded typography invites exploration. Bouncy spring animations and
+      illustration-friendly layouts make the interface feel alive and
+      approachable.
+    reference: ["mailchimp.com", "figma.com", "framer.com"]
+    tokens:
+      colors:
+        light:
+          background: "#FFF8E7"
+          surface: "#FFFFFF"
+          surface-elevated: "#FFFFFF"
+          primary: "#7B61FF"
+          secondary: "#FF6F61"
+          accent: "#FFE01B"
+          text-primary: "#2C2C2C"
+          text-secondary: "#555555"
+          text-tertiary: "#888888"
+          border: "rgba(123,97,255,0.12)"
+          separator: "#F0E8D8"
+          destructive: "#E53E3E"
+          success: "#38A169"
+          warning: "#DD6B20"
+        dark:
+          background: "#1A1820"
+          surface: "#252230"
+          surface-elevated: "#302C3D"
+          primary: "#9B8AFF"
+          secondary: "#FF8F82"
+          accent: "#FFE85C"
+          text-primary: "#F5F0FF"
+          text-secondary: "#C4BDD4"
+          text-tertiary: "#7A7488"
+          border: "rgba(155,138,255,0.15)"
+          separator: "#302C3D"
+          destructive: "#FEB2B2"
+          success: "#68D391"
+          warning: "#FBD38D"
+      typography:
+        font_family: "'Poppins', 'DM Sans', system-ui, sans-serif"
+        font_mono: "'Fira Code', monospace"
+        scale: [12, 14, 16, 18, 22, 28, 36, 48, 60, 72]
+        weights: [400, 500, 600, 700, 800]
+        line_height: 1.5
+        letter_spacing: "0em"
+        title_tracking: "-0.01em"
+        heading_style: "friendly sans, playful weight contrast, generous sizing, personality-rich"
+      spacing:
+        base: 4
+        scale: [0, 4, 8, 12, 16, 24, 32, 48, 64, 80, 96]
+      radius:
+        sm: 8
+        md: 14
+        lg: 20
+        xl: 28
+        2xl: 36
+        full: 9999
+      shadows:
+        sm: "0 2px 6px rgba(44,44,44,0.06)"
+        md: "0 6px 16px rgba(44,44,44,0.08)"
+        lg: "0 12px 32px rgba(44,44,44,0.10)"
+        purple: "0 8px 24px rgba(123,97,255,0.15)"
+        playful: "4px 4px 0 rgba(44,44,44,0.08)"
+      motion:
+        spring_default: { stiffness: 350, damping: 18, mass: 0.8 }
+        spring_bouncy: { stiffness: 500, damping: 12, mass: 0.6 }
+        spring_playful: { stiffness: 400, damping: 14, mass: 0.7 }
+        reduced_motion: "crossfade 0.2s ease"
+        hover_bounce: "scale(1.05) with bouncy spring"
+        entrance: "fade-up + scale(0.95→1.0) with playful spring"
+        wiggle: "rotate(-2deg→2deg) on hover, 0.3s"
+      effects:
+        warm_bg: "linear-gradient(180deg, #FFF8E7 0%, #FFFFFF 50%)"
+        confetti_accent: "scattered geometric shapes at 3% opacity"
+        illustration_slot: "dedicated areas for SVG illustrations"
+        playful_border: "2px solid #2C2C2C"
+        yellow_highlight: "background #FFE01B with slight rotation"
+    component_patterns:
+      card: "white surface, playful shadow, large radius, illustration header area, rounded-2xl"
+      button_primary: "solid purple, rounded-full, bold, bouncy hover scale, playful shadow"
+      button_secondary: "white, thick border, rounded-full, hover fill yellow accent"
+      button_accent: "solid yellow, dark text, rounded-full, bouncy, used for fun CTAs"
+      input: "white surface, rounded-xl, purple focus ring, friendly label, rounded corners"
+      modal: "white surface, rounded-2xl, bouncy spring enter, illustration header, playful close"
+      nav: "warm background, rounded pill links, purple active, playful hover effects"
+    css_variables_prefix: "--creative"
+    tailwind_extend:
+      colors:
+        creative-purple: "#7B61FF"
+        creative-coral: "#FF6F61"
+        creative-yellow: "#FFE01B"
+        creative-cream: "#FFF8E7"
+
+# ==============================================================================
+# 13. FOOD & HOSPITALITY
+# ==============================================================================
+food_hospitality:
+
+  - id: food-fine-dining
+    name: "Food Fine Dining"
+    category: food
+    contrast_validated: true
+    composable: [food-modern-cafe, luxury-artisan, luxury-maison]
+    description: >
+      Essence of Alinea and Eleven Madison Park. Avant-garde fine dining
+      where plating is art and the website is a gallery. Deep charcoal and
+      warm neutrals create dramatic contrast for food photography. Refined
+      serif typography with cinematic spacing. Slow parallax and moody
+      lighting effects create an immersive, sensory-first experience.
+    reference: ["alinearestaurant.com", "elevenmadisonpark.com", "thefrenchlaundry.com"]
+    tokens:
+      colors:
+        light:
+          background: "#F5F3EE"
+          surface: "#E6E0D6"
+          surface-elevated: "#FDFBF7"
+          primary: "#2C2C24"
+          secondary: "#A67B5B"
+          accent: "#8B7335"
+          text-primary: "#1A1A1A"
+          text-secondary: "#4A4540"
+          text-tertiary: "#7A756E"
+          border: "rgba(44,44,36,0.10)"
+          separator: "#D4CCC0"
+          destructive: "#8B3020"
+          success: "#3D5A27"
+          warning: "#8B7335"
+        dark:
+          background: "#0E0E0C"
+          surface: "#1A1816"
+          surface-elevated: "#242220"
+          primary: "#E8E0D4"
+          secondary: "#C49A78"
+          accent: "#C4A55A"
+          text-primary: "#EAE4DA"
+          text-secondary: "#B8AFA2"
+          text-tertiary: "#706A60"
+          border: "rgba(232,224,212,0.10)"
+          separator: "#242220"
+          destructive: "#D4745A"
+          success: "#6B9E65"
+          warning: "#C4A55A"
+      typography:
+        font_display: "'Cormorant Garamond', 'Playfair Display', 'Georgia', serif"
+        font_family: "'Cormorant Garamond', 'Georgia', serif"
+        font_body: "'Inter', 'Lato', sans-serif"
+        font_mono: "'IBM Plex Mono', monospace"
+        scale: [12, 14, 16, 18, 22, 28, 36, 48, 60, 80]
+        weights: [300, 400, 500, 600, 700]
+        line_height: 1.7
+        letter_spacing: "0.01em"
+        title_tracking: "0.03em"
+        heading_style: "editorial serif, cinematic, italic for accents, dramatic white space"
+      spacing:
+        base: 8
+        scale: [0, 8, 16, 24, 32, 48, 64, 80, 96, 120, 160, 200]
+      radius:
+        sm: 2
+        md: 4
+        lg: 8
+        xl: 12
+        full: 9999
+      shadows:
+        sm: "0 1px 4px rgba(26,26,26,0.04)"
+        md: "0 4px 12px rgba(26,26,26,0.06)"
+        lg: "0 8px 28px rgba(26,26,26,0.08)"
+        warm: "0 8px 24px rgba(166,123,91,0.10)"
+      motion:
+        spring_default: { stiffness: 80, damping: 16, mass: 1.4 }
+        spring_gentle: { stiffness: 50, damping: 14, mass: 1.8 }
+        spring_cinematic: { stiffness: 40, damping: 12, mass: 2.0 }
+        reduced_motion: "crossfade 0.5s ease"
+        parallax_intensity: 0.06
+        zoom_reveal: "scale(1.05→1.0) over 1.2s ease-out"
+        transition_style: "slow parallax on food photography, cinematic zoom reveals, moody lighting"
+      effects:
+        parchment_texture: "subtle paper grain at 2% opacity"
+        warm_gradient: "linear-gradient(180deg, #F5F3EE 0%, #E6E0D6 100%)"
+        editorial_line: "1px solid rgba(44,44,36,0.15)"
+        photo_vignette: "radial-gradient(ellipse, transparent 50%, rgba(0,0,0,0.08) 100%)"
+        dramatic_overlay: "linear-gradient(180deg, transparent 40%, rgba(14,14,12,0.6) 100%)"
+    component_patterns:
+      card: "minimal border, photo-dominant layout, editorial serif heading, generous padding (56px), dramatic hover overlay"
+      button_primary: "solid charcoal, minimal radius, sentence case, serif text, warm hover glow"
+      button_secondary: "transparent, charcoal border, sentence case, serif, hover fill subtle"
+      input: "minimal, bottom-border only, serif label, warm accent focus"
+      modal: "editorial layout, photo-left text-right, serif title italic, cinematic spacing"
+      nav: "transparent, editorial serif logo, italic accent links, thin separator"
+    css_variables_prefix: "--dining"
+    tailwind_extend:
+      colors:
+        dining-charcoal: "#2C2C24"
+        dining-clay: "#A67B5B"
+        dining-bone: "#E6E0D6"
+        dining-parchment: "#F5F3EE"
+
+  - id: food-modern-cafe
+    name: "Food Modern Cafe"
+    category: food
+    contrast_validated: true
+    composable: [food-fine-dining, luxury-artisan, minimalist]
+    description: >
+      Essence of Blue Bottle Coffee and Sweetgreen. Clean, sustainable, and
+      approachable premium. Kraft paper tones mixed with clean whites and
+      leaf greens signal freshness and environmental consciousness. Simple
+      geometric typography, balanced hierarchy, and smooth scrolling create
+      a frictionless browsing experience.
+    reference: ["bluebottlecoffee.com", "sweetgreen.com", "allbirds.com"]
+    tokens:
+      colors:
+        light:
+          background: "#FFFFFF"
+          surface: "#F5F2ED"
+          surface-elevated: "#FFFFFF"
+          primary: "#3C2415"
+          secondary: "#4A7C59"
+          accent: "#D4C5A9"
+          text-primary: "#2C2218"
+          text-secondary: "#5A5044"
+          text-tertiary: "#8A8078"
+          border: "rgba(60,36,21,0.08)"
+          separator: "#E8E2DA"
+          destructive: "#B83220"
+          success: "#4A7C59"
+          warning: "#C4950A"
+        dark:
+          background: "#141210"
+          surface: "#1E1C18"
+          surface-elevated: "#282420"
+          primary: "#D4C5A9"
+          secondary: "#6BA07A"
+          accent: "#C4A880"
+          text-primary: "#EAE4DA"
+          text-secondary: "#B0A898"
+          text-tertiary: "#706860"
+          border: "rgba(212,197,169,0.10)"
+          separator: "#282420"
+          destructive: "#D4745A"
+          success: "#6BA07A"
+          warning: "#E0B830"
+      typography:
+        font_family: "'Inter', 'DM Sans', 'Helvetica Neue', sans-serif"
+        font_mono: "'IBM Plex Mono', monospace"
+        scale: [12, 14, 16, 18, 22, 26, 32, 40, 48]
+        weights: [400, 500, 600, 700]
+        line_height: 1.55
+        letter_spacing: "0em"
+        title_tracking: "-0.01em"
+        heading_style: "clean geometric sans, warm medium weights, balanced hierarchy"
+      spacing:
+        base: 8
+        scale: [0, 4, 8, 16, 24, 32, 40, 56, 72, 96, 120]
+      radius:
+        sm: 6
+        md: 10
+        lg: 14
+        xl: 20
+        full: 9999
+      shadows:
+        sm: "0 1px 4px rgba(44,34,24,0.04)"
+        md: "0 4px 12px rgba(44,34,24,0.06)"
+        lg: "0 8px 24px rgba(44,34,24,0.08)"
+        kraft: "0 4px 16px rgba(212,197,169,0.12)"
+      motion:
+        spring_default: { stiffness: 200, damping: 22, mass: 1 }
+        spring_gentle: { stiffness: 120, damping: 18, mass: 1.2 }
+        spring_smooth: { stiffness: 160, damping: 20, mass: 1.1 }
+        reduced_motion: "crossfade 0.3s ease"
+        hover_lift: "translateY(-2px)"
+        scroll_smooth: true
+      effects:
+        kraft_texture: "subtle kraft paper grain at 3% opacity"
+        eco_gradient: "linear-gradient(180deg, #FFFFFF 0%, #F5F2ED 100%)"
+        green_accent: "1px solid rgba(74,124,89,0.20)"
+        natural_border: "1px solid rgba(60,36,21,0.08)"
+    component_patterns:
+      card: "white or kraft surface, gentle shadow, rounded-xl, clean heading, subtle hover lift"
+      button_primary: "solid espresso brown, rounded-lg, medium weight, gentle hover darken"
+      button_secondary: "transparent, brown border, rounded-lg, hover kraft tint"
+      button_green: "solid leaf green, white text, rounded-lg, for eco/sustainable CTAs"
+      input: "white surface, rounded-lg, espresso focus border, clean label"
+      modal: "white surface, rounded-2xl, gentle spring, clean layout, kraft accent"
+      nav: "white surface, clean separator, espresso active indicator, leaf green CTA"
+    css_variables_prefix: "--cafe"
+    tailwind_extend:
+      colors:
+        cafe-espresso: "#3C2415"
+        cafe-leaf: "#4A7C59"
+        cafe-kraft: "#D4C5A9"
+        cafe-sky: "#E8F4FD"
+
+# ==============================================================================
+# 14. RESORT & TRAVEL
+# ==============================================================================
+resort_travel:
+
+  - id: resort-luxury
+    name: "Resort Luxury"
+    category: resort
+    contrast_validated: true
+    composable: [resort-boutique, luxury-maison, luxury-artisan]
+    description: >
+      Essence of Aman Resorts and Four Seasons. Serene luxury expressed
+      through natural materials — stone, ocean, sand, warm wood. Expansive
+      full-bleed imagery with elegant thin sans typography that breathes
+      with maximum white space. Slow cinematic reveals and gentle parallax
+      landscapes transport the viewer before they arrive.
+    reference: ["aman.com", "fourseasons.com", "oneandonlyresorts.com"]
+    tokens:
+      colors:
+        light:
+          background: "#FFFFFF"
+          surface: "#F2EDE6"
+          surface-elevated: "#FFFFFF"
+          primary: "#1B3A4B"
+          secondary: "#C7B299"
+          accent: "#8B7B5E"
+          text-primary: "#1A1816"
+          text-secondary: "#4A4540"
+          text-tertiary: "#8A8478"
+          border: "rgba(27,58,75,0.08)"
+          separator: "#E6DDD4"
+          destructive: "#8B3020"
+          success: "#2D5A42"
+          warning: "#A08030"
+        dark:
+          background: "#0E1214"
+          surface: "#161C20"
+          surface-elevated: "#1E262C"
+          primary: "#C7B299"
+          secondary: "#7CA0B0"
+          accent: "#B8A68C"
+          text-primary: "#EAE4DA"
+          text-secondary: "#A8A098"
+          text-tertiary: "#6A6460"
+          border: "rgba(199,178,153,0.10)"
+          separator: "#1E262C"
+          destructive: "#D4745A"
+          success: "#5A9E72"
+          warning: "#C4A050"
+      typography:
+        font_display: "'Cormorant Garamond', 'Playfair Display', serif"
+        font_family: "'Inter', 'Lato', 'Helvetica Neue', sans-serif"
+        font_mono: "'JetBrains Mono', monospace"
+        scale: [11, 13, 15, 18, 22, 28, 36, 48, 64, 80]
+        weights: [200, 300, 400, 500, 600]
+        line_height: 1.6
+        letter_spacing: "0.03em"
+        title_tracking: "0.06em"
+        heading_style: "elegant thin sans display, serif accents for subtitles, maximum breathing room"
+      spacing:
+        base: 8
+        scale: [0, 8, 16, 24, 32, 48, 64, 80, 96, 120, 160, 200, 240]
+      radius:
+        sm: 2
+        md: 4
+        lg: 8
+        xl: 12
+        full: 9999
+      shadows:
+        sm: "0 1px 4px rgba(0,0,0,0.04)"
+        md: "0 4px 16px rgba(0,0,0,0.06)"
+        lg: "0 12px 40px rgba(0,0,0,0.08)"
+        ocean: "0 8px 30px rgba(27,58,75,0.10)"
+        cinematic: "0 20px 60px rgba(0,0,0,0.12)"
+      motion:
+        spring_default: { stiffness: 60, damping: 14, mass: 1.8 }
+        spring_gentle: { stiffness: 40, damping: 12, mass: 2.0 }
+        spring_cinematic: { stiffness: 30, damping: 10, mass: 2.5 }
+        reduced_motion: "crossfade 0.6s ease"
+        parallax_intensity: 0.10
+        reveal_duration: "1.5s"
+        transition_style: "slow cinematic reveals, parallax landscapes, gentle spring"
+      effects:
+        stone_texture: "subtle stone grain texture at 2% opacity"
+        ocean_gradient: "linear-gradient(180deg, #1B3A4B 0%, #2A5060 100%)"
+        sand_gradient: "linear-gradient(180deg, #F2EDE6 0%, #E6D5B8 100%)"
+        warm_vignette: "radial-gradient(ellipse, transparent 50%, rgba(26,24,22,0.04) 100%)"
+        fullbleed_image: "100vw width, parallax scroll, warm color correction"
+    component_patterns:
+      card: "minimal, full-bleed imagery, thin overlay text, generous spacing (64px), serif subtitle"
+      button_primary: "solid ocean deep, minimal radius, thin weight uppercase, wide tracking"
+      button_secondary: "transparent, stone border, thin weight, sentence case, hover fill subtle"
+      input: "minimal, bottom-border only, thin weight label, ocean focus color"
+      modal: "full-viewport on mobile, parallax header image, serif title, cinematic enter"
+      nav: "transparent over hero, thin weight links, wide tracking, scroll-triggered background"
+    css_variables_prefix: "--resort"
+    tailwind_extend:
+      colors:
+        resort-ocean: "#1B3A4B"
+        resort-stone: "#C7B299"
+        resort-sand: "#E6D5B8"
+        resort-warm: "#1A1816"
+
+  - id: resort-boutique
+    name: "Resort Boutique"
+    category: resort
+    contrast_validated: true
+    composable: [resort-luxury, luxury-maison, luxury-atelier]
+    description: >
+      Essence of Aman Resorts and Amanpuri. Ultra-minimal luxury where
+      negative space is the primary design element. Warm sand and stone
+      tones create serenity; Japanese-influenced restraint governs every
+      decision. Thin sans-serif typography with generous tracking whispers
+      rather than shouts. Slow, contemplative transitions and full-bleed
+      photography create a meditative browsing experience. Every element
+      earns its place — if it doesn't contribute to tranquility, it goes.
+    reference: ["aman.com", "amanpuri.com", "amanyara.com"]
+    tokens:
+      colors:
+        light:
+          background: "#FAF7F2"
+          surface: "#F0EBE3"
+          surface-elevated: "#FFFFFF"
+          primary: "#3A3530"
+          secondary: "#A69882"
+          accent: "#8C7B5E"
+          text-primary: "#2A2520"
+          text-secondary: "#5A554E"
+          text-tertiary: "#8A857E"
+          border: "rgba(58,53,48,0.08)"
+          separator: "#E8E2DA"
+          destructive: "#8B3A2A"
+          success: "#4A6840"
+          warning: "#8C7B5E"
+        dark:
+          background: "#100E0C"
+          surface: "#1A1816"
+          surface-elevated: "#242220"
+          primary: "#E8E0D4"
+          secondary: "#C4B8A4"
+          accent: "#B8A888"
+          text-primary: "#EAE4DA"
+          text-secondary: "#B0A898"
+          text-tertiary: "#706860"
+          border: "rgba(232,224,212,0.08)"
+          separator: "#242220"
+          destructive: "#D4785A"
+          success: "#6B9E6A"
+          warning: "#B8A888"
+      typography:
+        font_display: "'Cormorant', 'Garamond', 'Georgia', serif"
+        font_family: "'Inter', 'Helvetica Neue', sans-serif"
+        font_body: "'Inter', 'Lato', sans-serif"
+        font_mono: "'IBM Plex Mono', monospace"
+        scale: [11, 13, 15, 17, 20, 26, 34, 44, 56, 72]
+        weights: [300, 400, 500]
+        line_height: 1.75
+        letter_spacing: "0.04em"
+        title_tracking: "0.12em"
+        heading_style: "thin sans-serif with wide tracking, minimal weight, serene presence"
+      spacing:
+        base: 8
+        scale: [0, 8, 16, 24, 40, 56, 80, 104, 128, 160, 200, 240]
+      radius:
+        sm: 0
+        md: 2
+        lg: 4
+        xl: 8
+        full: 9999
+      shadows:
+        sm: "0 1px 3px rgba(42,37,32,0.03)"
+        md: "0 4px 12px rgba(42,37,32,0.04)"
+        lg: "0 8px 24px rgba(42,37,32,0.06)"
+        warm: "0 12px 32px rgba(140,123,94,0.08)"
+      motion:
+        spring_default: { stiffness: 60, damping: 16, mass: 1.6 }
+        spring_gentle: { stiffness: 40, damping: 14, mass: 2.0 }
+        spring_serene: { stiffness: 30, damping: 12, mass: 2.2 }
+        reduced_motion: "crossfade 0.6s ease"
+        crossfade_duration: "0.8s"
+        hover_reveal: "opacity 0→1, 0.6s ease"
+        transition_style: "contemplative pace, slow crossfades, meditative scroll, no abrupt motion"
+      effects:
+        sand_gradient: "linear-gradient(180deg, #FAF7F2 0%, #F0EBE3 100%)"
+        stone_wash: "radial-gradient(ellipse at center, rgba(166,152,130,0.04) 0%, transparent 70%)"
+        zen_line: "1px solid rgba(58,53,48,0.06)"
+        photo_fullbleed: "object-fit: cover, no border, no shadow, edge-to-edge"
+        negative_space: "minimum 80px padding between content sections"
+    component_patterns:
+      card: "borderless, generous negative space, thin sans heading with wide tracking, full-bleed photo"
+      button_primary: "solid stone, no radius, thin weight text, wide tracking, subtle hover darken"
+      button_secondary: "transparent, thin border, wide tracking, hover border darken"
+      input: "borderless, bottom-line only, thin label, wide tracking, stone focus color"
+      modal: "full-viewport, centered content, dramatic negative space, slow enter"
+      nav: "transparent, thin weight logo, wide tracking links, minimal, no decoration"
+    css_variables_prefix: "--aman"
+    tailwind_extend:
+      colors:
+        aman-stone: "#3A3530"
+        aman-sand: "#A69882"
+        aman-cream: "#FAF7F2"
+        aman-warm: "#F0EBE3"

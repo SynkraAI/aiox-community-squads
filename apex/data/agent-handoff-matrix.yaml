@@ -1,0 +1,446 @@
+# ==============================================================================
+# APEX SQUAD — Agent Handoff Matrix
+# data/agent-handoff-matrix.yaml
+# ==============================================================================
+# Purpose:  Formalizes ALL inter-agent handoff protocols. Replaces implicit
+#           "coordinate with @agent" references with explicit handoff rules,
+#           conflict resolution, and arbitration protocols.
+#
+# Problem:  60% of handoffs were informal — agents referenced each other but
+#           no protocol defined WHO decides when they disagree.
+#
+# Owner:    apex-lead
+# Version:  1.0.0
+# ==============================================================================
+
+version: "1.0.0"
+
+# ==============================================================================
+# 1. HANDOFF PROTOCOLS — Formal agent-to-agent delegation
+# ==============================================================================
+
+handoff_protocols:
+
+  # --------------------------------------------------------------------------
+  # DESIGN → IMPLEMENTATION handoffs
+  # --------------------------------------------------------------------------
+
+  diana_to_josh:
+    from: design-sys-eng
+    to: css-eng
+    trigger: "Token definitions ready for CSS implementation"
+    artifact:
+      type: TOKEN_SPEC
+      required_fields:
+        - token_names: "Complete list of new/changed tokens"
+        - css_variable_format: "Expected --var-name format"
+        - light_dark_values: "Values for both modes"
+        - usage_examples: "Where each token is used"
+    conflict_resolution:
+      scenario: "Josh's CSS mental model conflicts with Diana's token API"
+      arbiter: apex-lead
+      rule: "Diana owns naming and values, Josh owns implementation strategy"
+      escalation: "If no agreement in 1 handoff cycle → apex-lead decides"
+
+  diana_to_sara:
+    from: design-sys-eng
+    to: a11y-eng
+    trigger: "Color tokens need contrast validation"
+    artifact:
+      type: CONTRAST_CHECK
+      required_fields:
+        - color_pairs: "All text/background combinations"
+        - target_ratio: "4.5:1 AA or 7:1 AAA"
+        - success_criteria: "1 failure blocks entire palette. No partial passes."
+        - revalidation_scope: "On color change, re-test full palette (not just modified color)"
+    conflict_resolution:
+      scenario: "Brand color fails WCAG contrast"
+      arbiter: apex-lead
+      rule: "Sara's contrast requirement is NON-NEGOTIABLE. Diana adjusts token."
+      precedence: "Accessibility > Brand fidelity"
+
+  ahmad_to_matt:
+    from: interaction-dsgn
+    to: motion-eng
+    trigger: "Interaction pattern needs motion design"
+    artifact:
+      type: MOTION_INTENT
+      required_fields:
+        - interaction_type: "enter | exit | feedback | transform | status"
+        - desired_feel: "Natural language description"
+        - duration_hint: "Fast (< 200ms) | Medium (200-400ms) | Slow (> 400ms)"
+    conflict_resolution:
+      scenario: "Ahmad wants tween-based micro-delay, Matt insists on spring"
+      arbiter: apex-lead
+      rule: "Matt owns physics implementation. Ahmad can request FEEL, not MECHANISM."
+      exception: "Status transitions (color-only) can use CSS transitions"
+
+  ahmad_to_josh:
+    from: interaction-dsgn
+    to: css-eng
+    trigger: "Interaction pattern needs layout implementation"
+    artifact:
+      type: LAYOUT_SPEC
+      required_fields:
+        - layout_algorithm: "flex | grid | positioned | flow"
+        - responsive_behavior: "Breakpoint expectations"
+        - a11y_constraints: "Focus order, tab sequence, touch target minimums (44x44px)"
+        - browser_support: "Minimum browser versions (Safari 17+, Chrome 120+, Firefox 121+)"
+    conflict_resolution:
+      scenario: "Ahmad specifies interaction requiring Grid, Josh prefers Flex"
+      arbiter: josh (css-eng)
+      rule: "Josh owns layout algorithm choice. Ahmad specifies BEHAVIOR, not METHOD."
+
+  # --------------------------------------------------------------------------
+  # IMPLEMENTATION → QUALITY handoffs
+  # --------------------------------------------------------------------------
+
+  kent_to_sara:
+    from: react-eng
+    to: a11y-eng
+    trigger: "Component has interactive elements needing a11y review"
+    artifact:
+      type: A11Y_REVIEW_REQUEST
+      required_fields:
+        - component_path: "File path"
+        - interactive_elements: "List of buttons, links, inputs"
+        - focus_management: "How focus moves"
+    conflict_resolution:
+      scenario: "Sara finds keyboard trap in Kent's state machine"
+      arbiter: sara (a11y-eng)
+      rule: "Sara's a11y requirements are NON-NEGOTIABLE. Kent fixes focus management."
+      precedence: "Accessibility > Implementation elegance"
+
+  josh_to_andy:
+    from: css-eng
+    to: qa-visual
+    trigger: "CSS changes need visual regression testing"
+    artifact:
+      type: VISUAL_REGRESSION_REQUEST
+      required_fields:
+        - modified_files: "CSS/component files changed"
+        - breakpoints_affected: "Which viewports to test"
+        - expected_changes: "What SHOULD look different"
+    conflict_resolution:
+      scenario: "Visual regression fails due to CSS changes Josh deems correct"
+      arbiter: apex-lead
+      rule: "Andy's baseline is source of truth. Josh updates baseline OR fixes CSS."
+      process: "1. Josh reviews diff. 2. If intentional, update baseline. 3. If bug, fix CSS."
+
+  matt_to_sara:
+    from: motion-eng
+    to: a11y-eng
+    trigger: "Animation added — needs reduced-motion check"
+    artifact:
+      type: REDUCED_MOTION_CHECK
+      required_fields:
+        - animation_component: "Component with animation"
+        - spring_config: "stiffness, damping, mass"
+        - reduced_motion_fallback: "What happens with prefers-reduced-motion"
+    conflict_resolution:
+      scenario: "Matt's animation has no reduced-motion fallback"
+      arbiter: sara (a11y-eng)
+      rule: "BLOCK until fallback exists. No exceptions."
+      precedence: "Accessibility is NON-WAIVABLE"
+
+  matt_to_addy:
+    from: motion-eng
+    to: perf-eng
+    trigger: "Complex animation needs performance validation"
+    artifact:
+      type: PERF_VALIDATION
+      required_fields:
+        - animation_type: "spring | scroll-driven | gesture"
+        - element_count: "Number of animated elements"
+        - target_fps: 60
+    conflict_resolution:
+      scenario: "Matt's animation drops below 60fps on low-end device"
+      arbiter: addy (perf-eng)
+      rule: "Addy's performance budget is final. Matt simplifies animation."
+      exception: "If only on devices below minimum target (e.g., < iPhone SE), document and ship"
+
+  # --------------------------------------------------------------------------
+  # EXTRACTION → INTEGRATION handoffs
+  # --------------------------------------------------------------------------
+
+  kilian_to_diana:
+    from: web-intel
+    to: design-sys-eng
+    trigger: "Design tokens extracted from external site ready for integration"
+    artifact:
+      type: EXTRACTED_TOKENS
+      required_fields:
+        - source_url: "Where tokens were extracted from"
+        - extracted_at: "ISO 8601 timestamp"
+        - token_map: "Extracted values with semantic mapping"
+        - confidence: "high | medium | low per token"
+    conflict_resolution:
+      scenario: "Extracted tokens conflict with existing project tokens"
+      arbiter: diana (design-sys-eng)
+      rule: "Diana owns project token system. Extracted tokens are SUGGESTIONS, not mandates."
+      process: "1. Diana reviews extracted vs existing. 2. Cherry-picks what fits. 3. Rejects conflicts."
+
+  kilian_to_josh:
+    from: web-intel
+    to: css-eng
+    trigger: "Extracted patterns need CSS implementation"
+    artifact:
+      type: PATTERN_SPEC
+      required_fields:
+        - pattern_description: "What was found"
+        - css_approach: "How it could be implemented"
+        - source_reference: "URL where pattern was found"
+    conflict_resolution:
+      scenario: "Extracted pattern uses CSS approach Josh disagrees with"
+      arbiter: josh (css-eng)
+      rule: "Josh owns CSS implementation. Pattern is inspiration, not specification."
+
+  # --------------------------------------------------------------------------
+  # CROSS-PLATFORM handoffs
+  # --------------------------------------------------------------------------
+
+  kent_to_krzysztof:
+    from: react-eng
+    to: mobile-eng
+    trigger: "Web component needs React Native equivalent"
+    artifact:
+      type: COMPONENT_PARITY
+      required_fields:
+        - web_component: "React component path"
+        - shared_logic: "What can be reused"
+        - platform_adaptations: "What needs native treatment"
+    conflict_resolution:
+      scenario: "Web pattern doesn't port to mobile"
+      arbiter: fernando (cross-plat-eng)
+      rule: "Fernando arbitrates cross-platform disagreements. Outcome: shared OR platform-specific."
+
+  krzysztof_to_michal:
+    from: mobile-eng
+    to: qa-xplatform
+    trigger: "Mobile feature needs cross-platform testing"
+    artifact:
+      type: DEVICE_TEST_REQUEST
+      required_fields:
+        - feature_description: "What to test"
+        - platforms: "iOS, Android, visionOS"
+        - gesture_interactions: "Swipe, long press, etc."
+    conflict_resolution:
+      scenario: "Gesture test fails — implementation or test assumption?"
+      arbiter: krzysztof (mobile-eng)
+      rule: "Krzysztof reviews gesture implementation. If correct, Michal adjusts test."
+
+  # --------------------------------------------------------------------------
+  # ARCHITECTURE handoffs
+  # --------------------------------------------------------------------------
+
+  apex_to_aria:
+    from: apex-lead
+    to: frontend-arch
+    trigger: "New feature/page needs high-level architecture decision"
+    artifact:
+      type: ARCH_REVIEW_REQUEST
+      required_fields:
+        - feature_description: "What is being built"
+        - complexity_estimate: "simple | standard | complex"
+        - tech_stack_questions: "Any framework/library decisions needed"
+        - component_hierarchy: "Proposed component tree (if available)"
+    conflict_resolution:
+      scenario: "apex-lead wants quick implementation, Aria insists on architectural review"
+      arbiter: aria (frontend-arch)
+      rule: "Aria owns architecture decisions. Implementation agents execute."
+      escalation: "If Aria's review blocks timeline → apex-lead negotiates scope, not skip"
+
+  kent_to_aria:
+    from: react-eng
+    to: frontend-arch
+    trigger: "Complex component tree needs structural validation"
+    artifact:
+      type: COMPONENT_ARCH_REVIEW
+      required_fields:
+        - component_tree: "Proposed hierarchy"
+        - state_strategy: "Local, context, external store"
+        - server_client_boundary: "RSC vs client component decisions"
+    conflict_resolution:
+      scenario: "Kent's implementation diverges from Aria's architecture"
+      arbiter: aria (frontend-arch)
+      rule: "Aria owns component architecture. Kent adapts implementation."
+
+  josh_to_aria:
+    from: css-eng
+    to: frontend-arch
+    trigger: "Large-scale layout restructuring needs architectural review"
+    artifact:
+      type: LAYOUT_ARCH_REVIEW
+      required_fields:
+        - layout_scope: "Which pages/sections affected"
+        - proposed_approach: "CSS Grid/Flexbox/Container Queries strategy"
+        - responsive_strategy: "Breakpoint architecture"
+    conflict_resolution:
+      scenario: "Josh's CSS architecture conflicts with Aria's system design"
+      arbiter: aria (frontend-arch)
+      rule: "Aria owns system-level decisions. Josh owns CSS-level implementation within that system."
+
+  # --------------------------------------------------------------------------
+  # SPATIAL handoffs
+  # --------------------------------------------------------------------------
+
+  kilian_to_paul:
+    from: web-intel
+    to: spatial-eng
+    trigger: "3D assets extracted or curated need spatial preparation"
+    artifact:
+      type: SPATIAL_ASSET_REQUEST
+      required_fields:
+        - asset_type: "3D model | texture | environment | spatial UI"
+        - source: "URL or file path"
+        - target_platform: "visionOS | WebXR | Three.js | all"
+        - optimization_requirements: "poly count, file size, LOD needs"
+    conflict_resolution:
+      scenario: "Kilian curates asset that Paul deems technically unsuitable"
+      arbiter: paul (spatial-eng)
+      rule: "Paul owns 3D technical decisions. Kilian can re-curate alternatives."
+
+  krzysztof_to_paul:
+    from: mobile-eng
+    to: spatial-eng
+    trigger: "iOS/visionOS feature needs spatial or 3D component"
+    artifact:
+      type: SPATIAL_COMPONENT_REQUEST
+      required_fields:
+        - component_description: "What the spatial component does"
+        - platform: "visionOS | iOS AR | WebXR"
+        - interaction_model: "gaze | hand tracking | controller | touch"
+    conflict_resolution:
+      scenario: "Krzysztof's mobile pattern conflicts with Paul's spatial approach"
+      arbiter: paul (spatial-eng)
+      rule: "Paul owns spatial implementation. Krzysztof can request BEHAVIOR, not MECHANISM."
+      exception: "2D overlays on spatial content follow mobile-eng patterns"
+
+  # --------------------------------------------------------------------------
+  # APEX → EXTERNAL handoffs
+  # --------------------------------------------------------------------------
+
+  apex_to_devops:
+    from: apex-lead
+    to: devops
+    trigger: "Feature complete, all quality gates passed"
+    artifact:
+      type: SHIP_HANDOFF
+      required_fields:
+        - story_id: "Active story"
+        - branch: "Git branch"
+        - files_modified: "List of changed files"
+        - gates_passed: "Quality gate status summary"
+        - apex_sign_off: true
+    conflict_resolution:
+      scenario: "apex-lead declares ready, devops flags blocking issue (security, CI/CD, config)"
+      arbiter: apex-lead
+      rule: "apex-lead makes final ship/no-ship decision. devops can escalate to @aiox-master if gate violation suspected."
+      escalation: "If devops suspects gate bypass → escalate to @aiox-master with evidence"
+    rules:
+      - "apex-lead MUST sign off before handoff (QG-AX-010, non-waivable)"
+      - "All other quality gates MUST pass"
+      - "Handoff artifact saved to .aios/handoffs/"
+
+# ==============================================================================
+# 2. ARBITRATION RULES — When agents disagree
+# ==============================================================================
+
+arbitration:
+  default_arbiter: apex-lead
+
+  precedence_hierarchy:
+    - domain: accessibility
+      agent: a11y-eng
+      rule: "Accessibility requirements are NON-NEGOTIABLE. Always wins over aesthetics, performance, or convenience."
+
+    - domain: performance
+      agent: perf-eng
+      rule: "Performance budgets are final. Implementation must meet budgets or simplify."
+
+    - domain: token_naming
+      agent: design-sys-eng
+      rule: "Diana owns token API. Other agents implement, not rename."
+
+    - domain: css_implementation
+      agent: css-eng
+      rule: "Josh owns HOW CSS is written. Other agents specify WHAT it should do."
+
+    - domain: motion_physics
+      agent: motion-eng
+      rule: "Matt owns spring configs and animation physics. Others specify FEEL."
+
+    - domain: cross_platform
+      agent: cross-plat-eng
+      rule: "Fernando arbitrates web vs mobile divergence decisions."
+
+    - domain: architecture
+      agent: frontend-arch
+      rule: "Aria owns architecture decisions. Implementation agents execute."
+
+    - domain: visual_baseline
+      agent: qa-visual
+      rule: "Andy's visual regression baseline is source of truth."
+
+  escalation_protocol:
+    step_1: "Agents attempt to resolve bilaterally"
+    step_2: "If no resolution, escalate to domain authority (see precedence_hierarchy)"
+    step_3: "If domain authority can't resolve, escalate to apex-lead"
+    step_4: "apex-lead makes final decision, documents rationale"
+    max_cycles: 2
+
+# ==============================================================================
+# 3. THREE-STEP PIPELINE — Kilian → Diana → Josh
+# ==============================================================================
+
+three_step_pipeline:
+  description: "Extract → Tokenize → Implement pipeline with explicit sync points"
+
+  steps:
+    - step: 1
+      agent: web-intel
+      action: "Extract design intelligence from external source"
+      output: EXTRACTED_TOKENS
+      sync_point: "Diana reviews before tokenization"
+
+    - step: 2
+      agent: design-sys-eng
+      action: "Validate, filter, and integrate tokens into project system"
+      output: TOKEN_SPEC
+      sync_point: "Josh reviews before implementation"
+
+    - step: 3
+      agent: css-eng
+      action: "Implement tokens as CSS variables/Tailwind config"
+      output: IMPLEMENTED_TOKENS
+      sync_point: "Andy runs visual regression after implementation"
+
+  quality_gates:
+    after_step_1: "Extracted tokens have confidence >= medium"
+    after_step_2: "No conflict with existing tokens (or conflicts resolved)"
+    after_step_3: "Visual regression passes, contrast ratios met"
+
+# ==============================================================================
+# 4. SCOPE LOCK PROPAGATION
+# ==============================================================================
+
+scope_lock:
+  description: >
+    Scope Lock exists ONLY in apex-lead. This section ensures ALL agents
+    respect the scope lock when it's active.
+
+  propagation_rule: >
+    When apex-lead sets scope_lock on a request, the lock is communicated
+    to delegated agents via the handoff artifact field 'scope_lock'.
+    Agents MUST NOT expand beyond the locked scope.
+
+  artifact_field:
+    scope_lock:
+      files: "[locked file list]"
+      domains: "[locked domain list]"
+      expanded_by: null  # Agent ID if scope was expanded (requires apex-lead approval)
+
+  enforcement:
+    - "Agent receives scope_lock in handoff → only touch listed files/domains"
+    - "If agent needs to expand → request apex-lead approval first"
+    - "Expanding without approval → veto (VC-FIX-001)"

@@ -1,0 +1,1387 @@
+# ===============================================================================
+# WF-DISPATCH-MAIN: Story-Driven Dispatch Pipeline
+# ===============================================================================
+# The MAIN workflow for the Dispatch Squad. Orchestrates the complete pipeline
+# from story input to execution report.
+#
+# Pipeline: Story -> Sufficiency Gate -> Decompose -> Route -> Optimize ->
+#           Enrich -> Quality Gate -> Execute -> Verify -> Report
+#
+# Author: AIOS Dispatch Squad
+# Created: 2026-02-10
+# ===============================================================================
+
+workflow:
+  id: wf-dispatch-main
+  name: "Story-Driven Dispatch"
+  version: "1.0.0"
+  description: |
+    Main dispatch workflow. Takes a story (preferred), PRD, or structured input,
+    validates sufficiency, decomposes into atomic tasks, routes to correct agents
+    and models, optimizes into DAG-based waves, enforces quality gates, executes
+    in parallel via subagents, verifies outputs, and generates execution + cost
+    reports.
+
+    This workflow implements all 7 Immutable Laws of Dispatch:
+    - LAW #0: NEVER MAIN CONTEXT (all execution via subagents)
+    - LAW #1: CODE > LLM (scripts for deterministic work)
+    - LAW #2: RIGHT MODEL (Haiku for defined, Sonnet for judgment)
+    - LAW #3: STORY-DRIVEN (acceptance criteria required)
+    - LAW #4: SLASH COMMAND MAP (full path routing)
+    - LAW #5: WAVE OPTIMIZED (DAG topological sort)
+    - LAW #6: OPTIMIZE EVERYTHING (executor decision tree Q1-Q6)
+
+  entry_agent: dispatch-chief
+  duration: "Variable — depends on task count and wave depth"
+  min_tasks: 1
+  recommended_min_tasks: 3
+  max_tasks: 100
+
+  # ===========================================================================
+  # PREREQUISITES
+  # ===========================================================================
+
+  prerequisites:
+    required:
+      - "Input: story file, PRD file, or structured task list"
+      - "Dispatch squad installed: squads/dispatch/ with all agents, scripts, data"
+      - "State directory writable: _temp/dispatch/runs/"
+    recommended:
+      - "Story with acceptance criteria (preferred over free text)"
+      - "Command registry populated: data/command-registry.yaml"
+      - "Domain registry configured: data/domain-registry.yaml"
+
+  # ===========================================================================
+  # INPUT TYPES
+  # ===========================================================================
+
+  input_types:
+    story:
+      format: "Markdown file with acceptance criteria"
+      path_pattern: "plan/stories/{story-name}.md"
+      command: "*dispatch plan/stories/{file}.md"
+      preferred: true
+      sufficiency_checks: ["V0.1"]
+
+    prd:
+      format: "PRD with requirements sections"
+      path_pattern: "plan/prd/{prd-name}.md"
+      command: "*dispatch plan/prd/{file}.md"
+      preferred: true
+      sufficiency_checks: []  # PRDs have requirements by definition
+
+    task_list:
+      format: "Structured task list with deliverables"
+      command: "*dispatch {file}"
+      preferred: false
+      sufficiency_checks: ["V0.3"]
+
+    free_text:
+      format: "Unstructured text description"
+      command: "*dispatch-free {text}"
+      preferred: false
+      sufficiency_checks: ["V0.1", "V0.2", "V0.3"]
+      note: "Legacy input — triggers extra sufficiency checks"
+
+  # ===========================================================================
+  # GLOBAL CONFIGURATION
+  # ===========================================================================
+
+  config:
+    fail_fast: true
+    max_fix_iterations: 2
+    circuit_breaker_threshold: 5  # consecutive failures -> HALT
+    state_persistence: "after_every_phase_and_wave"
+    resume_support: true
+    resume_command: "*resume"
+    state_path: "_temp/dispatch/runs/{run_id}/state.json"
+    events_path: "_temp/dispatch/runs/{run_id}/events.jsonl"
+
+    subagent_limits:
+      max_concurrent: 10
+      recommended_wave_size: 5-7
+      nesting: "FORBIDDEN"
+      max_result_tokens: 500
+      background_mcp: "UNAVAILABLE"
+
+    cost_budget:
+      warning_threshold: "3x estimate"
+      halt_threshold: "5x estimate"
+
+    timeouts:
+      sufficiency_gate: 30   # seconds
+      decomposition: 300     # seconds
+      routing: 120           # seconds
+      wave_optimization: 120 # seconds
+      enrichment: 60         # seconds per task
+      quality_gate: 60       # seconds
+      reporting: 300         # seconds
+
+  # ===========================================================================
+  # PHASE 0: SUFFICIENCY GATE
+  # ===========================================================================
+  # Agent: dispatch-chief (inline — the ONE thing orchestrator does directly)
+  # Type: Human-in-loop, soft block
+  # Latency: < 30 seconds
+  # Purpose: Validate input is sufficiently defined for dispatch
+  # ===========================================================================
+
+  phases:
+    - phase: 0
+      id: "PHASE-0"
+      name: "Sufficiency Gate"
+      agent: dispatch-chief
+      gate_type: "human_in_loop"
+      block_type: "soft"
+      timeout: 30
+      description: |
+        Validates that the input is sufficiently defined for dispatch execution.
+        This is the ONLY thing dispatch-chief does directly (not via subagent).
+        It is a fast, soft-blocking gate that redirects insufficient input to
+        the correct agent for preparation.
+
+        Pedro Valerio principle: "Dispatch is an EXECUTION engine, not a
+        THINKING engine. If the input needs thinking, route to the right
+        thinker first."
+
+      input:
+        required:
+          - name: "input_file_or_text"
+            type: "string"
+            description: "Path to story/PRD/task-list file, or inline text for free-text dispatch"
+        optional:
+          - name: "--force"
+            type: "flag"
+            description: "Bypass sufficiency gate (logged as warning, health score item #1 = LEGACY)"
+
+      actions:
+        - id: "A0.1"
+          name: "Classify input type"
+          executor: "dispatch-chief"
+          action: |
+            Determine input type: story | prd | task_list | free_text.
+            Apply classification logic:
+            - File with .md extension + story structure keywords -> story
+            - File with .md extension + requirements sections -> prd
+            - File with structured task items + deliverables -> task_list
+            - Inline text without file -> free_text
+
+        - id: "A0.2"
+          name: "Run sufficiency veto conditions"
+          executor: "scripts/validate-dispatch-gate.sh --phase sufficiency"
+          checklist: "checklists/pre-dispatch-gate.md"
+          veto_conditions:
+            - id: "V0.1"
+              condition: "Story has no acceptance criteria"
+              check: "grep -c 'acceptance|criteria|[ ]' {input_file} == 0"
+              action: "REDIRECT to /po for acceptance criteria"
+            - id: "V0.2"
+              condition: "Input < 10 words with no deliverables"
+              check: "word_count < 10 AND no quantities detected"
+              action: "REDIRECT to /pm or /copy:agents:copy-chief"
+            - id: "V0.3"
+              condition: "No specific deliverables mentioned"
+              check: "no file types, no quantities, no output paths"
+              action: "ASK for quantities and deliverables"
+
+        - id: "A0.3"
+          name: "Handle gate result"
+          executor: "dispatch-chief"
+          action: |
+            IF all V0.* PASS -> proceed to Phase 1
+            IF any V0.* FAIL:
+              - Present redirect recommendation with numbered options
+              - Option to specify details inline
+              - Option to force with --force flag
+            IF --force flag -> log warning, proceed with health score penalty
+
+      checkpoint:
+        criteria:
+          - "input_type CLASSIFIED"
+          - "all V0.* veto conditions EVALUATED"
+          - "result is PASS or REDIRECT (with recommendation)"
+        on_pass:
+          next_phase: "PHASE-1"
+          message: "Sufficiency Gate: PASS. Input type: {{input_type}}. Proceeding to decomposition."
+        on_fail:
+          action: "redirect"
+          redirect_targets:
+            no_criteria: "/po"
+            too_vague: "/pm"
+            copy_project: "/copy:agents:copy-chief"
+            unknown: "/lens"
+          message: |
+            Sufficiency Gate: BLOCKED.
+            {{veto_id}}: {{veto_condition}}.
+            Recommendation: {{redirect_target}}
+            Options:
+            1. Redirect to {{redirect_agent}} (recommended)
+            2. Add missing details now
+            3. Force dispatch (--force)
+            4. Other
+
+      output:
+        - name: "input_classification"
+          type: "enum"
+          values: ["story", "prd", "task_list", "free_text"]
+        - name: "sufficiency_result"
+          type: "enum"
+          values: ["PASS", "REDIRECT", "FORCED"]
+
+    # =========================================================================
+    # PHASE 1: DECOMPOSITION
+    # =========================================================================
+    # Agent: wave-planner (subagent, Sonnet)
+    # Purpose: Story/PRD -> atomic tasks with dependency graph
+    # =========================================================================
+
+    - phase: 1
+      id: "PHASE-1"
+      name: "Decomposition"
+      agent: wave-planner
+      model: sonnet
+      timeout: 300
+      depends_on:
+        - "PHASE-0"
+      description: |
+        Decomposes the validated input into atomic sub-tasks with a dependency
+        graph. Each task is a single deliverable with clear acceptance criteria,
+        output path, and estimated execution time.
+
+        Reinertsen principle: "Decompose work to the smallest batch size that
+        has independent value. Smaller batches = faster flow."
+
+      input:
+        from_phase: "PHASE-0"
+        required:
+          - name: "validated_input"
+            description: "Story/PRD/task-list that passed sufficiency gate"
+          - name: "input_type"
+            description: "Classification from Phase 0"
+
+      task_file: "tasks/plan-execution.md"
+
+      actions:
+        - id: "A1.1"
+          name: "Extract tasks from input"
+          executor: "wave-planner (Sonnet subagent)"
+          action: |
+            Read the input and extract atomic tasks:
+            - Each task = 1 deliverable
+            - Each task has: name, description, output_path, acceptance_criteria
+            - Extract explicit tasks from acceptance criteria checkboxes
+            - Infer implicit tasks from requirements
+
+        - id: "A1.2"
+          name: "Build dependency graph"
+          executor: "wave-planner (Sonnet subagent)"
+          action: |
+            Determine dependencies between tasks:
+            - Task B depends on Task A if B needs A's output as input
+            - Mark independent tasks (no dependencies) explicitly
+            - Express as DAG: task_id -> [depends_on_ids]
+            - NEVER create circular dependencies (V1.4)
+
+        - id: "A1.3"
+          name: "Estimate task parameters"
+          executor: "wave-planner (Sonnet subagent)"
+          action: |
+            For each task, estimate:
+            - Expected output size (lines/words)
+            - Expected execution time (seconds)
+            - Complexity level (simple | moderate | complex)
+            - Whether deterministic (can use Worker) or needs reasoning (needs Agent)
+
+      checkpoint:
+        criteria:
+          - "all tasks ATOMIC (1 deliverable each)"
+          - "all tasks have acceptance_criteria"
+          - "all tasks have output_path"
+          - "dependency graph is a valid DAG (no cycles)"
+          - "total task count >= 1"
+        on_pass:
+          next_phase: "PHASE-2"
+          message: "Decomposition: {{task_count}} atomic tasks extracted, dependency graph built."
+        on_fail:
+          action: "retry"
+          max_retries: 2
+          message: "Decomposition failed: {{failure_reason}}. Retrying with more specific instructions."
+
+      output:
+        - name: "atomic_tasks"
+          type: "list"
+          description: "List of atomic tasks with dependencies"
+        - name: "dependency_graph"
+          type: "dict"
+          description: "DAG mapping task_id -> [depends_on_ids]"
+        - name: "task_count"
+          type: "integer"
+
+    # =========================================================================
+    # PHASE 2: ROUTING
+    # =========================================================================
+    # Agent: task-router (subagent, Haiku)
+    # Purpose: Assign agent, model, enrichment level, timeout to each task
+    # =========================================================================
+
+    - phase: 2
+      id: "PHASE-2"
+      name: "Routing"
+      agent: task-router
+      model: haiku
+      timeout: 120
+      depends_on:
+        - "PHASE-1"
+      description: |
+        Routes each atomic task to the correct agent, model, enrichment level,
+        and timeout. Uses domain registry and model selection rules for
+        consistent, repeatable routing.
+
+        IDS Enforcement: REUSE > ADAPT > CREATE. Always check command-registry
+        before creating ad-hoc subagents.
+
+      input:
+        from_phase: "PHASE-1"
+        required:
+          - name: "atomic_tasks"
+            description: "List of atomic tasks from decomposition"
+        data_files:
+          - "data/domain-registry.yaml"
+          - "data/model-selection-rules.yaml"
+          - "data/enrichment-rules.yaml"
+          - "data/timeout-rules.yaml"
+
+      task_file: "tasks/route-tasks.md"
+
+      actions:
+        - id: "A2.1"
+          name: "Domain detection"
+          executor: "task-router (Haiku subagent)"
+          action: |
+            For each task, detect domain using domain-registry.yaml:
+            - Weighted keyword matching against task description
+            - Map domain -> squad -> agent
+            - Resolve command path: /{squad}:{type}:{name}
+
+        - id: "A2.2"
+          name: "Model selection"
+          executor: "task-router (Haiku subagent)"
+          action: |
+            Apply decision tree from model-selection-rules.yaml (Q1-Q6):
+            Q1: Is output deterministic? -> Worker (script)
+            Q2: Is there a template to fill? -> Haiku
+            Q3: Does it need judgment? -> Sonnet
+            Q4: Is it architectural? -> DO NOT dispatch (redirect)
+
+        - id: "A2.3"
+          name: "Enrichment assignment"
+          executor: "task-router (Haiku subagent)"
+          action: |
+            Assign enrichment level from enrichment-rules.yaml:
+            - MINIMAL (~500 tokens): Deterministic, simple file operations
+            - STANDARD (~1500 tokens): Code generation, MCP operations
+            - FULL (~3000 tokens): Creative writing, copy, strategic content
+
+        - id: "A2.4"
+          name: "Timeout assignment"
+          executor: "task-router (Haiku subagent)"
+          action: |
+            Assign timeout from timeout-rules.yaml:
+            - Worker (script): 30s
+            - Haiku agent: 120s
+            - Sonnet agent: 300s
+            - MCP operation: 60s
+            - Code generation: 180s
+
+      checkpoint:
+        criteria:
+          - "all tasks have AGENT assigned (or executor_type == worker)"
+          - "all tasks have MODEL assigned (haiku | sonnet | worker)"
+          - "all tasks have ENRICHMENT level (MINIMAL | STANDARD | FULL)"
+          - "all tasks have TIMEOUT > 0"
+          - "zero tasks requiring Opus (redirect those back)"
+        on_pass:
+          next_phase: "PHASE-3"
+          message: |
+            Routing complete: {{worker_count}} workers, {{haiku_count}} haiku,
+            {{sonnet_count}} sonnet. No Opus tasks (correct).
+        on_fail:
+          action: "retry"
+          max_retries: 1
+          message: "Routing incomplete: {{missing_fields}}. Re-running task-router."
+
+      output:
+        - name: "routed_tasks"
+          type: "list"
+          description: "Tasks with agent, model, enrichment, timeout assigned"
+        - name: "model_distribution"
+          type: "dict"
+          description: "Count per model: {worker: N, haiku: N, sonnet: N}"
+
+    # =========================================================================
+    # PHASE 3: WAVE OPTIMIZATION
+    # =========================================================================
+    # Agent: wave-planner (or scripts/wave-optimizer.py for simple cases)
+    # Purpose: Group tasks into waves for maximum parallelism via DAG sort
+    # =========================================================================
+
+    - phase: 3
+      id: "PHASE-3"
+      name: "Wave Optimization"
+      agent: wave-planner
+      model: "sonnet | worker"
+      timeout: 120
+      depends_on:
+        - "PHASE-2"
+      description: |
+        Organizes routed tasks into execution waves using DAG topological sort
+        (Kahn's algorithm). All tasks with zero in-degree go into the same wave
+        for TRUE PARALLEL execution. Goal: minimize total waves while respecting
+        dependencies and WIP limits.
+
+        Reinertsen principle: "U-curve optimization — batch size that minimizes
+        total cost (holding cost + transaction cost)."
+        Goldratt principle: "Drum-Buffer-Rope — pace at rate of constraint."
+
+      input:
+        from_phase: "PHASE-2"
+        required:
+          - name: "routed_tasks"
+            description: "Tasks with all routing fields populated"
+          - name: "dependency_graph"
+            description: "DAG from Phase 1"
+
+      task_file: "tasks/decompose-to-waves.md"
+
+      actions:
+        - id: "A3.1"
+          name: "DAG topological sort"
+          executor: "scripts/wave-optimizer.py"
+          executor_type: "worker"
+          action: |
+            Run Kahn's algorithm on the dependency graph:
+            1. Find all tasks with in-degree 0 -> Wave 1
+            2. Remove Wave 1 tasks, recalculate in-degrees
+            3. Find new in-degree 0 tasks -> Wave 2
+            4. Repeat until all tasks assigned to waves
+            5. Detect circular dependencies (V1.4 — should have been caught but double-check)
+
+        - id: "A3.2"
+          name: "Apply WIP limits"
+          executor: "wave-planner (Sonnet subagent) | scripts/wave-optimizer.py"
+          action: |
+            Enforce wave size limits:
+            - Recommended: 5-7 tasks per wave
+            - Maximum: 10 tasks per wave (API rate limit)
+            - If wave has > 10 independent tasks, split into sub-waves
+            - Preserve parallelism within sub-waves
+
+        - id: "A3.3"
+          name: "Identify critical path"
+          executor: "scripts/wave-optimizer.py"
+          executor_type: "worker"
+          action: |
+            Calculate critical path through the DAG:
+            - Longest chain of dependent tasks
+            - Sum of estimated times along critical path = minimum total duration
+            - Flag critical path tasks (delay in these delays entire dispatch)
+
+        - id: "A3.4"
+          name: "Generate wave manifests"
+          executor: "wave-planner"
+          action: |
+            For each wave, generate manifest using templates/wave-manifest-tmpl.yaml:
+            - wave_num, task_count, estimated_duration
+            - Task list with: task_id, agent, model, timeout
+            - Dependencies satisfied (all prior waves complete)
+            - Wave-level cost estimate
+
+      checkpoint:
+        criteria:
+          - "all tasks assigned to waves"
+          - "no wave exceeds 10 tasks"
+          - "wave count < task count (optimization achieved)"
+          - "critical path identified with duration estimate"
+          - "zero circular dependencies"
+          - "wave manifests generated"
+        on_pass:
+          next_phase: "PHASE-4"
+          message: |
+            Wave optimization: {{wave_count}} waves from {{task_count}} tasks
+            ({{reduction_pct}}% reduction). Critical path: {{critical_path_duration}}s.
+        on_fail:
+          action: "retry"
+          max_retries: 1
+          message: "Wave optimization failed: {{failure_reason}}."
+
+      output:
+        - name: "waves"
+          type: "list"
+          description: "Ordered list of waves, each containing task list"
+        - name: "wave_count"
+          type: "integer"
+        - name: "critical_path"
+          type: "list"
+          description: "List of task_ids on the critical path"
+        - name: "critical_path_duration"
+          type: "integer"
+          description: "Estimated total seconds for critical path"
+        - name: "execution_plan"
+          type: "yaml"
+          template: "templates/execution-plan-tmpl.yaml"
+
+    # =========================================================================
+    # PHASE 4: ENRICHMENT
+    # =========================================================================
+    # Agent: dispatch-chief (delegates to scripts/enrich-task.py)
+    # Purpose: Inject KB, context, and templates into task prompts
+    # =========================================================================
+
+    - phase: 4
+      id: "PHASE-4"
+      name: "Enrichment"
+      agent: dispatch-chief
+      executor: "scripts/enrich-task.py"
+      executor_type: "worker"
+      timeout_per_task: 60
+      depends_on:
+        - "PHASE-3"
+      description: |
+        Loads knowledge base per domain and injects context into each task
+        prompt. Applies the task-prompt-tmpl.md template to create enriched
+        prompts ready for subagent execution.
+
+        Prompt caching strategy: STATIC sections first (KB, rules), DYNAMIC
+        sections last (task-specific). Same-domain tasks in the same wave
+        share cached KB = ~75% input token savings.
+
+      input:
+        from_phase: "PHASE-3"
+        required:
+          - name: "waves"
+            description: "Wave manifests with tasks"
+          - name: "routed_tasks"
+            description: "Tasks with enrichment level assigned"
+        data_files:
+          - "data/enrichment-rules.yaml"
+          - "data/haiku-patterns.yaml"
+
+      actions:
+        - id: "A4.1"
+          name: "Load KB per domain"
+          executor: "scripts/enrich-task.py"
+          executor_type: "worker"
+          action: |
+            For each unique domain in the task set:
+            - Load domain KB from the squad's knowledge base
+            - Load relevant templates, checklists, reference material
+            - Cache loaded content for reuse across same-domain tasks
+
+        - id: "A4.2"
+          name: "Inject context per enrichment level"
+          executor: "scripts/enrich-task.py"
+          executor_type: "worker"
+          action: |
+            For each task, assemble prompt based on enrichment level:
+
+            MINIMAL (~500 tokens):
+            - Task instruction + output path + acceptance criteria
+            - "DO NOT ask questions. Execute immediately."
+
+            STANDARD (~1500 tokens):
+            - All of MINIMAL
+            - KB summary (domain-specific)
+            - MCP tool references (if applicable)
+            - Output format specification
+
+            FULL (~3000 tokens):
+            - All of STANDARD
+            - Complete domain KB
+            - Business context (from source/ files)
+            - ICP/avatar context
+            - Style guide references
+
+        - id: "A4.3"
+          name: "Apply task-prompt template"
+          executor: "scripts/enrich-task.py"
+          executor_type: "worker"
+          action: |
+            Apply templates/task-prompt-tmpl.md structure:
+            [STATIC] Header (executor rules) ........... ~200 tokens
+            [STATIC] Knowledge Context (domain KB) ..... ~500-3000 tokens
+            [STATIC] Business Context (if triggered) ... ~0-2000 tokens
+            [DYNAMIC] Task Description ................. ~200 tokens
+            [DYNAMIC] Acceptance Criteria .............. ~100 tokens
+            [DYNAMIC] Output Path ...................... ~50 tokens
+            [STATIC] Closing Instruction ............... ~100 tokens
+
+        - id: "A4.4"
+          name: "Verify token limits"
+          executor: "scripts/enrich-task.py"
+          executor_type: "worker"
+          action: |
+            Verify each enriched prompt is within token limits:
+            - MINIMAL: < 1000 tokens
+            - STANDARD: < 2500 tokens
+            - FULL: < 5000 tokens
+            If over limit: truncate KB (keep most relevant sections)
+
+      checkpoint:
+        criteria:
+          - "all tasks have enriched prompts"
+          - "all prompts under token limits"
+          - "all prompts follow task-prompt-tmpl.md structure"
+          - "STATIC sections placed before DYNAMIC (cache optimization)"
+        on_pass:
+          next_phase: "PHASE-4.5"
+          message: "Enrichment complete. {{task_count}} prompts ready. Avg tokens: {{avg_tokens}}."
+        on_fail:
+          action: "retry"
+          max_retries: 1
+          message: "Enrichment failed for {{fail_count}} tasks: {{failure_reason}}."
+
+      output:
+        - name: "enriched_prompts"
+          type: "dict"
+          description: "task_id -> enriched_prompt_text"
+        - name: "token_estimates"
+          type: "dict"
+          description: "task_id -> estimated_input_tokens"
+
+    # =========================================================================
+    # PHASE 4.5: PRE-EXECUTION QUALITY GATE
+    # =========================================================================
+    # Agent: quality-gate (subagent, Sonnet)
+    # Type: Automatic, hard block
+    # Latency: < 60 seconds
+    # Purpose: Validate ALL tasks pass veto conditions before execution
+    # =========================================================================
+
+    - phase: 4.5
+      id: "PHASE-4.5"
+      name: "Pre-Execution Quality Gate"
+      agent: quality-gate
+      model: sonnet
+      gate_type: "automatic"
+      block_type: "hard"
+      timeout: 60
+      depends_on:
+        - "PHASE-4"
+      description: |
+        Validates that EVERY task is sufficiently defined, unambiguous, and
+        executable BEFORE any wave is dispatched. All V1.* veto conditions
+        are checked. A single hard-block violation stops the entire wave.
+
+        Deming principle: "Quality is built in at the source, not inspected
+        in at the end."
+        Pedro Valerio: "Se o executor CONSEGUE fazer errado, VAI fazer errado."
+
+      input:
+        from_phase: "PHASE-4"
+        required:
+          - name: "enriched_prompts"
+            description: "All task prompts after enrichment"
+          - name: "execution_plan"
+            description: "Wave manifests from Phase 3"
+        data_files:
+          - "data/veto-conditions.yaml"
+          - "data/haiku-patterns.yaml"
+
+      task_file: "tasks/verify-wave.md"
+      checklist: "checklists/pre-execution-gate.md"
+
+      actions:
+        - id: "A4.5.1"
+          name: "Run V1.* veto conditions on all tasks"
+          executor: "scripts/validate-dispatch-gate.sh --phase pre-execution"
+          executor_type: "worker"
+          veto_conditions:
+            - id: "V1.1"
+              name: "Output path defined"
+              check: "task.output_path is not None and task.output_path != ''"
+            - id: "V1.2"
+              name: "Acceptance criteria operational"
+              check: "No subjective words without quantification"
+              banned_words: ["good", "appropriate", "adequate", "well-written", "nice",
+                            "quality", "better", "effective", "compelling", "engaging",
+                            "proper", "correct", "professional", "suitable"]
+            - id: "V1.3"
+              name: "Zero placeholders"
+              check: "regex: [XXX], {TODO}, TBD, [PLACEHOLDER], [INSERT]"
+            - id: "V1.4"
+              name: "No circular dependencies"
+              check: "scripts/wave-optimizer.py --check-cycles"
+            - id: "V1.5"
+              name: "Haiku template for large output"
+              check: "IF haiku AND expected_lines > 50 THEN template present"
+            - id: "V1.6"
+              name: "No code-switching"
+              check: "Instructions in EN, output language specified separately"
+            - id: "V1.7"
+              name: "Single deliverable per task"
+              check: "count_deliverables(task) == 1"
+            - id: "V1.8"
+              name: "Timeout defined"
+              check: "task.timeout > 0"
+            - id: "V1.9"
+              name: "No vague verbs"
+              check: "No improve/optimize/enhance without specifics"
+            - id: "V1.10"
+              name: "Model assigned"
+              check: "task.model in [haiku, sonnet, worker]"
+            - id: "V1.11"
+              name: "Agent assigned"
+              check: "task.agent is not None OR task.executor_type == worker"
+
+        - id: "A4.5.2"
+          name: "Validate Haiku prompts against haiku-patterns.yaml"
+          executor: "quality-gate (Sonnet subagent)"
+          checklist: "checklists/haiku-prompt-checklist.md"
+          action: |
+            For each task where model == haiku:
+            ALWAYS rules (must be present):
+            1. Instructions in ENGLISH
+            2. Template for outputs > 50 lines
+            3. "DO NOT ask questions. Execute immediately."
+            4. "Return ONLY [format]. Nothing else." for structured output
+            5. 1 task = 1 deliverable
+            6. Output format explicit
+            7. Output language specified if not English
+
+            NEVER rules (must NOT be present):
+            1. Prompts without context
+            2. "Generate document" without template
+            3. Code-switching (EN+PT)
+            4. Outputs > 300 lines without template
+            5. Multiple deliverables
+            6. Implicit instructions
+            7. Inherited model (must be explicit)
+
+        - id: "A4.5.3"
+          name: "Record PDSA predictions"
+          executor: "quality-gate (Sonnet subagent)"
+          action: |
+            For each wave, record predictions BEFORE execution:
+            - predicted_files: count of expected output files
+            - predicted_failures: expected failure count (usually 0)
+            - predicted_cost: estimated based on model + tokens
+            - predicted_wall_clock: estimated based on critical path
+            Save to state.json wave.prediction field.
+
+      checkpoint:
+        criteria:
+          - "ALL V1.* checks run on EVERY task"
+          - "ALL Haiku prompts validated against haiku-patterns.yaml"
+          - "PDSA predictions recorded for every wave"
+          - "zero hard-block violations (V1.1-V1.11)"
+        on_pass:
+          next_phase: "PHASE-5"
+          message: "Pre-Execution Gate: PASS. All {{task_count}} tasks cleared. Predictions recorded."
+        on_fail:
+          action: "fix_and_retry"
+          return_to: "wave-planner"
+          max_iterations: 2
+          message: |
+            Pre-Execution Gate: FAIL — {{violation_count}} violations.
+            {{#each violations}}
+            {{this.veto_id}}: Task '{{this.task_name}}' — {{this.condition}}.
+            Fix: {{this.fix_instruction}}
+            {{/each}}
+
+            Returning to wave-planner for fix (iteration {{iteration}}/2).
+          on_max_iterations_exceeded:
+            action: "halt"
+            message: |
+              Pre-Execution Gate: FAILED after 2 fix iterations.
+              {{violation_count}} violations could not be auto-resolved.
+
+              Options:
+              1. Review violations and fix manually
+              2. Remove problematic tasks and re-dispatch
+              3. Abort dispatch
+              4. Other
+
+      output:
+        - name: "gate_result"
+          type: "enum"
+          values: ["PASS", "FAIL"]
+        - name: "violations"
+          type: "list"
+          description: "List of veto violations with fix instructions"
+        - name: "wave_predictions"
+          type: "dict"
+          description: "Per-wave predictions for PDSA"
+
+    # =========================================================================
+    # PHASE 5: EXECUTION
+    # =========================================================================
+    # Agent: dispatch-chief (coordinates subagents via Task tool)
+    # Purpose: Execute waves in order, all tasks in wave in TRUE PARALLEL
+    # =========================================================================
+
+    - phase: 5
+      id: "PHASE-5"
+      name: "Execution"
+      agent: dispatch-chief
+      timeout: "varies_per_wave"
+      depends_on:
+        - "PHASE-4.5"
+      description: |
+        Executes waves sequentially (Wave 1, then Wave 2, etc.) but all
+        tasks WITHIN a wave run in TRUE PARALLEL via subagents (Task tool).
+        After each wave, state is persisted and post-execution gate runs.
+
+        Gene Kim First Way: Fast left-to-right flow. Small batches.
+        Quality at every step.
+
+      input:
+        from_phase: "PHASE-4.5"
+        required:
+          - name: "waves"
+            description: "Validated wave manifests"
+          - name: "enriched_prompts"
+            description: "Validated task prompts"
+          - name: "wave_predictions"
+            description: "PDSA predictions from Phase 4.5"
+
+      task_file: "tasks/execute-wave.md"
+
+      actions:
+        - id: "A5.0"
+          name: "Initialize execution state"
+          executor: "dispatch-chief"
+          action: |
+            Create run directory: _temp/dispatch/runs/{run_id}/
+            Initialize state.json via lib/pipeline_state.py
+            Initialize events.jsonl via lib/event_log.py
+            Log run_started event
+
+        - id: "A5.1"
+          name: "Execute waves in sequence"
+          executor: "dispatch-chief"
+          action: |
+            FOR each wave in waves (ordered):
+
+              A5.1.1: Log wave_started event
+              A5.1.2: Launch ALL tasks in wave via Task tool (PARALLEL)
+                       Each task invoked as:
+                       Task(
+                         model=task.model,  # "haiku" | "sonnet"
+                         prompt=enriched_prompts[task.task_id],
+                         timeout=task.timeout,
+                         max_turns=15  # haiku: 15, sonnet: 20
+                       )
+              A5.1.3: Collect results from all subagents
+              A5.1.4: Record actual cost, tokens, duration per task
+              A5.1.5: Persist wave state via lib/pipeline_state.py
+              A5.1.6: Log task_completed / task_failed events
+              A5.1.7: Run Post-Execution Gate (Phase 5.5) for this wave
+              A5.1.8: Handle failures per self-healing rules
+              A5.1.9: Log wave_completed / wave_failed event
+              A5.1.10: If wave passed, proceed to next wave
+                        If wave failed and self-healing resolved, proceed
+                        If wave halted, stop execution
+
+        - id: "A5.2"
+          name: "Self-healing for simple failures"
+          executor: "dispatch-chief"
+          action: |
+            Per data/dispatch-heuristics.yaml self_healing section:
+
+            SIMPLE failures (auto-fix):
+            - Single task failed: Retry with same prompt (max 2 attempts)
+            - Output under word count: Retry with explicit "minimum X words"
+            - File in wrong path: Move via script (CODE > LLM)
+            - Missing section: Retry with section explicitly listed
+
+            COMPLEX failures (escalate):
+            - 3+ tasks in same wave failed: HALT, show failures, ask user
+            - Cost exceeded 5x estimate: HALT, show breakdown
+            - Rate limit hit: Pause 60s, retry wave
+
+        - id: "A5.3"
+          name: "Circuit breaker monitoring"
+          executor: "dispatch-chief"
+          action: |
+            Track consecutive failure count across the entire run:
+            - Increment on each task failure
+            - Reset to 0 on each task success
+            - If count reaches 5: TRIGGER circuit breaker
+              - HALT entire dispatch
+              - Preserve state to state.json
+              - Log circuit_breaker event
+              - Present options to user with pattern analysis
+
+      checkpoint:
+        criteria:
+          - "all waves executed (or halted with state preserved)"
+          - "state persisted after every wave"
+          - "events logged for every task and wave"
+          - "circuit breaker not triggered (or handled properly if triggered)"
+        on_pass:
+          next_phase: "PHASE-6"
+          message: "Execution complete. {{completed_waves}}/{{total_waves}} waves. {{pass_count}}/{{total_tasks}} tasks passed."
+        on_fail:
+          action: "halt_with_state"
+          message: |
+            Execution halted.
+            Completed: {{completed_waves}}/{{total_waves}} waves
+            Tasks: {{pass_count}} passed, {{fail_count}} failed
+            State saved: _temp/dispatch/runs/{{run_id}}/state.json
+            Resume with: *resume
+
+      output:
+        - name: "wave_results"
+          type: "list"
+          description: "Per-wave results with task statuses"
+        - name: "created_files"
+          type: "list"
+          description: "List of all files created during execution"
+        - name: "total_cost"
+          type: "float"
+          description: "Actual total cost in USD"
+
+    # =========================================================================
+    # PHASE 5.5: POST-EXECUTION VERIFICATION
+    # =========================================================================
+    # Agent: quality-gate (subagent, Sonnet)
+    # Type: Automatic, hard block
+    # Purpose: Verify outputs exist, are non-empty, and meet criteria
+    # NOTE: This phase runs INSIDE Phase 5 after EACH wave, not as a
+    #       separate sequential phase. Listed here for documentation.
+    # =========================================================================
+
+    - phase: 5.5
+      id: "PHASE-5.5"
+      name: "Post-Execution Verification"
+      agent: quality-gate
+      model: sonnet
+      gate_type: "automatic"
+      block_type: "hard"
+      timeout: 60
+      runs_inside: "PHASE-5"
+      runs_after: "each wave completion"
+      description: |
+        Runs AFTER each wave completes (not as a standalone phase).
+        Validates that outputs actually exist, are non-empty, and contain
+        no placeholder text. Also performs PDSA study (predicted vs actual).
+
+        This is invoked by dispatch-chief as part of the Phase 5 wave loop
+        (action A5.1.7). It is documented as a separate phase for clarity.
+
+      input:
+        from_phase: "PHASE-5 (current wave)"
+        required:
+          - name: "wave_results"
+            description: "Results from the just-completed wave"
+          - name: "wave_predictions"
+            description: "PDSA predictions from Phase 4.5"
+
+      task_file: "tasks/verify-wave.md"
+      checklist: "checklists/post-execution-gate.md"
+
+      actions:
+        - id: "A5.5.1"
+          name: "Run V2.* veto conditions on wave outputs"
+          executor: "scripts/validate-wave-results.py"
+          executor_type: "worker"
+          veto_conditions:
+            - id: "V2.1"
+              name: "Output file exists"
+              check: "os.path.exists(task.output_path)"
+              severity: "hard_block"
+              on_fail: "Mark task FAILED, trigger retry"
+            - id: "V2.2"
+              name: "Output non-empty"
+              check: "os.path.getsize(task.output_path) > 0"
+              severity: "hard_block"
+              on_fail: "Mark task FAILED, retry with enhanced context"
+            - id: "V2.3"
+              name: "Cost within bounds"
+              check: "actual_cost <= 3 * estimated_cost"
+              severity: "warning"
+              on_fail: "Log warning, flag for PDSA study"
+            - id: "V2.4"
+              name: "No placeholder text in output"
+              check: "regex: [XXX], {TODO}, TBD, [INSERT], {{variable}}"
+              severity: "hard_block"
+              on_fail: "Mark task FAILED, retry with explicit 'resolve ALL placeholders'"
+
+        - id: "A5.5.2"
+          name: "PDSA Study — compare predicted vs actual"
+          executor: "quality-gate (Sonnet subagent)"
+          action: |
+            For the completed wave, compare:
+            - Predicted file count vs actual
+            - Predicted cost vs actual cost
+            - Predicted failures vs actual failures
+            - Predicted wall clock vs actual duration
+
+            Record study results in state.json wave.study field.
+            Log study event in events.jsonl.
+
+            Classify any deltas:
+            - Within normal variation (< 1.5x) = common cause
+            - Outside normal variation (> 1.5x) = special cause (investigate)
+
+        - id: "A5.5.3"
+          name: "PDSA Act — adjust for next wave"
+          executor: "quality-gate (Sonnet subagent)"
+          action: |
+            Based on study findings, recommend adjustments for next wave:
+            - If Haiku tasks failing: increase enrichment (STANDARD -> FULL)
+            - If cost too high: reduce wave size or enrichment level
+            - If quality low: enable feedback loop (Sonnet evaluates, Haiku retries)
+            - If timing off: recalibrate timeout estimates
+
+            Record act recommendations in state.json wave.act field.
+
+      checkpoint:
+        criteria:
+          - "ALL V2.* checks run on EVERY task in wave"
+          - "PDSA study recorded (predicted vs actual)"
+          - "PDSA act recommendations recorded"
+          - "failed tasks classified (SIMPLE vs COMPLEX)"
+          - "self-healing applied for SIMPLE failures"
+          - "COMPLEX failures escalated"
+        on_pass:
+          next_wave: true
+          message: "Post-Execution Gate: PASS for Wave {{wave_num}}."
+        on_fail:
+          action: "self_heal_or_escalate"
+          message: "Post-Execution Gate: {{fail_count}} failures in Wave {{wave_num}}."
+
+      output:
+        - name: "wave_gate_result"
+          type: "enum"
+          values: ["PASS", "PARTIAL_PASS", "FAIL"]
+        - name: "pdsa_study"
+          type: "dict"
+          description: "Predicted vs actual comparison"
+        - name: "pdsa_act"
+          type: "dict"
+          description: "Adjustments for next wave"
+
+    # =========================================================================
+    # PHASE 6: REPORTING
+    # =========================================================================
+    # Agent: dispatch-chief (using templates + scripts)
+    # Purpose: Generate execution report, cost report, health score
+    # =========================================================================
+
+    - phase: 6
+      id: "PHASE-6"
+      name: "Reporting"
+      agent: dispatch-chief
+      timeout: 300
+      depends_on:
+        - "PHASE-5"
+      description: |
+        Final phase. Generates the execution report and cost report using
+        templates and scripts. Calculates dispatch health score. Optionally
+        updates story checkboxes. Presents results to user.
+
+        Gene Kim Third Way: Learning — compound improvement through
+        measurement and reflection.
+
+      input:
+        from_phase: "PHASE-5"
+        required:
+          - name: "run_state"
+            description: "Complete state.json with all wave and task results"
+          - name: "created_files"
+            description: "List of all files created during execution"
+
+      task_file: "tasks/report-execution.md"
+
+      actions:
+        - id: "A6.1"
+          name: "Generate execution report"
+          executor: "dispatch-chief (template fill)"
+          template: "templates/execution-report-tmpl.md"
+          action: |
+            Fill execution report template with data from state.json:
+            - Run summary (run_id, duration, status)
+            - Input summary (source, task count, wave count)
+            - Wave-by-wave results table
+            - Deming PDSA predicted vs actual table
+            - Task-level detail (status, output_path, acceptance results)
+            - Failures & retries section
+            - Veto gate results (V1.* and V2.*)
+
+        - id: "A6.2"
+          name: "Generate cost report"
+          executor: "scripts/cost-tracker.py --run-id {run_id} --generate-report"
+          executor_type: "worker"
+          template: "templates/cost-report-tmpl.md"
+          action: |
+            Calculate all cost metrics deterministically:
+            - Total cost, per-wave, per-task
+            - Model distribution (% Worker, Haiku, Sonnet)
+            - Opus equivalent cost (what it would cost in main context)
+            - Savings analysis (actual vs Opus estimate)
+            - Prompt caching effectiveness (cache hits, savings)
+            - CODE > LLM ratio
+            - Estimate vs actual comparison
+            - V2.3 check: cost within budget
+
+        - id: "A6.3"
+          name: "Calculate health score"
+          executor: "scripts/dispatch-health-score.py --run-id {run_id}"
+          executor_type: "worker"
+          data: "data/dispatch-heuristics.yaml"
+          action: |
+            Evaluate 12 health items:
+            1. Story-Driven Input
+            2. DAG Wave Optimization
+            3. Pre-Execution Gate Passed
+            4. Model Selection Applied
+            5. CODE > LLM Enforced
+            6. Enrichment Levels Applied
+            7. State Persisted
+            8. Acceptance Criteria Verified
+            9. Cost Tracked
+            10. Zero Main Context Execution
+            11. Handoff Saved
+            12. Feedback Loop Active
+
+            Score: 12/12 = Exemplary, 9-11 = Good, 5-8 = Needs Work, 1-4 = Poor
+
+        - id: "A6.4"
+          name: "Update story checkboxes (if story input)"
+          executor: "dispatch-chief"
+          condition: "input_type == story"
+          action: |
+            For tasks with status == "pass":
+              Mark matching checkbox in story file: [ ] -> [x]
+            For tasks with status == "fail":
+              Leave checkbox unmarked, add HTML comment with error
+            RULE: ONLY mark checkboxes for tasks that PASSED verification
+
+        - id: "A6.5"
+          name: "Persist reports and log completion"
+          executor: "dispatch-chief"
+          action: |
+            Save reports:
+            - _temp/dispatch/runs/{run_id}/report.md
+            - _temp/dispatch/runs/{run_id}/cost-report.md
+            Update state.json with report paths and final status
+            Log run_completed event via lib/event_log.py
+
+        - id: "A6.6"
+          name: "Present results to user"
+          executor: "dispatch-chief"
+          action: |
+            Output summary in dispatch-chief voice:
+            - Run ID, duration, task pass/fail counts
+            - File list (every file created)
+            - Cost summary with savings
+            - Health score with rating
+            - Contextual next steps (1, 2, 3, 4=Other)
+
+      checkpoint:
+        criteria:
+          - "execution report generated and saved"
+          - "cost report generated and saved"
+          - "health score calculated (0-12)"
+          - "zero placeholders in reports"
+          - "story checkboxes updated (if story input)"
+          - "event log has run_completed event"
+          - "user received summary with next steps"
+        on_pass:
+          next_phase: "COMPLETE"
+          message: |
+            Dispatch complete.
+            Health score: {{health_score}}/12 ({{health_rating}}).
+            Cost: ${{total_cost}} ({{savings_pct}}% savings vs Opus).
+            Reports: _temp/dispatch/runs/{{run_id}}/
+
+      output:
+        - name: "report_path"
+          type: "string"
+          value: "_temp/dispatch/runs/{run_id}/report.md"
+        - name: "cost_report_path"
+          type: "string"
+          value: "_temp/dispatch/runs/{run_id}/cost-report.md"
+        - name: "health_score"
+          type: "integer"
+          range: "0-12"
+        - name: "health_rating"
+          type: "string"
+          values: ["Exemplary", "Good", "Needs Work", "Poor"]
+
+  # ===========================================================================
+  # COMPLETION
+  # ===========================================================================
+
+  completion:
+    signal: "DISPATCH COMPLETE"
+
+    deliverables:
+      always:
+        - "_temp/dispatch/runs/{run_id}/state.json"
+        - "_temp/dispatch/runs/{run_id}/events.jsonl"
+        - "_temp/dispatch/runs/{run_id}/report.md"
+        - "_temp/dispatch/runs/{run_id}/cost-report.md"
+      conditional:
+        - description: "Updated story file (if story input)"
+          condition: "input_type == story"
+          path: "{story_file}"
+      task_outputs:
+        - description: "All files created by dispatched tasks"
+          paths: "dynamic — listed in execution report"
+
+    success_criteria:
+      - "all tasks passed post-execution gate"
+      - "health score >= 9/12"
+      - "cost within 3x estimate"
+      - "zero unresolved failures"
+      - "reports generated with zero placeholders"
+
+    partial_success_criteria:
+      - "some tasks passed, some failed (reported accurately)"
+      - "health score 5-8/12"
+      - "state preserved for resume"
+      - "failure details documented"
+
+  # ===========================================================================
+  # SIGNALS & CONTROL
+  # ===========================================================================
+
+  signals:
+    phase_complete: "PHASE {{phase_id}} COMPLETE"
+    gate_pass: "GATE {{gate_id}}: PASS"
+    gate_fail: "GATE {{gate_id}}: FAIL — {{violation_count}} violations"
+    wave_start: "WAVE {{wave_num}} EXECUTING ({{task_count}} tasks)"
+    wave_complete: "WAVE {{wave_num}} COMPLETE ({{pass_count}}/{{task_count}} passed)"
+    circuit_breaker: "CIRCUIT BREAKER — 5 consecutive failures"
+    dispatch_complete: "DISPATCH COMPLETE — {{health_score}}/12"
+    dispatch_halted: "DISPATCH HALTED — {{reason}}"
+
+  # ===========================================================================
+  # RESUME SUPPORT
+  # ===========================================================================
+
+  resume:
+    command: "*resume"
+    description: |
+      Resumes an interrupted dispatch from the last persisted state.
+      Reads _temp/dispatch/runs/{run_id}/state.json to determine:
+      - Last completed wave
+      - Pending tasks
+      - Failure context (if halted by circuit breaker)
+    behavior: |
+      1. Find most recent run with status != "completed"
+      2. Load state.json
+      3. Identify last completed wave
+      4. Re-run Phase 5.5 on last wave (verify no partial state)
+      5. Continue from next wave
+      6. If circuit breaker was trigger: show pattern analysis, ask to proceed
+    state_path: "_temp/dispatch/runs/{run_id}/state.json"
+
+  # ===========================================================================
+  # ERROR HANDLING
+  # ===========================================================================
+
+  error_handling:
+    self_healing:
+      simple_failures:
+        - problem: "Single task failed in wave"
+          action: "Retry with same prompt (max 2 attempts)"
+        - problem: "Output slightly under word count"
+          action: "Retry with explicit 'minimum X words' added"
+        - problem: "File created in wrong path"
+          action: "Move to correct path via script (CODE > LLM)"
+        - problem: "Missing section in output"
+          action: "Retry with section explicitly listed"
+
+      complex_failures:
+        - problem: "3+ tasks in same wave failed"
+          action: "HALT wave, show failures, ask user"
+        - problem: "Quality gate fails after 2 fix iterations"
+          action: "HALT, show violations, present options"
+        - problem: "Cost exceeded 5x estimate"
+          action: "HALT, show cost breakdown, ask to continue"
+        - problem: "Rate limit hit"
+          action: "Pause wave, wait 60s, retry"
+
+    circuit_breaker:
+      trigger: "5 consecutive task failures in a run"
+      action: "HALT entire dispatch, preserve state, notify user"
+      reset: "Resets to 0 after any successful task execution"
+      resume: "*resume continues from last good wave"
+
+    principle: |
+      "Problemas simples: auto-cura. Complexos: escala humano.
+      Sem zona cinza." — Pedro Valerio
+
+  # ===========================================================================
+  # METADATA
+  # ===========================================================================
+
+  metadata:
+    created: "2026-02-10"
+    version: "1.0.0"
+    author: "AIOS Dispatch Squad"
+    squad: "dispatch"
+    entry_agent: "dispatch-chief"
+    mind: "Gene Kim (The DevOps Handbook, The Phoenix Project, Accelerate)"
+    secondary_minds:
+      - "Donald Reinertsen — Principles of Product Development Flow"
+      - "Eliyahu Goldratt — Theory of Constraints"
+      - "W. Edwards Deming — PDSA cycle, Operational Definitions"
+      - "Pedro Valerio — Veto Conditions, Gate Classification, Self-Healing"
+
+    phase_count: 8  # Phase 0, 1, 2, 3, 4, 4.5, 5, 5.5, 6
+    task_files:
+      - "tasks/plan-execution.md"
+      - "tasks/route-tasks.md"
+      - "tasks/decompose-to-waves.md"
+      - "tasks/execute-wave.md"
+      - "tasks/verify-wave.md"
+      - "tasks/report-execution.md"
+
+    template_files:
+      - "templates/execution-plan-tmpl.yaml"
+      - "templates/wave-manifest-tmpl.yaml"
+      - "templates/task-prompt-tmpl.md"
+      - "templates/execution-report-tmpl.md"
+      - "templates/cost-report-tmpl.md"
+      - "templates/dispatch-state-tmpl.json"
+
+    checklist_files:
+      - "checklists/pre-dispatch-gate.md"
+      - "checklists/pre-execution-gate.md"
+      - "checklists/post-execution-gate.md"
+      - "checklists/haiku-prompt-checklist.md"
+
+    script_files:
+      - "scripts/wave-optimizer.py"
+      - "scripts/enrich-task.py"
+      - "scripts/validate-dispatch-gate.sh"
+      - "scripts/validate-wave-results.py"
+      - "scripts/cost-tracker.py"
+      - "scripts/dispatch-health-score.py"
+
+    data_files:
+      - "data/veto-conditions.yaml"
+      - "data/domain-registry.yaml"
+      - "data/model-selection-rules.yaml"
+      - "data/enrichment-rules.yaml"
+      - "data/timeout-rules.yaml"
+      - "data/haiku-patterns.yaml"
+      - "data/dispatch-heuristics.yaml"
+
+    library_modules:
+      - "lib/pipeline_state.py"
+      - "lib/event_log.py"
+      - "lib/progress.py"
+
+    compatible_with:
+      - "dispatch-chief v1.0.0"
+      - "wave-planner v1.0.0"
+      - "task-router v1.0.0"
+      - "quality-gate v1.0.0"
+      - "All AIOS squads (via slash command routing)"
+
+    lines: "500+"

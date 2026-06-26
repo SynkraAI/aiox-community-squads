@@ -1,0 +1,443 @@
+version: "1.0"
+source: "$100M Proof Checklist Playbook.pdf"
+author: "Alex Hormozi"
+description: "Framework completo para coletar, organizar e apresentar provas que vendem"
+
+# =============================================================================
+# HIERARQUIA DE PROVA (do mais ao menos poderoso)
+# =============================================================================
+hierarchy:
+  - level: 1
+    type: "demonstrated_result"
+    description: "Mostrar o resultado acontecendo ao vivo"
+    power: "highest"
+    example: "Demo ao vivo do produto funcionando"
+
+  - level: 2
+    type: "documented_result"
+    description: "Evidencia visual/documental do resultado"
+    power: "very_high"
+    examples:
+      - "Screenshots de resultados"
+      - "Videos de antes/depois"
+      - "Graficos de crescimento"
+
+  - level: 3
+    type: "third_party_testimonial"
+    description: "Depoimento de cliente real com detalhes especificos"
+    power: "high"
+
+  - level: 4
+    type: "credentials"
+    description: "Autoridade, certificacoes, experiencia"
+    power: "medium_high"
+
+  - level: 5
+    type: "logical_argument"
+    description: "Explicacao racional de por que funciona"
+    power: "medium"
+
+  - level: 6
+    type: "claim"
+    description: "Afirmacao sem prova"
+    power: "lowest"
+
+# =============================================================================
+# TIPOS DE PROVA
+# =============================================================================
+proof_types:
+  social_proof:
+    definition: "Evidencia de que outros ja usaram e aprovaram"
+    subtypes:
+      - name: "celebrity_endorsement"
+        description: "Figura conhecida usando/recomendando"
+        power_multiplier: 3x
+
+      - name: "expert_endorsement"
+        description: "Especialista da area validando"
+        power_multiplier: 2.5x
+
+      - name: "peer_testimonial"
+        description: "Cliente similar ao prospect"
+        power_multiplier: 2x
+        note: "Mais relatable = mais efetivo"
+
+      - name: "crowd_proof"
+        description: "Numeros agregados (10k+ clientes)"
+        power_multiplier: 1.5x
+
+  results_proof:
+    definition: "Demonstracao de outcomes especificos"
+    categories:
+      - name: "before_after"
+        elements:
+          - "Estado inicial claro"
+          - "Estado final claro"
+          - "Timeframe especifico"
+          - "Contexto (quem, onde)"
+
+      - name: "case_study"
+        elements:
+          - "Situacao inicial"
+          - "Problema enfrentado"
+          - "Solucao aplicada"
+          - "Resultado obtido"
+          - "Metricas especificas"
+
+      - name: "statistics"
+        requirements:
+          - "Fonte verificavel"
+          - "Amostra relevante"
+          - "Periodo definido"
+          - "Metodologia clara"
+
+  credential_proof:
+    definition: "Autoridade e expertise demonstrada"
+    types:
+      - "Anos de experiencia"
+      - "Numero de clientes atendidos"
+      - "Valor gerado/gerenciado"
+      - "Certificacoes relevantes"
+      - "Media appearances"
+      - "Livros publicados"
+      - "Premios/reconhecimentos"
+
+  logical_proof:
+    definition: "Argumentos racionais que fazem sentido"
+    techniques:
+      - name: "mechanism"
+        description: "Explicar COMO funciona"
+        example: "O sistema funciona porque..."
+
+      - name: "analogy"
+        description: "Comparar com algo conhecido"
+        example: "E como [coisa familiar]..."
+
+      - name: "demonstration"
+        description: "Mostrar passo a passo"
+
+  risk_reversal:
+    definition: "Prova de confianca no proprio produto"
+    types:
+      - name: "money_back_guarantee"
+        variants:
+          - "30/60/90 dias"
+          - "Sem perguntas"
+          - "Dobro do dinheiro de volta"
+
+      - name: "performance_guarantee"
+        description: "Resultado X ou dinheiro de volta"
+
+      - name: "conditional_guarantee"
+        description: "Se fizer Y e nao conseguir X..."
+
+# =============================================================================
+# CHECKLISTS DE IMPLEMENTACAO
+# =============================================================================
+checklists:
+  collecting_proof:
+    title: "Checklist para Coletar Provas"
+    items:
+      - step: 1
+        action: "Identificar clientes com melhores resultados"
+        how: "Revisar metricas, feedback, renovacoes"
+
+      - step: 2
+        action: "Pedir permissao para usar historia"
+        script: "Adoraria compartilhar sua historia de sucesso. Posso usar seu depoimento?"
+
+      - step: 3
+        action: "Coletar dados especificos"
+        data_points:
+          - "Situacao antes (numeros)"
+          - "Situacao depois (numeros)"
+          - "Tempo para resultado"
+          - "O que mais gostou"
+          - "Para quem recomendaria"
+
+      - step: 4
+        action: "Obter formato de alta qualidade"
+        priority:
+          - "Video (melhor)"
+          - "Audio"
+          - "Texto escrito"
+          - "Screenshot/imagem"
+
+      - step: 5
+        action: "Arquivar com metadata"
+        metadata:
+          - "Nome e empresa"
+          - "Nicho/industria"
+          - "Produto usado"
+          - "Data coletado"
+          - "Resultado principal"
+
+  presenting_proof:
+    title: "Checklist para Apresentar Provas"
+    rules:
+      - rule: "Especificidade vence generalidade"
+        bad: "Muitos clientes tiveram resultados"
+        good: "437 clientes geraram media de $12,400 em 47 dias"
+
+      - rule: "Match proof to objection"
+        example: "Se objecao e tempo, mostre caso de resultado rapido"
+
+      - rule: "Stack multiple proof types"
+        order:
+          - "Abra com estatistica (credibilidade)"
+          - "Siga com case study (relatable)"
+          - "Feche com garantia (risk reversal)"
+
+      - rule: "Use proof relevant to prospect"
+        tip: "Mostre caso do mesmo nicho/tamanho/situacao"
+
+  audit_existing_proof:
+    title: "Auditoria de Provas Existentes"
+    questions:
+      - "Quantos testimonials temos?"
+      - "Quantos sao em video?"
+      - "Cobrem todas as objecoes principais?"
+      - "Representam diferentes nichos/personas?"
+      - "Estao atualizados (< 12 meses)?"
+      - "Temos permissao documentada?"
+      - "Estao facilmente acessiveis para vendas?"
+
+# =============================================================================
+# SCRIPTS PARA COLETAR TESTIMONIALS
+# =============================================================================
+testimonial_scripts:
+  video_request:
+    subject: "Pedido Especial (30 segundos)"
+    script: |
+      Oi [NOME],
+
+      Vi que voce conseguiu [RESULTADO ESPECIFICO] com [PRODUTO].
+
+      Adoraria se pudesse gravar um video curto (30-60 seg)
+      respondendo essas 3 perguntas:
+
+      1. Como estava sua situacao ANTES?
+      2. O que mudou DEPOIS de usar [PRODUTO]?
+      3. Para quem voce recomendaria?
+
+      Pode gravar pelo celular mesmo, nao precisa ser profissional.
+
+      Se preferir, podemos agendar uma call de 10 min e eu gravo.
+
+      Obrigado!
+
+  interview_questions:
+    warm_up:
+      - "Como voce descobriu [PRODUTO]?"
+      - "O que te fez decidir experimentar?"
+
+    before_state:
+      - "Como estava [AREA] antes de comecar?"
+      - "Quais eram suas maiores frustracoes?"
+      - "O que ja tinha tentado que nao funcionou?"
+
+    transformation:
+      - "Qual foi o primeiro resultado que notou?"
+      - "O que mudou especificamente?"
+      - "Pode me dar numeros exatos?"
+
+    after_state:
+      - "Como esta [AREA] hoje?"
+      - "Qual o resultado que mais te orgulha?"
+      - "O que isso significou para sua vida/negocio?"
+
+    recommendation:
+      - "Para quem voce recomendaria [PRODUTO]?"
+      - "O que diria para alguem na duvida?"
+      - "Se pudesse resumir em uma frase..."
+
+  written_template:
+    format: |
+      ANTES: [situacao inicial]
+      DEPOIS: [resultado atual]
+      TEMPO: [quanto demorou]
+      FAVORITO: [o que mais gostou]
+      RECOMENDO PARA: [perfil ideal]
+
+# =============================================================================
+# FRAMEWORK DE CASE STUDY
+# =============================================================================
+case_study_framework:
+  structure:
+    - section: "headline"
+      formula: "[CLIENTE] conseguiu [RESULTADO] em [TEMPO] usando [PRODUTO]"
+      example: "Agencia XYZ faturou $50k/mes em 90 dias com nosso sistema"
+
+    - section: "snapshot"
+      elements:
+        - "Nome/empresa"
+        - "Nicho"
+        - "Resultado principal (numero)"
+        - "Tempo para resultado"
+        - "Foto ou logo"
+
+    - section: "situation"
+      questions:
+        - "Quem e o cliente?"
+        - "Qual era o contexto?"
+        - "Qual o problema/desafio?"
+      length: "2-3 paragrafos"
+
+    - section: "solution"
+      questions:
+        - "O que implementou?"
+        - "Como foi o processo?"
+        - "Quais passos seguiu?"
+      length: "2-3 paragrafos"
+      tip: "Mencione features especificas do produto"
+
+    - section: "results"
+      requirements:
+        - "Numeros especificos"
+        - "Comparacao antes/depois"
+        - "Multiplas metricas se possivel"
+        - "Quote do cliente"
+      length: "2-3 paragrafos"
+
+    - section: "cta"
+      options:
+        - "Quer resultados similares? [LINK]"
+        - "Agende uma conversa: [LINK]"
+        - "Baixe o mesmo sistema: [LINK]"
+
+  formats:
+    short:
+      use_for: "Social media, ads"
+      length: "100-200 palavras"
+      structure: "Snapshot + Resultado + CTA"
+
+    medium:
+      use_for: "Landing pages, emails"
+      length: "300-500 palavras"
+      structure: "Headline + Situation + Results + CTA"
+
+    long:
+      use_for: "Blog posts, sales pages"
+      length: "800-1500 palavras"
+      structure: "Full framework"
+
+# =============================================================================
+# PROOF STACKING (Combinando Provas)
+# =============================================================================
+proof_stacking:
+  principle: "Multiplas provas fracas > uma prova forte isolada"
+
+  minimum_viable_stack:
+    - "1 estatistica/numero agregado"
+    - "1 testimonial especifico"
+    - "1 garantia"
+
+  optimal_stack:
+    - "Estatistica de abertura (credibilidade)"
+    - "Case study detalhado (relatable)"
+    - "2-3 testimonials curtos (variedade)"
+    - "Credenciais do autor/empresa"
+    - "Garantia de fechamento"
+
+  per_objection_mapping:
+    objection_price:
+      proofs:
+        - "ROI case studies"
+        - "Custo de NAO agir"
+        - "Garantia de resultado"
+
+    objection_time:
+      proofs:
+        - "Casos de resultado rapido"
+        - "Quanto tempo economiza"
+        - "Testimonials de pessoas ocupadas"
+
+    objection_trust:
+      proofs:
+        - "Credenciais e experiencia"
+        - "Numero de clientes"
+        - "Garantias generosas"
+        - "Media mentions"
+
+    objection_works_for_me:
+      proofs:
+        - "Case de pessoa similar"
+        - "Variedade de nichos atendidos"
+        - "Testimonial de cetico convertido"
+
+# =============================================================================
+# METRICAS E KPIs DE PROVA
+# =============================================================================
+proof_metrics:
+  quantity_targets:
+    minimum: "10 testimonials"
+    good: "50 testimonials"
+    excellent: "100+ testimonials"
+
+  quality_checklist:
+    - "Inclui numeros especificos?"
+    - "Menciona timeframe?"
+    - "Identifica a pessoa (nome, empresa)?"
+    - "Em video ou com foto?"
+    - "Cobre objecao comum?"
+
+  coverage_matrix:
+    dimensions:
+      - "Por produto/servico"
+      - "Por nicho do cliente"
+      - "Por objecao principal"
+      - "Por tipo de resultado"
+    goal: "Minimo 3 provas por celula da matriz"
+
+# =============================================================================
+# INSTRUCOES PARA AGENTES
+# =============================================================================
+agent_usage:
+  hormozi_copy:
+    when_writing_copy:
+      - "SEMPRE inclua pelo menos 1 prova especifica"
+      - "Use numeros exatos, nao aproximados"
+      - "Match proof type to target objection"
+      - "Stack 3+ tipos de prova em sales pages"
+
+    proof_density:
+      headline: "Pode incluir numero/resultado"
+      lead: "1-2 provas de credibilidade"
+      body: "1 prova a cada 200-300 palavras"
+      close: "Stack provas + garantia"
+
+    formatting:
+      testimonials:
+        - "Use quotes com atribuicao completa"
+        - "Negrito nos numeros/resultados"
+        - "Inclua foto quando possivel"
+
+      statistics:
+        - "Cite fonte se externa"
+        - "Use numeros especificos (437, nao 'mais de 400')"
+        - "Contextualize (em quanto tempo, de quanto para quanto)"
+
+  content_creation:
+    case_study_prompt: |
+      Crie um case study seguindo o framework:
+      1. Headline com resultado numerico
+      2. Snapshot com metricas-chave
+      3. Situacao (2 paragrafos)
+      4. Solucao (2 paragrafos)
+      5. Resultados com numeros
+      6. CTA claro
+
+    testimonial_edit_prompt: |
+      Edite este testimonial para:
+      1. Manter voz autentica
+      2. Destacar numeros especificos
+      3. Remover fluff/generalidades
+      4. Adicionar contexto se necessario
+      5. Manter em 50-100 palavras
+
+  validation:
+    before_using_proof:
+      - "Tenho permissao documentada?"
+      - "Os dados sao verificaveis?"
+      - "Esta atualizado (< 12 meses)?"
+      - "E relevante para este publico?"

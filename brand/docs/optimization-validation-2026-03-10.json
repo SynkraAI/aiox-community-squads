@@ -1,0 +1,26 @@
+{
+  "squad": "brand",
+  "generated_at": "2026-03-10T17:05:00Z",
+  "workflow_contracts": {
+    "files_checked": 8,
+    "errors": 0,
+    "warnings": 0
+  },
+  "validate_squad_quick": {
+    "result": "PASS",
+    "final_score": 9,
+    "type": "pipeline",
+    "metrics": {
+      "agents": 16,
+      "tasks": 18,
+      "checklists": 1
+    },
+    "deterministic": {
+      "tier1_fail": 0,
+      "security_fail": 0,
+      "xref_fail": 0,
+      "workflow_contract_fail": 0,
+      "warnings": 0
+    }
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lendario.ai/squads/etl-ops/enriched-transcript.schema.json",
+  "title": "Enriched Transcript Output",
+  "description": "Schema for structured transcript output with YAML frontmatter metadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["frontmatter", "body"],
+  "properties": {
+    "frontmatter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "title"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "Origin identifier (URL, file path, or descriptive name)",
+          "minLength": 1
+        },
+        "collection": {
+          "type": "string",
+          "description": "Parent group name (series, playlist, folder)",
+          "minLength": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "description": "Order within collection (1-based)",
+          "minimum": 1
+        },
+        "title": {
+          "type": "string",
+          "description": "Item title",
+          "minLength": 1
+        },
+        "topic": {
+          "type": "string",
+          "description": "One-line summary of content",
+          "maxLength": 200
+        },
+        "key_concepts": {
+          "type": "array",
+          "description": "Extracted terms and concepts for indexing",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "maxItems": 20
+        },
+        "language": {
+          "type": "string",
+          "description": "ISO 639-1 language code",
+          "pattern": "^[a-z]{2}(-[A-Z]{2})?$"
+        },
+        "duration_sec": {
+          "type": "integer",
+          "description": "Original media duration in seconds",
+          "minimum": 0
+        },
+        "speaker": {
+          "type": "string",
+          "description": "Primary speaker identifier"
+        },
+        "tags": {
+          "type": "array",
+          "description": "User-defined classification tags",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "prerequisites": {
+          "type": "array",
+          "description": "Required prior knowledge or content dependencies",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "note": {
+          "type": "string",
+          "description": "Quality notes, processing artifacts, or editorial comments about the content"
+        }
+      }
+    },
+    "body": {
+      "type": "string",
+      "description": "Markdown-formatted content with structure (headings, lists, tables, quotes)",
+      "minLength": 1
+    }
+  },
+  "examples": [
+    {
+      "frontmatter": {
+        "source": "https://cdn.example.com/videos/intro.mp4",
+        "collection": "Onboarding Series",
+        "sequence": 1,
+        "title": "Getting Started",
+        "topic": "Introduction to the platform and core concepts",
+        "key_concepts": ["setup", "navigation", "first steps"],
+        "language": "en",
+        "duration_sec": 480
+      },
+      "body": "# Getting Started\n\nWelcome to the platform...\n\n## Key Points\n\n- First point\n- Second point"
+    }
+  ]
+}

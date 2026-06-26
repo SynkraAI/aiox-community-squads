@@ -1,0 +1,126 @@
+# Learner Diagnostic Template
+# Purpose: Assess individual learner's prior knowledge and recommend personalized path
+# Output: Diagnostic report with starting point, adapted progression, and learning profile
+
+metadata:
+  diagnostic_id: "{DIAGNOSTIC_ID}"  # e.g., "diag-001-learner-maria"
+  learner_id: "{LEARNER_ID}"
+  curriculum_id: "{CURRICULUM_ID}"  # Target curriculum
+  diagnostic_date: "{DIAGNOSTIC_DATE}"
+  assessor: "{ASSESSOR}"  # Human or automated
+  version: "{VERSION}"
+
+learner_profile:
+  # Basic learner information
+  name: "{LEARNER_NAME}"
+  background: "{BACKGROUND}"  # e.g., "Entrepreneur, 5 years coaching business"
+  goals: "{GOALS}"  # e.g., "Automate marketing to save 10h/week"
+  constraints: "{CONSTRAINTS}"  # e.g., "3h/week study time, low tech literacy"
+  learning_preferences: "{PREFERENCES}"  # e.g., "Visual learner, prefers video over text"
+
+prior_knowledge_assessment:
+  # What learner already knows (mapped to curriculum concepts)
+  method: "{METHOD}"  # e.g., "Pre-test", "Interview", "Portfolio review"
+
+  concepts_assessed:
+    - concept: "{CONCEPT_1}"  # From curriculum knowledge map
+      proficiency: "{NONE|BASIC|INTERMEDIATE|ADVANCED}"
+      evidence: "{EVIDENCE}"  # What demonstrated this proficiency
+      bloom_level: "{BLOOM_LEVEL}"  # Highest Bloom level demonstrated
+
+    - concept: "{CONCEPT_2}"
+      proficiency: "{PROFICIENCY}"
+      evidence: "{EVIDENCE}"
+      bloom_level: "{BLOOM_LEVEL}"
+
+  knowledge_gaps:
+    - gap: "{GAP_1}"  # e.g., "No understanding of email segmentation"
+      severity: "{LOW|MEDIUM|HIGH}"  # Impact on learning path
+      prerequisite_for: ["{CONCEPT_A}", "{CONCEPT_B}"]  # What this blocks
+
+    - gap: "{GAP_2}"
+      severity: "{SEVERITY}"
+      prerequisite_for: []
+
+bloom_level_per_concept:
+  # Map learner's demonstrated Bloom level for each concept
+  - concept: "{CONCEPT}"
+    current_bloom_level: "{LEVEL}"  # e.g., "Remember" (knows definition)
+    target_bloom_level: "{LEVEL}"  # e.g., "Apply" (curriculum goal)
+    gap: "{GAP}"  # e.g., "2 levels" (Remember → Understand → Apply)
+
+recommended_starting_point:
+  # Where learner should begin in curriculum
+  module_id: "{MODULE_ID}"
+  lesson_id: "{LESSON_ID}"  # Optional (if can skip within module)
+
+  rationale: |
+    {RATIONALE}
+    # E.g., "Learner demonstrates INTERMEDIATE proficiency in concepts 1-5, can skip Module 1"
+
+  prerequisites_to_review:
+    - concept: "{CONCEPT}"
+      reason: "{REASON}"  # Why review is needed despite some knowledge
+
+adapted_progression:
+  # Personalized learning path
+  # Format: Module → Skip/Review/Full → Justification
+  modules:
+    - module_id: "{MODULE_ID}"
+      module_name: "{MODULE_NAME}"
+      recommendation: "{SKIP|REVIEW|FULL}"
+      justification: |
+        {JUSTIFICATION}
+        # E.g., "SKIP: Learner already demonstrates APPLY level for all concepts"
+
+      adapted_lessons:
+        # If REVIEW, specify which lessons
+        - lesson_id: "{LESSON_ID}"
+          action: "{SKIP|REVIEW|FULL}"
+          reason: "{REASON}"
+
+    - module_id: "{MODULE_ID}"
+      module_name: "{MODULE_NAME}"
+      recommendation: "{RECOMMENDATION}"
+      justification: |
+        {JUSTIFICATION}
+
+estimated_completion_time:
+  # How long adapted path will take
+  original_hours: {HOURS}  # Standard curriculum
+  adapted_hours: {HOURS}  # After personalization
+  time_saved: {HOURS}
+
+  breakdown:
+    - module: "{MODULE}"
+      hours: {HOURS}
+
+learning_strategies:
+  # Personalized tactics based on profile
+  strengths:
+    - strength: "{STRENGTH}"  # e.g., "Strong visual memory"
+      leverage: "{LEVERAGE}"  # How to use this: "Prioritize video lessons, diagram-heavy materials"
+
+  challenges:
+    - challenge: "{CHALLENGE}"  # e.g., "Struggles with abstract concepts"
+      mitigation: "{MITIGATION}"  # "Use concrete examples, hands-on practice before theory"
+
+support_needs:
+  # What learner may need help with
+  - need: "{NEED_1}"  # e.g., "Clarification on technical jargon"
+    solution: "{SOLUTION}"  # e.g., "Provide glossary, use plain language"
+
+  - need: "{NEED_2}"
+    solution: "{SOLUTION}"
+
+progress_checkpoints:
+  # When to reassess learner progress
+  - checkpoint: 1
+    module: "{MODULE_ID}"
+    timing: "{TIMING}"  # e.g., "After 2 weeks"
+    focus: "{FOCUS}"  # What to assess
+    criteria: "{CRITERIA}"  # What indicates on-track vs struggling
+
+notes: |
+  {ADDITIONAL_NOTES}
+  # Learner's self-assessment, motivation level, iteration history

@@ -1,0 +1,9 @@
+handoff:
+  id: etl-cross-domain-handoff
+  version: "1.0.0"
+  from_domain: Tactical
+  to_domain: Operational
+  context_summary: ""
+  evidence_paths: []
+  blocking_risks: []
+  next_action: ""

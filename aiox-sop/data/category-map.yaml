@@ -1,0 +1,647 @@
+# =============================================================================
+# SOP Category Map — SOP Chief Knowledge Base
+# =============================================================================
+# Static knowledge base mapping minimum SOPs every business type needs.
+# Structured in 3 layers:
+#   1. Universal — every business needs these
+#   2. By Industry — vertical-specific (compliance, delivery, expertise)
+#   3. By Business Model — monetization-specific (sales, delivery, retention)
+#
+# Source: workspace/businesses/*/L0-identity/company-dna.yaml
+# Consumed by: sop-chief (SOP creation routing)
+# Update frequency: rare — only when new industries/models enter workspace
+#
+# NOTE: Some SOPs have Brazil-specific context (NF-e, ANVISA, LGPD, CVM).
+# When generating SOPs for international businesses, adapt regulatory
+# references to local equivalents (FDA, GDPR, SEC, etc.).
+# =============================================================================
+
+version: "1.0.0"
+generated_from: "industry and business model research"
+last_updated: "2026-03-18"
+
+# =============================================================================
+# LAYER 1: UNIVERSAL SOPs
+# Every business, regardless of industry or model, needs these.
+# These are "dumb processes" — should be invisible and automated.
+# =============================================================================
+
+universal_sops:
+  description: >
+    SOPs every business must have documented. Administrative, financial, and
+    basic operational processes. Dominant executor: Worker.
+    Default priority: P1 (quick wins — hours to synchronize).
+
+  financial:
+    - id: SOP-UNIV-FIN-01
+      name: "Invoice Issuance"
+      description: "Issue invoices for products/services sold"
+      executor: Worker
+      complexity: low
+      frequency: "per transaction"
+      br_context: "NF-e via SEFAZ. Requires digital certificate (e-CNPJ)."
+
+    - id: SOP-UNIV-FIN-02
+      name: "Accounts Payable"
+      description: "Track and process payments to suppliers, freelancers, and services"
+      executor: Worker
+      complexity: low
+      frequency: weekly
+
+    - id: SOP-UNIV-FIN-03
+      name: "Accounts Receivable"
+      description: "Track incoming payments, dunning, and delinquency management"
+      executor: Worker/Agent
+      complexity: low
+      frequency: daily
+
+    - id: SOP-UNIV-FIN-04
+      name: "Bank Reconciliation"
+      description: "Match bank statements against financial system records"
+      executor: Worker
+      complexity: low
+      frequency: weekly
+
+  sales:
+    - id: SOP-UNIV-COM-01
+      name: "Inbound Lead Qualification"
+      description: "Classify and score leads from forms, WhatsApp, email, ads"
+      executor: Worker/Agent
+      complexity: low-medium
+      frequency: "per lead"
+
+    - id: SOP-UNIV-COM-02
+      name: "Sales Follow-up Cadence"
+      description: "Structured sequence of touchpoints after initial interest"
+      executor: Worker/Agent
+      complexity: low
+      frequency: daily
+
+    - id: SOP-UNIV-COM-03
+      name: "CRM Deal Registration"
+      description: "Record closed deal data in CRM with all required fields"
+      executor: Worker
+      complexity: low
+      frequency: "per sale"
+
+  people:
+    - id: SOP-UNIV-PES-01
+      name: "New Employee Onboarding"
+      description: "Integration checklist: access provisioning, tools, culture, initial training"
+      executor: Hybrid
+      complexity: medium
+      frequency: "per hire"
+
+    - id: SOP-UNIV-PES-02
+      name: "Employee Offboarding"
+      description: "Revoke access, transfer responsibilities, exit interview"
+      executor: Hybrid
+      complexity: medium
+      frequency: "per departure"
+
+    - id: SOP-UNIV-PES-03
+      name: "Time Off & Absence Management"
+      description: "Request, approval, and tracking of vacations, leaves, absences"
+      executor: Worker
+      complexity: low
+      frequency: monthly
+
+  operations:
+    - id: SOP-UNIV-OPS-01
+      name: "Data Backup"
+      description: "Routine backup of critical systems (cloud storage, databases, code)"
+      executor: Worker
+      complexity: low
+      frequency: daily/weekly
+
+    - id: SOP-UNIV-OPS-02
+      name: "Access & Credential Management"
+      description: "Provisioning, rotation, and revocation of tool/system access"
+      executor: Worker
+      complexity: low
+      frequency: "per event"
+
+    - id: SOP-UNIV-OPS-03
+      name: "Periodic KPI Reporting"
+      description: "Generate and distribute KPI dashboards to management"
+      executor: Worker/Agent
+      complexity: low
+      frequency: weekly/monthly
+
+  support:
+    - id: SOP-UNIV-ATD-01
+      name: "Tier 1 Support Triage"
+      description: "First-contact support: classify, answer FAQs, escalate if needed"
+      executor: Agent
+      complexity: medium
+      frequency: "per ticket"
+
+    - id: SOP-UNIV-ATD-02
+      name: "Complaint Management"
+      description: "Receive, log, route, and track resolution of complaints"
+      executor: Hybrid
+      complexity: medium
+      frequency: "per complaint"
+
+  marketing:
+    - id: SOP-UNIV-MKT-01
+      name: "Social Media Content Publishing"
+      description: "Schedule and publish posts across platforms (Instagram, LinkedIn, YouTube, etc.)"
+      executor: Worker
+      complexity: low
+      frequency: daily
+
+    - id: SOP-UNIV-MKT-02
+      name: "Email Marketing Operations"
+      description: "Send newsletters, manage automations, segment lists"
+      executor: Worker/Agent
+      complexity: low-medium
+      frequency: weekly
+
+  legal:
+    - id: SOP-UNIV-JUR-01
+      name: "Contract Management"
+      description: "Draft, review, sign, and archive contracts"
+      executor: Hybrid
+      complexity: medium
+      frequency: "per contract"
+
+    - id: SOP-UNIV-JUR-02
+      name: "Data Privacy Compliance"
+      description: "Consent management, privacy policy, data subject requests"
+      executor: Hybrid
+      complexity: medium
+      frequency: ongoing
+      br_context: "LGPD (Lei Geral de Proteção de Dados). International: GDPR, CCPA."
+
+# =============================================================================
+# LAYER 2: INDUSTRY SOPs
+# Vertical-specific. Define compliance, delivery, and domain expertise
+# the business needs BECAUSE of the market it operates in.
+# =============================================================================
+
+industry_sops:
+  description: >
+    Industry-specific SOPs. The vertical determines compliance requirements,
+    delivery type, and required expertise. Dominant executor: mix of all 4.
+    Priority: P0 (core processes — weeks to months to synchronize).
+
+  healthcare:
+    id: IND-HEALTHCARE
+    name: "Healthcare"
+    description: "Medical equipment, telemedicine, supplements, dentistry, therapies"
+    examples: "clinics, medtech B2B, supplement brands, therapy practices"
+    sops:
+      - id: SOP-IND-HEALTH-01
+        name: "Regulatory Compliance"
+        description: "Maintain conformity with applicable health regulatory bodies"
+        why: "Mandatory by law. No compliance = no operation."
+        executor: Hybrid
+        complexity: high
+        br_context: "ANVISA, CRO, CRM, CFO. US: FDA, FTC."
+
+      - id: SOP-IND-HEALTH-02
+        name: "Health Product Inventory Control"
+        description: "Traceability, expiration dates, lot numbers, proper storage"
+        why: "Regulatory + operational. Expired product = legal risk."
+        executor: Worker/Hybrid
+        complexity: medium
+
+      - id: SOP-IND-HEALTH-03
+        name: "Product Registration & Certification"
+        description: "Register new products/equipment with regulatory agencies"
+        why: "No registration = cannot sell."
+        executor: Human
+        complexity: high
+
+      - id: SOP-IND-HEALTH-04
+        name: "Clinical Service Protocol"
+        description: "Standard patient/client care flow in healthcare settings"
+        why: "Standardization = quality + scale + legal defense."
+        executor: Hybrid
+        complexity: high
+
+  education:
+    id: IND-EDUCATION
+    name: "Education"
+    description: "Online courses, cohorts, mentoring, learning communities, corporate training"
+    examples: "edtech platforms, cohort programs, corporate training, personal development"
+    sops:
+      - id: SOP-IND-EDU-01
+        name: "Content Production Pipeline"
+        description: "Full cycle: planning, recording, editing, publishing lessons/modules"
+        why: "Bottleneck #1 in EdTechs. No new content = product stagnates."
+        executor: Hybrid
+        complexity: high
+
+      - id: SOP-IND-EDU-02
+        name: "Student Onboarding"
+        description: "Journey from first access to first value delivered"
+        why: "Retention. Student who doesn't engage in week 1 churns."
+        executor: Agent/Worker
+        complexity: medium
+
+      - id: SOP-IND-EDU-03
+        name: "Class / Cohort Launch Cycle"
+        description: "Enrollment opening, registration, payment, access, kick-off"
+        why: "Main revenue event in cohort model."
+        executor: Hybrid
+        complexity: high
+
+      - id: SOP-IND-EDU-04
+        name: "Assessment & Certification"
+        description: "Learning evaluation process and certificate issuance"
+        why: "Credibility of the educational product."
+        executor: Worker/Hybrid
+        complexity: medium
+
+      - id: SOP-IND-EDU-05
+        name: "Pedagogical Support / Mentoring"
+        description: "Q&A support, exercise review, mentoring sessions"
+        why: "Competitive differentiator. Students pay for support, not just content."
+        executor: Human/Agent
+        complexity: medium
+
+  technology:
+    id: IND-TECH
+    name: "Technology / AI"
+    description: "Software, SaaS platforms, digital tools, AI frameworks"
+    examples: "SaaS products, fintech platforms, AI tools, developer tools"
+    sops:
+      - id: SOP-IND-TECH-01
+        name: "Release / Deploy Cycle"
+        description: "Development pipeline: branch, review, test, staging, production"
+        why: "Continuous delivery. Bug in production = churn."
+        executor: Worker/Hybrid
+        complexity: high
+
+      - id: SOP-IND-TECH-02
+        name: "Incident / Bug Management"
+        description: "Triage, prioritization, fix, and post-mortem for production bugs"
+        why: "Churn prevention. Unresolved critical bug = lost customer."
+        executor: Hybrid
+        complexity: medium
+
+      - id: SOP-IND-TECH-03
+        name: "Technical User Onboarding"
+        description: "Account setup, initial configuration, first value delivered"
+        why: "Activation. User who doesn't configure in first session abandons."
+        executor: Agent/Worker
+        complexity: medium
+
+      - id: SOP-IND-TECH-04
+        name: "Security & Data Protection"
+        description: "Access policies, encryption, backups, security incident response"
+        why: "Trust. Data breach = product death."
+        executor: Hybrid
+        complexity: high
+
+  tourism_gastronomy:
+    id: IND-TOURISM
+    name: "Tourism / Gastronomy"
+    description: "Tours, gastronomic experiences, tourism marketplaces"
+    examples: "tour operators, restaurant marketplaces, travel platforms"
+    sops:
+      - id: SOP-IND-TOUR-01
+        name: "Partner Establishment Onboarding"
+        description: "Acquire, validate, contract, and activate new marketplace partner"
+        why: "Supply side. No partners = no offer."
+        executor: Hybrid
+        complexity: medium
+
+      - id: SOP-IND-TOUR-02
+        name: "Experience Quality Control"
+        description: "Periodic partner evaluation, mystery shopper, customer feedback"
+        why: "Brand. Bad experience = negative review = user churn."
+        executor: Hybrid
+        complexity: medium
+
+      - id: SOP-IND-TOUR-03
+        name: "Geographic Expansion"
+        description: "Playbook for entering a new city: research, acquisition, launch"
+        why: "Growth. Model depends on geographic scale."
+        executor: Human/Agent
+        complexity: high
+
+  telecom_services:
+    id: IND-TELECOM
+    name: "Telecom / Multi-Sector Services"
+    description: "Telecommunications, vehicle protection, service franchises"
+    examples: "telecom providers, fleet management, multi-unit service businesses"
+    sops:
+      - id: SOP-IND-TEL-01
+        name: "Service Provisioning"
+        description: "Activate new service for customer (SIM, protection, rental)"
+        why: "Core delivery. No provisioning = customer can't use it."
+        executor: Worker/Hybrid
+        complexity: medium
+
+      - id: SOP-IND-TEL-02
+        name: "Multi-Entity / Multi-Company Management"
+        description: "Administrative, financial, and tax control across multiple legal entities"
+        why: "High admin overhead. Inefficiency across entities = eroded margins."
+        executor: Hybrid
+        complexity: high
+        br_context: "Multi-CNPJ management. Each entity has separate tax obligations."
+
+      - id: SOP-IND-TEL-03
+        name: "Franchise Network Management"
+        description: "Standardization, training, audit, and support for franchisees"
+        why: "Model scale. Franchisee without standards = diluted brand."
+        executor: Hybrid
+        complexity: high
+
+  gaming:
+    id: IND-GAMING
+    name: "Gaming / Entertainment"
+    description: "Game publishing, studios, gamer communities"
+    examples: "game publishers, indie studios, esports organizations"
+    sops:
+      - id: SOP-IND-GAME-01
+        name: "Game Publishing Pipeline"
+        description: "Evaluation, contract, development, QA, launch, marketing"
+        why: "Core of publisher model. Each game is a product."
+        executor: Hybrid
+        complexity: high
+
+      - id: SOP-IND-GAME-02
+        name: "Build QA & Testing"
+        description: "Functional, performance, and compatibility testing before release"
+        why: "Quality gate. Buggy game = review bomb = title death."
+        executor: Worker/Hybrid
+        complexity: high
+
+      - id: SOP-IND-GAME-03
+        name: "Micro-Studio Onboarding"
+        description: "Integrate new partner studio: tools, processes, standards"
+        why: "Scale. Each studio must operate to publisher standards."
+        executor: Hybrid
+        complexity: medium
+
+  finance_crypto:
+    id: IND-FINANCE
+    name: "Finance / Crypto"
+    description: "Investments, cryptocurrency, financial education"
+    examples: "investment advisors, crypto funds, financial education platforms"
+    sops:
+      - id: SOP-IND-FIN-01
+        name: "Financial Regulatory Compliance"
+        description: "Conform with securities regulators, crypto rules, KYC/AML"
+        why: "Mandatory. No compliance = lawsuit + fines + prison."
+        executor: Human/Hybrid
+        complexity: high
+        br_context: "CVM, Banco Central. US: SEC, CFTC, FinCEN."
+
+      - id: SOP-IND-FIN-02
+        name: "Risk & Portfolio Management"
+        description: "Exposure monitoring, limits, stop-loss, rebalancing"
+        why: "Core delivery. Mentor without risk management = student loses money."
+        executor: Agent/Human
+        complexity: high
+
+      - id: SOP-IND-FIN-03
+        name: "Market Analysis & Signal Distribution"
+        description: "Pipeline for collecting, analyzing, and distributing signals/recommendations"
+        why: "Core delivery. Students pay for analysis, not generic content."
+        executor: Agent
+        complexity: high
+
+# =============================================================================
+# LAYER 3: BUSINESS MODEL SOPs
+# Specific to HOW the business monetizes. Define sales, delivery, and
+# retention operations regardless of industry.
+# =============================================================================
+
+business_model_sops:
+  description: >
+    Business model-specific SOPs. The model determines how to sell, deliver,
+    and retain, regardless of industry. A healthcare SaaS and a gaming SaaS
+    share billing, onboarding, and churn prevention SOPs.
+
+  saas:
+    id: MOD-SAAS
+    name: "SaaS / Subscription"
+    description: "Software sold as a service with recurring billing"
+    examples: "B2B SaaS, B2C subscription apps, freemium platforms, vertical SaaS"
+    sops:
+      - id: SOP-MOD-SAAS-01
+        name: "SaaS User Onboarding"
+        description: "First login, setup, guided tour, first value delivered"
+        why: "Activation. User who doesn't reach 'aha moment' churns."
+        executor: Agent/Worker
+        complexity: medium
+
+      - id: SOP-MOD-SAAS-02
+        name: "Billing & Subscription Management"
+        description: "Recurring billing, upgrade/downgrade, dunning, cancellation"
+        why: "Revenue. Billing failure = involuntary churn."
+        executor: Worker
+        complexity: medium
+
+      - id: SOP-MOD-SAAS-03
+        name: "Churn Prevention / Retention"
+        description: "Identify churn signals, proactive intervention, win-back campaigns"
+        why: "LTV. Cost to retain < cost to acquire."
+        executor: Agent/Hybrid
+        complexity: medium
+
+      - id: SOP-MOD-SAAS-04
+        name: "Feature Release / Changelog"
+        description: "Communicate updates, document changes, migrate users"
+        why: "Engagement. User who doesn't know about updates doesn't use them."
+        executor: Worker/Agent
+        complexity: low
+
+  agency:
+    id: MOD-AGENCY
+    name: "Agency / Services"
+    description: "Specialized services sold per project or retainer"
+    examples: "marketing agencies, consulting firms, design studios, dev shops"
+    sops:
+      - id: SOP-MOD-AG-01
+        name: "Commercial Proposal Pipeline"
+        description: "Briefing, research, drafting, approval, and delivery of proposals"
+        why: "Revenue. No proposal = no client."
+        executor: Agent/Hybrid
+        complexity: medium
+
+      - id: SOP-MOD-AG-02
+        name: "New Client Onboarding"
+        description: "Kick-off, access collection, scope definition, SLA, communication channels"
+        why: "Time-to-value. Client waiting 2 weeks to start is already frustrated."
+        executor: Hybrid
+        complexity: medium
+
+      - id: SOP-MOD-AG-03
+        name: "Performance Reporting"
+        description: "Periodic generation of results reports for clients"
+        why: "Retention. Client who doesn't see results cancels."
+        executor: Agent/Worker
+        complexity: low-medium
+
+      - id: SOP-MOD-AG-04
+        name: "Scope & Change Request Management"
+        description: "Process to approve, document, and price scope changes"
+        why: "Margin. Infinite scope = unprofitable project."
+        executor: Human/Hybrid
+        complexity: medium
+
+  cohort:
+    id: MOD-COHORT
+    name: "Cohort / Immersion"
+    description: "Closed groups with defined start/end dates, high interaction"
+    examples: "cohort-based courses, in-person immersions, bootcamps, masterminds"
+    sops:
+      - id: SOP-MOD-COH-01
+        name: "Cohort Launch Cycle"
+        description: "Campaign, acquisition, enrollment, payment, confirmation, kick-off"
+        why: "Revenue event. All revenue depends on the launch."
+        executor: Hybrid
+        complexity: high
+
+      - id: SOP-MOD-COH-02
+        name: "Cohort Delivery Operations"
+        description: "Class/session schedule, materials, support, community management"
+        why: "NPS. Disorganized delivery = student doesn't repurchase."
+        executor: Hybrid
+        complexity: high
+
+      - id: SOP-MOD-COH-03
+        name: "Post-Cohort Upsell / Continuity"
+        description: "Offer next level, community, mentoring after cohort ends"
+        why: "LTV. Student who finishes without next step = lost revenue."
+        executor: Agent/Human
+        complexity: medium
+
+  marketplace:
+    id: MOD-MARKETPLACE
+    name: "Marketplace / Platform"
+    description: "Connects supply and demand, charges commission or subscription"
+    examples: "two-sided marketplaces, aggregator platforms, booking systems"
+    sops:
+      - id: SOP-MOD-MKT-01
+        name: "Partner Onboarding (Supply Side)"
+        description: "Acquisition, validation, contract, activation on marketplace"
+        why: "Supply. No partners = no offer."
+        executor: Hybrid
+        complexity: medium
+
+      - id: SOP-MOD-MKT-02
+        name: "Marketplace Quality Management"
+        description: "Reviews, reports, suspension, partner rewards"
+        why: "Trust. Marketplace with bad partners loses users."
+        executor: Agent/Hybrid
+        complexity: medium
+
+      - id: SOP-MOD-MKT-03
+        name: "User Acquisition (Demand Side)"
+        description: "Pipeline for acquiring, activating, and retaining consumers"
+        why: "Demand. No users = partners leave."
+        executor: Agent/Worker
+        complexity: medium
+
+  direct_response:
+    id: MOD-DR
+    name: "Direct Response / eCommerce"
+    description: "Direct sales via paid traffic, VSLs, funnels, immediate conversion"
+    examples: "supplement brands, info-product funnels, ecommerce DTC, affiliate offers"
+    sops:
+      - id: SOP-MOD-DR-01
+        name: "VSL/Funnel Creation Pipeline"
+        description: "Research, script, recording, editing, landing page, checkout"
+        why: "Revenue driver #1. Each funnel is a revenue asset."
+        executor: Hybrid
+        complexity: high
+
+      - id: SOP-MOD-DR-02
+        name: "Creative Testing Cycle"
+        description: "Creation, A/B testing, analysis, kill/scale decisions for ad creatives"
+        why: "Scale. Performing creative = scale. Fatigued creative = CPA rises."
+        executor: Agent/Hybrid
+        complexity: medium
+
+      - id: SOP-MOD-DR-03
+        name: "Supply Chain / Fulfillment"
+        description: "Inventory, supplier, production, shipping, tracking, returns"
+        why: "Physical delivery. Product that doesn't arrive = chargeback + negative review."
+        executor: Worker/Hybrid
+        complexity: high
+
+      - id: SOP-MOD-DR-04
+        name: "Ad Claims & Compliance"
+        description: "Validate claims, review creatives, ensure platform policy compliance"
+        why: "Survival. Banned ad account = zero revenue overnight."
+        executor: Hybrid
+        complexity: medium
+
+  high_ticket_mentoring:
+    id: MOD-MENTORING
+    name: "High-Ticket Mentoring"
+    description: "Consultative sale of mentoring/advisory at high price point"
+    examples: "executive coaching, expert advisory, mastermind groups, 1:1 consulting"
+    sops:
+      - id: SOP-MOD-MHT-01
+        name: "Consultative Sales Pipeline"
+        description: "Application, screening, sales call, closing, onboarding"
+        why: "Revenue. Each sale is high-touch, needs process."
+        executor: Human/Agent
+        complexity: medium
+
+      - id: SOP-MOD-MHT-02
+        name: "Session & Calendar Management"
+        description: "Scheduling, confirmation, no-show handling, rescheduling, post-session follow-up"
+        why: "Delivery. Mentor without organized calendar = bad experience."
+        executor: Worker
+        complexity: low
+
+      - id: SOP-MOD-MHT-03
+        name: "1:1 Result Delivery"
+        description: "Session framework, diagnosis, action plan, progress tracking"
+        why: "Results. Student without results doesn't renew and doesn't refer."
+        executor: Human
+        complexity: high
+
+  franchise:
+    id: MOD-FRANCHISE
+    name: "Franchise / Network"
+    description: "Model replication via franchisees or owned units"
+    examples: "fast food chains, service franchises, licensed operations, multi-unit retail"
+    sops:
+      - id: SOP-MOD-FRQ-01
+        name: "Unit Standardization"
+        description: "Opening checklist, visual identity, mandatory processes"
+        why: "Brand. Non-standard unit = diluted brand."
+        executor: Hybrid
+        complexity: high
+
+      - id: SOP-MOD-FRQ-02
+        name: "Franchisee Training"
+        description: "Initial training program and periodic refresher courses"
+        why: "Quality. Untrained franchisee = bad operation."
+        executor: Hybrid
+        complexity: high
+
+      - id: SOP-MOD-FRQ-03
+        name: "Franchise Audit"
+        description: "Periodic visit, compliance checklist, corrective action plan"
+        why: "Control. Without audits, standards degrade over time."
+        executor: Human/Agent
+        complexity: medium
+
+# =============================================================================
+# HOW TO USE THIS FILE
+# =============================================================================
+# The sop-chief uses this category-map to determine required SOPs:
+#
+# 1. Business with industry=Healthcare and model=SaaS:
+#    -> Required SOPs = universal + healthcare + saas
+#
+# 2. Business with industry=Education and model=Cohort:
+#    -> Required SOPs = universal + education + cohort
+#
+# 3. Business with industry=Technology and model=Agency+SaaS:
+#    -> Required SOPs = universal + technology + agency + saas
+#
+# The sop-research-context.yaml for each business (in workspace/businesses/
+# {slug}/L1-strategy/) references IDs from this file to indicate which SOPs apply.
+# =============================================================================

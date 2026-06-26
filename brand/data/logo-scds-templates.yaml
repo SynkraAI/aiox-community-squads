@@ -1,0 +1,224 @@
+# Logo SCDS Templates
+# ============================================================================
+# Pre-built SCDS prompt templates by logo type
+# Used by: logo-prompt-engineering task (wheeler-brand-design)
+# Reference: squads/design/data/gemini-logo-guidelines.yaml
+# ============================================================================
+
+version: "1.0.0"
+created: "2026-02-28"
+used_by: ["logo-prompt-engineering", "wheeler-brand-design"]
+
+# Template Variables
+# ============================================================================
+# All templates use {{variable}} syntax for injection:
+#   {{brand_name}}        - The brand name (for wordmarks/combination marks)
+#   {{initials}}          - Brand initials (for lettermarks, derived from brand_name)
+#   {{shape_language}}    - From logo-style-library.yaml archetype mapping
+#   {{color_territory}}   - From logo-style-library.yaml archetype mapping
+#   {{style_keywords}}    - From logo-style-library.yaml archetype mapping
+#   {{typography_feel}}   - From logo-style-library.yaml archetype mapping
+#   {{metaphor}}          - From strategic direction concept
+#   {{mood}}              - From strategic direction concept
+#   {{industry}}          - From logo brief
+#   {{negative_prompt}}   - Compiled from gemini-logo-guidelines.yaml
+
+# Logo Type Templates
+# ============================================================================
+
+templates:
+  wordmark:
+    description: "Full brand name as the logo — typography IS the identity"
+    aspect_ratio: "16:9"
+    best_for: ["Brands with short, distinctive names", "Tech companies", "Fashion/luxury"]
+    examples: ["Google", "Coca-Cola", "FedEx", "Netflix"]
+
+    scds:
+      subject: >
+        Professional wordmark logo of the text "{{brand_name}}" in {{typography_feel}} typography,
+        {{shape_language}} letterforms, clean and legible at all sizes
+      setting: >
+        Centered on clean white background, isolated, no surrounding elements,
+        generous whitespace
+      style: >
+        Professional logo design, flat vector style, {{mood}},
+        {{style_keywords}}, precise typography, {{color_territory}} color palette
+      technical: >
+        Aspect ratio 16:9, {{resolution}}, scalable design
+      negative_prompt: >
+        blurry, low quality, pixelated, watermark, 3D render, photorealistic,
+        icon, symbol, pictorial element, illustration alongside text,
+        distorted text, warped letters, illegible text, decorative font
+
+    tips:
+      - "Typography weight matters: bold = confidence, light = elegance"
+      - "Letter spacing (tracking) affects perceived premium-ness"
+      - "Consider custom ligatures or modified letterforms for uniqueness"
+      - "Test legibility at small sizes — wordmarks must be readable"
+
+  lettermark:
+    description: "Monogram or initials — distilled identity"
+    aspect_ratio: "1:1"
+    best_for: ["Companies with long names", "Luxury/fashion", "Institutions"]
+    examples: ["IBM", "CNN", "HP", "LV"]
+
+    scds:
+      subject: >
+        Professional lettermark monogram logo using the letters "{{initials}}",
+        {{shape_language}} forms, {{typography_feel}} style,
+        interlocking or stacked composition
+      setting: >
+        Centered on clean white background, square format, isolated,
+        balanced composition
+      style: >
+        Professional logo design, flat vector style, {{mood}},
+        {{style_keywords}}, sophisticated typography, {{color_territory}} color palette
+      technical: >
+        Aspect ratio 1:1, {{resolution}}, works as app icon and favicon
+      negative_prompt: >
+        blurry, low quality, pixelated, watermark, 3D render, photorealistic,
+        full words, complete brand name, illustration, complex scene,
+        distorted text, overlapping illegible letters
+
+    tips:
+      - "2-3 letters maximum for readability"
+      - "Interlock, overlap, or contain letters for visual unity"
+      - "Must work at 32px (favicon) — test mentally"
+
+  icon_symbol:
+    description: "Abstract or pictorial mark — visual metaphor as identity"
+    aspect_ratio: "1:1"
+    best_for: ["Global brands", "Tech/apps", "Brands needing language-agnostic identity"]
+    examples: ["Apple", "Nike", "Twitter/X", "Target"]
+
+    scds:
+      subject: >
+        Professional icon logo, {{metaphor}},
+        {{shape_language}} geometric form, simple and memorable,
+        single visual element
+      setting: >
+        Centered on clean white background, square format, isolated,
+        perfect visual balance
+      style: >
+        Professional logo design, flat vector style, {{mood}},
+        {{style_keywords}}, minimal detail, clean lines, {{color_territory}} color palette,
+        scalable at any size
+      technical: >
+        Aspect ratio 1:1, {{resolution}}, works from 16px favicon to billboard
+      negative_prompt: >
+        blurry, low quality, pixelated, watermark, 3D render, photorealistic,
+        text, letters, words, typography, complex detail, multiple elements,
+        realistic illustration, photographic
+
+    tips:
+      - "One concept, one shape — simplicity is strength"
+      - "Negative space can create secondary meaning (FedEx arrow)"
+      - "Must be recognizable in silhouette form"
+      - "Test: can you describe it in one sentence?"
+
+  combination_mark:
+    description: "Icon + text together — versatile primary lockup"
+    aspect_ratio: "16:9"
+    best_for: ["Most brands", "New brands needing both recognition and name awareness"]
+    examples: ["Adidas", "Burger King", "Mastercard", "Spotify"]
+
+    scds:
+      subject: >
+        Professional combination mark logo with {{metaphor}} icon
+        alongside the text "{{brand_name}}" in {{typography_feel}} typography,
+        icon on left with text on right, proportional balance
+      setting: >
+        Centered on clean white background, horizontal layout, isolated,
+        generous spacing between icon and text
+      style: >
+        Professional logo design, flat vector style, {{mood}},
+        {{style_keywords}}, cohesive icon and typography pairing,
+        {{color_territory}} color palette
+      technical: >
+        Aspect ratio 16:9, {{resolution}}, icon should work independently
+      negative_prompt: >
+        blurry, low quality, pixelated, watermark, 3D render, photorealistic,
+        disconnected elements, icon too small, text too small,
+        distorted text, complex background, multiple logos
+
+    tips:
+      - "Icon and text must feel like one unit, not two separate elements"
+      - "Ensure icon can be separated and used alone (app icon, favicon)"
+      - "Consistent visual weight between icon and text"
+
+  emblem:
+    description: "Text/icon enclosed in a shape — badge/seal/crest"
+    aspect_ratio: "1:1"
+    best_for: ["Traditional/heritage brands", "Sports teams", "Government/institutions", "Craft/artisan"]
+    examples: ["Starbucks", "Harley-Davidson", "NFL", "Harvard"]
+
+    scds:
+      subject: >
+        Professional emblem logo, {{metaphor}} contained within a
+        {{shape_language}} badge shape, "{{brand_name}}" text integrated
+        into the enclosing form, unified composition
+      setting: >
+        Centered on clean white background, square format, isolated,
+        self-contained design
+      style: >
+        Professional logo design, flat vector style, {{mood}},
+        {{style_keywords}}, badge/seal aesthetic, {{color_territory}} color palette,
+        contained and unified
+      technical: >
+        Aspect ratio 1:1, {{resolution}}, works as stamp or patch
+      negative_prompt: >
+        blurry, low quality, pixelated, watermark, 3D render, photorealistic,
+        open composition, floating elements, disconnected parts,
+        complex detail that won't scale, realistic illustration
+
+    tips:
+      - "All elements must be contained within the outer shape"
+      - "Text wraps around or integrates INTO the shape"
+      - "More complex = less scalable. Keep detail purposeful"
+
+  abstract_mark:
+    description: "Geometric/organic form — pure visual identity without literal meaning"
+    aspect_ratio: "1:1"
+    best_for: ["Tech companies", "Startups", "Companies wanting unique/ownable marks"]
+    examples: ["Airbnb", "Pepsi", "Chase", "Olympics"]
+
+    scds:
+      subject: >
+        Professional abstract logo mark, {{shape_language}} geometric form,
+        {{metaphor}}, single cohesive shape,
+        visually balanced and distinctive
+      setting: >
+        Centered on clean white background, square format, isolated,
+        perfect symmetry or intentional asymmetry
+      style: >
+        Professional logo design, flat vector style, {{mood}},
+        {{style_keywords}}, pure geometry, {{color_territory}} color palette,
+        bold and ownable
+      technical: >
+        Aspect ratio 1:1, {{resolution}}, instantly recognizable in silhouette
+      negative_prompt: >
+        blurry, low quality, pixelated, watermark, 3D render, photorealistic,
+        text, letters, words, typography, literal illustration,
+        complex scene, realistic objects, multiple shapes
+
+    tips:
+      - "Abstract doesn't mean random — every curve/angle should be intentional"
+      - "Must be describable: 'the swoosh', 'the star', 'the four squares'"
+      - "Color can be integral to recognition (Pepsi blue/red)"
+
+# Prompt Assembly Guide
+# ============================================================================
+assembly_guide:
+  steps:
+    - "1. Select logo type template based on strategic direction"
+    - "2. Load archetype values from logo-style-library.yaml"
+    - "3. Inject metaphor and mood from strategic direction concept"
+    - "4. Inject brand-specific values (name, industry, initials)"
+    - "5. Select resolution based on phase (exploration=1K, refinement=2K, final=4K)"
+    - "6. Compile negative prompt: universal + type-specific from gemini-logo-guidelines.yaml"
+    - "7. Review complete SCDS for coherence before generation"
+
+  per_concept_output:
+    count: "2-3 SCDS prompts per strategic direction"
+    rationale: "Each direction gets multiple logo types explored"
+    example: "Direction 'Shield of Trust' → 1 emblem SCDS + 1 icon SCDS + 1 combination SCDS"

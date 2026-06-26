@@ -1,0 +1,117 @@
+# =============================================================================
+# Audit Verdict Thresholds
+# =============================================================================
+# Data: verdict-thresholds.yaml | SOP Factory | Synkra AIOX
+# Used by: sop-auditor, audit-sop.md, certify-sop.md, re-audit.md
+#
+# Canonical contract:
+# - final audit verdict bands
+# - override rules applied on top of the final score
+# - certification gate requirements
+# - Crosby worksheet as a component of the audit, not a second verdict engine
+# =============================================================================
+
+schema_version: "1.1.0"
+
+audit_verdicts:
+  - id: "CERTIFIED"
+    score_min: 90
+    score_max: 100
+    label: "Certified"
+    meaning: "SOP is release-ready with strong audit performance."
+    action: "Approve for production release."
+
+  - id: "APPROVED"
+    score_min: 75
+    score_max: 89
+    label: "Approved"
+    meaning: "SOP is usable with tracked improvements."
+    action: "Release with remediation plan."
+
+  - id: "CONDITIONAL"
+    score_min: 60
+    score_max: 74
+    label: "Conditional"
+    meaning: "SOP has significant gaps and requires remediation before normal use."
+    action: "Revise and re-audit within 14 days."
+
+  - id: "REJECTED"
+    score_min: 0
+    score_max: 59
+    label: "Rejected"
+    meaning: "SOP does not meet minimum audit expectations."
+    action: "Return for major rewrite."
+
+override_rules:
+  - rule: "Any critical risk finding blocks CERTIFIED"
+    condition: "critical_risk_findings > 0"
+    effect: "Max verdict = APPROVED"
+    source: "tasks/audit-sop.md"
+
+  - rule: "Any high-likelihood safety risk blocks APPROVED"
+    condition: "safety_high_likelihood_findings > 0"
+    effect: "Max verdict = CONDITIONAL"
+    source: "tasks/audit-sop.md"
+
+  - rule: "Required standard below 50% compliance blocks APPROVED"
+    condition: "required_standard_compliance_below_50 > 0"
+    effect: "Max verdict = CONDITIONAL"
+    source: "tasks/audit-sop.md"
+
+score_model:
+  final_score:
+    formula: "(structural * 0.20) + (content * 0.30) + (compliance * 0.20) + (risk * 0.15) + (crosby * 0.15)"
+    components:
+      structural: 0.20
+      content: 0.30
+      compliance: 0.20
+      risk: 0.15
+      crosby: 0.15
+
+  crosby_component:
+    worksheet: "checklists/14-point-crosby-checklist.md"
+    point_score_scale:
+      checks_4_of_4: 10
+      checks_3_of_4: 7
+      checks_2_of_4: 4
+      checks_0_or_1_of_4: 1
+    aggregate_formula: "average(point_scores) * 10"
+
+certification_gate:
+  required_verdict: "CERTIFIED"
+  minimum_score: 90
+  critical_open: 0
+  major_open: 0
+  traceability_required: true
+
+nonconformity:
+  classifications:
+    - id: "CRITICAL"
+      definition: "Poses immediate risk to safety, compliance, or business continuity"
+      sop_impact: "STOP — immediate remediation required."
+      sla_days: 7
+
+    - id: "MAJOR"
+      definition: "Significant gap that reduces SOP effectiveness or compliance"
+      sop_impact: "HOLD — release delayed until remediated."
+      sla_days: 14
+
+    - id: "MINOR"
+      definition: "Small gap that does not significantly impact execution"
+      sop_impact: "NOTE — release possible with tracked remediation."
+      sla_days: 30
+
+    - id: "OBSERVATION"
+      definition: "Improvement opportunity, not a blocking nonconformity"
+      sop_impact: "LOG — next revision cycle."
+      sla_days: -1
+
+re_audit:
+  finding_statuses:
+    - "CLOSED"
+    - "OPEN"
+    - "REGRESSED"
+    - "NEW"
+  pass_condition: "All Critical and Major findings CLOSED"
+  conditional_condition: "Only Minor findings remain OPEN"
+  fail_condition: "Any Critical/Major OPEN or any REGRESSED finding"

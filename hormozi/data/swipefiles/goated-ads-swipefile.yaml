@@ -1,0 +1,770 @@
+# GOATed Ads Playbook - Alex Hormozi
+# Extraido de: $100M GOATed Ads Playbook, FRAMEWORK GOATed Ads, Checklist de Ads
+# Fonte: Acquisition.com - Copyright 2025
+
+version: "1.0"
+source: "GOATed Ads Playbook"
+author: "Alex Hormozi"
+context: "Sistema para criar 150-750 ads por semana e escalar advertising"
+
+# =============================================================================
+# AD ASSEMBLY PROCESS - O Sistema de Montagem de Ads
+# =============================================================================
+ad_assembly_process:
+  overview: |
+    Ads sao montados em partes, nao criados de uma vez.
+    Resultado: 50 hooks x 3-5 meats x 1-3 CTAs = 150 a 750 ads por semana.
+    90% do trabalho esta na preparacao, nao na gravacao.
+
+  time_allocation:
+    hooks: "80%"
+    meat: "20%"
+    ctas: "~0%"
+
+  hook:
+    description: "Primeiros 5 segundos - vende a pessoa em prestar atencao"
+    quantity_per_session: 50
+    importance: "Se ninguem passa pelo hook, nada mais importa"
+
+    sources_for_hooks:
+      - name: "Winning Hooks From Previous Ads"
+        description: "Top performers do passado que voce reusa"
+        priority: 1
+      - name: "Winning Hooks From Free Content"
+        description: "Hooks de longs, shorts, tweets, emails que performaram"
+        priority: 2
+      - name: "Winning Hooks From Other Ads"
+        description: "Salve ads que voce gosta e copie os hooks"
+        priority: 3
+      - name: "Winning Hooks From Others Content"
+        description: "Content com tons de views no seu espaco"
+        priority: 4
+      - name: "Platform Ad Libraries"
+        description: "Ultimo recurso - dificil saber o que performa"
+        priority: 5
+
+    types_verbal:
+      - "Labels (Rotulos)"
+      - "Questions (Yes/Open)"
+      - "Conditionals (Se/Entao)"
+      - "Commands (Imperativos)"
+      - "Statements (Declaracoes)"
+      - "Lists/Steps (Listas/Passos)"
+      - "Narratives (Historias)"
+      - "Exclamations (Exclamacoes)"
+
+    formula: "Hook Eficaz = Call Out + Value Condition"
+    call_out: "Algo que faz o prospect dizer 'isso e para mim'"
+    value_condition: "Promessa implicita ou explicita de valor SE consumirem"
+
+  meat:
+    description: "Corpo do ad que cumpre a promessa do hook"
+    quantity_per_session: "3-5"
+    rotation: "Menos frequente porque menos pessoas veem"
+
+    formats:
+      demonstration:
+        description: "Mostra o produto/servico em acao"
+        subtypes:
+          - "Live use ou reactions"
+          - "Unboxing"
+          - "Comparisons (before/after)"
+          - "High production hero ads (Dollar Shave Club, Old Spice)"
+
+      testimonial:
+        description: "Prova social de clientes/usuarios"
+        subtypes:
+          - "User-generated content (UGC)"
+          - "Direct to camera"
+          - "Podcast style"
+          - "Professional testimonials"
+          - "Raw iPhone style"
+          - "Walk n talk rants"
+          - "Group testimonials (parade of proof)"
+          - "Lifecycle ads"
+          - "Man-on-the-street interviews"
+          - "Influencer collabs"
+
+      education:
+        description: "Ensina algo valioso"
+        subtypes:
+          - "Explainer videos"
+          - "How-to listicles"
+          - "Whiteboard explainer"
+          - "High performing organic content"
+
+      story:
+        description: "Narrativa que conecta emocionalmente"
+        subtypes:
+          - "Storytelling"
+          - "Lifestyle"
+          - "Warnings and opportunities"
+          - "Documentary style"
+          - "Skits"
+          - "Brand manifestos"
+
+      faceless:
+        description: "Sem pessoa na camera"
+        subtypes:
+          - "Screenshots of customer comments/texts"
+          - "Text only"
+          - "Slide shows"
+          - "Animations"
+          - "Cartoon ads"
+          - "Visual effect based ads"
+
+  cta:
+    description: "Call To Action - diz exatamente o que fazer"
+    quantity_per_session: "1-3"
+    principle: "Clear > Clever"
+
+    elements:
+      what_to_do: "Take advantage of this great offer by..."
+      how_to_do_it: "...tapping the button on the bottom of your screen..."
+      when_to_do_it: "...before it expires..."
+      what_they_get: "...and you'll get $1000 of free stuff."
+      what_happens_next: "...delivered straight to your inbox."
+
+    best_practice: "Show AND tell - demonstre visualmente o proximo passo"
+
+    examples:
+      - "Start free on the next page"
+      - "Grab your 14-day free trial on the next page"
+      - "Get started on the next page free"
+
+    enhancements:
+      - "Urgency"
+      - "Scarcity"
+      - "Guarantees"
+      - "Bonuses"
+
+# =============================================================================
+# FORMULA 150-750 ADS POR SEMANA
+# =============================================================================
+scale_formula:
+  equation: "50 hooks x 3-5 meats x 1-3 CTAs = 150-750 ads/semana"
+
+  weekly_schedule:
+    friday: "Ad creation day"
+    steps:
+      - "Find your best ads"
+      - "Chop them into hook, meat, CTA"
+      - "Run through kaleidoscope for 50+ hooks"
+      - "Generate 3-5 variations on meat"
+      - "Record 1-3 CTAs"
+
+  benefits:
+    offense: "Escala advertising consistentemente"
+    defense: "Ninguem consegue descobrir seus top performers"
+
+# =============================================================================
+# EUGENE SCHWARTZ - 5 LEVELS OF AWARENESS
+# =============================================================================
+schwartz_5_levels:
+  description: |
+    Audiencias vao de quente/pequena para fria/grande.
+    Quanto melhor o ad, mais alto na piramide ele converte.
+
+  levels:
+    - level: 1
+      name: "Most Aware"
+      description: "Cliente conhece seu produto, so precisa saber a oferta"
+      hook_type: "Offer driven"
+      example_template: "50% off our best-selling XYZ product for the rest of the month"
+      b2c_example: "XFast's new formula: Now with 25% more protein - Same great taste!"
+      b2b_example: "DigitalBoost: Now offering social media management at 20% off for new clients"
+
+    - level: 2
+      name: "Product Aware"
+      description: "Cliente sabe o que voce vende mas nao tem certeza se e certo pra ele"
+      hook_type: "Proof driven"
+      example_template: "Discover why 10,000 people chose XYZ to solve their [problem] last month"
+      b2c_example: "Why 9 out of 10 XFast users reached their goal weight within 3 months"
+      b2b_example: "See how DigitalBoost increased ROI by 150% for 5 different industries"
+
+    - level: 3
+      name: "Solution Aware"
+      description: "Cliente sabe o resultado que quer mas nao sabe que seu produto pode entregar"
+      hook_type: "Promise driven"
+      example_template: "The fastest way to [achieve desired result] - introducing XYZ"
+      b2c_example: "Lose 15 pounds in 30 days with our scientifically proven meal replacement system"
+      b2b_example: "Double your online sales in 6 months with our data-driven marketing strategies"
+
+    - level: 4
+      name: "Problem Aware"
+      description: "Cliente sente que tem um problema mas nao sabe que existe solucao"
+      hook_type: "Pain driven"
+      example_template: "Tired of [specific problem]? There's a better way"
+      b2c_example: "Frustrated with crash diets that don't last? There's a sustainable way to shed pounds"
+      b2b_example: "Is your website getting sales? You might be missing these crucial elements"
+
+    - level: 5
+      name: "Completely Unaware"
+      description: "Cliente nao sabe que tem um problema ou necessidade"
+      hook_type: "Curiosity driven"
+      example_template: "The hidden danger in your daily routine that's costing you [money/time/health]"
+      b2c_example: "The hidden hormonal imbalance that's making 1 in 3 Americans gain weight"
+      b2b_example: "The unexpected way your business is losing $1000s each month in untapped revenue"
+
+  pro_tip: |
+    Se 90% dos seus hooks estao no bucket 'Most Aware', espalhe para capturar fatias maiores.
+    Quando em duvida, va um pouco mais amplo - voce ainda pega a audiencia quente
+    e atrai parte da audiencia fria.
+
+  meme_tip: |
+    Memes ou conteudo meme-like atraem a maior porcentagem da sua audiencia.
+    Um meme relevante para um grupo especifico funciona como mariposa para a chama.
+
+# =============================================================================
+# SCALE IT FRAMEWORK
+# =============================================================================
+scale_framework:
+  core_principle: |
+    Voce nao saturou o mercado - voce saturou a qualidade do seu ad.
+    Quanto melhor o ad, maior a audiencia que ele converte.
+
+  process:
+    step_1:
+      name: "Find Winners"
+      description: "Faca muitas variacoes no inicio"
+      detail: "Variacoes apelam para diferentes segmentos do mercado"
+
+    step_2:
+      name: "Double Down"
+      description: "Alguns ads performam muito melhor que o resto"
+      detail: "Quando encontrar, reuse os mesmos hooks para mais winners"
+
+    step_3:
+      name: "Kaleidoscope"
+      description: "Tome ads vencedores e multiplique"
+      detail: "Processo avancado para escalar winners existentes"
+
+  key_insight: |
+    Novos clientes entram no mercado todo dia.
+    Voce deve a eles servir o ad mais convertedor possivel.
+    Nao fique entediado repetindo - sera a primeira vez que eles veem.
+
+  old_spice_example: |
+    "Eu nao era comprador de Old Spice. Vi os ads, achei engracados,
+    comecei a comprar. E 70% do mercado tambem. Esse e um ad sem limite.
+    Bom o suficiente para converter todo mundo."
+
+# =============================================================================
+# GOATED ADS CHEAT SHEET
+# =============================================================================
+cheat_sheet:
+  step_1:
+    name: "Figure Out Awareness Level"
+    levels:
+      - "Unaware"
+      - "Problem Aware"
+      - "Solution Aware"
+      - "Product Aware"
+      - "Most Aware"
+
+  step_2:
+    name: "Write 50 Hooks"
+    options:
+      - "Divida hooks em buckets por nivel de awareness"
+      - "OU foque a maioria mais ampla que seus hooks atuais"
+    inspiration_sources:
+      - "Seus melhores ads anteriores"
+      - "Top ads de outras industrias (ouro aqui)"
+      - "Seu melhor short content"
+      - "Melhor short content de outros"
+      - "Salve ads favoritos para revisar"
+
+  step_3:
+    name: "Write 3-5 Meats"
+    types:
+      demonstration:
+        - "Showcasing produto/servico"
+        - "Unboxing"
+        - "Comparison ads"
+        - "Before and afters"
+        - "High production hero ads"
+      testimonial:
+        - "UGC"
+        - "Founder direct to camera"
+        - "Podcast style"
+        - "Professional testimonials"
+        - "Raw iPhone style"
+        - "Walk n talk rant style"
+        - "Group testimonials"
+        - "Lifecycle ads"
+        - "Man on the street"
+        - "Influencer collabs"
+      education:
+        - "Educational/informational"
+        - "Explainer videos"
+        - "How-to/tutorial"
+        - "Whiteboard explainer"
+        - "Listicle videos"
+        - "High performing organic"
+      story:
+        - "Storytelling/narrative"
+        - "Lifestyle"
+        - "Emotional/sentimental"
+        - "Humorous/comedy"
+        - "Brand manifesto"
+        - "Problem-solution"
+      faceless:
+        - "Screenshots of comments/texts"
+        - "Text only"
+        - "Slide shows"
+        - "Animations"
+        - "Cartoon ads"
+        - "Visual effect based"
+
+  step_4:
+    name: "Write 1-3 CTAs"
+    elements:
+      - "What/how to do it"
+      - "When to do it"
+      - "What they get for doing it"
+      - "What happens next (optional)"
+      - "Demonstrate visually"
+
+  step_5:
+    name: "Find New Winners"
+    action: "Repeat steps 1-4 to find another winner"
+
+# =============================================================================
+# FRAMEWORK 70-20-10 (Modelo Google)
+# =============================================================================
+framework_70_20_10:
+  origin: "Larry Page e Sergey Brin - provado matematicamente"
+  application: "Alocacao de recursos para maximos retornos"
+
+  distribution:
+    proven_70:
+      percentage: 70
+      description: "Core - Proven Winners"
+      action: "Reusar top performers"
+
+    adjacent_20:
+      percentage: 20
+      description: "Emerging - Winner Adjacent"
+      action: "Modelar de outros nichos"
+
+    moonshot_10:
+      percentage: 10
+      description: "Moonshots - Experimentos"
+      action: "Ideias completamente novas"
+
+  rule: "Nunca faca 100% novo ou 100% do mesmo - siga 70-20-10"
+
+# =============================================================================
+# CHECKLISTS OPERACIONAIS
+# =============================================================================
+checklists:
+  pre_launch:
+    matematica_fundamental:
+      - "CAC maximo calculado (LTGP / 3)"
+      - "Break-even em dias definido (ideal: <30)"
+      - "Budget teste = 10x CPA esperado"
+      - "Margem minima: 30% apos ads"
+
+    pesquisa_mercado:
+      - "10 concorrentes analisados no Facebook Ad Library"
+      - "5 angulos que estao funcionando identificados"
+      - "3 ofertas dominantes mapeadas"
+      - "Gaps obvios no mercado documentados"
+
+    avatar_cirurgico:
+      - "Dor #1 identificada (a que tira sono)"
+      - "Linguagem exata coletada (prints de comentarios)"
+      - "Nivel de sofisticacao medido (1-5)"
+      - "Poder de compra validado"
+
+  campaign_structure:
+    hierarquia:
+      - "CBO ligado (deixa o algoritmo trabalhar)"
+      - "3-5 conjuntos de anuncios maximo"
+      - "Budget minimo: $50/dia por conjunto"
+      - "Pixel instalado e eventos configurados"
+
+    segmentacao_inicial:
+      - "Broad targeting (3-10% da populacao)"
+      - "SEM interesses empilhados"
+      - "Idade: range de 10 anos minimo"
+      - "Lookalike 1% da lista de clientes"
+
+  creative:
+    hook_3_seconds:
+      - "Problema especifico mencionado"
+      - "Numero na primeira linha"
+      - "Pattern interrupt visual"
+      - "Avatar falando com avatar"
+
+    video_structure:
+      - "0-3s: Hook"
+      - "3-10s: Agitar problema"
+      - "10-20s: Apresentar solucao"
+      - "20-27s: Prova social"
+      - "27-30s: CTA claro"
+
+    copy:
+      - "Headline: Resultado especifico + tempo"
+      - "Primary text: <125 caracteres"
+      - "Descricao: Beneficio principal"
+      - "CTA: Verbos de acao (Garantir, Comecar, Acessar)"
+
+  landing_page:
+    above_fold:
+      - "Headline match com ad (exata)"
+      - "CTA em <3 segundos de scroll"
+      - "Prova social visivel"
+      - "Tempo de carregamento <2s"
+
+    conversion_elements:
+      - "VSL ou carta de vendas"
+      - "Garantia destacada"
+      - "FAQ das 5 maiores objecoes"
+      - "Urgencia real (nao fake)"
+      - "Checkout em 1 passo"
+
+  metrics_48h:
+    day_1:
+      - "CTR >1% (menos = hook ruim)"
+      - "CPM <$30 (mais = criativo ruim)"
+      - "CPC <$3 (mais = relevancia baixa)"
+      - "Link CTR >0.8%"
+
+    day_2:
+      - "Frequencia <2"
+      - "CPL <50% do target"
+      - "Add to Cart >5%"
+      - "Video Views 3s >30%"
+
+  weekly_optimization:
+    week_1:
+      - "Matar ads com CPA >150% do target"
+      - "Duplicar budget dos vencedores"
+      - "Testar 3 novos criativos"
+      - "Ajustar bid cap se necessario"
+
+    week_2:
+      - "Criar lookalike dos compradores"
+      - "Testar novo angulo de copy"
+      - "Adicionar retargeting"
+      - "Implementar exclusoes de audiencia"
+
+    week_3_4:
+      - "Scale vertical (aumentar budget 20%/dia)"
+      - "Scale horizontal (novas audiencias)"
+      - "Testar novos formatos (carousel, collection)"
+      - "Adicionar novos geos/demos"
+
+  scale_signals:
+    ready_to_scale:
+      - "ROAS >3x por 7 dias seguidos"
+      - "CPA estavel por 500+ conversoes"
+      - "Frequencia <3 apos 14 dias"
+      - "CTR mantem >1%"
+
+    how_to_scale:
+      - "Regra 20%: Aumenta budget 20% a cada 48h"
+      - "Novos conjuntos: Mesma copy, nova audiencia"
+      - "Surfing: Pausa sexta, reativa segunda"
+      - "Day-parting: Desliga madrugada se B2B"
+
+  troubleshooting:
+    cpm_alto:
+      - "Criativo cansou (frequencia >7)"
+      - "Relevance score <6"
+      - "Competicao aumentou (Q4, Black Friday)"
+      - "Conta com penalidade"
+
+    cpa_subindo:
+      - "Pagina convertendo menos"
+      - "Oferta perdeu forca"
+      - "Competidor com oferta melhor"
+      - "Mudanca no algoritmo"
+
+    ctr_baixo:
+      - "Hook fraco"
+      - "Visual generico"
+      - "Copy nao ressoa"
+      - "Saturacao de mercado"
+
+  daily_5min:
+    - "CPA ontem vs hoje"
+    - "Frequencia <5"
+    - "Comentarios respondidos"
+    - "Competidores checados"
+    - "Budget utilization >90%"
+
+# =============================================================================
+# GOLDEN RULES
+# =============================================================================
+golden_rules:
+  - rule: "Nunca scale sem 100 conversoes"
+    number: 1
+  - rule: "Creative fatigue = 10-14 dias"
+    number: 2
+  - rule: "80% do resultado vem de 20% dos ads"
+    number: 3
+  - rule: "Teste preco antes de mudar tudo"
+    number: 4
+  - rule: "iOS mata 30% do tracking (calcule isso)"
+    number: 5
+
+# =============================================================================
+# RED FLAGS IMEDIATOS
+# =============================================================================
+red_flags:
+  - condition: "CPA dobrou"
+    action: "PAUSA"
+  - condition: "CTR <0.5%"
+    action: "MATA"
+  - condition: "Frequencia >10"
+    action: "REFRESH"
+  - condition: "ROAS <2x por 3 dias"
+    action: "ANALISE"
+  - condition: "Relevance score <4"
+    action: "NOVO CRIATIVO"
+
+# =============================================================================
+# BUDGET ALLOCATION
+# =============================================================================
+budget_allocation:
+  proven_campaigns: "70%"
+  new_tests: "20%"
+  retargeting: "10%"
+
+# =============================================================================
+# HOOK EXAMPLES (Swipe Copy)
+# =============================================================================
+hook_examples:
+  for_ads:
+    - "Local business owners, I have a gift for you"
+    - "Real quick question... Can I have your email address?"
+    - "Would you pay $1,000 to have the business of your dreams in 30 days?"
+    - "You might be wondering why I just caught a banana..."
+    - "Read this if you're tired of being broke"
+    - "$4,664 per month... That's what Kyle... The LAST person on the leaderboard... was able to build"
+
+  for_content:
+    - "You guys want to hear something completely insane"
+    - "How to get ahead of 99% of people"
+    - "The smartest thing you can do today"
+    - "I f&cking guarantee you that..."
+
+  for_email:
+    - "SHHHHH It's a SURPRISE!!"
+    - "Btw... (I have a favor to ask)"
+    - "We made a boo boo"
+    - "Your first goodie (for affiliates only)"
+
+# =============================================================================
+# KEY INSIGHTS
+# =============================================================================
+key_insights:
+  - insight: "O Hook e 80% do Valor do Marketing"
+    detail: "David Ogilvy: depois de escrever o headline, voce gastou 80 centavos do seu dolar"
+    action: "Inverta seu tempo - 80% hook, 20% resto"
+
+  - insight: "Grave 10 Hooks Para Cada 1 Ad"
+    detail: "Nao e typo - 10 para 1. Encontra o winner 10x mais rapido"
+    action: "Pare de gravar 1 e torcer"
+
+  - insight: "Hooks Devem Fazer ELES Se Sentirem Importantes"
+    detail: "Dean mudou de ego para empatia e fez milhoes"
+    action: "Delete referencias a voce do hook"
+
+  - insight: "Let The Data Do The Teaching"
+    detail: "Mesmo seu pior conteudo tem top 10% - analise esses hooks"
+    action: "Documente TUDO, analise top/bottom 10%"
+
+  - insight: "Cocktail Party Effect"
+    detail: "Seu nome corta qualquer ruido - replique isso"
+    action: "Seja especifico no call-out"
+
+  - insight: "Hooks Sao Verbal + Nonverbal"
+    detail: "Nao e so texto - e tudo nos primeiros 5 segundos"
+    action: "Use visual absurdo + explicacao"
+
+  - insight: "Mude Apenas o Hook e 2-5-10X Resultados"
+    detail: "Mesmo produto, preco, oferta - so hook diferente"
+    action: "Teste hooks antes de mudar qualquer outra coisa"
+
+# =============================================================================
+# CASE STUDIES
+# =============================================================================
+case_studies:
+  larry_king:
+    context: "Dean Graziosi gastou fortunas recriando set do Larry King"
+    problem: "Conseguiu o REAL Larry King, bomba total"
+    intervention: |
+      Mudou de: "Tonight, I'm here with multi-millionaire Dean Graziosi..."
+      Para: "Have you ever looked in the mirror and thought 'I should be further ahead?'"
+    result: "De zero vendas para milhoes de livros"
+    lesson: "Ego no hook = morte. Fazer ELES importantes = ouro"
+
+  banana:
+    context: "Hormozi precisava de hook novo para Skool Games"
+    intervention: "Pegou uma banana no ar + 'You might be wondering why I just caught a banana...'"
+    result: "Virou um dos top performers"
+    lesson: "Moonshots visuais (10%) podem virar core (70%)"
+
+  bottom_leaderboard:
+    context: "Precisava mostrar que QUALQUER UM consegue"
+    hook: "$4,664 per month... That's what Kyle... The LAST person on the leaderboard... was able to build"
+    result: "Top performer porque remove objecao 'nao sou bom o suficiente'"
+    lesson: "Use o pior caso como prova, nao o melhor"
+
+# =============================================================================
+# METRICS & BENCHMARKS
+# =============================================================================
+metrics:
+  ctr:
+    bad: "<1%"
+    medium: "1-3%"
+    good: "3-5%"
+    excellent: ">5%"
+
+  time_allocation:
+    hooks_testing: "8 horas por batch de 50"
+    speed_dating_exercise: "30 segundos por hook"
+    daily_analysis: "10 minutos"
+    weekly_review: "1 hora"
+    monthly_audit: "2 horas"
+
+  implementation_timeline:
+    first_2_hours: "3-5 acoes imediatas geram resultado"
+    first_week: "50 hooks iniciais testados"
+    first_30_days: "Sistema 70-20-10 funcionando"
+    60_days: "Primeiros outliers massivos identificados"
+    90_days: "Maestria e scale unlocked"
+    6_months: "2-5x baseline estabelecido"
+    1_year: "10x possivel com consistencia"
+
+# =============================================================================
+# HACKS E ATALHOS
+# =============================================================================
+hacks:
+  - name: "O Reverso do Ego"
+    technique: "Pergunte 'qual a maior dor/desejo deles' em vez de 'como me apresento bem'"
+
+  - name: "Bottom Leaderboard"
+    technique: "Use o PIOR caso de sucesso como hook - remove todas objecoes"
+
+  - name: "The Banana Principle"
+    technique: "Visual absurdo + explicacao = atencao garantida"
+    template: "You might be wondering why I just [acao bizarra]"
+
+  - name: "Confession Hook"
+    technique: "'I have a confession...' funciona porque humanos sao curiosos sobre segredos"
+
+  - name: "The Guarantee Hook"
+    technique: "'I f&cking guarantee you...' - intensidade emocional + certeza"
+
+  - name: "Question Stack"
+    technique: "3 perguntas sim em sequencia = 90% concordancia na quarta afirmacao"
+
+  - name: "Pattern Interrupt Visual"
+    technique: "Comece com algo que NAO faz sentido, depois explique"
+
+  - name: "Specific Number Hook"
+    technique: "'$4,664/month' funciona melhor que '$5k/month'"
+
+  - name: "Call Out Multiplo"
+    technique: "'Local business owners' > 'Chiropractors in Texas' > 'Austin chiropractors with 2-5 years experience'"
+
+  - name: "The Rumor Hook"
+    technique: "'The rumors are true...' - cria FOMO instantaneo"
+
+# =============================================================================
+# MANTRAS OPERACIONAIS
+# =============================================================================
+mantras:
+  - "Hook first, content second"
+  - "10x or nothing"
+  - "Data not opinions"
+  - "They matter, not me"
+  - "Test, document, repeat"
+  - "Top 10%, Bottom 10%"
+  - "70-20-10 always"
+  - "8 hours minimum"
+
+# =============================================================================
+# CITACOES ESTRATEGICAS
+# =============================================================================
+quotes:
+  - text: "After you've written your headline, you've spent eighty cents of your advertising dollar."
+    author: "David Ogilvy"
+    application: "Use quando alguem questionar tempo gasto em hooks"
+
+  - text: "Have you ever in your adult life looked at yourself in the mirror and thought 'I should be further ahead by now?'"
+    author: "Dean Graziosi"
+    application: "Modelo para hooks empaticos"
+
+  - text: "You gotta nail the hook or nothing else matters."
+    author: "Dean Graziosi"
+    application: "Repita antes de criar qualquer conteudo"
+
+  - text: "The hook dictates the content, and not the other way around"
+    author: "Alex Hormozi"
+    application: "Use quando comecar novo projeto"
+
+  - text: "Let the data do the teaching. Most people have no idea anyways."
+    author: "Alex Hormozi"
+    application: "Use quando criticarem seus testes"
+
+# =============================================================================
+# AGENT USAGE - Instrucoes para Agentes AI
+# =============================================================================
+agent_usage:
+  hormozi_ads:
+    primary_use: "Criacao e otimizacao de ads seguindo metodologia GOATed"
+
+    when_creating_ads:
+      - "Sempre gerar minimo 10 variacoes de hooks"
+      - "Seguir distribuicao 70-20-10 para tipos de hooks"
+      - "Mapear nivel de awareness do target antes de escrever"
+      - "Incluir elemento visual de pattern interrupt quando possivel"
+      - "CTA deve mostrar E dizer o proximo passo"
+
+    hook_generation_process:
+      step_1: "Identificar nivel de awareness (1-5)"
+      step_2: "Selecionar tipo de hook apropriado"
+      step_3: "Gerar 10+ variacoes usando formulas"
+      step_4: "Incluir call out especifico + value condition"
+      step_5: "Adicionar elemento nonverbal se aplicavel"
+
+    meat_selection:
+      - "Demonstration: quando produto e visual"
+      - "Testimonial: quando ha prova social forte"
+      - "Education: quando awareness e baixa"
+      - "Story: quando conexao emocional necessaria"
+      - "Faceless: quando founder nao quer aparecer"
+
+    optimization_rules:
+      - "Matar CTR <1% imediatamente"
+      - "Duplicar budget de ROAS >3x"
+      - "Refresh criativo a cada 10-14 dias"
+      - "Nunca escalar sem 100 conversoes"
+
+    checklist_usage:
+      pre_launch: "Validar TODOS itens antes de gastar $1"
+      daily: "Executar checklist de 5 minutos"
+      weekly: "Seguir otimizacao semanal"
+      scale: "Verificar sinais antes de aumentar budget"
+
+    red_flags_to_monitor:
+      - "CPA dobrando = pausar"
+      - "CTR <0.5% = matar"
+      - "Frequencia >10 = refresh"
+      - "ROAS <2x por 3 dias = analisar"
+
+    budget_framework:
+      proven: "70% do budget em campanhas que funcionam"
+      testing: "20% em novos testes"
+      retargeting: "10% em retargeting"
+
+    scale_process:
+      - "Confirmar ROAS >3x por 7 dias"
+      - "Verificar 500+ conversoes estáveis"
+      - "Aplicar regra 20% (aumentar 20% a cada 48h)"
+      - "Expandir horizontal para novas audiencias"

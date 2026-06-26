@@ -1,0 +1,213 @@
+# Token Registry — claude-code-mastery
+# SINKRA-native: formal IDs (TK-CCM-*), families, values, and semantics
+# Version: 2.0.0
+# Last updated: 2026-04-03
+
+families:
+  time:
+    - TK-CCM-TIME-001
+    - TK-CCM-TIME-002
+  capacity:
+    - TK-CCM-CAP-001
+    - TK-CCM-CAP-002
+  threshold:
+    - TK-CCM-THR-001
+    - TK-CCM-THR-002
+  priority:
+    - TK-CCM-PRI-001
+  permission:
+    - TK-CCM-PERM-001
+  taxonomy:
+    - TK-CCM-TAX-001
+    - TK-CCM-TAX-002
+    - TK-CCM-TAX-003
+    - TK-CCM-TAX-004
+  behavior:
+    - TK-CCM-BEH-001
+    - TK-CCM-BEH-002
+  accountability:
+    - TK-CCM-ACC-001
+  mode:
+    - TK-CCM-MODE-CRIAR
+    - TK-CCM-MODE-CONFIGURAR
+    - TK-CCM-MODE-RESOLVER
+    - TK-CCM-MODE-ENTENDER
+    - TK-CCM-MODE-VALIDAR
+    - TK-CCM-MODE-PLANEJAR
+
+tokens:
+  # ─── Time ───────────────────────────────────────────────────────────────
+  - id: TK-CCM-TIME-001
+    token_name: knowledge_refresh_ttl
+    family: Time
+    value: "14d"
+    semantic: "Janela máxima para atualizar conhecimento do ecossistema Anthropic"
+    consumed_by:
+      - wf-knowledge-update
+
+  - id: TK-CCM-TIME-002
+    token_name: worker_auto_background_seconds
+    family: Time
+    value: 120
+    semantic: "Tempo máximo de idle (120s) antes do auto-background trigger"
+    consumed_by:
+      - swarm-orchestrator
+
+  # ─── Capacity ───────────────────────────────────────────────────────────
+  - id: TK-CCM-CAP-001
+    token_name: context_budget_cap
+    family: Capacity
+    value: 15000
+    unit: tokens
+    semantic: "Limite de budget de contexto aceitável para hooks, MCP e docs de suporte"
+    consumed_by:
+      - mcp-workflow
+      - wf-audit-complete
+
+  - id: TK-CCM-CAP-002
+    token_name: team_message_ui_cap
+    family: Capacity
+    value: 50
+    unit: messages
+    semantic: "Limite de 50 mensagens na UI para componentes do swarm"
+    consumed_by:
+      - swarm-orchestrator
+
+  # ─── Threshold ──────────────────────────────────────────────────────────
+  - id: TK-CCM-THR-001
+    token_name: audit_score_threshold
+    family: Threshold
+    value: 0.8
+    semantic: "Threshold mínimo para aprovar setup e publicar recommendations"
+    consumed_by:
+      - audit-setup
+      - wf-audit-complete
+      - wf-project-setup
+
+  - id: TK-CCM-THR-002
+    token_name: task_claim_max_retries
+    family: Threshold
+    value: 30
+    semantic: "Lock e timeout parameter: max 30 retries (BR-SWARM-017)"
+    consumed_by:
+      - swarm-orchestrator
+
+  # ─── Priority ───────────────────────────────────────────────────────────
+  - id: TK-CCM-PRI-001
+    token_name: issue_severity_priority
+    family: Priority
+    value: ["critical", "high", "medium", "low"]
+    semantic: "Priorização de gaps por impacto em segurança, contexto e integração"
+    consumed_by:
+      - audit-setup
+      - diagnose
+
+  # ─── Permission ─────────────────────────────────────────────────────────
+  - id: TK-CCM-PERM-001
+    token_name: deny_first_permission
+    family: Permission
+    value: true
+    semantic: "Permissão explícita que mantém deny-first em settings e automações"
+    consumed_by:
+      - configure-claude-code
+      - permission-strategy
+      - wf-project-setup
+
+  # ─── Taxonomy ───────────────────────────────────────────────────────────
+  - id: TK-CCM-TAX-001
+    token_name: claude_runtime_taxonomy
+    family: Taxonomy
+    value: ["hook", "mcp", "skill", "config", "command", "report", "rule", "agent"]
+    semantic: "Vocabulário controlado para hooks, MCP, skills, config, command e report"
+    consumed_by:
+      - claude-mastery-chief
+
+  - id: TK-CCM-TAX-002
+    token_name: swarm_feature_flag
+    family: Taxonomy
+    value: ["team_create", "permission_sync", "coordinator_mode", "wave_teams"]
+    semantic: "Enum de flags de features do swarm"
+    consumed_by:
+      - swarm-orchestrator
+
+  - id: TK-CCM-TAX-003
+    token_name: swarm_task_status
+    family: Taxonomy
+    value: ["pending", "running", "completed", "failed", "killed"]
+    semantic: "Enum de 5 estados da task no swarm"
+    consumed_by:
+      - swarm-orchestrator
+
+  - id: TK-CCM-TAX-004
+    token_name: swarm_coordinator_mode
+    family: Taxonomy
+    value: ["direct", "coordinator", "hybrid"]
+    semantic: "Classificação estrutural do modo Hybrid Coordinator nos chiefs SINKRA"
+    consumed_by:
+      - swarm-orchestrator
+      - claude-mastery-chief
+
+  # ─── Behavior ───────────────────────────────────────────────────────────
+  - id: TK-CCM-BEH-001
+    token_name: fail_loud_mastery
+    family: Behavior
+    value: true
+    semantic: "Falhas de setup, lint de config ou drift de docs geram bloqueio e handoff"
+    consumed_by:
+      - wf-audit-complete
+      - wf-project-setup
+
+  - id: TK-CCM-BEH-002
+    token_name: swarm_permission_sync
+    family: Behavior
+    value: "dry_run_first"
+    semantic: "Dry-run primeiro e enforce via logging para allowLists do swarm agent"
+    consumed_by:
+      - swarm-orchestrator
+
+  # ─── Accountability ─────────────────────────────────────────────────────
+  - id: TK-CCM-ACC-001
+    token_name: mastery_steward
+    family: Accountability
+    value: "Human (mastery-steward)"
+    semantic: "Responsável humano final por aprovar mudanças críticas no runtime Claude Code"
+    consumed_by:
+      - wf-audit-complete
+      - wf-knowledge-update
+
+  # ─── Modes ──────────────────────────────────────────────────────────────
+  - id: TK-CCM-MODE-CRIAR
+    token_name: CRIAR
+    family: Mode
+    value: "CRIAR"
+    semantic: "Modo de criação de hooks, skills, agents e templates"
+
+  - id: TK-CCM-MODE-CONFIGURAR
+    token_name: CONFIGURAR
+    family: Mode
+    value: "CONFIGURAR"
+    semantic: "Modo de configuração de settings, MCPs e políticas"
+
+  - id: TK-CCM-MODE-RESOLVER
+    token_name: RESOLVER
+    family: Mode
+    value: "RESOLVER"
+    semantic: "Modo de resolução de problemas no runtime Claude Code"
+
+  - id: TK-CCM-MODE-ENTENDER
+    token_name: ENTENDER
+    family: Mode
+    value: "ENTENDER"
+    semantic: "Modo de diagnóstico, explicação e comparação de recursos"
+
+  - id: TK-CCM-MODE-VALIDAR
+    token_name: VALIDAR
+    family: Mode
+    value: "VALIDAR"
+    semantic: "Modo de auditoria e verificação de compliance do setup"
+
+  - id: TK-CCM-MODE-PLANEJAR
+    token_name: PLANEJAR
+    family: Mode
+    value: "PLANEJAR"
+    semantic: "Modo de planejamento de adoção, roadmap e migração"

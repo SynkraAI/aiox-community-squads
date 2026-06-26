@@ -1,0 +1,146 @@
+id: wf-brand-positioning-narrative
+name: Brand Positioning & Narrative Workflow
+description: Diferenciação, posicionamento competitivo e mensagem
+version: 1.0.0
+squad: brand
+created: "2026-02-18"
+type: legacy
+config:
+  mode: sequential
+  checkpoint_required: true
+inputs:
+  required:
+    - name: brand_name
+      type: string
+    - name: foundation_report
+      type: string
+    - name: primary_offer
+      type: string
+    - name: target_audience
+      type: string
+workspace_contract:
+  required_preflight:
+    - bash squads/brand/scripts/bootstrap-brand-workspace.sh {{brand_name}}
+    - bash squads/brand/scripts/validate-brand-essentials.sh
+    - node workspace/scripts/resolve-squad-workspace-readiness.cjs --squad=brand --business={{brand_name}} --context-type=brand
+  context_task: load-workspace-context
+  canonical_template_namespace: brand
+  canonical_output_policy: template-first
+phases:
+  - id: workspace_context
+    name: Workspace preflight and context load
+    executor: brand-chief
+    tasks:
+      - task: load-workspace-context.md
+        inputs:
+          - brand_name
+  - id: differentiation
+    name: Onlyness and differentiation
+    executor: neumeier-differentiation
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/positioning/onlyness-statement.md
+  - id: positioning
+    name: Competitive positioning
+    executor: ries-positioning
+    inputs_from_previous:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/positioning/onlyness-statement.md
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/positioning/positioning-statement.md
+  - id: archetype
+    name: Archetype system
+    executor: archetype-consultant
+    inputs_from_previous:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/positioning/positioning-statement.md
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/narrative/archetype-profile.md
+  - id: narrative
+    name: StoryBrand narrative
+    executor: storybrand-narrator
+    tasks:
+      - task: positioning-narrative.md
+        inputs:
+          - brand_name
+          - foundation_report
+          - primary_offer
+          - target_audience
+    inputs_from_previous:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/narrative/archetype-profile.md
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/narrative/messaging-framework.md
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/strategic-positioning.yaml
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/positioning/positioning-narrative-report.md
+outputs:
+  base_path: workspace/businesses/{{brand_name}}/L2-tactical/brand/
+  artifacts:
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/positioning/onlyness-statement.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/positioning/positioning-statement.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/narrative/archetype-profile.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/narrative/messaging-framework.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/strategic-positioning.yaml
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/positioning/positioning-narrative-report.md
+final_output:
+  format: markdown
+  includes:
+    - onlyness_statement
+    - positioning_statement
+    - archetype_profile
+    - core_message
+workflow:
+  id: wf-brand-positioning-narrative
+  name: Brand Positioning & Narrative Workflow
+  version: 1.0.0
+  description: Diferenciação, posicionamento competitivo e mensagem
+  type: legacy
+  sequence:
+    - step: workspace-context
+      id: workspace-context
+      phase: 1
+      phase_name: Workspace preflight and context load
+      agent: brand-chief
+      action: execute_workspace-preflight-and-context-load
+      next: differentiation
+    - step: differentiation
+      id: differentiation
+      phase: 2
+      phase_name: Onlyness and differentiation
+      agent: neumeier-differentiation
+      action: execute_onlyness-and-differentiation
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/positioning/onlyness-statement.md
+      next: positioning
+    - step: positioning
+      id: positioning
+      phase: 3
+      phase_name: Competitive positioning
+      agent: ries-positioning
+      action: execute_competitive-positioning
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/positioning/positioning-statement.md
+      next: archetype
+    - step: archetype
+      id: archetype
+      phase: 4
+      phase_name: Archetype system
+      agent: archetype-consultant
+      action: execute_archetype-system
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/narrative/archetype-profile.md
+      next: narrative
+    - step: narrative
+      id: narrative
+      phase: 5
+      phase_name: StoryBrand narrative
+      agent: storybrand-narrator
+      action: execute_storybrand-narrative
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/narrative/messaging-framework.md
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/strategic-positioning.yaml
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/positioning/positioning-narrative-report.md
+    - workflow_end:
+        id: complete
+        action: workflow_complete
+  handoff_prompts:
+    brand-chief_to_neumeier-differentiation: Handoff context from brand-chief to neumeier-differentiation. Preserve outputs, risks, and open decisions.
+    neumeier-differentiation_to_ries-positioning: Handoff context from neumeier-differentiation to ries-positioning. Preserve outputs, risks, and open decisions.
+    ries-positioning_to_archetype-consultant: Handoff context from ries-positioning to archetype-consultant. Preserve outputs, risks, and open decisions.
+    archetype-consultant_to_storybrand-narrator: Handoff context from archetype-consultant to storybrand-narrator. Preserve outputs, risks, and open decisions.

@@ -1,0 +1,223 @@
+id: wf-brand-complete
+name: Brand Complete Workflow
+description: "Fluxo completo: naming/domain + fundamentos + posicionamento + ativação"
+version: 1.0.0
+squad: brand
+created: "2026-02-18"
+type: legacy
+config:
+  mode: sequential
+  checkpoint_required: true
+  allow_skip:
+    - naming_domain_if_already_defined
+inputs:
+  required:
+    - name: brand_name
+      type: string
+    - name: context_type
+      type: enum
+      options:
+        - produto
+        - empresa
+        - servico
+    - name: business_context
+      type: string
+    - name: category
+      type: string
+    - name: target_market
+      type: enum
+      options:
+        - brasil
+        - latam
+        - global
+    - name: business_stage
+      type: enum
+      options:
+        - startup
+        - growth
+        - enterprise
+        - smb
+    - name: primary_offer
+      type: string
+    - name: target_audience
+      type: string
+  optional:
+    - name: existing_name
+      type: string
+    - name: existing_domain
+      type: string
+    - name: constraints
+      type: string
+    - name: budget
+      type: number
+workspace_contract:
+  required_preflight:
+    - bash squads/brand/scripts/bootstrap-brand-workspace.sh {{brand_name}}
+    - bash squads/brand/scripts/validate-brand-essentials.sh
+    - node workspace/scripts/resolve-squad-workspace-readiness.cjs --squad=brand --business={{brand_name}} --context-type=brand
+  context_task: load-workspace-context
+  canonical_template_namespace: brand
+  canonical_output_policy: template-first
+phases:
+  - id: workspace_context
+    name: Workspace preflight and context load
+    executor: brand-chief
+    tasks:
+      - task: load-workspace-context.md
+        inputs:
+          - brand_name
+  - id: naming_domain
+    name: Naming + Domain
+    executor: brand-chief
+    objective: Executar apenas se nome/domínio não estiverem definidos
+    conditional: run_if_missing(existing_name, existing_domain)
+    workflow_call:
+      workflow: wf-naming-to-domain
+      inputs:
+        - brand_name
+        - context_type
+        - business_context
+        - target_market
+        - constraints
+        - budget
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/naming/naming-domain-recommendation.md
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/domain-decision.yaml
+  - id: foundations
+    name: Brand foundations
+    executor: brand-chief
+    workflow_call:
+      workflow: wf-brand-foundations
+      inputs:
+        - brand_name
+        - business_context
+        - category
+        - target_market
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/foundations-report.md
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/brandbook.yaml
+  - id: positioning_narrative
+    name: Positioning and narrative
+    executor: brand-chief
+    workflow_call:
+      workflow: wf-brand-positioning-narrative
+      inputs:
+        - brand_name
+        - foundation_report
+        - primary_offer
+        - target_audience
+    inputs_from_previous:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/foundations-report.md
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/positioning/positioning-narrative-report.md
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/strategic-positioning.yaml
+  - id: activation
+    name: Activation system
+    executor: brand-chief
+    workflow_call:
+      workflow: wf-brand-activation-system
+      inputs:
+        - brand_name
+        - positioning_report
+        - business_stage
+    inputs_from_previous:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/positioning/positioning-narrative-report.md
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/activation-system-report.md
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo-concept.yaml
+  - id: final_pack
+    name: Final consolidation
+    executor: brand-chief
+    inputs_from_previous:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/naming/naming-domain-recommendation.md
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/foundations-report.md
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/positioning/positioning-narrative-report.md
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/activation-system-report.md
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/brand-master-plan.md
+outputs:
+  base_path: workspace/businesses/{{brand_name}}/L2-tactical/brand/
+  artifacts:
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/naming/naming-domain-recommendation.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/domain-decision.yaml
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/foundations-report.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/brandbook.yaml
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/positioning/positioning-narrative-report.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/strategic-positioning.yaml
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/activation-system-report.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo-concept.yaml
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/brand-master-plan.md
+final_output:
+  format: markdown
+  includes:
+    - final_name_and_domain
+    - brand_foundations
+    - positioning_framework
+    - narrative_framework
+    - activation_plan_30_60_90
+    - governance_and_kpis
+workflow:
+  id: wf-brand-complete
+  name: Brand Complete Workflow
+  version: 1.0.0
+  description: "Fluxo completo: naming/domain + fundamentos + posicionamento + ativação"
+  type: legacy
+  sequence:
+    - step: workspace-context
+      id: workspace-context
+      phase: 1
+      phase_name: Workspace preflight and context load
+      agent: brand-chief
+      action: execute_workspace-preflight-and-context-load
+      next: naming-domain
+    - step: naming-domain
+      id: naming-domain
+      phase: 2
+      phase_name: Naming + Domain
+      agent: brand-chief
+      action: execute_naming-domain
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/naming/naming-domain-recommendation.md
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/domain-decision.yaml
+      next: foundations
+    - step: foundations
+      id: foundations
+      phase: 3
+      phase_name: Brand foundations
+      agent: brand-chief
+      action: execute_brand-foundations
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/foundations-report.md
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/brandbook.yaml
+      next: positioning-narrative
+    - step: positioning-narrative
+      id: positioning-narrative
+      phase: 4
+      phase_name: Positioning and narrative
+      agent: brand-chief
+      action: execute_positioning-and-narrative
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/positioning/positioning-narrative-report.md
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/strategic-positioning.yaml
+      next: activation
+    - step: activation
+      id: activation
+      phase: 5
+      phase_name: Activation system
+      agent: brand-chief
+      action: execute_activation-system
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/activation-system-report.md
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo-concept.yaml
+      next: final-pack
+    - step: final-pack
+      id: final-pack
+      phase: 6
+      phase_name: Final consolidation
+      agent: brand-chief
+      action: execute_final-consolidation
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/brand-master-plan.md
+    - workflow_end:
+        id: complete
+        action: workflow_complete

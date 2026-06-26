@@ -1,0 +1,129 @@
+id: wf-brand-foundations
+name: Brand Foundations Workflow
+description: Diagnóstico de equity, identidade e crescimento
+version: 1.0.0
+squad: brand
+created: "2026-02-18"
+type: legacy
+config:
+  mode: sequential
+  checkpoint_required: true
+inputs:
+  required:
+    - name: brand_name
+      type: string
+    - name: business_context
+      type: string
+    - name: category
+      type: string
+    - name: target_market
+      type: enum
+      options:
+        - brasil
+        - latam
+        - global
+workspace_contract:
+  required_preflight:
+    - bash squads/brand/scripts/bootstrap-brand-workspace.sh {{brand_name}}
+    - bash squads/brand/scripts/validate-brand-essentials.sh
+    - node workspace/scripts/resolve-squad-workspace-readiness.cjs --squad=brand --business={{brand_name}} --context-type=brand
+  context_task: load-workspace-context
+  canonical_template_namespace: brand
+  canonical_output_policy: template-first
+phases:
+  - id: workspace_context
+    name: Workspace preflight and context load
+    executor: brand-chief
+    tasks:
+      - task: load-workspace-context.md
+        inputs:
+          - brand_name
+  - id: cbbe_diagnosis
+    name: CBBE Diagnosis
+    executor: keller-brand-equity
+    tasks:
+      - task: brand-diagnosis.md
+        inputs:
+          - brand_name
+          - business_context
+          - category
+          - target_market
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/cbbe-report.md
+  - id: identity_architecture
+    name: Brand Vision Architecture
+    executor: aaker-brand-identity
+    inputs_from_previous:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/cbbe-report.md
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/identity-architecture.md
+  - id: growth_strategy
+    name: Growth Strategy Lens
+    executor: sharp-brand-science
+    inputs_from_previous:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/identity-architecture.md
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/growth-availability-plan.md
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/foundations-report.md
+outputs:
+  base_path: workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/
+  artifacts:
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/cbbe-report.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/identity-architecture.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/growth-availability-plan.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/foundations-report.md
+final_output:
+  format: markdown
+  includes:
+    - cbbe_baseline
+    - identity_architecture
+    - growth_priorities
+    - top_gaps
+workflow:
+  id: wf-brand-foundations
+  name: Brand Foundations Workflow
+  version: 1.0.0
+  description: Diagnóstico de equity, identidade e crescimento
+  type: legacy
+  sequence:
+    - step: workspace-context
+      id: workspace-context
+      phase: 1
+      phase_name: Workspace preflight and context load
+      agent: brand-chief
+      action: execute_workspace-preflight-and-context-load
+      next: cbbe-diagnosis
+    - step: cbbe-diagnosis
+      id: cbbe-diagnosis
+      phase: 2
+      phase_name: CBBE Diagnosis
+      agent: keller-brand-equity
+      action: execute_cbbe-diagnosis
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/cbbe-report.md
+      next: identity-architecture
+    - step: identity-architecture
+      id: identity-architecture
+      phase: 3
+      phase_name: Brand Vision Architecture
+      agent: aaker-brand-identity
+      action: execute_brand-vision-architecture
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/identity-architecture.md
+      next: growth-strategy
+    - step: growth-strategy
+      id: growth-strategy
+      phase: 4
+      phase_name: Growth Strategy Lens
+      agent: sharp-brand-science
+      action: execute_growth-strategy-lens
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/growth-availability-plan.md
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/foundations/foundations-report.md
+    - workflow_end:
+        id: complete
+        action: workflow_complete
+  handoff_prompts:
+    brand-chief_to_keller-brand-equity: Handoff context from brand-chief to keller-brand-equity. Preserve outputs, risks, and open decisions.
+    keller-brand-equity_to_aaker-brand-identity: Handoff context from keller-brand-equity to aaker-brand-identity. Preserve outputs, risks, and open decisions.
+    aaker-brand-identity_to_sharp-brand-science: Handoff context from aaker-brand-identity to sharp-brand-science. Preserve outputs, risks, and open decisions.

@@ -1,0 +1,579 @@
+# Content Swipefile - Alex Hormozi
+# Extracted from YouTube, Shorts, Twitter, and Podcasts
+version: "1.0"
+extraction_date: "2026-02-23"
+source_path: "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Hormozi/04 Posts & YouTube/"
+
+overview:
+  shorts_total: 306
+  youtube_videos_total: 232
+  twitter_file: 1  # Compilacao de tweets
+  podcasts_total: 19
+  sample_analyzed: 45
+
+# =============================================================================
+# SHORT-FORM CONTENT (SHORTS)
+# =============================================================================
+shorts:
+  total_files: 306
+
+  # Hooks de abertura mais eficazes identificados
+  top_hooks:
+    curiosity_gap:
+      - "A BILLIONAIRE told me this...and it changed my life"
+      - "This sales tactic MADE ME $35,000,000..."
+      - "The SECRET to selling anything you want..."
+      - "How I closed $100M in sales...the EXACT method"
+      - "The BEST persuasion HACK for SALES that I learned from EMINEM..."
+      - "One hack that has made me the most productive..."
+      - "Insecurity made me rich, here's how..."
+
+    number_specificity:
+      - "3 Magic Words To Close More Sales"
+      - "4 Steps To Go From $0 to $10 Million"
+      - "I built a $100M sales team using this framework"
+      - "Why Making Your First $100K Is The Hardest"
+      - "Meet these 7 Customer Needs to Get Them to Buy"
+      - "The 3 Levels Of Accountability"
+
+    contrarian_statement:
+      - "REVERSE PSYCHOLOGY HACK to close more deals..."
+      - "Confidence Is Self Delusion"
+      - "Active businesses are like horcruxes"
+      - "Sales is like SEX - You learn by doing it NOT by reading about it"
+      - "The truth about sales..."
+
+    question_hooks:
+      - "Would you cheat if you could?"
+      - "What would a person 10X smarter than me do?"
+      - "How to spot a MILLION DOLLAR opportunity?"
+      - "Is College Right For You?"
+
+    authority_hooks:
+      - "A BILLIONAIRE told me..."
+      - "100M CEO explains..."
+      - "Warren Buffett's Secret..."
+      - "What Billionaires think about..."
+
+  # Padroes de estrutura identificados
+  structure_patterns:
+    standard_short:
+      format: "Hook > Context > Tactic > Example > CTA implícito"
+      duration: "30-60 segundos"
+      example: "CLOSER Framework short"
+
+    story_to_lesson:
+      format: "Mini-história > Turning point > Lição > Aplicação"
+      duration: "45-60 segundos"
+      example: "Assumed close $35M story"
+
+    framework_reveal:
+      format: "Problema comum > Framework acronimo > Steps rapidos"
+      duration: "50-60 segundos"
+      example: "CLOSER = Clarify, Label, Overview, Sell, Explain, Reinforce"
+
+    objection_handling:
+      format: "Objeção comum > Reframe psicológico > Resposta sugerida"
+      duration: "30-45 segundos"
+      example: "'My husband won't approve' - childlike curiosity response"
+
+  # Temas mais recorrentes
+  themes:
+    sales_tactics:
+      frequency: "~35% do conteúdo"
+      subtopics:
+        - "Assumed close"
+        - "No-based questions"
+        - "Damaging admission (Eminem technique)"
+        - "Childlike curiosity for objections"
+        - "Fair enough close (Jordan Belfort)"
+        - "CLOSER framework"
+
+    wealth_building:
+      frequency: "~25% do conteúdo"
+      subtopics:
+        - "First $100K is hardest (no leverage)"
+        - "Skill stacking"
+        - "Arbitrage windows"
+        - "Information as investment"
+        - "Time vs money trade"
+
+    mindset_productivity:
+      frequency: "~20% do conteúdo"
+      subtopics:
+        - "Constraint-based productivity"
+        - "Insecurity as fuel"
+        - "Delayed gratification"
+        - "Volume builds skill"
+
+    business_strategy:
+      frequency: "~15% do conteúdo"
+      subtopics:
+        - "Opportunity evaluation (units x margin x competition)"
+        - "Hiring/firing decisions"
+        - "Sales team management"
+
+    personal_stories:
+      frequency: "~5% do conteúdo"
+      subtopics:
+        - "Sleeping on gym floor"
+        - "Bumble date with Leila"
+        - "Driving to California"
+
+  # Formulas de titulo eficazes
+  title_formulas:
+    number_formula:
+      pattern: "[Number] [Adjective] [Thing] to [Desired Outcome]"
+      examples:
+        - "3 Magic Words To Close More Sales"
+        - "4 Steps To Go From $0 to $10 Million"
+        - "5 Things to Help People Understand What You're Saying"
+
+    how_i_formula:
+      pattern: "How I [Achieved Result]...[Promise]"
+      examples:
+        - "How I closed $100M in sales...the EXACT method"
+        - "How I make decisions [Success framework]"
+        - "How I built a $100M sales team"
+
+    secret_formula:
+      pattern: "The SECRET/TRUTH/HACK to [Desired Outcome]"
+      examples:
+        - "The SECRET to Selling Anything You Want"
+        - "The TRUTH about affirmations"
+        - "Psychology HACK to close more sales"
+
+    this_x_me_formula:
+      pattern: "This [thing] [MADE/COST] me $[amount]..."
+      examples:
+        - "This sales tactic MADE ME $35,000,000..."
+        - "This Lesson Cost me $5,000,000..."
+
+# =============================================================================
+# LONG-FORM CONTENT (YOUTUBE VIDEOS)
+# =============================================================================
+youtube_videos:
+  total_files: 232
+
+  top_hooks:
+    credibility_opener:
+      - "I was able to take home more in a year than the CEO of McDonald's, IKEA, Ford, Motorola and Yahoo COMBINED"
+      - "I own acquisition.com, portfolio does over $150 million a year"
+      - "We went from zero to $50 million run rate in 20 months"
+
+    anti_pitch:
+      - "I have absolutely nothing to sell you"
+      - "I make these videos because I hope you use the stuff, make money, and join acquisition.com"
+      - "The book is 99 cents because I want everyone to have it"
+
+    story_hook:
+      - "Six years ago I told clients they should STOP making content..."
+      - "I was asked to speak at the War Room mastermind which is $30,000/year..."
+
+    challenge_hook:
+      - "If your ads aren't converting well..."
+      - "If you're a small business owner that costs time and money..."
+
+  structure_patterns:
+    keynote_presentation:
+      format: |
+        1. Credibility establishment (2-3 min)
+        2. "Who am I talking to?" audience segmentation
+        3. Core framework introduction
+        4. Deep dive with acronyms/steps
+        5. Stories/examples for each point
+        6. Recap and soft CTA
+      duration: "15-45 minutos"
+      examples:
+        - "30 Minutes of sales training"
+        - "100M CEO explains How to CREATE a $100M product"
+
+    phase_breakdown:
+      format: |
+        1. Overview of phases (1-5 or stages)
+        2. Each phase explained with examples
+        3. "Where most people stop" insight
+        4. How to progress between phases
+        5. Action items
+      duration: "10-20 minutos"
+      examples:
+        - "1.2M Followers in 6 Months - Content Strategy"
+
+    beliefs_framework:
+      format: |
+        1. Personal context/achievement
+        2. Counter-intuitive observations
+        3. Numbered beliefs/lessons
+        4. Story for each belief
+        5. How to apply
+      duration: "20-30 minutos"
+      examples:
+        - "9 Beliefs That Built My Ultra High Net Worth"
+
+  themes:
+    offer_creation:
+      frequency: "~30% do conteúdo"
+      key_concepts:
+        - "Value equation: Dream Outcome x Perceived Likelihood / Time x Effort & Sacrifice"
+        - "De-commoditization"
+        - "Values-based vs price-based decisions"
+        - "Selling in a category of one"
+
+    sales_systems:
+      frequency: "~25% do conteúdo"
+      key_concepts:
+        - "CLOSER framework detailed"
+        - "Conviction framework (tone control)"
+        - "Scaling framework (7 days)"
+        - "Question-based scripting"
+        - "30-second stories"
+
+    content_marketing:
+      frequency: "~15% do conteúdo"
+      key_concepts:
+        - "5 phases of content"
+        - "Lead nurture vs lead generation"
+        - "Quality x Quantity wins"
+        - "Platform maximization"
+
+    skill_acquisition:
+      frequency: "~15% do conteúdo"
+      key_concepts:
+        - "Talent stacking"
+        - "4 highest value skills"
+        - "Information as best investment"
+        - "4-5 hours uninterrupted daily"
+
+    business_philosophy:
+      frequency: "~15% do conteúdo"
+      key_concepts:
+        - "Work is the best coping mechanism"
+        - "Options > Freedom"
+        - "Everyone wants you to do well, just not better than them"
+        - "Make work cool again"
+
+# =============================================================================
+# TWITTER CONTENT
+# =============================================================================
+twitter:
+  total_tweets: "500+ analisados"
+
+  thread_patterns:
+    framework_thread:
+      structure: "Intro hook > Numbered points > Examples > Reframe"
+      example: "Belief breaking framework: 1) What they think 2) Why it isn't true..."
+
+    one_liner_wisdom:
+      structure: "Contrarian statement + Implication"
+      examples:
+        - "Hard work is the table stake, not the guarantee of winning"
+        - "Money only solves money problems"
+        - "Epic lives require epic sacrifices"
+
+    comparison_insight:
+      structure: "X vs Y + Surprising truth"
+      examples:
+        - "Humility is not thinking less of yourself, but thinking of yourself less"
+        - "Model what someone did to GET there, not what they do ONCE there"
+
+  top_performing_formats:
+    actionable_advice:
+      - "Had dinner with college seniors... Four steps: 1) Get LLC 2) Bank account 3) Payment processor 4) Solve problem for stranger"
+      - "If you need more customers, learn: Outreach, Content, Ads, Affiliates, Referrals. There is no other way."
+
+    reframes:
+      - "If you can solve it with money, you don't have a problem - you have an expense"
+      - "Myth: Working too much leads to burnout. Reality: Not being able to manage emotions leads to burnout"
+      - "Work life balance assumes you're not living when you work"
+
+    success_metrics:
+      - "Divide what you took home last year by 2000. That's your hourly rate."
+      - "The longer you delay your ask, the bigger the ask you can make"
+
+    psychological_insights:
+      - "No one with a brain worth picking, wants it picked"
+      - "For happiness, what you think matters more than what others think. For money, what others think matters more"
+      - "The best salesmen care deeply for the customer and little for getting the deal"
+
+  themes_ranked:
+    - topic: "Money/Wealth mindset"
+      frequency: "~25%"
+    - topic: "Sales/Persuasion"
+      frequency: "~20%"
+    - topic: "Productivity/Work ethic"
+      frequency: "~20%"
+    - topic: "Business strategy"
+      frequency: "~15%"
+    - topic: "Personal philosophy"
+      frequency: "~15%"
+    - topic: "Relationships/Leadership"
+      frequency: "~5%"
+
+# =============================================================================
+# PODCASTS (GAME PODCAST)
+# =============================================================================
+podcasts:
+  total_episodes: 19
+
+  structure_patterns:
+    solo_episode:
+      format: |
+        1. Quick intro + book plug (99 cents)
+        2. Topic introduction with hook
+        3. Framework/concept explanation
+        4. Multiple examples
+        5. How to implement
+        6. CTA: Share the podcast
+      duration: "15-25 minutos"
+
+    interview_episode:
+      format: |
+        1. Guest context
+        2. Key learnings from guest
+        3. Alex's reframe/additions
+        4. Actionable takeaways
+      duration: "45-60 minutos"
+
+  top_themes:
+    persuasion_principles:
+      concepts:
+        - "Reciprocity (waiter mint example)"
+        - "Consistency (foot in door)"
+        - "Social proof"
+        - "Authority"
+        - "Scarcity"
+        - "Liking"
+      source: "Robert Cialdini adaptation"
+
+    four_highest_value_skills:
+      skills:
+        - skill: "Raise and multiply money"
+          leverage: "Capital"
+        - skill: "Capture and multiply attention"
+          leverage: "Media"
+        - skill: "Return time to others at no incremental cost"
+          leverage: "Technology"
+        - skill: "Influence behavior at mass scale"
+          leverage: "Labor"
+      key_insight: "All four compound exponentially"
+
+    character_development:
+      concepts:
+        - "3 paths of entrepreneur"
+        - "4 evil E's entrepreneurs make"
+        - "Fixing character deficiencies"
+
+  recurring_elements:
+    intro_cta: "If you can think about how you found this podcast, somebody probably tweeted it... The only way this grows is through word of mouth"
+    book_plug: "$100M Offers - 99 cents on Kindle, $12 audiobook"
+    sign_off: "I make this channel because a lot of people are broke and I don't want to be one of them"
+
+# =============================================================================
+# CONTENT FORMULAS CROSS-PLATFORM
+# =============================================================================
+content_formulas:
+
+  short_form:
+    hook_patterns:
+      - pattern: "Credibility + Curiosity Gap"
+        template: "[Authority/$$] taught me this...and it [changed/made] my [life/$$]"
+
+      - pattern: "Number + Benefit"
+        template: "[X] [words/steps/things] to [desired outcome]"
+
+      - pattern: "Contrarian Hook"
+        template: "The TRUTH about [common belief]..."
+
+      - pattern: "Question Hook"
+        template: "Would you [provocative action] if [condition]?"
+
+    body_structures:
+      - name: "Framework Drop"
+        steps:
+          - "Name the framework (acronym preferred)"
+          - "Quick explanation of each letter/step"
+          - "One example"
+
+      - name: "Story to Lesson"
+        steps:
+          - "Mini situation setup"
+          - "What happened"
+          - "What I learned"
+          - "How you can apply"
+
+      - name: "Objection Flip"
+        steps:
+          - "Common objection stated"
+          - "Why people think this"
+          - "Reframe with psychology"
+          - "What to say instead"
+
+  long_form:
+    opening_formulas:
+      - name: "Anti-Pitch Credibility"
+        template: |
+          "If you don't know who I am, my name is [name].
+          I own [company] - we do [impressive metric].
+          I have nothing to sell you.
+          I make these videos because [genuine reason]."
+
+      - name: "Audience Segmentation"
+        template: |
+          "Raise your hand if you're [level 1]...
+          Who's doing [level 2]...
+          Who's at [level 3]...
+          Great, I'll try to cater this to all of you."
+
+      - name: "Story Hook"
+        template: |
+          "[Time] ago I told [people] to [counterintuitive advice].
+          I was partially right and partially wrong.
+          In this video I'll break down [what changed]."
+
+    framework_structures:
+      - name: "Numbered Steps"
+        format: "Step 1, Step 2, Step 3... with stories for each"
+
+      - name: "Acronym Framework"
+        format: "CLOSER, LEADS, etc - each letter = concept + example"
+
+      - name: "Phase Progression"
+        format: "Phase 1 to Phase 5 with 'where most stop' insight"
+
+      - name: "Belief/Lesson List"
+        format: "9 beliefs, 10 lessons, 8 things... with stories"
+
+  twitter_specific:
+    one_liner_formulas:
+      - pattern: "[Noun] is [surprising definition]"
+        example: "Hard work is the ability to endure discomfort for extended periods"
+
+      - pattern: "[Common belief]. [Contrarian truth]."
+        example: "People try to explain why others do things and yet don't know why they do things themselves."
+
+      - pattern: "The [superlative] [people] [action] because [insight]"
+        example: "The best salesmen care deeply for the customer and little for getting the deal"
+
+    thread_formulas:
+      - pattern: "Hook + Numbered List + Reframe"
+      - pattern: "Question + Steps + Call to action"
+      - pattern: "Myth vs Reality breakdown"
+
+# =============================================================================
+# AGENT USAGE INSTRUCTIONS
+# =============================================================================
+agent_usage:
+
+  hormozi_content_agent:
+    description: "Agente para criar conteudo no estilo Hormozi"
+    when_to_use:
+      - "Criar scripts para shorts/reels"
+      - "Estruturar videos longos"
+      - "Escrever threads Twitter"
+      - "Desenvolver episodios podcast"
+    how_to_use:
+      - "Identifique o formato (short/long/thread/podcast)"
+      - "Selecione hook pattern apropriado"
+      - "Use estrutura correspondente do swipefile"
+      - "Mantenha tom direto, confiante, sem bullshit"
+      - "Inclua numeros especificos sempre que possivel"
+      - "Use historias pessoais como prova"
+    tone_guidelines:
+      - "Direto e sem rodeios"
+      - "Confiante mas nao arrogante"
+      - "Educativo antes de persuasivo"
+      - "Numeros especificos > generalidades"
+      - "Historias > teoria"
+      - "Anti-pitch: valor primeiro, venda depois"
+
+  hormozi_hooks_agent:
+    description: "Agente especializado em hooks no estilo Hormozi"
+    hook_selection_guide:
+      for_sales_content:
+        preferred_hooks:
+          - "Number + specific result"
+          - "Credibility + tactic reveal"
+          - "Psychology hack pattern"
+        example: "3 Magic Words to Close More Sales"
+
+      for_wealth_content:
+        preferred_hooks:
+          - "Billionaire/mentor authority"
+          - "Specific dollar amount"
+          - "Counterintuitive truth"
+        example: "A BILLIONAIRE told me this...and it changed my life"
+
+      for_mindset_content:
+        preferred_hooks:
+          - "Contrarian statement"
+          - "Reframe pattern"
+          - "Personal story tease"
+        example: "Insecurity made me rich, here's how..."
+
+      for_business_content:
+        preferred_hooks:
+          - "Framework acronym"
+          - "Number of steps/ways"
+          - "Common mistake reveal"
+        example: "The 3 Ways Small Businesses Beat Bigger Competitors"
+
+    hook_testing:
+      - "Tweet primeiro para testar engagement"
+      - "Hooks com numeros performam 40% melhor"
+      - "Money amounts aumentam clicks"
+      - "Contrarian hooks geram mais compartilhamentos"
+
+# =============================================================================
+# KEY PHRASES & EXPRESSIONS
+# =============================================================================
+signature_phrases:
+  intros:
+    - "If you don't know who I am..."
+    - "I have nothing to sell you"
+    - "I make these videos because..."
+    - "Let's rock and roll"
+
+  transitions:
+    - "Here's the thing..."
+    - "Now, here's where it gets interesting..."
+    - "And this is the key point..."
+    - "So what does this actually mean?"
+
+  credibility_markers:
+    - "When I was building Gym Launch..."
+    - "In our portfolio companies..."
+    - "A billionaire friend of mine..."
+    - "When we hit $100M..."
+
+  call_to_actions:
+    - "The only way this grows is word of mouth"
+    - "If you're doing $3M+ per year, go to acquisition.com"
+    - "Keep being awesome, lots of love"
+    - "I hope you use this stuff and make money"
+
+# =============================================================================
+# CONTENT CALENDAR PATTERNS
+# =============================================================================
+content_cadence:
+  observed_patterns:
+    shorts:
+      frequency: "Daily ou multiple per day"
+      repurposing: "Extraidos de videos longos"
+
+    youtube:
+      frequency: "2-4x por semana"
+      types: "Mix de keynotes, frameworks, interviews"
+
+    twitter:
+      frequency: "5-10 tweets por dia"
+      mix: "One-liners, threads, engagement replies"
+
+    podcast:
+      frequency: "2-3x por semana"
+      format: "Solo episodes + occasional guests"
+
+  repurposing_strategy:
+    - "Long video -> 5-10 shorts"
+    - "Podcast episode -> 3-5 video clips"
+    - "Twitter threads -> Short scripts"
+    - "Best performing content -> Paid ads creative"

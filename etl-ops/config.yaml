@@ -1,0 +1,405 @@
+pack:
+  name: etl-ops
+  version: "1.0.0"
+  short-title: ETL Operations Squad
+  description: >-
+    Squad operacional para execucao de pipelines ETL usando a infraestrutura
+    existente em services/etl/. Tres agentes funcionais que
+    sabem operar CLIs, collectors e ETLService API. Sem mind clones -
+    heuristicas de Alan Nicolas + Pedro Valerio como fundacao. Inclui fluxo
+    progressivo para livros: EPUB-first, manifesto estrutural, contexto
+    de livro e resumo por capitulo.
+  icon: "🔄"
+  author: Alan Nicolas
+  slashPrefix: etlOps
+
+entry_agent: etl-chief
+
+ide_sync:
+  enabled: false
+  rationale: "Pipeline operacional baseado em services/etl e scripts locais; não precisa mirror dedicado de agents"
+
+domain_model:
+  Strategic:
+    label: "Estratégico"
+    scope: "Política de ETL, padrões do hub e evolução do envelope operacional"
+  Tactical:
+    label: "Tático"
+    scope: "Roteamento, desenho de pipeline e decisões de transformação"
+  Operational:
+    label: "Operacional"
+    scope: "Execução de extração, enriquecimento, compilação e validação local"
+
+logging:
+  runtime_audit: true
+  error_behavior: fail_loud
+  error_handling:
+    on_extract_fail: preserve_partial_artifacts
+    on_transform_fail: block_delivery
+    on_workspace_route_blocked: emit_review_handoff
+
+sinkra:
+  hierarchy_mapping:
+    Token: "Critérios declarativos de roteamento, ownership, thresholds e modos"
+    Atom: "Task unitária de ETL"
+    Molecule: "Subfluxo recorrente de preflight, extract, transform ou deliver"
+    Organism: "Pipeline ETL completo por tipo de source"
+    Template: "Schema, contract ou envelope reutilizável"
+    Instance: "Run real persistido em workspace ou outputs/etl"
+  governance_tokens:
+    - type: Accountability
+      rule: "Toda execução tem steward humano ou chief responsável"
+    - type: Threshold
+      rule: "Quality gates e fidelity rules usam threshold numérico explícito"
+    - type: Behavior
+      rule: "Fail loud em pré-requisito ausente, source inválida ou contrato quebrado"
+    - type: Time
+      rule: "Runs persistidos têm janela de revisão e reaproveitamento definida"
+  composition_rules:
+    - "Preflight sempre precede diagnose, extract, transform e deliver"
+    - "Cada task unitária declara executor, input, output e critérios de completion"
+    - "Workflows persistem envelope e checkpoints em fluxo unidirecional"
+    - "Handoffs interdomínio usam artifact tipado"
+    - "Saídas canônicas preferem workspace quando há business_slug válido"
+
+squad:
+  name: etl-ops
+  version: 1.0.0
+
+metadata:
+  version: "1.0.0"
+  score: 3.8
+
+workspace_integration:
+  level: none
+  rationale: >-
+    ETL-OPS extrai dados de múltiplas fontes e deve ancorar saídas canônicas
+    no workspace quando houver contexto de negócio, mantendo fallback legado
+    em outputs/etl para execuções sem slug. A promoção final depende de
+    `workspace-handoff.yaml` validado pelo COO/workspace governance.
+  readiness_owner: COO
+  readiness_handoff: workspace-handoff.yaml
+  handoff:
+    target: workspace-chief
+    condition: "Quando squad é instalado em ambiente com workspace/ ativo"
+    contract: "ETL-OPS declara write_paths; workspace-chief valida e integra"
+  read_paths:
+    - workspace/businesses/
+    - workspace/domains/
+    - workspace/_templates/
+    - docs/
+    - squads/etl-ops/data/
+    - services/etl/
+  write_paths:
+    - workspace/businesses/
+    - workspace/_templates/etl/
+    - outputs/etl/
+    - docs/etl/
+  template_namespace: etl
+  canonical_outputs_root: workspace/businesses/{slug}/etl/
+  custom_outputs_root: docs/etl/{slug}/
+  legacy_outputs_root: outputs/etl/{run_id}/
+  bootstrap:
+    required: true
+    script: "scripts/bootstrap-etl-workspace.sh"
+  env_bootstrap:
+    optional: true
+    script: "scripts/etl-env-bootstrap.sh"
+  essentials_validation:
+    required: true
+    script: "scripts/validate-etl-essentials.sh"
+
+# Infrastructure Reference
+infrastructure:
+  service_path: services/etl
+  legacy_service_path: services/etl
+  legacy_service_path_note: "Compat alias: infrastructure/services/etl foi removido deste Hub; consumers devem usar services/etl"
+  service_version: "2.6.0"
+  cli_tools:
+    - bin/youtube-transcript.js
+    - bin/youtube-channel.js
+    - bin/youtube-metadata.js
+    - bin/youtube-clean-transcript.js
+    - bin/youtube-pipeline.js
+    - bin/youtube-diarize.js
+    - bin/youtube-diarize-autoheal.js
+    - bin/fetch-page.js
+    - bin/transcribe.js
+    - bin/ebook-to-markdown.js
+    - bin/firecrawl-scrape.sh
+    - bin/firecrawl-search.sh
+    - bin/cloudflare-crawl.sh
+  collectors:
+    - collectors/web-collector.js
+    - collectors/pdf-collector.js
+    - collectors/epub-collector.js
+    - collectors/ebook-collector.js
+    - collectors/zlibrary-collector.js
+    - collectors/chatwoot-collector.js
+    - collectors/document-collector.js
+    - collectors/transcribe-collector.js
+  api_class: service.js  # ETLService
+
+  # External tools (system dependencies)
+  external_tools:
+    - name: ffmpeg
+      purpose: "Video/audio processing, scene detection, frame extraction"
+      install: "brew install ffmpeg (macOS) / apt install ffmpeg (Linux)"
+      required_for: [video_transcription, direct_video_url, video_multimodal, extract-keyframes]
+    - name: whisper
+      purpose: "Speech-to-text transcription"
+      install: "pip install openai-whisper"
+      required_for: [video_transcription, direct_video_url, video_multimodal]
+    - name: scenedetect
+      purpose: "Advanced scene detection with multiple algorithms"
+      install: "pip install scenedetect[opencv]"
+      required_for: [video_multimodal, extract-keyframes]
+      fallback: "ffmpeg scene filter"
+    - name: firecrawl-cli
+      purpose: "Web scraping, search+scrape e crawl de sites com JS pesado"
+      install: "npx -y firecrawl-cli@latest init --all --browser"
+      required_for: [search_and_scrape, web_page_js_heavy, site_crawl]
+      fallback: "fetch-page.js para single page"
+      auth: "FIRECRAWL_API_KEY ou firecrawl login --browser"
+    - name: cloudflare-crawl
+      purpose: "Crawl incremental com renderização para sites grandes"
+      install: "Cloudflare account + API token com Browser Rendering permission"
+      required_for: [site_crawl, web_page_js_heavy]
+      fallback: "firecrawl crawl"
+      auth: "CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID"
+
+# Pattern Library
+pattern_library:
+  prefix: EO
+  naming_convention:
+    format: "{PREFIX}-{CATEGORY}-{NUMBER}"
+    example: "EO-TP-001"
+  categories:
+    - id: TP
+      name: "Task Patterns"
+      description: "Patterns for ETL task structure"
+    - id: VP
+      name: "Veto Patterns"
+      description: "Veto conditions for ETL operations"
+    - id: CP
+      name: "Checkpoint Patterns"
+      description: "Validation checkpoints between phases"
+
+# Task Standards
+task_standards:
+  enforce_anatomy: true
+  validator: "EO-TP-001"
+  required_fields:
+    - task_name
+    - status
+    - responsible_executor
+    - execution_type
+    - input
+    - output
+    - action_items
+    - acceptance_criteria
+
+# Agents
+agents:
+  - id: etl-steward
+    file: null
+    role: "Steward humano para aprovação final e ownership de execução"
+    executor_profile:
+      sinkra_type: Human
+      human_in_the_loop: true
+      output_schema: etl-governance-approval
+
+  - id: etl-auditor
+    file: null
+    role: "Clone de revisão para validação de fidelidade e contrato"
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: etl-audit-review
+
+  - id: etl-chief
+    file: agents/etl-chief.md
+    role: "Pipeline orchestrator - routing, quality validation, checkpoint management"
+    executor_profile:
+      sinkra_type: Agent
+      human_in_the_loop: true
+      output_schema: etl-routing-decision
+      story_role: reviewer
+      can_execute: false
+      core_replaces: null
+      work_contexts: ["ETL orchestration", "pipeline routing", "checkpoint management", "quality validation"]
+      can_review: ["etl-pipeline", "data-quality", "checkpoint-compliance"]
+
+  - id: etl-extractor
+    file: agents/etl-extractor.md
+    role: "Data extraction - CLI execution, source fetching, file operations"
+    executor_profile:
+      sinkra_type: Worker
+      human_in_the_loop: false
+      output_schema: etl-extraction-envelope
+      story_role: executor
+      can_execute: true
+      core_replaces: "@data-engineer"
+      work_contexts: ["data extraction", "CLI execution", "source fetching", "file operations", "batch processing"]
+      can_review: []
+
+  - id: etl-transformer
+    file: agents/etl-transformer.md
+    role: "Data transformation - cleaning, enrichment, format conversion"
+    executor_profile:
+      sinkra_type: Worker
+      human_in_the_loop: false
+      output_schema: etl-transformation-envelope
+      story_role: executor
+      can_execute: true
+      core_replaces: "@data-engineer"
+      work_contexts: ["data transformation", "cleaning", "enrichment", "format conversion", "schema mapping"]
+      can_review: []
+
+# Executor Types
+executor_types:
+  agent:
+    id: "EO-EP-001"
+    name: "ETL Agent"
+    use_for: ["Pipeline orchestration", "Source analysis", "Quality validation"]
+  worker:
+    id: "EO-EP-002"
+    name: "ETL Worker"
+    use_for: ["CLI execution", "File operations", "Batch processing"]
+
+# Workflow Configuration
+workflow_config:
+  checkpoint_policy: always_active
+  fail_fast: true
+  allow_manual_override: false
+  local_quality_gate:
+    command: "npm run validate:etl-ops"
+    required_before_completion: true
+    enforcement_layer: "agents+tasks+workflows"
+
+composition_mapping:
+  tokens:
+    source: "data/token-registry.yaml"
+    count: 12
+    description: "Tokens operacionais para roteamento, ownership, thresholds e runtime"
+  atoms:
+    description: "Tasks unitárias do squad ETL-OPS"
+    mapping:
+      - pattern: "tasks/load-workspace-context.md"
+        role: preflight
+      - pattern: "tasks/process.md"
+        role: orchestrate
+      - pattern: "tasks/enrich.md"
+        role: transform
+      - pattern: "tasks/compile.md"
+        role: compile
+      - pattern: "tasks/extract-podcast.md"
+        role: extract
+      - pattern: "tasks/extract-keyframes.md"
+        role: multimodal
+    count: 7
+  molecules:
+    description: "Combinações recorrentes de atoms"
+    declared:
+      - id: mol-preflight
+        atoms: [load-workspace-context, etl-env-bootstrap]
+      - id: mol-extract-transform
+        atoms: [process, enrich, compile, summarize-book]
+      - id: mol-multimodal
+        atoms: [extract-podcast, extract-keyframes]
+  organisms:
+    description: "Pipelines completos de ETL"
+    mapping:
+      - id: org-etl-process
+        workflow: etl-pipeline
+        molecules: [mol-preflight, mol-extract-transform]
+        state_machine: true
+        phases: 8
+      - id: org-etl-multimodal
+        workflow: etl-thresholds
+        molecules: [mol-preflight, mol-multimodal]
+        state_machine: true
+        phases: 4
+  templates:
+    description: "Contracts, schemas e handoffs do ETL"
+    source: "templates/"
+  instances:
+    description: "Execuções reais persistidas em workspace e outputs/etl"
+    persistence: "outputs/etl/ | workspace/businesses/{slug}/etl/"
+    lifecycle: [draft, validated, approved, consumed, archived]
+
+# Task Catalog
+task_catalog:
+  public_tasks:
+    - id: load-workspace-context
+      path: tasks/load-workspace-context.md
+      entrypoint: false
+      modes: [single, batch, rag]
+    - id: etl-env-bootstrap
+      path: tasks/etl-env-bootstrap.md
+      entrypoint: false
+      modes: [single, batch, rag]
+    - id: process
+      path: tasks/process.md
+      entrypoint: true
+      modes: [single, batch, rag]
+    - id: extract-podcast
+      path: tasks/extract-podcast.md
+      entrypoint: false
+      modes: [single, batch]
+    - id: compile
+      path: tasks/compile.md
+      entrypoint: false
+      modes: [batch]
+    - id: summarize-book
+      path: tasks/summarize-book.md
+      entrypoint: false
+      modes: [single, batch]
+    - id: enrich
+      path: tasks/enrich.md
+      entrypoint: false
+      modes: [single, batch]
+    - id: extract-keyframes
+      path: tasks/extract-keyframes.md
+      entrypoint: false
+      modes: [single, batch]
+      strategies: [scene_detection, interval, adaptive]
+  contracts:
+    input_schema: data/process.schema.json
+    routing_profiles: data/routing-profiles.yaml
+    checkpoints: data/checkpoints.yaml
+    output_contract: data/output-contract.yaml
+    enriched_transcript_schema: data/enriched-transcript.schema.json
+
+# Heuristic Foundation
+heuristics:
+  alan_nicolas:
+    - "VERIFY PHYSICALLY BEFORE THEORIZING - ls, curl, node antes de assumir"
+    - "DISCOVERY BEFORE IMPLEMENTATION - mapear sistemas existentes antes de construir"
+    - "DETERMINISM FIRST - Script > Query > Regex > LLM (ultimo recurso)"
+    - "ETL FIRST - fetch-page.js (zero tokens) > WebFetch (gasta tokens)"
+    - "NEVER MOCK WHEN REAL DATA EXISTS"
+  pedro_valerio:
+    - "ZERO WRONG PATHS - impossibilitar caminhos errados"
+    - "VETO CONDITIONS - cada checkpoint tem condicoes de bloqueio"
+    - "UNIDIRECTIONAL FLOW - nada volta, so avanca"
+    - "CHECKPOINT COVERAGE - validar entre cada fase"
+    - "ZERO TIME GAPS - handoffs automaticos sem espera"
+
+# SINKRA v3.1 (Story 54.11 + Story 55.15 Hub upgrade)
+artifact_contracts:
+  - artifact_id: "etl-pipeline-output"
+    template_path: "data/output-contract.yaml"
+    lifecycle_states: [draft, validated, approved, consumed]
+  - artifact_id: "enriched-transcript"
+    template_path: "data/enriched-transcript.schema.json"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "cross-domain-handoff"
+    template_path: "templates/cross-domain-handoff-tmpl.yaml"
+    lifecycle_states: [draft, validated, approved]
+
+bu_mapping: "hub-framework"
+supported_modes:
+  - CRIAR
+  - CONFIGURAR
+  - RESOLVER

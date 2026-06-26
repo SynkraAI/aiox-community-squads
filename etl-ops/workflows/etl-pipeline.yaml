@@ -1,0 +1,25 @@
+workflow:
+  id: etl-pipeline
+  version: "1.0.0"
+  phases:
+    - preflight
+    - diagnose
+    - validate_prerequisites
+    - extract
+    - structure
+    - context_pack
+    - transform
+    - deliver
+  thresholds:
+    workspace_bootstrap_success: 1.0
+    essentials_validation_success: 1.0
+    source_accessibility: 1.0
+    extraction_non_empty: 1.0
+    structure_manifest_success: 1.0
+    context_pack_success: 1.0
+    fidelity_threshold: 0.9
+    output_contract_valid: 1.0
+  error_handling:
+    on_preflight_fail: halt
+    on_extract_fail: preserve_partial_artifacts
+    on_contract_fail: block_delivery

@@ -1,0 +1,17 @@
+# Dispatch Squad — Quick Wins Dependencies
+# Install: pip install -r squads/dispatch/requirements.txt
+
+# Resilience: exponential backoff, jitter, retry patterns
+tenacity>=8.2.0
+
+# Resilience: circuit breaker pattern
+pybreaker>=1.2.0
+
+# Typed models: YAML/JSON schema validation
+pydantic>=2.5.0
+
+# Progress: live dashboards, colored output, tables
+rich>=13.7.0
+
+# YAML parsing (used by dispatch_models for config validation)
+pyyaml>=6.0

@@ -1,0 +1,579 @@
+# =============================================================================
+# Workflow Quality Scoring Rubric - Master Reference
+# =============================================================================
+# Used by: sop-analyst (analyze-workflow task)
+# Version: 1.0.0
+# Adapted from: sop-scoring-rubric.yaml (SOP Factory)
+# Purpose: Evaluate YAML workflow files across 10 quality dimensions
+#
+# Scoring Philosophy:
+#   Every score MUST be backed by evidence from the workflow being analyzed.
+#   No score is valid without at least one citation. Scores reflect the
+#   workflow's fitness for orchestrating multi-phase operations.
+#
+# Grade Scale:
+#   A+ = 95-100  |  A = 90-94  |  B+ = 85-89  |  B = 80-84
+#   C+ = 75-79   |  C = 70-74  |  D = 60-69   |  F = 0-59
+# =============================================================================
+
+rubric:
+  version: "1.0.0"
+  target_format: "YAML workflow (workflow-tmpl.yaml schema)"
+  total_weight: 100
+  passing_score: 70
+  certification_score: 90
+
+  score_ranges:
+    critical:
+      range: "0-20"
+      label: "Critical"
+      description: "Fundamentally deficient. The workflow cannot be executed in this dimension."
+      action: "Immediate rewrite required for this dimension."
+      color: "#DC2626"
+
+    poor:
+      range: "21-40"
+      label: "Poor"
+      description: "Significant deficiencies. Major gaps that create execution risk."
+      action: "Major remediation required before use."
+      color: "#EA580C"
+
+    fair:
+      range: "41-60"
+      label: "Fair"
+      description: "Partially adequate. Executable with significant caveats."
+      action: "Targeted improvements needed within 30 days."
+      color: "#CA8A04"
+
+    good:
+      range: "61-80"
+      label: "Good"
+      description: "Meets most requirements. Minor gaps or improvements possible."
+      action: "Schedule improvements for next review cycle."
+      color: "#2563EB"
+
+    excellent:
+      range: "81-100"
+      label: "Excellent"
+      description: "Exceeds requirements. Best-practice quality."
+      action: "Maintain. Consider as template for other workflows."
+      color: "#16A34A"
+
+  # ===========================================================================
+  # 10 DIMENSIONS — Adapted from SOP rubric for Workflow YAML context
+  # ===========================================================================
+  dimensions:
+    - id: WD-01
+      name: "Clarity"
+      weight: 10
+      sop_equivalent: "DIM-01 Clarity"
+      description: |
+        Measures how easily the workflow can be understood by its target
+        executor (human or agent). Phase names should be descriptive, step
+        descriptions unambiguous, and agent assignments crystal clear.
+
+      scoring_signals:
+        - signal: "Phase naming quality"
+          description: "Phase names are descriptive and self-explanatory"
+          excellent: "All phases have clear, action-oriented names (e.g., 'Research & Discovery')"
+          good: "Most phases clearly named, 1-2 generic (e.g., 'Phase 1')"
+          fair: "Mix of clear and generic phase names"
+          poor: "Most phases use generic or cryptic names"
+          critical: "Phase names are IDs only (e.g., 'P1', 'P2')"
+
+        - signal: "Step description quality"
+          description: "Each step/task has a clear description of what happens"
+          excellent: "Every step has specific, actionable description with expected output"
+          good: "Most steps well-described, minor omissions"
+          fair: "Some steps described, others rely on task file names only"
+          poor: "Minimal descriptions, rely on implied knowledge"
+          critical: "No descriptions, only task file references"
+
+        - signal: "Agent assignment clarity"
+          description: "Agent responsible for each phase/step is unambiguous"
+          excellent: "Every phase and task has explicit agent assignment with rationale"
+          good: "All phases have agent assignment, tasks inherit from phase"
+          fair: "Most phases have agents, some ambiguous inheritance"
+          poor: "Agent assignments scattered or missing for some phases"
+          critical: "No agent assignments or only at workflow level"
+
+        - signal: "Ambiguity density"
+          description: "Absence of vague terms in workflow definitions"
+          excellent: "Zero vague qualifiers in phase/step definitions"
+          good: "1-2 vague terms in non-critical descriptions"
+          fair: "3-5 vague terms, some in phase definitions"
+          poor: "6-10 vague terms throughout"
+          critical: "10+ vague terms, workflow intent unclear"
+
+    - id: WD-02
+      name: "Completeness"
+      weight: 15
+      sop_equivalent: "DIM-02 Completeness"
+      description: |
+        Measures whether the workflow covers all necessary phases from start
+        to finish. Includes inputs/outputs defined, scope boundaries, and
+        all required workflow anatomy sections present.
+
+      scoring_signals:
+        - signal: "Phase coverage"
+          description: "All logical phases of the process are represented"
+          excellent: "Complete coverage with sub-steps for complex phases"
+          good: "All major phases covered, minimal gaps"
+          fair: "Major phases present, some intermediate steps missing"
+          poor: "Several phases missing or overly summarized"
+          critical: "Large portions of the process undocumented"
+
+        - signal: "Inputs/outputs defined"
+          description: "Every phase declares what it receives and produces"
+          excellent: "All phases have typed inputs and outputs with format specs"
+          good: "All phases have inputs/outputs listed"
+          fair: "Most phases have outputs, inputs sometimes implicit"
+          poor: "Sporadic input/output definitions"
+          critical: "No input/output specifications"
+
+        - signal: "Scope boundaries"
+          description: "What the workflow covers and does not cover is explicit"
+          excellent: "Clear best_for section + explicit exclusions"
+          good: "best_for defined, exclusions implied"
+          fair: "Scope implied from phase list"
+          poor: "Scope ambiguous"
+          critical: "No scope definition, reader must guess"
+
+        - signal: "Workflow anatomy sections"
+          description: "Required sections per workflow-tmpl.yaml are present"
+          excellent: "All 10 required sections present and populated"
+          good: "8-9 sections present"
+          fair: "6-7 sections present"
+          poor: "4-5 sections present"
+          critical: "Fewer than 4 sections"
+
+        - signal: "Handoff definitions"
+          description: "Transitions between phases/agents are explicitly defined"
+          excellent: "handoff_prompts section with context and instruction per transition"
+          good: "Handoffs defined for most transitions"
+          fair: "Some handoffs defined, others implicit"
+          poor: "Minimal handoff definitions"
+          critical: "No handoff definitions between phases"
+
+    - id: WD-03
+      name: "Executability"
+      weight: 15
+      sop_equivalent: "DIM-03 Executability"
+      description: |
+        Measures whether an agent or human can execute the workflow without
+        additional guidance. The sequence must be logically valid, tasks must
+        exist, agents must be defined, and there should be no dead ends.
+
+      scoring_signals:
+        - signal: "Sequence validity"
+          description: "workflow.sequence[] is present and logically ordered"
+          excellent: "Complete sequence with requires/next chain, all references valid"
+          good: "Sequence present and ordered, minor reference gaps"
+          fair: "Sequence present but some ordering issues"
+          poor: "Sequence incomplete or has broken references"
+          critical: "No executable sequence defined"
+
+        - signal: "Task existence"
+          description: "All referenced task files actually exist in the squad"
+          excellent: "100% of referenced tasks exist and are valid"
+          good: "95%+ tasks exist, 1-2 planned but not yet created"
+          fair: "80-94% tasks exist"
+          poor: "60-79% tasks exist"
+          critical: "< 60% tasks exist or most are placeholders"
+
+        - signal: "Agent existence"
+          description: "All referenced agents are defined in the squad"
+          excellent: "All agents exist with complete definitions"
+          good: "All agents exist, some with minimal definitions"
+          fair: "Most agents exist, 1-2 undefined"
+          poor: "Several agents referenced but undefined"
+          critical: "Most agents are undefined or wrong IDs"
+
+        - signal: "No dead ends"
+          description: "Every phase leads to the next or to completion"
+          excellent: "All paths lead to defined next steps or completion_signal"
+          good: "Main path complete, 1 edge case path undefined"
+          fair: "Some paths end without clear next step"
+          poor: "Multiple dead ends in the workflow"
+          critical: "Workflow cannot be followed to completion"
+
+        - signal: "Dependency resolution"
+          description: "Phase dependencies (requires field) form a valid DAG"
+          excellent: "All dependencies explicit, no cycles, topological order valid"
+          good: "Dependencies mostly explicit, order is logical"
+          fair: "Some implicit dependencies"
+          poor: "Dependencies unclear, potential circular refs"
+          critical: "Dependencies contradictory or circular"
+
+    - id: WD-04
+      name: "Measurability"
+      weight: 10
+      sop_equivalent: "DIM-04 Measurability"
+      description: |
+        Measures whether checkpoints define quantitative success criteria,
+        duration estimates exist, and workflow completion can be objectively
+        assessed.
+
+      scoring_signals:
+        - signal: "Checkpoint criteria"
+          description: "Checkpoints have specific, measurable pass/fail criteria"
+          excellent: "All checkpoints have quantitative criteria with thresholds"
+          good: "Most checkpoints have measurable criteria"
+          fair: "Some checkpoints have criteria, others are vague"
+          poor: "Checkpoints exist but criteria are qualitative only"
+          critical: "No checkpoint criteria defined"
+
+        - signal: "Duration estimates"
+          description: "Time estimates are provided per phase"
+          excellent: "Per-phase duration with total workflow estimate"
+          good: "Per-phase duration estimates"
+          fair: "Total workflow duration only"
+          poor: "Vague time references"
+          critical: "No time information"
+
+        - signal: "Success criteria"
+          description: "Workflow-level completion is clearly defined"
+          excellent: "completion_signals + quality_checklist + acceptance criteria"
+          good: "completion_signals and quality_checklist present"
+          fair: "Some completion signals defined"
+          poor: "Vague completion definition"
+          critical: "No completion criteria"
+
+        - signal: "Quality metrics"
+          description: "Measurable quality thresholds for outputs"
+          excellent: "Quality scores, acceptance thresholds, min/max defined"
+          good: "Quality checklist with specific criteria"
+          fair: "General quality expectations stated"
+          poor: "Quality mentioned but not measured"
+          critical: "No quality metrics"
+
+    - id: WD-05
+      name: "Compliance"
+      weight: 10
+      sop_equivalent: "DIM-05 Compliance"
+      description: |
+        Measures adherence to the workflow-tmpl.yaml schema, AIOX workflow
+        standards, and presence of quality gates and governance checks.
+
+      scoring_signals:
+        - signal: "Schema compliance"
+          description: "Workflow follows workflow-tmpl.yaml and workflow-yaml-schema.yaml"
+          excellent: "Full schema compliance including optional sections"
+          good: "All required sections present per schema"
+          fair: "Most required sections, minor schema deviations"
+          poor: "Significant schema deviations"
+          critical: "Does not follow workflow schema"
+
+        - signal: "Quality gates present"
+          description: "Phase-level quality gates with blocking/non-blocking criteria"
+          excellent: "Every phase has quality gate with veto conditions"
+          good: "Most phases have quality gates"
+          fair: "Some phases have quality gates"
+          poor: "Single workflow-level gate only"
+          critical: "No quality gates"
+
+        - signal: "Governance gate"
+          description: "governance_gate section with AI-first governance checks"
+          excellent: "Full governance gate with ci_policy and semantic checks"
+          good: "Governance gate with required checks"
+          fair: "Basic governance mentions"
+          poor: "Governance vaguely referenced"
+          critical: "No governance considerations"
+
+        - signal: "Veto conditions"
+          description: "VETO conditions defined for critical decision points"
+          excellent: "Per-phase veto conditions with clear triggers and actions"
+          good: "Veto conditions for most critical phases"
+          fair: "Some veto conditions defined"
+          poor: "Generic veto conditions only"
+          critical: "No veto conditions"
+
+    - id: WD-06
+      name: "Maintainability"
+      weight: 10
+      sop_equivalent: "DIM-06 Maintainability"
+      description: |
+        Measures how easy the workflow is to update, version, and keep current.
+        Includes version control, orchestrator assignment, and modular structure.
+
+      scoring_signals:
+        - signal: "Version control"
+          description: "Version field present with semantic versioning"
+          excellent: "Semantic versioning + changelog + metadata.created date"
+          good: "Version field with date"
+          fair: "Version field only"
+          poor: "Version mentioned but not systematic"
+          critical: "No version control"
+
+        - signal: "Orchestrator assigned"
+          description: "Workflow has a designated orchestrator agent"
+          excellent: "Orchestrator named with escalation path"
+          good: "Orchestrator clearly assigned"
+          fair: "Orchestrator implied from context"
+          poor: "Orchestrator unclear"
+          critical: "No orchestrator defined"
+
+        - signal: "Modular phases"
+          description: "Phases are independent enough to update individually"
+          excellent: "Fully modular, phases can be updated independently"
+          good: "Mostly modular, few cross-dependencies"
+          fair: "Some modularity"
+          poor: "Tightly coupled phases"
+          critical: "Monolithic, any change requires full review"
+
+        - signal: "Metadata completeness"
+          description: "metadata section with version, framework, created, story_id"
+          excellent: "All metadata fields populated including story_id and key_difference"
+          good: "Core metadata fields present"
+          fair: "Partial metadata"
+          poor: "Minimal metadata"
+          critical: "No metadata section"
+
+    - id: WD-07
+      name: "Accessibility"
+      weight: 10
+      sop_equivalent: "DIM-07 Accessibility"
+      description: |
+        Measures how easily the workflow can be found, navigated, and understood.
+        Includes metadata tags, description quality, and phase legibility.
+
+      scoring_signals:
+        - signal: "Metadata tags"
+          description: "Searchable tags, keywords, or categories in metadata"
+          excellent: "Rich metadata with tags, primary_use_case, and best_for"
+          good: "Basic metadata with description and use case"
+          fair: "Some searchable metadata"
+          poor: "Minimal metadata"
+          critical: "No searchable metadata"
+
+        - signal: "Description quality"
+          description: "Workflow-level description explains purpose and outputs"
+          excellent: "Clear description with purpose, outputs, and when-to-use"
+          good: "Description covers purpose and main outputs"
+          fair: "Brief description"
+          poor: "Single-line or vague description"
+          critical: "No description"
+
+        - signal: "Phase name legibility"
+          description: "Phase names can be scanned quickly to understand flow"
+          excellent: "All phase names form a readable narrative of the workflow"
+          good: "Most phase names are immediately understandable"
+          fair: "Mix of clear and unclear phase names"
+          poor: "Phase names require reading descriptions to understand"
+          critical: "Phase names are cryptic or generic"
+
+        - signal: "Navigation structure"
+          description: "YAML structure supports easy navigation"
+          excellent: "Clear section headers, consistent indentation, comment separators"
+          good: "Good structure with some comment headers"
+          fair: "Basic YAML structure"
+          poor: "Inconsistent structure"
+          critical: "Poorly structured, hard to navigate"
+
+    - id: WD-08
+      name: "Error Handling"
+      weight: 10
+      sop_equivalent: "DIM-08 Error Handling"
+      description: |
+        Measures how well the workflow handles failures, includes escalation
+        paths, defines rollback procedures, and specifies on_error behaviors.
+
+      scoring_signals:
+        - signal: "on_error defined"
+          description: "error_handling section with phase failure and checkpoint failure handlers"
+          excellent: "Per-phase on_error + global error_handling with retry/halt policies"
+          good: "Global error_handling section with clear policies"
+          fair: "Some error handling mentioned"
+          poor: "Generic error handling only"
+          critical: "No error handling"
+
+        - signal: "Escalation paths"
+          description: "Clear escalation when workflow cannot proceed"
+          excellent: "Per-phase escalation with contacts, triggers, and SLAs"
+          good: "Escalation path with agent references"
+          fair: "Escalation mentioned, targets unclear"
+          poor: "Vague escalation guidance"
+          critical: "No escalation path"
+
+        - signal: "Rollback procedures"
+          description: "Steps to undo or recover from a failed phase"
+          excellent: "Per-phase rollback with data recovery procedures"
+          good: "Phase-level rollback or return_to_previous_phase policy"
+          fair: "General rollback guidance"
+          poor: "Rollback mentioned but not detailed"
+          critical: "No rollback consideration"
+
+        - signal: "Veto conditions as error prevention"
+          description: "VETO conditions prevent entering phases with invalid preconditions"
+          excellent: "Comprehensive veto conditions prevent all known failure modes"
+          good: "Veto conditions cover most critical failure modes"
+          fair: "Some veto conditions"
+          poor: "Minimal veto conditions"
+          critical: "No veto conditions (no prevention)"
+
+    - id: WD-09
+      name: "Visual Design"
+      weight: 5
+      sop_equivalent: "DIM-09 Visual Design"
+      description: |
+        Measures the effective use of visual elements to enhance understanding.
+        For workflows, this means Mermaid diagrams, structured YAML (not
+        inline prose), and clear tabular data.
+
+      scoring_signals:
+        - signal: "Mermaid diagram"
+          description: "Process flow visualized as a Mermaid diagram"
+          excellent: "Complete Mermaid flowchart with decision diamonds and agent labels"
+          good: "Simplified Mermaid diagram for main flow"
+          fair: "Partial diagram or text-based flow description"
+          poor: "Text-only description of flow"
+          critical: "No visual representation of flow"
+
+        - signal: "Structured YAML"
+          description: "Data expressed as proper YAML structures, not prose in YAML strings"
+          excellent: "All data in structured YAML (arrays, maps, typed fields)"
+          good: "Mostly structured, minor prose-in-YAML sections"
+          fair: "Mix of structured and prose"
+          poor: "Mostly prose embedded in YAML strings"
+          critical: "YAML used only as wrapper for prose"
+
+        - signal: "Consistent formatting"
+          description: "YAML formatting follows consistent patterns"
+          excellent: "Consistent indentation, separator comments, section grouping"
+          good: "Mostly consistent with minor variations"
+          fair: "Some inconsistencies"
+          poor: "Formatting varies significantly"
+          critical: "No consistent formatting"
+
+    - id: WD-10
+      name: "AI-Readiness"
+      weight: 5
+      sop_equivalent: "DIM-10 AI-Readiness"
+      description: |
+        Measures how easily the workflow can be consumed and executed by AI
+        agents. Template variables, parseable condition gates, and structured
+        data enhance AI-readiness.
+
+      scoring_signals:
+        - signal: "Template variables"
+          description: "Workflow uses template variables ({{var}}) for dynamic content"
+          excellent: "All dynamic values use template variables with defaults"
+          good: "Most dynamic values parameterized"
+          fair: "Some template variables used"
+          poor: "Hardcoded values throughout"
+          critical: "No template variables, all hardcoded"
+
+        - signal: "Condition gates parseable"
+          description: "Checkpoint conditions are machine-parseable (not prose)"
+          excellent: "All conditions expressed as structured logic (IF/THEN, boolean)"
+          good: "Most conditions are parseable"
+          fair: "Mix of structured and prose conditions"
+          poor: "Mostly prose conditions"
+          critical: "All conditions are natural language prose"
+
+        - signal: "Agent-executable steps"
+          description: "Steps reference specific task files that agents can load and execute"
+          excellent: "Every step has task file reference with agent and output spec"
+          good: "Most steps have task references"
+          fair: "Some steps reference tasks, others are descriptions"
+          poor: "Few task file references"
+          critical: "No task file references, only descriptions"
+
+  # ===========================================================================
+  # COMPOSITE SCORING
+  # ===========================================================================
+  composite_scoring:
+    method: "weighted_average"
+    formula: "sum(dimension_score * dimension_weight) / 100"
+    rounding: "round to nearest integer"
+    grade_thresholds:
+      A_plus: 95
+      A: 90
+      B_plus: 85
+      B: 80
+      C_plus: 75
+      C: 70
+      D: 60
+      F: 0
+
+  # ===========================================================================
+  # Evidence Standard — Inherited from SOP rubric
+  # ===========================================================================
+  evidence_standard:
+    citation_format: "[MARKER] file:section — 'observação ou texto citado'"
+    citation_examples:
+      - "[DOC] wf-squad-fusion.yaml:sequence — 'All 5 phases have explicit agent assignment'"
+      - "[OBS] brownfield-complete.yaml:PHASE-3 — missing outputs field for analysis phase"
+      - "[INF] wf-create-squad.yaml:error_handling — no rollback policy defined, likely oversight"
+
+    valid_markers:
+      - marker: "[OBS]"
+        id: "observed"
+        score: 1.0
+        valid_for_scoring: true
+        description: "Direct observation from the workflow file"
+
+      - marker: "[DOC]"
+        id: "documented"
+        score: 0.9
+        valid_for_scoring: true
+        description: "Explicitly stated in the workflow or referenced artifact"
+
+      - marker: "[REP]"
+        id: "reported"
+        score: 0.8
+        valid_for_scoring: true
+        description: "Described by workflow author or executor"
+
+      - marker: "[COR]"
+        id: "corroborated"
+        score: 0.7
+        valid_for_scoring: true
+        description: "Multiple weak signals converge on the same finding"
+
+      - marker: "[INF]"
+        id: "inferred"
+        score: 0.5
+        valid_for_scoring: true
+        description: "Logically necessary but not explicitly stated"
+
+      - marker: "[ASM]"
+        id: "assumed"
+        score: 0.3
+        valid_for_scoring: false
+        description: "Best guess based on norms, NOT workflow-specific evidence"
+
+      - marker: "[UNK]"
+        id: "unknown"
+        score: 0.1
+        valid_for_scoring: false
+        description: "Known gap, insufficient evidence"
+
+    minimum_per_dimension:
+      full: 2
+      quick: 1
+
+    minimum_marker_for_scoring: "[INF]"
+    minimum_marker_score: 0.5
+    veto_on_zero_evidence: true
+    source_reference: "sop-scoring-rubric.yaml → evidence_standard"
+
+  # ===========================================================================
+  # Invention Red Flags — Inherited from SOP rubric
+  # ===========================================================================
+  invention_red_flags:
+    phrases:
+      - "Geralmente se recomenda"
+      - "Best practices sugerem"
+      - "Na minha experiência"
+      - "É comum fazer"
+      - "Experts concordam que"
+      - "Tipicamente"
+      - "Normalmente"
+      - "Industry standard suggests"
+      - "It is generally accepted"
+      - "Common wisdom dictates"
+
+    rule: "Frase red flag no report sem citação [MARKER] acompanhante → VETO"
+    action: "Replace with cited evidence or declare '[UNK] — insufficient evidence for this claim'"
+    source_reference: "sop-scoring-rubric.yaml → invention_red_flags"

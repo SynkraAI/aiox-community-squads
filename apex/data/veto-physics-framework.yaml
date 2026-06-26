@@ -1,0 +1,438 @@
+# ==============================================================================
+# VETO PHYSICS FRAMEWORK
+# squads/apex/data/veto-physics-framework.yaml
+# ==============================================================================
+# The meta-pattern behind adaptive quality enforcement.
+# SSoT: This file defines HOW to create veto conditions, not WHICH conditions
+#        exist. For actual conditions, see veto-conditions.yaml.
+#
+# Philosophy: "Rigorous WITHOUT being fragile."
+#   A quality gate that blocks on a missing tool is worse than no gate at all —
+#   it trains people to bypass gates. Veto Physics solves this by making every
+#   condition ADAPTIVE: it checks whether enforcement is even possible before
+#   attempting enforcement.
+#
+# Origin:   Extracted from 121 veto conditions across 28 quality gates in Apex.
+# Reuse:    ANY squad with quality gates should adopt this pattern.
+# Owner:    apex-lead
+# ==============================================================================
+
+version: "1.0.0"
+name: "Veto Physics"
+description: "Adaptive quality enforcement — rigorous WITHOUT being fragile"
+
+# ==============================================================================
+# CORE INNOVATION
+# ==============================================================================
+# Traditional quality gates are binary: pass or fail.
+# The problem: if the CHECK TOOL is missing, the gate either:
+#   (a) blocks falsely (fragile — punishes teams for environment differences), or
+#   (b) silently passes (dangerous — false sense of security).
+#
+# Veto Physics introduces a THIRD state: "cannot evaluate."
+# Every condition declares what it needs (available_check) and what to do when
+# that need is unmet (on_unavailable). This eliminates false positives while
+# preserving maximum safety.
+# ==============================================================================
+
+core_innovation:
+  problem: "Quality gates that depend on tools break when tools are absent"
+  solution: "Every condition declares its runtime dependencies and fallback behavior"
+  mechanism: "available_check + on_unavailable = adaptive enforcement"
+  result: "Zero false positives, maximum real protection"
+
+# ==============================================================================
+# CONDITION ANATOMY — The 4 required properties
+# ==============================================================================
+# Every veto condition in the system MUST have all 4 properties.
+# Missing any property is itself a process violation.
+# ==============================================================================
+
+condition_anatomy:
+
+  # ---------------------------------------------------------------------------
+  # Property 1: available_check
+  # ---------------------------------------------------------------------------
+  # Can we even run this check? Verify that the tool, file, command, or
+  # configuration needed for this condition EXISTS in the current environment.
+  # ---------------------------------------------------------------------------
+  available_check:
+    purpose: "Verify the tool/file/command needed for this check EXISTS"
+    required: true
+    evaluation_order: 1  # Always runs FIRST
+    examples:
+      - check: "command -v chromatic"
+        meaning: "Chromatic CLI is installed"
+      - check: "test -f tsconfig.json"
+        meaning: "TypeScript is configured in this project"
+      - check: "grep -q 'tailwindcss' package.json"
+        meaning: "Tailwind CSS is a project dependency"
+      - check: "test -d packages/ui/src/components"
+        meaning: "Component directory exists"
+      - check: "npm run tokens:validate --dry-run 2>/dev/null"
+        meaning: "Token validation script exists and is runnable"
+    rules:
+      - "MUST be a fast, side-effect-free check (no writes, no installs)"
+      - "MUST return boolean: available (exit 0) or unavailable (exit non-zero)"
+      - "If this fails → condition cannot be evaluated → go to on_unavailable"
+      - "If this passes → proceed to check"
+
+  # ---------------------------------------------------------------------------
+  # Property 2: on_unavailable
+  # ---------------------------------------------------------------------------
+  # What happens when the check tool does not exist? This is the ADAPTIVE
+  # part — the condition degrades gracefully instead of breaking.
+  # ---------------------------------------------------------------------------
+  on_unavailable:
+    purpose: "Define fallback behavior when the check tool is absent"
+    required: true
+    evaluation_order: 2  # Only evaluated when available_check fails
+    options:
+
+      SKIP_WITH_WARNING:
+        when: "Tool is optional or check is nice-to-have"
+        behavior: "Skip this veto condition, log a warning, continue pipeline"
+        visibility: "Warning appears in gate-status output"
+        risk_level: low
+        examples:
+          - "Chromatic not installed → skip visual regression check"
+          - "Storybook not configured → skip component isolation check"
+          - "axe-core CLI not present → skip automated a11y scan"
+
+      MANUAL_CHECK:
+        when: "Tool is missing but the quality dimension is important"
+        behavior: "Agent performs manual verification using available means"
+        visibility: "Manual check result logged with agent rationale"
+        risk_level: medium
+        examples:
+          - "axe-core not configured → agent manually checks contrast ratios"
+          - "Lighthouse CLI not installed → agent reviews code for CWV patterns"
+          - "Playwright not available → agent manually tests keyboard navigation"
+
+      BLOCK:
+        when: "This check is critical and cannot be skipped under any circumstance"
+        behavior: "Block progress even without the automated tool"
+        visibility: "Hard block — pipeline stops until resolved"
+        risk_level: high
+        examples:
+          - "TypeScript errors → block even if tsc is not in PATH"
+          - "Security vulnerability in dependencies → block even without npm audit"
+          - "apex-lead sign-off missing → block (no tool needed, human gate)"
+
+    selection_guide:
+      - "Default to SKIP_WITH_WARNING for tooling-dependent checks"
+      - "Use MANUAL_CHECK when the quality dimension is user-facing"
+      - "Reserve BLOCK for security, data integrity, and non-waivable gates"
+
+  # ---------------------------------------------------------------------------
+  # Property 3: check
+  # ---------------------------------------------------------------------------
+  # The actual verification — what are we checking?
+  # Only runs when available_check passes.
+  # ---------------------------------------------------------------------------
+  check:
+    purpose: "The verification command, script, or description"
+    required: true
+    evaluation_order: 3  # Only runs after available_check passes
+
+    types:
+      automated:
+        description: "Shell command that returns a measurable result"
+        examples:
+          - "grep -rn '#[0-9a-fA-F]{3,8}' src/ | wc -l"
+          - "npm run lint -- --quiet 2>&1 | grep -c 'error'"
+          - "npx tsc --noEmit 2>&1 | grep -c 'error TS'"
+
+      manual:
+        description: "Textual description for agent to verify"
+        examples:
+          - "Verify all images have meaningful alt text"
+          - "Confirm modal traps focus and releases on close"
+          - "Check that color palette meets WCAG AA contrast"
+
+    threshold:
+      purpose: "Numeric boundary for pass/fail"
+      examples:
+        - value: 0
+          meaning: "Zero violations allowed"
+        - value: 90
+          meaning: "Score must be at least 90"
+        - value: 200
+          meaning: "Bundle size must not exceed 200KB"
+
+    operators:
+      - name: "equals"
+        meaning: "Result must exactly match threshold"
+      - name: "greater_than"
+        meaning: "Result must exceed threshold"
+      - name: "less_than"
+        meaning: "Result must be below threshold"
+      - name: "greater_or_equal"
+        meaning: "Result must meet or exceed threshold"
+      - name: "less_or_equal"
+        meaning: "Result must not exceed threshold"
+      - name: "exit_code_equals"
+        meaning: "Command exit code must match threshold"
+      - name: "file_exists_and_not_empty"
+        meaning: "File must exist and have content"
+      - name: "all_pass"
+        meaning: "All sub-checks must pass"
+
+  # ---------------------------------------------------------------------------
+  # Property 4: action
+  # ---------------------------------------------------------------------------
+  # What happens when the check FAILS? This is the enforcement.
+  # ---------------------------------------------------------------------------
+  action:
+    purpose: "Define consequence of veto condition violation"
+    required: true
+    evaluation_order: 4  # Only evaluated when check fails
+
+    format: "VETO — {specific message with fix guidance}"
+    rules:
+      - "Message MUST explain WHAT is wrong"
+      - "Message MUST suggest HOW to fix"
+      - "Message SHOULD reference the source of truth (task file, docs)"
+      - "NEVER use vague messages like 'quality check failed'"
+
+    properties:
+      auto_fixable:
+        type: boolean
+        purpose: "Can the agent fix this automatically without human input?"
+        default: false
+      reference:
+        type: string
+        purpose: "Task file or doc that explains how to fix"
+        example: "tasks/fix-hardcoded-tokens.md"
+
+# ==============================================================================
+# ENFORCEMENT LEVELS
+# ==============================================================================
+# How aggressively to apply veto conditions. Higher levels run earlier in the
+# process, catching issues sooner. A condition can be enforced at multiple levels.
+# ==============================================================================
+
+enforcement_levels:
+  - level: 1
+    name: "CI Pipeline"
+    description: "Automated, runs on every PR"
+    timing: "After push, before merge"
+    blocking: true
+    automation: "Fully automated — no human in the loop"
+
+  - level: 2
+    name: "Pre-commit Hook"
+    description: "Runs before git commit completes"
+    timing: "At commit time"
+    blocking: true
+    automation: "Fully automated — runs locally"
+
+  - level: 3
+    name: "Workflow Phase Gate"
+    description: "Checked at phase transitions in pipelines"
+    timing: "Between pipeline phases"
+    blocking: true
+    automation: "Agent-enforced — part of workflow execution"
+
+  - level: 4
+    name: "Manual + Recorded"
+    description: "Human approval required, decision is logged"
+    timing: "At designated review points"
+    blocking: true
+    automation: "Human decision, system records it"
+
+  - level: 5
+    name: "Task-Level Quality"
+    description: "Checked during individual task execution"
+    timing: "During task steps"
+    blocking: true
+    automation: "Agent-enforced — inline quality checks"
+
+# ==============================================================================
+# EXPEDITED MODE — Controlled gate relaxation
+# ==============================================================================
+# Some situations require faster delivery. Expedited mode allows controlled
+# relaxation of SOME gates — but NEVER the critical ones.
+# ==============================================================================
+
+expedited_mode:
+  purpose: "Allow faster delivery without sacrificing critical quality"
+
+  never_skip:
+    label: "NON-WAIVABLE"
+    description: "Gates that cannot be skipped under any circumstance"
+    examples:
+      - "apex-lead sign-off"
+      - "TypeScript compilation"
+      - "Security vulnerability checks"
+    rule: "Skipping a NON-WAIVABLE gate is a process violation, period"
+
+  may_skip_with_justification:
+    label: "WAIVABLE"
+    description: "Gates that can be skipped with documented justification"
+    requirements:
+      - "Written justification in story file"
+      - "Explicit approval from gate owner"
+      - "Tracked in gate-status output"
+    examples:
+      - "Visual regression (Chromatic not set up yet)"
+      - "Performance budget (prototype phase)"
+
+  rules:
+    - "Expedited mode is a TEMPORARY state, not a permanent configuration"
+    - "All skipped gates must have a follow-up task to address them"
+    - "gate-status MUST show skipped gates prominently"
+
+# ==============================================================================
+# GATE STATUS — Visibility into actual protection level
+# ==============================================================================
+# Users must know their ACTUAL protection level, not the theoretical one.
+# A project with 18 gates but 12 skipped due to missing tools has 6 active
+# gates — the user needs to know this.
+# ==============================================================================
+
+gate_status:
+  command: "*gate-status"
+  purpose: "Show how many gates are active vs skipped for THIS project"
+
+  output_format:
+    summary: "{active} of {total} gates active, {skipped} skipped"
+    detail_per_gate:
+      - gate_id: "QG-{SQUAD}-{NNN}"
+      - gate_name: "Human-readable name"
+      - status: "ACTIVE | SKIPPED | MANUAL"
+      - conditions_active: "N of M"
+      - skip_reasons: "List of unavailable tools"
+
+  importance: |
+    Without gate-status, users assume all gates are protecting them.
+    In reality, a fresh project without Chromatic, Storybook, axe-core CLI,
+    and Lighthouse has many gates in SKIP_WITH_WARNING mode.
+    gate-status makes the real protection level transparent.
+
+# ==============================================================================
+# EVALUATION FLOW — How a single condition is processed
+# ==============================================================================
+
+evaluation_flow:
+  description: "Runtime evaluation sequence for one veto condition"
+  steps:
+    - step: 1
+      name: "available_check"
+      action: "Run the availability check"
+      on_pass: "Proceed to step 2"
+      on_fail: "Go to step 1b"
+
+    - step: "1b"
+      name: "on_unavailable"
+      action: "Execute the fallback strategy"
+      outcomes:
+        SKIP_WITH_WARNING: "Log warning, condition result = SKIPPED, continue"
+        MANUAL_CHECK: "Agent performs manual check, result = PASS or FAIL"
+        BLOCK: "Condition result = FAIL, pipeline stops"
+
+    - step: 2
+      name: "check"
+      action: "Run the actual verification"
+      on_pass: "Condition result = PASS, continue"
+      on_fail: "Go to step 3"
+
+    - step: 3
+      name: "action"
+      action: "Enforce the veto"
+      outcomes:
+        auto_fixable_true: "Agent attempts fix, then re-runs from step 1"
+        auto_fixable_false: "Block with VETO message, require human intervention"
+
+# ==============================================================================
+# TEMPLATES — For other squads adopting Veto Physics
+# ==============================================================================
+# Use these templates when creating veto conditions for a new squad.
+# Replace {SQUAD} with the squad prefix (e.g., AX, NF, SC).
+# ==============================================================================
+
+templates:
+
+  # Template for a quality gate (group of related conditions)
+  gate:
+    id: "QG-{SQUAD}-{NNN}"
+    name: "{descriptive name}"
+    profiles: []       # Which squad profiles enforce this gate
+    applies_to: []     # Task IDs this gate covers
+    enforcement_level: 3  # Default: workflow phase gate
+    waivable: true     # Can be skipped in expedited mode?
+    conditions: []     # List of conditions (use condition template below)
+
+  # Template for a single veto condition
+  condition:
+    id: "VC-{SQUAD}-{NNN}"
+    condition: "{human-readable description of what is being checked}"
+    available_check: "{command to verify tool/file exists}"
+    on_unavailable: "SKIP_WITH_WARNING"  # Default: graceful degradation
+    check: "{verification command or description}"
+    threshold: null       # Numeric boundary (null if not applicable)
+    operator: null        # Comparison operator (null if not applicable)
+    action: "VETO — {what is wrong}. {how to fix}."
+    auto_fixable: false   # Default: requires human intervention
+    reference: null       # Task file with fix instructions
+
+# ==============================================================================
+# ANTI-PATTERNS — What NOT to do
+# ==============================================================================
+
+anti_patterns:
+
+  - name: "Missing available_check"
+    description: "Condition assumes the tool always exists"
+    consequence: "False positives in environments without the tool"
+    fix: "Add available_check for every external dependency"
+
+  - name: "BLOCK everything"
+    description: "Using BLOCK as on_unavailable for every condition"
+    consequence: "Pipeline breaks on new environments, teams bypass gates"
+    fix: "Reserve BLOCK for security and data integrity only"
+
+  - name: "Vague action messages"
+    description: "VETO — Quality check failed"
+    consequence: "Developer has no idea what to fix"
+    fix: "Always include WHAT is wrong and HOW to fix it"
+
+  - name: "Check without threshold"
+    description: "Automated check that returns a number but has no pass/fail boundary"
+    consequence: "Ambiguous results — is 3 good or bad?"
+    fix: "Always pair automated checks with threshold + operator"
+
+  - name: "Inline condition definitions"
+    description: "Defining veto conditions in task files or CLAUDE.md instead of the SSoT"
+    consequence: "Conditions drift, duplicates appear, enforcement is inconsistent"
+    fix: "All conditions live in data/veto-conditions.yaml — reference, never duplicate"
+
+  - name: "Silent skip"
+    description: "Skipping a condition without logging or visibility"
+    consequence: "Users think they are protected when they are not"
+    fix: "SKIP_WITH_WARNING always logs — gate-status always shows skipped count"
+
+# ==============================================================================
+# METRICS — Measuring gate health
+# ==============================================================================
+
+metrics:
+  gate_coverage:
+    formula: "active_conditions / total_conditions"
+    healthy: ">= 0.7 (70% of conditions can be evaluated)"
+    warning: "0.5 - 0.7 (many tools missing)"
+    critical: "< 0.5 (most gates are skipped)"
+
+  false_positive_rate:
+    formula: "false_blocks / total_blocks"
+    target: "0 (zero false positives)"
+    note: "Any false positive means available_check is wrong or missing"
+
+  mean_time_to_fix:
+    formula: "avg(time from VETO to resolution)"
+    note: "Track per condition — high MTTF suggests poor action messages"
+
+  waiver_rate:
+    formula: "waived_conditions / total_conditions"
+    healthy: "< 0.1 (less than 10% waived)"
+    warning: ">= 0.1 (review whether gates are realistic)"

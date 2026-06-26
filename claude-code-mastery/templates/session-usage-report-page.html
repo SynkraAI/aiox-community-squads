@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{TITLE}}</title>
+  <style>
+{{STYLES}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="eyebrow">Claude Code Mastery • Executive HTML</div>
+      <h1>Session Usage Report</h1>
+      <p class="hero-copy">
+        Relatório executivo estático gerado a partir das transcripts, métricas determinísticas,
+        facets agregadas e narrativa opcional. O pipeline continua auditável em JSON e Markdown.
+      </p>
+      <div class="hero-meta">
+        <span><strong>Período:</strong> últimos {{DAYS}} dias</span>
+        <span><strong>Gerado em:</strong> {{GENERATED_AT}}</span>
+        <span><strong>Fonte narrativa:</strong> {{NARRATIVE_SOURCE}}</span>
+      </div>
+    </header>
+    {{SECTIONS}}
+  </main>
+  <script>
+{{SCRIPT}}
+  </script>
+</body>
+</html>

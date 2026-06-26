@@ -1,0 +1,281 @@
+# Claude Code — Permission & Security Rules (Decoded)
+# Base catalog normalized against latest source read from <local>/claude-code-main
+# Latest runtime cross-check: 2026-04-03 | outputs/decoded/claude-code-main/
+
+version: "1.1.0"
+source: "outputs/decoded/claude-code-main"
+total_rules: 212
+bash_rules: 106
+normalized_domains:
+  - permission_modes
+  - permission_pipeline
+  - runtime_constraints
+
+# ═══════════════════════════════════════════════════════════
+# PERMISSION MODES (from PermissionMode.ts)
+# ═══════════════════════════════════════════════════════════
+
+permission_modes:
+  - mode: default
+    description: "User prompted for each tool use not in allowlist"
+  - mode: acceptEdits
+    description: "File edits auto-approved, other tools still prompt"
+  - mode: dontAsk
+    description: "Promptable operations are converted to deny instead of asking the user"
+  - mode: bypassPermissions
+    description: "All tools auto-approved EXCEPT safety checks (dangerous files/dirs)"
+    note: "Safety checks ALWAYS fire regardless of mode; launch is gated by dangerous-skip-permissions"
+  - mode: plan
+    description: "Read-only tools only, no writes allowed"
+  - mode: auto
+    description: "Feature-gated classifier mode; not universally available"
+    availability: "Only present when transcript classifier / auto-mode features are enabled"
+
+runtime_constraints:
+  dontAsk:
+    source: "permissions.ts:503-516"
+    behavior: "Any final ask decision is transformed into deny"
+  bypass_gate:
+    source: "print.ts:4574-4595, main.tsx CLI setup"
+    behavior: "Cannot enter bypassPermissions unless the session was launched with dangerous-skip-permissions gate"
+  remote_mode_constraints:
+    source: "permissionSetup.ts:743-753"
+    behavior: "In CLAUDE_CODE_REMOTE, only default, acceptEdits, and plan are valid defaultMode values"
+
+# ═══════════════════════════════════════════════════════════
+# DANGEROUS FILES (BR-PERM-001) — always prompt, any mode
+# ═══════════════════════════════════════════════════════════
+
+dangerous_files:
+  source: "filesystem.ts:57-68"
+  rule_id: BR-PERM-001
+  list:
+    - .gitconfig
+    - .gitmodules
+    - .bashrc
+    - .bash_profile
+    - .zshrc
+    - .zprofile
+    - .profile
+    - .ripgreprc
+    - .mcp.json
+    - .claude.json
+
+# ═══════════════════════════════════════════════════════════
+# DANGEROUS DIRECTORIES (BR-PERM-002) — always prompt
+# ═══════════════════════════════════════════════════════════
+
+dangerous_directories:
+  source: "filesystem.ts:74-79"
+  rule_id: BR-PERM-002
+  list:
+    - .git
+    - .vscode
+    - .idea
+    - .claude
+
+# ═══════════════════════════════════════════════════════════
+# DANGEROUS INTERPRETERS (BR-PERM-031) — always prompt
+# ═══════════════════════════════════════════════════════════
+
+dangerous_interpreters:
+  source: "dangerousPatterns.ts:18-42"
+  rule_id: BR-PERM-031
+  list:
+    - python
+    - python3
+    - node
+    - deno
+    - ruby
+    - perl
+    - php
+    - lua
+    - npx
+    - bunx
+    - bash
+    - sh
+    - ssh
+    - "npm run"
+    - "yarn run"
+    - "pnpm run"
+    - "bun run"
+
+# ═══════════════════════════════════════════════════════════
+# DANGEROUS ENV VARS (BR-BASH-PERM-004) — never stripped
+# ═══════════════════════════════════════════════════════════
+
+dangerous_env_vars:
+  source: "bashPermissions.ts:371-377"
+  rule_id: BR-BASH-PERM-004
+  list:
+    - PATH
+    - LD_PRELOAD
+    - LD_LIBRARY_PATH
+    - "DYLD_*"
+    - NODE_OPTIONS
+    - HOME
+    - BASH_ENV
+
+# ═══════════════════════════════════════════════════════════
+# TOP 15 SECURITY VALIDATORS (from bashSecurity.ts)
+# These fire in order — any FAIL = command blocked
+# ═══════════════════════════════════════════════════════════
+
+security_validators:
+  source: "bashSecurity.ts"
+  pipeline_order:
+    - id: BR-BASH-SEC-035
+      name: "Control Character Block"
+      description: "Commands with bytes 0x00-0x08, 0x0B-0x0C, 0x0E-0x1F, 0x7F blocked FIRST"
+      source_line: "bashSecurity.ts:2244-2273"
+      severity: critical
+
+    - id: BR-BASH-SEC-036
+      name: "Shell-Quote Single-Quote Bug"
+      description: "Backslash-in-single-quote exploitation blocked before parsing"
+      source_line: "bashSecurity.ts:2276-2284"
+      severity: critical
+
+    - id: BR-BASH-SEC-012
+      name: "Command Substitution Patterns"
+      description: "<(), >(), =(), $(), ${}, $[, backtick blocked in unquoted content"
+      source_line: "bashSecurity.ts:860-873"
+      severity: critical
+
+    - id: BR-BASH-SEC-017
+      name: "IFS Injection"
+      description: "$IFS or ${...IFS...} always requires approval"
+      source_line: "bashSecurity.ts:1017-1036"
+      severity: critical
+
+    - id: BR-BASH-SEC-016
+      name: "Carriage Return Misparsing"
+      description: "\\r outside double quotes blocked (shell-quote/bash differential)"
+      source_line: "bashSecurity.ts:943-1015"
+      severity: critical
+
+    - id: BR-BASH-RO-002
+      name: "Variable Expansion Rejection"
+      description: "ANY $ in tokens after command prefix rejects from flag-based validation"
+      source_line: "readOnlyValidation.ts:1328-1369"
+      severity: high
+
+    - id: BR-BASH-RO-031
+      name: "cd+git Compound Block"
+      description: "cd AND git in same compound command never auto-approved (sandbox escape)"
+      source_line: "readOnlyValidation.ts:1913-1924"
+      severity: high
+
+    - id: BR-BASH-RO-032
+      name: "Bare Git Repo Detection"
+      description: "Git blocked when CWD has HEAD + objects/ + refs/ + hooks/ (bare/exploited repo)"
+      source_line: "readOnlyValidation.ts:1926-1936"
+      severity: high
+
+    - id: BR-BASH-PERM-006
+      name: "Two-Phase Wrapper Stripping"
+      description: "Phase 1: env vars+comments. Phase 2: wrappers but NOT env vars (HackerOne motivated)"
+      source_line: "bashPermissions.ts:524-615"
+      severity: high
+
+    - id: BR-BASH-PERM-LIMIT
+      name: "Compound Command Limit"
+      description: "Compound commands with >50 subcommands rejected without evaluating"
+      source_line: "bashPermissions.ts"
+      severity: high
+
+    - id: BR-BASH-SEC-OBFUSC
+      name: "Unicode Obfuscation"
+      description: "Commands with Unicode homoglyphs or obfuscation never auto-approved"
+      source_line: "bashSecurity.ts"
+      severity: high
+
+    - id: BR-PERM-036
+      name: "Classifier Unparseable = Block"
+      description: "If classifier response cannot be parsed, action MUST be blocked"
+      source_line: "yoloClassifier.ts:1198-1237"
+      severity: critical
+
+# ═══════════════════════════════════════════════════════════
+# COMMAND ALLOWLIST (30 commands with safe flags)
+# From readOnlyValidation.ts:128-1137
+# ═══════════════════════════════════════════════════════════
+
+command_allowlist_summary:
+  source: "readOnlyValidation.ts:128-1137"
+  total_commands: 30
+  notable_entries:
+    - command: git
+      safe: "status, diff, log flags"
+      dangerous: "-c (arbitrary config), --exec-path, --config-env"
+      special: "ls-remote URL rejection"
+
+    - command: find
+      safe: "via regex matching"
+      dangerous: "-delete, -exec, -execdir, -ok, -fprint, -fprintf"
+
+    - command: sed
+      safe: "-n, -e, -E, etc."
+      dangerous: "delegates to sedValidation"
+
+    - command: xargs
+      safe: "-0, -n, -P, --null"
+      dangerous: "-i, -e (GNU getopt desync)"
+      special: "Removed on Windows (UNC path bridge)"
+
+    - command: ps
+      safe: "standard flags"
+      dangerous: "BSD 'e' modifier (shows env vars)"
+
+    - command: date
+      safe: "standard flags"
+      dangerous: "positional args without + (sets system time)"
+
+    - command: hostname
+      safe: "display flags only"
+      dangerous: "ALL positional args (sets hostname)"
+
+# ═══════════════════════════════════════════════════════════
+# DENIAL TRACKING (BR-PERM-DENY-*)
+# ═══════════════════════════════════════════════════════════
+
+denial_rules:
+  - id: BR-PERM-DENY-002
+    description: "After 3 consecutive denials for exact same tool+input, auto-deny"
+    source_line: "permissionDenials.ts"
+
+  - id: BR-PERM-DENY-003
+    description: "After 4 total denials (any pattern), block agent entirely"
+    source_line: "permissionDenials.ts"
+
+# ═══════════════════════════════════════════════════════════
+# PERMISSION DECISION PIPELINE (RF-03 from Phase 3)
+# ═══════════════════════════════════════════════════════════
+# Order: Safety → Headless → Bypass → Denylist → Allowlist → Classifier → Prompt
+
+permission_pipeline:
+  source: "decision-models.md (Phase 3)"
+  steps:
+    - step: 1
+      name: "Safety Check"
+      description: "Dangerous files/dirs/interpreters → ALWAYS prompt (any mode)"
+    - step: 2
+      name: "Headless Mode"
+      description: "No interactive user → auto-deny unless in allowlist"
+    - step: 3
+      name: "Bypass Mode"
+      description: "bypassPermissions → auto-allow (but step 1 still fires)"
+    - step: 4
+      name: "Denylist Match"
+      description: "Explicit deny rules → block immediately"
+    - step: 5
+      name: "Allowlist Match"
+      description: "Explicit allow rules or flag-based validation → auto-allow"
+    - step: 6
+      name: "Classifier"
+      description: "LLM-based permission classifier (yoloClassifier) → allow/deny/ask"
+    - step: 7
+      name: "User Prompt"
+      description: "If no rule matches, prompt user for decision"
+  post_transform:
+    dontAsk: "Any remaining ask is converted to deny at the end of evaluation"

@@ -1,0 +1,14 @@
+version: "1.0.0"
+service_catalog:
+  hormozi_runtime:
+    service_ref: "squads/hormozi/scripts/"
+    connection: "local-cli"
+    integration: "validation-and-packaging"
+  market_intelligence:
+    service_ref: "squads/hormozi/data/hormozi-case-library.yaml"
+    connection: "local-yaml"
+    integration: "offer-diagnosis"
+  handoff_protocol:
+    service_ref: "squads/hormozi/templates/handoff-context-tmpl.yaml"
+    connection: "template-binding"
+    integration: "cross-domain-handoff"

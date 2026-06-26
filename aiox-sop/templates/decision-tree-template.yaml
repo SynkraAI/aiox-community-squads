@@ -1,0 +1,209 @@
+# =============================================================================
+# Decision Tree Template for ML SOPs
+# =============================================================================
+# Template: decision-tree-template.yaml | SOP Factory | Synkra AIOX
+# Used by: sop-ml-architect (*decision-tree command)
+#
+# Based on: BPMN 2.0 Gateways + exhaustive branching patterns
+#
+# Usage:
+#   1. Model each business rule as a decision node
+#   2. Ensure ALL branches have explicit targets (no implicit fall-through)
+#   3. Always include a "default" branch as catch-all
+#   4. Embed into step's decision_point field in ml-sop-yaml-template.yaml
+#
+# Decision Types:
+#   exclusive   - Exactly one branch taken (XOR gateway)
+#   inclusive   - One or more branches taken (OR gateway)
+#   parallel   - All branches taken simultaneously (AND gateway)
+#   complex    - Custom rule combining multiple conditions
+# =============================================================================
+
+# ==============================================================================
+# PATTERN 1: Simple Binary Decision (IF/ELSE)
+# ==============================================================================
+binary_decision:
+  id: "{{decision_id}}"
+  name: "{{decision_name}}"
+  type: "exclusive"
+  description: "{{what_is_being_decided}}"
+
+  evaluate: "{{variable_or_expression}}"       # What to evaluate
+
+  branches:
+    - condition: "{{true_condition}}"          # e.g., "status == 'approved'"
+      label: "Yes"
+      goto: "{{true_target_step}}"             # Step ID if condition true
+      action: "{{optional_action}}"            # Action before branching
+
+    - condition: "default"                     # REQUIRED: catch-all
+      label: "No"
+      goto: "{{false_target_step}}"            # Step ID if condition false
+
+# ==============================================================================
+# PATTERN 2: Multi-Branch Decision (SWITCH/CASE)
+# ==============================================================================
+multi_branch_decision:
+  id: "{{decision_id}}"
+  name: "{{decision_name}}"
+  type: "exclusive"
+  description: "{{what_is_being_decided}}"
+
+  evaluate: "{{variable_to_switch_on}}"        # e.g., "request.priority"
+
+  branches:
+    - condition: "{{value_1}}"                 # e.g., "priority == 'critical'"
+      label: "{{label_1}}"                     # e.g., "Critical Path"
+      goto: "{{target_step_1}}"
+
+    - condition: "{{value_2}}"                 # e.g., "priority == 'high'"
+      label: "{{label_2}}"
+      goto: "{{target_step_2}}"
+
+    - condition: "{{value_3}}"                 # e.g., "priority == 'medium'"
+      label: "{{label_3}}"
+      goto: "{{target_step_3}}"
+
+    - condition: "default"                     # REQUIRED: unmatched values
+      label: "{{default_label}}"
+      goto: "{{default_step}}"
+
+# ==============================================================================
+# PATTERN 3: Threshold Decision (Numeric Ranges)
+# ==============================================================================
+threshold_decision:
+  id: "{{decision_id}}"
+  name: "{{decision_name}}"
+  type: "exclusive"
+  description: "Route based on numeric threshold"
+
+  evaluate: "{{numeric_variable}}"             # e.g., "audit_score"
+
+  branches:
+    - condition: "value >= {{threshold_high}}"  # e.g., ">= 90"
+      label: "{{high_label}}"                  # e.g., "Certified"
+      goto: "{{high_target}}"
+
+    - condition: "value >= {{threshold_mid}}"   # e.g., ">= 70"
+      label: "{{mid_label}}"                   # e.g., "Approved"
+      goto: "{{mid_target}}"
+
+    - condition: "value >= {{threshold_low}}"   # e.g., ">= 50"
+      label: "{{low_label}}"                   # e.g., "Conditional"
+      goto: "{{low_target}}"
+
+    - condition: "default"                     # Below all thresholds
+      label: "{{fail_label}}"                  # e.g., "Rejected"
+      goto: "{{fail_target}}"
+
+# ==============================================================================
+# PATTERN 4: Inclusive Decision (Multiple Branches Can Fire)
+# ==============================================================================
+inclusive_decision:
+  id: "{{decision_id}}"
+  name: "{{decision_name}}"
+  type: "inclusive"                             # One or more branches taken
+  description: "{{what_conditions_to_check}}"
+
+  branches:
+    - condition: "{{condition_a}}"
+      label: "{{label_a}}"
+      goto: "{{target_a}}"
+      independent: true                        # Can fire alongside others
+
+    - condition: "{{condition_b}}"
+      label: "{{label_b}}"
+      goto: "{{target_b}}"
+      independent: true
+
+    - condition: "default"                     # If NO conditions match
+      label: "None matched"
+      goto: "{{fallback_step}}"
+
+  join_after: "{{convergence_step}}"           # Where branches reconverge
+
+# ==============================================================================
+# PATTERN 5: Compound Decision (Multiple Variables)
+# ==============================================================================
+compound_decision:
+  id: "{{decision_id}}"
+  name: "{{decision_name}}"
+  type: "complex"
+  description: "Decision based on multiple variables"
+
+  evaluate:
+    variables:
+      - "{{var_1}}"                            # e.g., "risk_level"
+      - "{{var_2}}"                            # e.g., "approval_status"
+
+  branches:
+    - condition: "{{var_1}} == 'high' AND {{var_2}} == 'pending'"
+      label: "High risk, pending approval"
+      goto: "{{escalation_step}}"
+
+    - condition: "{{var_1}} == 'high' AND {{var_2}} == 'approved'"
+      label: "High risk, approved"
+      goto: "{{proceed_with_caution_step}}"
+
+    - condition: "{{var_1}} != 'high'"
+      label: "Normal risk"
+      goto: "{{standard_step}}"
+
+    - condition: "default"
+      label: "Unhandled combination"
+      goto: "{{error_step}}"
+
+# ==============================================================================
+# PATTERN 6: Retry Loop Decision
+# ==============================================================================
+retry_decision:
+  id: "{{decision_id}}"
+  name: "Retry Gate"
+  type: "exclusive"
+  description: "Decide whether to retry or escalate after failure"
+
+  evaluate: "retry_count"
+
+  branches:
+    - condition: "retry_count < {{max_retries}}"
+      label: "Retry"
+      goto: "{{retry_target_step}}"            # Go back to the failed step
+      action: "increment_retry_count"
+
+    - condition: "default"
+      label: "Max retries exceeded"
+      goto: "{{escalation_step}}"
+      action: "log_retry_exhausted"
+
+# ==============================================================================
+# EMBEDDING GUIDE
+# ==============================================================================
+# To embed a decision in an ML SOP step:
+#
+#   steps:
+#     - id: "S003"
+#       name: "Evaluate Risk Level"
+#       action: "evaluate_risk"
+#       ...
+#       on_success: "S004"         # Default next (used if no decision match)
+#       on_failure: "ERR_01"
+#       decision_point:
+#         question: "What is the risk level?"
+#         evaluate: "risk_score"
+#         branches:
+#           - condition: "risk_score >= 80"
+#             label: "High Risk"
+#             goto: "S005"
+#           - condition: "risk_score >= 40"
+#             label: "Medium Risk"
+#             goto: "S004"
+#           - condition: "default"
+#             label: "Low Risk"
+#             goto: "S006"
+#
+# RULES:
+#   - Every decision MUST have a "default" branch
+#   - Conditions are evaluated top-to-bottom (first match wins for exclusive)
+#   - All goto targets MUST reference existing step IDs
+#   - Decision conditions must be mutually exclusive (for exclusive type)
+# ==============================================================================

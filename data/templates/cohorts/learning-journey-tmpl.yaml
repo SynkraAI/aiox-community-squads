@@ -1,0 +1,52 @@
+template_metadata:
+  schema_version: "analytics-template-v1"
+  template_id: "learning-journey-tmpl"
+  artifact: "learning-journey"
+  artifact_family: "cohorts"
+  owner_agent: "wes-kao"
+  governance_owners:
+    - "marketing-lead"
+    - "narrative-strategist"
+    - "data-chief"
+  output_path: "workspace/businesses/{slug}/analytics/cohorts/learning-journey.yaml"
+  custom_fallback_path: "docs/data/{slug}/learning-journey-{date}.md"
+  contains_real_data: false
+  pii_allowed: false
+
+context:
+  business_slug: "{slug}"
+  product_slug: "{product_slug}"
+  cohort_slug: "{cohort_slug}"
+  period_start: "{yyyy-mm-dd}"
+  period_end: "{yyyy-mm-dd}"
+  generated_at: "{iso_datetime}"
+  generated_by: "{agent_or_workflow}"
+
+analysis:
+  engagement_curve:
+    granularity: "{daily|weekly}"
+    points: []
+  completion_funnel:
+    enrolled: null
+    started: null
+    engaged: null
+    completed: null
+    completion_rate: null
+  death_zones: []
+  state_changes: []
+  emotional_journey: []
+  transformation_moments: []
+
+insights: []
+
+recommendations:
+  course_design_interventions: []
+  accountability_interventions: []
+  facilitation_interventions: []
+
+quality:
+  completeness_score: null
+  confidence_score: null
+  validation:
+    sources_linked: false
+    assumptions_listed: false

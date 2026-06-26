@@ -1,0 +1,487 @@
+# ==============================================================================
+# APEX SQUAD — Vocabulary Bridge
+# data/vocabulary-bridge.yaml
+# ==============================================================================
+# Purpose:  Translates non-technical user language into technical implementation
+#           intent. The user should NEVER need to know CSS, React, or any
+#           framework terminology to get what they want.
+#
+# Philosophy: "A culpa é sempre do comunicador." If the user said it and
+#             Apex didn't understand, Apex is wrong — not the user.
+#
+# Usage:     Emil and all agents reference this file during intent clarification
+#            (Step 1.6 of apex-fix.md). Match user phrases against categories,
+#            translate to technical intent, then CONFIRM with user in their
+#            own language before executing.
+#
+# Expansion: Add new entries as new user language patterns emerge.
+#            Categories are semantic — group by what the user SEES, not
+#            what the code DOES.
+#
+# Owner:     apex-lead
+# Version:   1.0.0
+# ==============================================================================
+
+version: "1.0.0"
+
+# ==============================================================================
+# HOW TO USE THIS FILE
+# ==============================================================================
+# 1. User says something non-technical
+# 2. Emil scans categories below for matching patterns
+# 3. If match found: use the translation + visual_description to confirm
+# 4. If no match: ask user to describe what they SEE or WANT in more detail
+# 5. ALWAYS confirm in user language, NEVER in code terms
+#
+# Confirmation format:
+#   "Entendi que voce quer:
+#    → {visual_description}
+#    Correto? (sim / ajustar)"
+# ==============================================================================
+
+categories:
+
+  # ============================================================================
+  # POSITION & VISIBILITY
+  # ============================================================================
+  position_visibility:
+    description: "Como elementos se comportam durante scroll e navegacao"
+
+    patterns:
+      - user_says: ["fixo", "ficar parado", "nao sumir", "sempre visivel", "grudado", "preso no topo", "nao desaparecer quando rolar", "ficar la em cima"]
+        intent: "sticky_or_fixed"
+        technical: "position: sticky ou position: fixed — elemento permanece visivel durante scroll"
+        visual_description: "O {elemento} fica SEMPRE visivel, mesmo quando voce rola a pagina pra baixo"
+        common_elements: ["header", "menu", "navbar", "barra de navegacao", "botao flutuante"]
+        agent: "@css-eng"
+
+      - user_says: ["some quando rolar", "esconde no scroll", "aparece quando voltar", "hide on scroll"]
+        intent: "scroll_hide_show"
+        technical: "transform: translateY(-100%) on scroll down, translateY(0) on scroll up"
+        visual_description: "O {elemento} some quando voce rola pra baixo e reaparece quando rola pra cima"
+        agent: "@css-eng"
+
+      - user_says: ["flutuando", "por cima de tudo", "na frente", "sobrepor", "em cima do conteudo"]
+        intent: "elevated_overlay"
+        technical: "position: fixed/absolute + z-index alto + box-shadow para elevacao"
+        visual_description: "O {elemento} fica flutuando por cima do conteudo, como se estivesse numa camada separada"
+        agent: "@css-eng"
+
+      - user_says: ["no canto", "canto inferior direito", "canto da tela", "botao flutuante", "FAB"]
+        intent: "floating_action"
+        technical: "position: fixed + bottom/right + border-radius: 50%"
+        visual_description: "Um botao redondo fixo no canto da tela, sempre acessivel"
+        agent: "@css-eng"
+
+  # ============================================================================
+  # BACKGROUND & TRANSPARENCY
+  # ============================================================================
+  background_transparency:
+    description: "Aparencia do fundo de elementos"
+
+    patterns:
+      - user_says: ["transparente", "sem fundo", "sem nada atras", "limpo", "sem cor de fundo", "tirar o fundo", "remover background"]
+        intent: "transparent_background"
+        technical: "background: transparent ou background: none"
+        visual_description: "O {elemento} fica sem cor de fundo — voce ve o que tem atras dele"
+        agent: "@css-eng"
+
+      - user_says: ["meio transparente", "translucido", "vidro", "glass", "fosco", "blur atras", "desfocado", "efeito vidro"]
+        intent: "glass_morphism"
+        technical: "background: rgba() com alpha + backdrop-filter: blur()"
+        visual_description: "O {elemento} fica com efeito de vidro fosco — da pra ver o que tem atras, mas desfocado"
+        agent: "@css-eng"
+
+      - user_says: ["escurecer", "mais escuro", "dark", "fundo preto", "noturno", "tema escuro"]
+        intent: "dark_background"
+        technical: "background-color com tons escuros (slate-900, gray-900, etc.)"
+        visual_description: "O {elemento} fica com fundo escuro"
+        agent: "@css-eng"
+
+      - user_says: ["gradiente", "degrade", "cor que muda", "transicao de cor"]
+        intent: "gradient_background"
+        technical: "background: linear-gradient() ou radial-gradient()"
+        visual_description: "O fundo tem uma transicao suave de uma cor pra outra"
+        agent: "@css-eng"
+
+  # ============================================================================
+  # SIZE & SPACING
+  # ============================================================================
+  size_spacing:
+    description: "Tamanho, espacamento e proporcoes"
+
+    patterns:
+      - user_says: ["mais espaco", "respira mais", "muito apertado", "mais folga", "mais ar", "espaçado"]
+        intent: "increase_spacing"
+        technical: "Aumentar padding/margin/gap"
+        visual_description: "Mais espaco entre os elementos — fica mais limpo e respira melhor"
+        agent: "@css-eng"
+
+      - user_says: ["mais junto", "mais compacto", "menos espaco", "junta mais", "apertado"]
+        intent: "decrease_spacing"
+        technical: "Reduzir padding/margin/gap"
+        visual_description: "Elementos ficam mais proximos uns dos outros"
+        agent: "@css-eng"
+
+      - user_says: ["maior", "aumentar", "mais grande", "destaca mais", "cresce"]
+        intent: "increase_size"
+        technical: "Aumentar font-size, width, height, scale"
+        visual_description: "O {elemento} fica maior e mais visivel"
+        agent: "@css-eng"
+
+      - user_says: ["menor", "diminuir", "mais discreto", "encolher", "reduzir"]
+        intent: "decrease_size"
+        technical: "Reduzir font-size, width, height, scale"
+        visual_description: "O {elemento} fica menor e mais discreto"
+        agent: "@css-eng"
+
+      - user_says: ["tela inteira", "full screen", "ocupa tudo", "100%", "preencher"]
+        intent: "full_width_height"
+        technical: "width: 100% / height: 100vh / min-h-screen"
+        visual_description: "O {elemento} ocupa a tela inteira"
+        agent: "@css-eng"
+
+  # ============================================================================
+  # LAYOUT & ARRANGEMENT
+  # ============================================================================
+  layout_arrangement:
+    description: "Como elementos sao organizados na pagina"
+
+    patterns:
+      - user_says: ["lado a lado", "um do lado do outro", "na mesma linha", "horizontal"]
+        intent: "horizontal_layout"
+        technical: "display: flex + flex-direction: row"
+        visual_description: "Os elementos ficam lado a lado na mesma linha"
+        agent: "@css-eng"
+
+      - user_says: ["um embaixo do outro", "empilhado", "vertical", "em coluna"]
+        intent: "vertical_layout"
+        technical: "display: flex + flex-direction: column"
+        visual_description: "Os elementos ficam empilhados, um embaixo do outro"
+        agent: "@css-eng"
+
+      - user_says: ["centralizado", "no meio", "centro", "alinhado no centro"]
+        intent: "centered"
+        technical: "justify-content: center + align-items: center"
+        visual_description: "O {elemento} fica centralizado no meio"
+        agent: "@css-eng"
+
+      - user_says: ["grid", "mosaico", "galeria", "cards em grid", "quadradinhos"]
+        intent: "grid_layout"
+        technical: "display: grid + grid-template-columns"
+        visual_description: "Os elementos ficam organizados em uma grade uniforme"
+        agent: "@css-eng"
+
+      - user_says: ["sidebar", "menu lateral", "painel do lado", "gaveta"]
+        intent: "sidebar_drawer"
+        technical: "Sidebar component ou Drawer com slide animation"
+        visual_description: "Um painel que fica do lado (ou abre deslizando do lado)"
+        agent: "@css-eng"
+
+  # ============================================================================
+  # ANIMATION & EFFECTS
+  # ============================================================================
+  animation_effects:
+    description: "Movimento, efeitos visuais e interacoes"
+
+    patterns:
+      - user_says: ["brilha", "glow", "brilho", "luminoso", "neon"]
+        intent: "glow_effect"
+        technical: "box-shadow com cor + blur alto ou text-shadow"
+        visual_description: "O {elemento} tem um brilho ao redor, como uma luz neon"
+        agent: "@motion-eng"
+
+      - user_says: ["pulsa", "respira", "batimento", "piscando suave"]
+        intent: "pulse_animation"
+        technical: "animate-pulse ou keyframes scale 1 → 1.05 → 1"
+        visual_description: "O {elemento} pulsa suavemente, como se estivesse respirando"
+        agent: "@motion-eng"
+
+      - user_says: ["desliza", "slide", "entra deslizando", "escorrega"]
+        intent: "slide_animation"
+        technical: "transform: translateX/Y com spring animation"
+        visual_description: "O {elemento} entra na tela deslizando suavemente"
+        agent: "@motion-eng"
+
+      - user_says: ["aparece devagar", "fade in", "surge", "materializa"]
+        intent: "fade_in"
+        technical: "opacity 0 → 1 com transition ou spring"
+        visual_description: "O {elemento} aparece gradualmente, do invisivel ao visivel"
+        agent: "@motion-eng"
+
+      - user_says: ["hover", "quando passar o mouse", "efeito ao passar", "muda quando toca"]
+        intent: "hover_effect"
+        technical: "hover state com transform/shadow/color change"
+        visual_description: "O {elemento} muda de aparencia quando voce passa o mouse ou toca"
+        agent: "@motion-eng"
+
+      - user_says: ["suave", "smooth", "fluido", "sem pulo", "transicao bonita"]
+        intent: "smooth_transition"
+        technical: "Spring animation ou transition com easing adequado"
+        visual_description: "A mudanca acontece de forma suave e natural, sem pulos"
+        agent: "@motion-eng"
+
+      - user_says: ["parallax", "profundidade", "3d", "camadas", "movimento ao rolar"]
+        intent: "parallax_depth"
+        technical: "transform: translateZ ou scroll-based parallax"
+        visual_description: "Elementos se movem em velocidades diferentes ao rolar, criando sensacao de profundidade"
+        agent: "@motion-eng"
+
+  # ============================================================================
+  # TYPOGRAPHY & TEXT
+  # ============================================================================
+  typography_text:
+    description: "Fontes, textos e legibilidade"
+
+    patterns:
+      - user_says: ["nao consigo ler", "muito claro", "texto sumindo", "nao aparece o texto", "contraste ruim"]
+        intent: "improve_contrast"
+        technical: "Aumentar contraste cor do texto vs fundo (WCAG AA min 4.5:1)"
+        visual_description: "O texto fica mais legivel, com mais contraste contra o fundo"
+        agent: "@a11y-eng"
+
+      - user_says: ["negrito", "mais grosso", "destaca o texto", "bold"]
+        intent: "bold_text"
+        technical: "font-weight: bold/semibold/700"
+        visual_description: "O texto fica mais grosso e destacado"
+        agent: "@css-eng"
+
+      - user_says: ["fonte diferente", "muda a letra", "tipografia", "mais moderna", "mais elegante"]
+        intent: "change_typography"
+        technical: "Trocar font-family"
+        visual_description: "A fonte do texto muda para um estilo diferente"
+        agent: "@css-eng"
+
+  # ============================================================================
+  # COLOR & THEME
+  # ============================================================================
+  color_theme:
+    description: "Cores, temas e paleta"
+
+    patterns:
+      - user_says: ["muda a cor", "cor diferente", "azul", "vermelho", "verde", "outra cor"]
+        intent: "change_color"
+        technical: "Alterar design token de cor"
+        visual_description: "A cor do {elemento} muda para {cor}"
+        note: "Sempre usar design tokens, NUNCA hardcodar hex"
+        agent: "@css-eng"
+
+      - user_says: ["modo escuro", "dark mode", "tema noturno", "versao escura"]
+        intent: "dark_mode"
+        technical: "Ativar/criar dark theme via CSS variables ou data-theme"
+        visual_description: "O app inteiro muda para cores escuras, melhor para usar a noite"
+        agent: "@css-eng"
+
+      - user_says: ["mais colorido", "vibrante", "vivo", "cores mais fortes"]
+        intent: "increase_saturation"
+        technical: "Aumentar saturacao nos tokens de cor"
+        visual_description: "As cores ficam mais vivas e vibrantes"
+        agent: "@css-eng"
+
+      - user_says: ["mais suave", "pasteis", "tons claros", "menos saturado"]
+        intent: "decrease_saturation"
+        technical: "Reduzir saturacao, usar tons pastel"
+        visual_description: "As cores ficam mais suaves e delicadas"
+        agent: "@css-eng"
+
+  # ============================================================================
+  # INTERACTIVE ELEMENTS
+  # ============================================================================
+  interactive_elements:
+    description: "Botoes, formularios, inputs e interacoes"
+
+    patterns:
+      - user_says: ["botao", "clicavel", "acao", "CTA", "call to action"]
+        intent: "button_element"
+        technical: "Button component com hover/active/focus states"
+        visual_description: "Um botao que o usuario pode clicar para realizar uma acao"
+        agent: "@react-eng"
+
+      - user_says: ["formulario", "campo pra preencher", "input", "caixa de texto", "digitar"]
+        intent: "form_input"
+        technical: "Input/Form components com validation e error states"
+        visual_description: "Um campo onde o usuario pode digitar informacoes"
+        agent: "@react-eng"
+
+      - user_says: ["dropdown", "lista que abre", "selecionar", "opcoes", "menu que desce"]
+        intent: "dropdown_select"
+        technical: "Select/Dropdown component"
+        visual_description: "Uma lista de opcoes que abre quando voce clica"
+        agent: "@react-eng"
+
+      - user_says: ["modal", "popup", "janela", "caixa que abre", "dialogo"]
+        intent: "modal_dialog"
+        technical: "Modal/Dialog component com backdrop + focus trap"
+        visual_description: "Uma janela que aparece por cima do conteudo"
+        agent: "@react-eng"
+
+      - user_says: ["toggle", "ligar desligar", "switch", "on off", "interruptor"]
+        intent: "toggle_switch"
+        technical: "Toggle/Switch component"
+        visual_description: "Um interruptor que liga e desliga"
+        agent: "@react-eng"
+
+      - user_says: ["carrossel", "slider", "slides", "deslizar entre", "galeria de imagens"]
+        intent: "carousel"
+        technical: "Carousel/Slider component com gesture support"
+        visual_description: "Conteudos que voce desliza para ver um de cada vez"
+        agent: "@react-eng"
+
+  # ============================================================================
+  # PAGE STRUCTURE
+  # ============================================================================
+  page_structure:
+    description: "Estrutura de paginas e secoes"
+
+    patterns:
+      - user_says: ["hero", "banner principal", "primeira secao", "topo da pagina", "area de destaque"]
+        intent: "hero_section"
+        technical: "Hero section — full-width, h1, CTA, background image/gradient"
+        visual_description: "A area principal no topo da pagina com titulo grande e botao de acao"
+        agent: "@css-eng"
+
+      - user_says: ["footer", "rodape", "fundo da pagina", "informacoes no final"]
+        intent: "footer_section"
+        technical: "Footer component — links, copyright, contact info"
+        visual_description: "A area no final da pagina com links, contato e informacoes"
+        agent: "@css-eng"
+
+      - user_says: ["secao", "bloco", "area", "parte da pagina"]
+        intent: "content_section"
+        technical: "Section element com padding vertical e max-width container"
+        visual_description: "Uma area separada da pagina com conteudo especifico"
+        agent: "@css-eng"
+
+      - user_says: ["pagina nova", "nova rota", "outra tela", "adicionar pagina"]
+        intent: "new_page_route"
+        technical: "Nova rota/pagina no router (React Router, Next.js, etc.)"
+        visual_description: "Uma tela completamente nova que o usuario pode acessar por um link"
+        agent: "@react-eng"
+
+  # ============================================================================
+  # RESPONSIVE & MOBILE
+  # ============================================================================
+  responsive_mobile:
+    description: "Comportamento em telas diferentes"
+
+    patterns:
+      - user_says: ["no celular", "mobile", "tela pequena", "smartphone", "responsivo"]
+        intent: "mobile_responsive"
+        technical: "Media queries / responsive breakpoints"
+        visual_description: "O layout se adapta para funcionar bem em telas de celular"
+        agent: "@css-eng"
+
+      - user_says: ["quebrou no celular", "nao cabe", "saiu da tela", "overflow", "barra horizontal"]
+        intent: "mobile_overflow"
+        technical: "overflow-x: hidden + max-width: 100% + responsive fixes"
+        visual_description: "O conteudo que estava saindo da tela agora cabe certinho"
+        agent: "@css-eng"
+
+      - user_says: ["hamburger", "menu mobile", "tres linhas", "menu que abre"]
+        intent: "mobile_menu"
+        technical: "Hamburger menu com drawer/slide animation"
+        visual_description: "Um menu compacto (tres linhas) que abre uma lista de opcoes no celular"
+        agent: "@css-eng"
+
+  # ============================================================================
+  # BRAND & ASSET CREATION
+  # ============================================================================
+  asset_brand_creation:
+    description: "Logo, icon, e asset visual para marca e interface"
+
+    patterns:
+      - user_says: ["logo", "recrear logo", "marca", "simbolo", "geometrico logo", "brand mark"]
+        intent: "logo_creation"
+        technical: "*asset-pipeline ou *logo"
+        visual_description: "Criar ou recrear uma marca/logo de forma geométrica"
+        agent: "@design-sys-eng"
+
+      - user_says: ["icone", "criar icone", "icon", "custom icon", "design icon"]
+        intent: "icon_creation"
+        technical: "*icon-create ou *asset-pipeline compose"
+        visual_description: "Criar um ícone customizado para o design system"
+        agent: "@design-sys-eng"
+
+      - user_says: ["sistema icones", "icon library", "auditar icones", "quantos icones", "icon audit"]
+        intent: "icon_system_audit"
+        technical: "*icon-system audit ou *icons"
+        visual_description: "Verificar organização e consistência dos ícones"
+        agent: "@design-sys-eng"
+
+      - user_says: ["setup icones", "organizar icones", "icon strategy", "qual library"]
+        intent: "icon_system_setup"
+        technical: "*icon-system setup"
+        visual_description: "Escolher uma library de ícones e configurar o sistema"
+        agent: "@design-sys-eng"
+
+      - user_says: ["migrar icones", "trocar icones", "switch icons", "consolidar icones"]
+        intent: "icon_system_migrate"
+        technical: "*icon-system migrate"
+        visual_description: "Migrar ou consolidar libraries de ícones"
+        agent: "@design-sys-eng"
+
+      - user_says: ["cores da marca", "paleta marca", "extrair cores", "brand colors"]
+        intent: "brand_color_extraction"
+        technical: "*asset-pipeline enhance"
+        visual_description: "Extrair paleta de cores da marca e integrar ao design system"
+        agent: "@design-sys-eng"
+
+# ==============================================================================
+# FALLBACK RULES
+# ==============================================================================
+fallback:
+  no_match_found:
+    action: |
+      Se nenhum pattern matched:
+      1. NAO tente adivinhar
+      2. Pergunte ao usuario: "Pode descrever o que voce VE ou quer VER? Por exemplo:
+         - 'Quero que o header fique sempre visivel quando rolar'
+         - 'Quero que o fundo seja transparente'
+         - 'Quero que o botao brilhe quando passar o mouse'"
+      3. Use a resposta para re-scan dos patterns
+      4. Se ainda nao matchou, pergunte: "Tem algum site ou app que faz algo parecido?"
+
+  ambiguous_match:
+    action: |
+      Se multiplos patterns matched:
+      1. Apresente as opcoes traduzidas em linguagem visual
+      2. "Voce quer dizer:
+         A) {visual_description_1}
+         B) {visual_description_2}
+         Qual desses?"
+
+  confirmation_template: |
+    Entendi que voce quer:
+    {numbered list of visual_descriptions}
+
+    Correto? (sim / ajustar)
+
+# ==============================================================================
+# EXPANSION PROTOCOL — Adding New Patterns
+# ==============================================================================
+# The bridge grows over time. When a user phrase doesn't match, follow this process.
+expansion:
+  trigger: "User phrase not matched by any pattern after fallback clarification"
+  process:
+    step_1: "Resolve intent via fallback rules (ask user to describe what they SEE)"
+    step_2: "After successful resolution, note the mapping: user_phrase → intent → technical"
+    step_3: "Add new pattern to vocabulary-bridge.yaml in the appropriate category"
+    step_4: "Include minimum 3 user_says variations, intent, technical, visual_description, agent"
+  format: |
+    # New pattern template:
+    - user_says: ["{original_phrase}", "{variation_1}", "{variation_2}"]
+      intent: "{resolved_intent}"
+      technical: "{css/react implementation}"
+      visual_description: "{non-technical confirmation}"
+      agent: "{responsible_agent}"
+  examples:
+    - original: "grudado"
+      resolved_to: "position_visibility.sticky_fixed"
+      added_as: "user_says variation in existing pattern"
+    - original: "sufocado"
+      resolved_to: "size_spacing.decrease_spacing"
+      added_as: "new user_says: ['sufocado', 'apertado', 'sem respiro']"
+    - original: "pisca"
+      resolved_to: "animation_effects.pulse"
+      added_as: "user_says variation in existing pulse pattern"
+  rule: "Curadoria > Volume — so adicionar patterns que foram realmente usados por usuarios reais, nao hipoteticos"

@@ -1,0 +1,54 @@
+template_metadata:
+  schema_version: "analytics-template-v1"
+  template_id: "executive-summary-tmpl"
+  artifact: "executive-summary"
+  artifact_family: "cohorts"
+  owner_agent: "avinash-kaushik"
+  governance_owners:
+    - "marketing-lead"
+    - "narrative-strategist"
+    - "data-chief"
+  output_path: "workspace/businesses/{slug}/analytics/cohorts/executive-summary.yaml"
+  custom_fallback_path: "docs/data/{slug}/executive-summary-{date}.md"
+  contains_real_data: false
+  pii_allowed: false
+
+context:
+  business_slug: "{slug}"
+  product_slug: "{product_slug}"
+  cohort_slug: "{cohort_slug}"
+  period_start: "{yyyy-mm-dd}"
+  period_end: "{yyyy-mm-dd}"
+  generated_at: "{iso_datetime}"
+  generated_by: "{agent_or_workflow}"
+
+analysis:
+  source_artifacts:
+    segmentation_rfm: "workspace/businesses/{slug}/analytics/cohorts/segmentation-rfm.yaml"
+    learning_journey: "workspace/businesses/{slug}/analytics/cohorts/learning-journey.yaml"
+    community_health: "workspace/businesses/{slug}/analytics/cohorts/community-health.yaml"
+    student_health_score: "workspace/businesses/{slug}/analytics/cohorts/student-health-score.yaml"
+    icp_deep_analysis: "workspace/businesses/{slug}/analytics/cohorts/icp-deep-analysis.yaml"
+  executive_snapshot:
+    health_signal: null
+    completion_signal: null
+    engagement_signal: null
+    value_signal: null
+  so_what:
+    what_changed: []
+    why_it_matters: []
+    now_what: []
+
+insights: []
+
+recommendations:
+  immediate_actions: []
+  short_term_actions: []
+  strategic_bets: []
+
+quality:
+  completeness_score: null
+  confidence_score: null
+  validation:
+    sources_linked: false
+    assumptions_listed: false

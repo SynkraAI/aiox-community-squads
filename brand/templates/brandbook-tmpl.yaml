@@ -1,0 +1,38 @@
+---
+_meta:
+  artifact_id: brandbook
+  version: "1.0.0"
+  lifecycle_states: [draft, validated, approved]
+  owner_squad: brand
+
+# Brandbook Template
+brand_name: "{brand_name}"
+brand_version: "{brand_version}"
+
+identity:
+  purpose: "{brand_purpose}"
+  vision: "{brand_vision}"
+  mission: "{brand_mission}"
+  values: []
+
+positioning:
+  onlyness_statement: "{onlyness_statement}"
+  archetype: "{archetype}"
+  tone_of_voice: "{tone_of_voice}"
+
+visual_identity:
+  primary_colors: []
+  secondary_colors: []
+  typography:
+    primary: "{primary_font}"
+    secondary: "{secondary_font}"
+  logo_usage_guidelines: "{logo_guidelines}"
+
+messaging:
+  tagline: "{tagline}"
+  elevator_pitch: "{elevator_pitch}"
+  storybrand_script: "{sb7_script}"
+
+guidelines:
+  dos: []
+  donts: []

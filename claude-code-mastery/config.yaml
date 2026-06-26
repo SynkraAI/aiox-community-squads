@@ -1,0 +1,351 @@
+# claude-code-mastery Configuration
+# Squad especialista em Claude Code, MCP, hooks, skills e integração com projetos
+# Version 2.1.0
+
+pack:
+  name: claude-code-mastery
+  version: "3.0.0"
+  description: >-
+    Squad especialista em todas as dimensões do Claude Code: hooks, skills,
+    subagents, MCP, plugins, agent teams, customização, integração com projetos,
+    roadmap tracking e awareness do ecossistema Anthropic.
+  icon: "💡"
+
+entry_agent: claude-mastery-chief
+type: enablement
+workspace_integration_level: none
+
+domain_model:
+  Strategic:
+    label: "Estratégico"
+    scope: "Evolução do ecossistema Anthropic, governança de adoção e decisões de arquitetura"
+  Tactical:
+    label: "Tático"
+    scope: "Desenho de hooks, skills, MCPs, políticas de configuração e setup de projetos"
+  Operational:
+    label: "Operacional"
+    scope: "Execução de auditorias, geração de artefatos, validação de setup e publicação de reports"
+
+logging:
+  runtime_audit: true
+  error_behavior: fail_loud
+  error_handling:
+    on_validation_fail: emit_review_handoff
+    on_threshold_breach: block_publish
+    on_runtime_warning: notify_mastery_steward
+
+sinkra:
+  hierarchy_mapping:
+    Token: "Modes, thresholds, políticas de segurança e ownership do runtime Claude Code"
+    Atom: "Tasks unitárias de auditar, configurar, integrar, atualizar, publicar e validar"
+    Molecule: "Workflows recorrentes de audit, setup e update de knowledge base"
+    Organism: "Squad de mastery do Claude Code com roteamento e especialistas de domínio"
+    Template: "Templates de config, hook, skill, handoff e relatórios operacionais"
+    Instance: "Hooks, MCP configs, skills, relatórios e setups concretos materializados em projetos"
+  governance_tokens:
+    - type: Accountability
+      rule: "Toda mudança crítica em runtime Claude Code tem steward humano e reviewer explícitos"
+    - type: Threshold
+      rule: "Audits e setup usam thresholds numéricos antes de publicar recomendações"
+    - type: Behavior
+      rule: "Falhas de configuração quebram loud, com handoff auditável"
+    - type: Permission
+      rule: "Configuração de hooks, MCP e permissões preserva deny-first e revisão humana"
+  composition_rules:
+    - "Cada task declara executor único, input, output e critério de performance"
+    - "Todo workflow crítico define thresholds numéricos e veto conditions"
+    - "Artifacts de Claude Code são emitidos com template binding e lifecycle explícito"
+    - "Integrações MCP e hooks deixam rastreio operacional em dados e reports"
+    - "Mudanças de conhecimento preservam rastreabilidade do ecossistema Anthropic"
+
+supported_domains:
+  - Strategic
+  - Tactical
+  - Operational
+
+supported_domains_ptbr:
+  - Estratégico
+  - Tático
+  - Operacional
+
+supported_modes:
+  - CRIAR
+  - CONFIGURAR
+  - RESOLVER
+  - ENTENDER
+  - VALIDAR
+  - PLANEJAR
+
+composition_mapping:
+  tokens:
+    source: data/token-registry.yaml
+  atoms:
+    paths:
+      - tasks/align-memory-context.md
+      - tasks/audit-integration.md
+      - tasks/audit-settings.md
+      - tasks/audit-setup.md
+      - tasks/brownfield-setup.md
+      - tasks/ci-cd-setup.md
+      - tasks/claude-md-engineer.md
+      - tasks/configure-claude-code.md
+      - tasks/context-rot-audit.md
+      - tasks/create-agent-definition.md
+      - tasks/create-rules.md
+      - tasks/create-team-topology.md
+      - tasks/delete-claude-code-mastery.md
+      - tasks/diagnose.md
+      - tasks/enterprise-config.md
+      - tasks/hook-designer.md
+      - tasks/integrate-project.md
+      - tasks/mcp-integration-plan.md
+      - tasks/mcp-workflow.md
+      - tasks/multi-project-setup.md
+      - tasks/optimize-context.md
+      - tasks/optimize-workflow.md
+      - tasks/parallel-decomposition.md
+      - tasks/permission-strategy.md
+      - tasks/rebuild-runtime-validator.md
+      - tasks/refresh-runtime-contract.md
+      - tasks/sandbox-setup.md
+      - tasks/setup-repository.md
+      - tasks/setup-wizard.md
+      - tasks/update-claude-code-mastery.md
+      - tasks/validate-setup.md
+      - tasks/worktree-strategy.md
+    sinkra_refs:
+      accountability_token: TK-CCM-ACC-001
+      token_registry: data/token-registry.yaml
+  molecules:
+    paths:
+      - workflows/wf-audit-complete.yaml
+      - workflows/wf-knowledge-update.yaml
+      - workflows/wf-project-setup.yaml
+    sinkra_refs:
+      journey_log: data/journey-log-events.yaml
+      state_machines:
+        - workflows/wf-audit-complete.yaml
+        - workflows/wf-project-setup.yaml
+        - workflows/wf-knowledge-update.yaml
+  organisms:
+    paths:
+      - config.yaml
+  templates:
+    paths:
+      - templates/hook-implementation-tmpl.md
+      - templates/mcp-config-tmpl.yaml
+      - templates/skill-definition-tmpl.md
+      - templates/cross-domain-handoff-tmpl.yaml
+      - templates/claude-md-fullstack.md
+      - templates/claude-md-library.md
+      - templates/claude-md-microservices.md
+      - templates/claude-md-mobile.md
+      - templates/claude-md-monorepo.md
+      - templates/github-actions-claude-ci.yml
+      - templates/github-actions-claude-review.yml
+      - templates/session-usage-report-tmpl.yaml
+      - templates/session-usage-report-page.html
+      - templates/session-usage-report-page.css
+  instances:
+    paths:
+      - data/token-registry.yaml
+      - data/quality-gates.yaml
+      - data/infrastructure-map.yaml
+      - data/ci-cd-patterns.yaml
+      - data/hook-patterns.yaml
+      - data/mcp-integration-catalog.yaml
+      - data/project-type-signatures.yaml
+      # Decoded from Claude Code CLI source (domain-decoder extraction, 2026-03-31)
+      - data/cc-permission-rules.yaml      # 212 rules: permissions, security, BashTool
+      - data/cc-architecture-map.yaml      # 25 bounded contexts, patterns, agent tool matrix
+
+quality_gates:
+  materialized: data/quality-gates.yaml
+
+agents:
+  - id: mastery-steward
+    name: Responsável Humano
+    role: Claude Code Steward
+    file: agents/claude-mastery-chief.md
+    tier: human
+    executor_profile:
+      sinkra_type: Human
+      human_in_the_loop: true
+      output_schema: mastery-approval
+      story_role: reviewer
+      can_execute: false
+      core_replaces: null
+      work_contexts: [governança, aprovação, priorização, risco, alinhamento]
+      can_review: [configuração, hooks, mcp, roadmap, integração]
+
+  - id: mastery-reviewer
+    name: Mirror
+    role: Claude Code Compliance Reviewer
+    file: agents/roadmap-sentinel.md
+    tier: reviewer
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: mastery-review-report
+      story_role: reviewer
+      can_execute: false
+      core_replaces: "@qa"
+      work_contexts: [auditoria, compliance, changelog, validação, handoff]
+      can_review: [setup, quality-gates, artifacts, update-knowledge]
+
+  - id: claude-mastery-chief
+    name: Orion
+    role: Claude Code Mastery Lead
+    file: agents/claude-mastery-chief.md
+    tier: orchestrator
+    executor_profile:
+      sinkra_type: Agent
+      human_in_the_loop: true
+      output_schema: routing-decision
+      story_role: reviewer
+      can_execute: false
+      core_replaces: null
+      work_contexts: [triage, routing, aiox-core, claude-code, orchestration]
+      can_review: [claude-code, orchestration, audit]
+
+  - id: hooks-architect
+    name: Latch
+    role: Hooks Architect
+    file: agents/hooks-architect.md
+    tier: specialist
+    executor_profile:
+      sinkra_type: Worker
+      human_in_the_loop: true
+      output_schema: hook-design-spec
+      story_role: executor
+      can_execute: true
+      core_replaces: "@dev"
+      work_contexts: [hooks, automação, lifecycle, validation, damage-control]
+      can_review: [hooks, automação]
+
+  - id: mcp-integrator
+    name: Piper
+    role: MCP Integrator
+    file: agents/mcp-integrator.md
+    tier: specialist
+    executor_profile:
+      sinkra_type: Worker
+      human_in_the_loop: true
+      output_schema: mcp-integration-report
+      story_role: executor
+      can_execute: true
+      core_replaces: "@dev"
+      work_contexts: [mcp, tool-discovery, integration, context-budget, transport]
+      can_review: [mcp, integration]
+
+  - id: swarm-orchestrator
+    name: Nexus
+    role: Swarm Orchestrator
+    file: agents/swarm-orchestrator.md
+    tier: specialist
+    executor_profile:
+      sinkra_type: Agent
+      human_in_the_loop: true
+      output_schema: swarm-topology-report
+      story_role: executor
+      can_execute: true
+      core_replaces: "@architect"
+      work_contexts: [agent-teams, subagents, worktrees, coordination, sessions]
+      can_review: [orchestration, swarm]
+
+  - id: config-engineer
+    name: Sigil
+    role: Config Engineer
+    file: agents/config-engineer.md
+    tier: specialist
+    executor_profile:
+      sinkra_type: Worker
+      human_in_the_loop: true
+      output_schema: claude-settings-plan
+      story_role: executor
+      can_execute: true
+      core_replaces: "@dev"
+      work_contexts: [settings, permissions, CLAUDE.md, rules, personas, config]
+      can_review: [configuration, permissions]
+
+  - id: skill-craftsman
+    name: Anvil
+    role: Skill Craftsman
+    file: agents/skill-craftsman.md
+    tier: specialist
+    executor_profile:
+      sinkra_type: Worker
+      human_in_the_loop: true
+      output_schema: skill-definition
+      story_role: executor
+      can_execute: true
+      core_replaces: "@dev"
+      work_contexts: [skills, commands, plugins, context-engineering, marketplace]
+      can_review: [skills, commands, plugins]
+
+  - id: project-integrator
+    name: Conduit
+    role: Project Integrator
+    file: agents/project-integrator.md
+    tier: specialist
+    executor_profile:
+      sinkra_type: Worker
+      human_in_the_loop: true
+      output_schema: integration-plan
+      story_role: executor
+      can_execute: true
+      core_replaces: "@devops"
+      work_contexts: [project-integration, brownfield, monorepo, ci-cd, setup]
+      can_review: [integration, setup]
+
+  - id: roadmap-sentinel
+    name: Vigil
+    role: Roadmap Sentinel
+    file: agents/roadmap-sentinel.md
+    tier: specialist
+    executor_profile:
+      sinkra_type: Clone
+      human_in_the_loop: true
+      output_schema: roadmap-delta-report
+      story_role: executor
+      can_execute: true
+      core_replaces: "@analyst"
+      work_contexts: [roadmap, changelog, feature-adoption, release-notes, ecosystem]
+      can_review: [roadmap, updates, changelog]
+
+status: active
+last_updated: "2026-04-03"
+sinkra_native: true
+
+sinkra_refs:
+  token_registry: data/token-registry.yaml
+  quality_gates: data/quality-gates.yaml
+  journey_log_events: data/journey-log-events.yaml
+  infrastructure_map: data/infrastructure-map.yaml
+
+bu_mapping: "hub-framework"
+artifact_contracts:
+  - artifact_id: "hook-implementation"
+    template_path: "templates/hook-implementation-tmpl.md"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "mcp-config"
+    template_path: "templates/mcp-config-tmpl.yaml"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "skill-definition"
+    template_path: "templates/skill-definition-tmpl.md"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "cross-domain-handoff"
+    template_path: "templates/cross-domain-handoff-tmpl.yaml"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "session-usage-report"
+    template_path: "templates/session-usage-report-tmpl.yaml"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "concept-mapping"
+    template_path: "templates/concept-mapping-tmpl.yaml"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "baseline-kpis"
+    template_path: "templates/baseline-kpis-tmpl.yaml"
+    lifecycle_states: [draft, validated, approved]
+  - artifact_id: "violations-log"
+    template_path: "templates/violations-log-tmpl.jsonl"
+    lifecycle_states: [draft, validated, approved]

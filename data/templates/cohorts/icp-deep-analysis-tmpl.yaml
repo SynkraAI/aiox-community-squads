@@ -1,0 +1,49 @@
+template_metadata:
+  schema_version: "analytics-template-v1"
+  template_id: "icp-deep-analysis-tmpl"
+  artifact: "icp-deep-analysis"
+  artifact_family: "cohorts"
+  owner_agent: "narrative-strategist"
+  governance_owners:
+    - "marketing-lead"
+    - "narrative-strategist"
+    - "data-chief"
+  output_path: "workspace/businesses/{slug}/analytics/cohorts/icp-deep-analysis.yaml"
+  custom_fallback_path: "docs/data/{slug}/icp-deep-analysis-{date}.md"
+  contains_real_data: false
+  pii_allowed: false
+
+context:
+  business_slug: "{slug}"
+  product_slug: "{product_slug}"
+  cohort_slug: "{cohort_slug}"
+  period_start: "{yyyy-mm-dd}"
+  period_end: "{yyyy-mm-dd}"
+  generated_at: "{iso_datetime}"
+  generated_by: "{agent_or_workflow}"
+
+analysis:
+  source_coverage:
+    channels: []
+    sample_size: null
+  persona_archetypes: []
+  pains: []
+  wins: []
+  jobs_to_be_done: []
+  objections: []
+  value_drivers: []
+  upsell_signals: []
+
+insights: []
+
+recommendations:
+  messaging_adjustments: []
+  offer_adjustments: []
+  segmentation_priorities: []
+
+quality:
+  completeness_score: null
+  confidence_score: null
+  validation:
+    sources_linked: false
+    assumptions_listed: false

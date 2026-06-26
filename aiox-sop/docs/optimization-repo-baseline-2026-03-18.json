@@ -1,0 +1,38 @@
+{
+  "started_at": "2026-03-18T17:08:30.665Z",
+  "completed_at": "2026-03-18T17:08:56.479Z",
+  "baseline_scope": "repo-global-quality-gates",
+  "overall_status": "pass",
+  "counts": {
+    "pass": 3,
+    "fail": 0,
+    "inconclusive": 0
+  },
+  "gates": [
+    {
+      "id": "lint",
+      "command": "npm run lint",
+      "status": "pass",
+      "advisory_warnings": [
+        "squads/course-creator/config.yaml: missing score field (checked: metadata.score, squad.score, top-level score)"
+      ]
+    },
+    {
+      "id": "typecheck",
+      "command": "npm run typecheck",
+      "status": "pass",
+      "advisory_warnings": [
+        "locale warning: LC_ALL C.UTF-8 not available in shell environment"
+      ]
+    },
+    {
+      "id": "test",
+      "command": "npm test",
+      "status": "pass",
+      "advisory_warnings": [
+        "squads/course-creator/config.yaml: missing score field (checked: metadata.score, squad.score, top-level score)",
+        "locale warning: LC_ALL C.UTF-8 not available in shell environment"
+      ]
+    }
+  ]
+}

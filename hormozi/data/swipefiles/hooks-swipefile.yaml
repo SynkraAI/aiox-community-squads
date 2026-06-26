@@ -1,0 +1,1982 @@
+# Hormozi Hooks Master Swipefile
+# Extracted from $100M Hooks Playbook, Ogilvy 40 Best, RMKT, Event Hooks, Checklist, Framework
+version: "1.0"
+extraction_date: "2026-02-23"
+total_hooks: 235
+
+# =============================================================================
+# HORMOZI 121 BEST HOOKS
+# =============================================================================
+hormozi_121_best_hooks:
+  metadata:
+    source: "$100M Hooks Playbook by Alex Hormozi"
+    performance_basis: "Sorted by views for content and performance for ads/emails"
+
+  hook_category_distribution:
+    statements: "35%"
+    conditionals: "20%"
+    questions: "15%"
+    commands: "10%"
+    narratives: "10%"
+    lists: "5%"
+    labels: "3%"
+    exclamations: "2%"
+
+  ads:
+    - id: "AH_AD_001"
+      hook: "Real quick question... Can I have your email address?"
+      tipo: "Question Hook"
+      triggers: ["Pattern Interrupt", "Curiosity Gap"]
+      formula: "[Quick question: + unexpected ask]"
+
+    - id: "AH_AD_002"
+      hook: "You might be wondering why I just caught a banana... And the reason why is because the amount of value I'm going to give you in the next 30 seconds is bananas..."
+      tipo: "Statement Hook (Visual Pattern Interrupt)"
+      triggers: ["Curiosity Gap", "Value Promise"]
+      formula: "[Visual interrupt] + [value promise]"
+
+    - id: "AH_AD_003"
+      hook: "That's weird... I don't see your name on the invite list?"
+      tipo: "Statement Hook (Intrigue)"
+      triggers: ["Curiosity Gap", "FOMO", "Exclusivity"]
+      formula: "[Observation of something off] + [implication]"
+
+    - id: "AH_AD_004"
+      hook: "The rumors are true..."
+      tipo: "Statement Hook (Confirmation)"
+      triggers: ["Curiosity Gap"]
+      formula: "[The rumors are true + ellipsis]"
+
+    - id: "AH_AD_005"
+      hook: "Would you pay $1,000 dollars to have the business of your dreams in 30 days? Well, how about $100 dollars to have the business of your dreams in 30 days? Well... How about free?"
+      tipo: "Question Hook (Descending Ladder)"
+      triggers: ["Value Contrast", "Curiosity Gap"]
+      formula: "[Would you pay X?] + [How about less?] + [Free reveal]"
+
+    - id: "AH_AD_006"
+      hook: "$4,664 per month in recurring revenue... That's what Kyle... The last person on the leaderboard... Was able to build..."
+      tipo: "Statement Hook (Social Proof)"
+      triggers: ["Specificity", "Social Proof", "Achievability"]
+      formula: "[Specific number] + [context of achiever] + [result]"
+      numeros: ["$4,664", "per month"]
+
+    - id: "AH_AD_007"
+      hook: "Which would you rather be? The guy pushing the boulder up the hill? Or the one with the boulder at the top who can just flick it and let it roll?"
+      tipo: "Question Hook (Dichotomy)"
+      triggers: ["Identity", "Visual Metaphor"]
+      formula: "[Which would you rather] + [hard option] vs [easy option]"
+
+    - id: "AH_AD_008"
+      hook: "Throw out your morning routine and switch to a money routine. This year we're launching the Skool Games."
+      tipo: "Command Hook"
+      triggers: ["Pattern Interrupt", "Contradiction"]
+      formula: "[Throw out X] + [switch to Y] + [announcement]"
+
+    - id: "AH_AD_009"
+      hook: "Real quick. The reason for this ad is because..."
+      tipo: "Statement Hook (Transparency)"
+      triggers: ["Pattern Interrupt", "Honesty"]
+      formula: "[Real quick] + [reason for this ad]"
+
+    - id: "AH_AD_010"
+      hook: "Local business owners, I have a gift for you"
+      tipo: "Label Hook"
+      triggers: ["Identity", "Gift/Value"]
+      formula: "[Specific label], I have [gift/value] for you"
+
+    - id: "AH_AD_011"
+      hook: "I have a confession... Which is I am sick and tired of seeing people who have never run a business before teaching other people how to grow businesses."
+      tipo: "Statement Hook (Confession)"
+      triggers: ["Vulnerability", "Contradiction", "Authority"]
+      formula: "[I have a confession] + [controversial opinion]"
+
+    - id: "AH_AD_012"
+      hook: "This is a penny... And I won't even charge you a penny to help you build a business in the next 30 days..."
+      tipo: "Statement Hook (Visual Value)"
+      triggers: ["Value Contrast", "Specificity"]
+      formula: "[Small object] + [won't charge even that] + [big promise]"
+      numeros: ["penny", "30 days"]
+
+    - id: "AH_AD_013"
+      hook: "Business owners: Do you ever wonder if you're working on the wrong stuff?"
+      tipo: "Question Hook (Pain)"
+      triggers: ["Identity", "Fear", "Doubt"]
+      formula: "[Label]: Do you ever wonder if [fear]?"
+
+    - id: "AH_AD_014"
+      hook: "Read this if you want to win"
+      tipo: "Command Hook"
+      triggers: ["Identity", "Aspiration"]
+      formula: "Read this if you want [desired outcome]"
+
+    - id: "AH_AD_015"
+      hook: "Read this if you're tired of being broke"
+      tipo: "Command Hook"
+      triggers: ["Pain", "Identity"]
+      formula: "Read this if you're tired of [pain state]"
+
+    - id: "AH_AD_016"
+      hook: "How to get ahead of 99% of people"
+      tipo: "Statement Hook (How-to)"
+      triggers: ["Superiority", "Specificity"]
+      formula: "How to [achievement] + [superiority metric]"
+      numeros: ["99%"]
+
+    - id: "AH_AD_017"
+      hook: "The smartest thing you can do today"
+      tipo: "Statement Hook"
+      triggers: ["Curiosity Gap", "Urgency"]
+      formula: "The smartest thing you can do [timeframe]"
+
+    - id: "AH_AD_018"
+      hook: "I wrote this for you"
+      tipo: "Statement Hook (Personal)"
+      triggers: ["Connection", "Exclusivity"]
+      formula: "I [action] this for you"
+
+    - id: "AH_AD_019"
+      hook: "The best offer I've ever made"
+      tipo: "Statement Hook (Superlative)"
+      triggers: ["FOMO", "Curiosity Gap"]
+      formula: "The best [thing] I've ever [done]"
+
+    - id: "AH_AD_020"
+      hook: "How I made my first $100M"
+      tipo: "Statement Hook (Story)"
+      triggers: ["Authority", "Curiosity Gap"]
+      formula: "How I [achievement with big number]"
+      numeros: ["$100M"]
+
+    - id: "AH_AD_021"
+      hook: "For people who want to quit work someday"
+      tipo: "Statement Hook (Identity)"
+      triggers: ["Aspiration", "Identity"]
+      formula: "For people who want to [aspiration]"
+
+    - id: "AH_AD_022"
+      hook: "At last! It's finally here."
+      tipo: "Exclamation Hook"
+      triggers: ["Anticipation", "FOMO"]
+      formula: "At last! [announcement]"
+
+  youtube_alex:
+    - id: "AH_YT_001"
+      hook: "You guys want to hear something completely insane"
+      tipo: "Question Hook (Tease)"
+      triggers: ["Curiosity Gap", "Emotional Promise"]
+      formula: "You guys want to hear something [emotional adjective]"
+
+    - id: "AH_YT_002"
+      hook: "Agghhhhh... This is the blueprint to becoming a millionaire and I'm going to walk you through the levels."
+      tipo: "Exclamation Hook"
+      triggers: ["Emotion", "Promise", "Structure"]
+      formula: "[Exclamation] + [big promise] + [structure preview]"
+
+    - id: "AH_YT_003"
+      hook: "On November 30th, 2022, the world changed forever."
+      tipo: "Statement Hook (Historic)"
+      triggers: ["Specificity", "Magnitude", "Curiosity Gap"]
+      formula: "On [specific date], [dramatic statement]"
+      numeros: ["November 30th, 2022"]
+
+    - id: "AH_YT_004"
+      hook: "This is a video I'm making for Ivante."
+      tipo: "Statement Hook (Personal)"
+      triggers: ["Specificity", "Exclusivity"]
+      formula: "This is [content] I'm making for [specific person/group]"
+
+    - id: "AH_YT_005"
+      hook: "Warren Buffet once told the story of his closest friend at Columbia Business School. He said..."
+      tipo: "Narrative Hook (Authority)"
+      triggers: ["Authority", "Story", "Curiosity Gap"]
+      formula: "[Authority figure] once told the story of [subject]"
+
+    - id: "AH_YT_006"
+      hook: "I f&cking guarantee you that you will be making more than people who have 4-year degrees. You'll probably start making more by the end of your first year."
+      tipo: "Statement Hook (Bold Claim)"
+      triggers: ["Contradiction", "Authority", "Specificity"]
+      formula: "I guarantee [bold outcome] + [timeline]"
+
+    - id: "AH_YT_007"
+      hook: "I've been in business for 13 years. I've sold 9 companies. My last company I sold for $46,200,000 dollars. I own Acquisition.com, which does around 17 million a month. I'm going to compress 13 years of brutal business truths and lessons into this video."
+      tipo: "Statement Hook (Authority Stack)"
+      triggers: ["Authority", "Specificity", "Value Promise"]
+      formula: "[Credentials stack] + [compression promise]"
+      numeros: ["13 years", "9 companies", "$46,200,000", "$17M/month"]
+
+    - id: "AH_YT_008"
+      hook: "In this video I'm going to talk to you about the 28 ways to stay poor"
+      tipo: "List Hook (Negative)"
+      triggers: ["Curiosity Gap", "Fear", "Specificity"]
+      formula: "I'm going to talk about [number] ways to [negative outcome]"
+      numeros: ["28"]
+
+    - id: "AH_YT_009"
+      hook: "One in every 250 businesses does over 10 million dollars a year. That means 99% of entrepreneurs never hit it. Every business I've started since I was 25 has crossed $10 million."
+      tipo: "Statement Hook (Contrast)"
+      triggers: ["Specificity", "Authority", "Contrast"]
+      formula: "[Rare statistic] + [personal exception]"
+      numeros: ["1 in 250", "$10M", "99%", "25"]
+
+    - id: "AH_YT_010"
+      hook: "Thirteen lessons I learned after graduating college from the real world that I wish I learned earlier."
+      tipo: "List Hook"
+      triggers: ["Regret", "Learning", "Specificity"]
+      formula: "[Number] lessons from [experience] I wish I knew earlier"
+      numeros: ["13"]
+
+    - id: "AH_YT_011"
+      hook: "What I want to do is show you how to win and impress the only person that really matters."
+      tipo: "Statement Hook (Tease)"
+      triggers: ["Curiosity Gap", "Self-improvement"]
+      formula: "I want to show you [achievement] for [mystery subject]"
+
+    - id: "AH_YT_012"
+      hook: "People are making podcasts and thinking in 90 days they're somehow going to blow up. In the beginning, I had 150 episodes of me just talking about how to run a gym better."
+      tipo: "Statement Hook (Reality Check)"
+      triggers: ["Contradiction", "Authority", "Patience"]
+      formula: "[Common misconception] + [my actual path]"
+      numeros: ["90 days", "150 episodes"]
+
+    - id: "AH_YT_013"
+      hook: "What's going on everyone? Today we're going to talk about a fun topic which is: I got a message: 'I'm dead broke, what do I do?'"
+      tipo: "Statement Hook (Relatable Problem)"
+      triggers: ["Relatability", "Problem Recognition"]
+      formula: "I got a message: [common painful question]"
+
+    - id: "AH_YT_014"
+      hook: "I started 4 businesses that cracked ten million in a row. I want to share the framework and lessons I learned from the many mistakes that led to those 4 in a row. So hopefully the next business you have (or the current business you are on) can achieve that level and beyond."
+      tipo: "Statement Hook (Framework Promise)"
+      triggers: ["Authority", "Framework", "Promise"]
+      formula: "[Achievement] + [framework share] + [promise for them]"
+      numeros: ["4 businesses", "$10M"]
+
+    - id: "AH_YT_015"
+      hook: "This is my most brutally honest advice to my younger self."
+      tipo: "Statement Hook (Personal)"
+      triggers: ["Vulnerability", "Wisdom", "Curiosity Gap"]
+      formula: "This is my most [adjective] [content type] to [myself/younger self]"
+
+    - id: "AH_YT_016"
+      hook: "We're all one decision away from changing our lives and a lot of us don't even know it."
+      tipo: "Statement Hook (Philosophical)"
+      triggers: ["Hope", "Urgency", "Curiosity Gap"]
+      formula: "We're all [close] to [transformation] and [don't know it]"
+
+    - id: "AH_YT_017"
+      hook: "I build wealth without reading a book a week."
+      tipo: "Statement Hook (Contradiction)"
+      triggers: ["Contradiction", "Curiosity Gap"]
+      formula: "I [achievement] without [common advice]"
+
+    - id: "AH_YT_018"
+      hook: "Kylie Jenner became a billionaire at 21 and here's what I learnt from how she did it."
+      tipo: "Statement Hook (Celebrity)"
+      triggers: ["Celebrity", "Learning", "Specificity"]
+      formula: "[Celebrity] [achievement] and here's what I learned"
+      numeros: ["billionaire", "21"]
+
+    - id: "AH_YT_019"
+      hook: "To become confident, you do something enough times that it loses its excitement. So many times that you become bored of it."
+      tipo: "Statement Hook (Insight)"
+      triggers: ["Insight", "Contradiction"]
+      formula: "To become [desired state], [counterintuitive method]"
+
+    - id: "AH_YT_020"
+      hook: "My actual productivity routine: Sleep until I wake up. Caffeine. Nicotine."
+      tipo: "Statement Hook (Anti-guru)"
+      triggers: ["Contradiction", "Authenticity", "Humor"]
+      formula: "My actual [popular topic]: [anti-advice list]"
+
+    - id: "AH_YT_021"
+      hook: "Fear is a mile wide and an inch deep."
+      tipo: "Statement Hook (Metaphor)"
+      triggers: ["Insight", "Metaphor", "Courage"]
+      formula: "[Emotion] is [metaphor for its true nature]"
+
+  youtube_leila:
+    - id: "AH_YTL_001"
+      hook: "How I brainwashed myself to succeed"
+      tipo: "Statement Hook (Provocative)"
+      triggers: ["Curiosity Gap", "Self-improvement", "Provocation"]
+      formula: "How I [provocative action] to [desired outcome]"
+
+    - id: "AH_YTL_002"
+      hook: "I've bought and sold 3 companies. One of which is worth over $100 million dollars and I'm building my 4th right now and my goal is to get it to a billion."
+      tipo: "Statement Hook (Authority)"
+      triggers: ["Authority", "Ambition", "Specificity"]
+      formula: "[Achievement list] + [current goal]"
+      numeros: ["3 companies", "$100M", "4th", "billion"]
+
+    - id: "AH_YTL_003"
+      hook: "Today I want to share with you four unsexy and unheard of businesses that can actually make you pretty rich."
+      tipo: "List Hook (Contradiction)"
+      triggers: ["Curiosity Gap", "Contradiction", "Promise"]
+      formula: "[Number] [anti-hype adjective] businesses that [promise]"
+      numeros: ["4"]
+
+    - id: "AH_YTL_004"
+      hook: "I reached a $100M net worth by the age of 29 so I want to walk you through the whole journey with the goal so you can take the lesson and apply it to your life and at the end I want to break down the goal I have next."
+      tipo: "Statement Hook (Journey)"
+      triggers: ["Authority", "Journey", "Value Promise"]
+      formula: "I [achievement] by [age] + [journey share] + [what's next]"
+      numeros: ["$100M", "29"]
+
+    - id: "AH_YTL_005"
+      hook: "Today I'm going to rank the best business opportunities of 2023, starting with Youtuber."
+      tipo: "List Hook (Ranking)"
+      triggers: ["Curiosity Gap", "Relevance", "Structure"]
+      formula: "Today I'm ranking [topic] of [year], starting with [tease]"
+      numeros: ["2023"]
+
+    - id: "AH_YTL_006"
+      hook: "40% of women have had something done and they don't talk about it. I'm going to talk about it."
+      tipo: "Statement Hook (Taboo)"
+      triggers: ["Taboo", "Vulnerability", "Curiosity Gap"]
+      formula: "[Hidden statistic] + I'm going to talk about it"
+      numeros: ["40%"]
+
+    - id: "AH_YTL_007"
+      hook: "In this video, I want to talk about the five books that changed my mindset while I was in my twenties."
+      tipo: "List Hook (Personal)"
+      triggers: ["Curation", "Personal", "Transformation"]
+      formula: "[Number] [things] that [changed me] during [period]"
+      numeros: ["5", "twenties"]
+
+  instagram_alex:
+    - id: "AH_IG_001"
+      hook: "If you want someone to treat you differently, you have to address it as soon as possible when they do something against it."
+      tipo: "Conditional Hook"
+      triggers: ["Practical Wisdom", "Relationship"]
+      formula: "If you want [outcome], you have to [action] when [trigger]"
+
+    - id: "AH_IG_002"
+      hook: "I'm at her parents' house in an extra bedroom. I'm the guy she met from the internet that she quit her job for, who's just lost everything. I had $1000 left."
+      tipo: "Narrative Hook (Vulnerability)"
+      triggers: ["Story", "Vulnerability", "Tension"]
+      formula: "[Vulnerable scene setting] + [context of failure]"
+      numeros: ["$1000"]
+
+    - id: "AH_IG_003"
+      hook: "If you wanna become obscenely wealthy and have your parents question if it's ethical or illegal what you're doing..."
+      tipo: "Conditional Hook (Provocative)"
+      triggers: ["Aspiration", "Provocation", "Curiosity Gap"]
+      formula: "If you wanna [extreme outcome] and have [others] question [you]..."
+
+    - id: "AH_IG_004"
+      hook: "Here's a sign that you're hiring dumb people"
+      tipo: "Statement Hook (Warning)"
+      triggers: ["Fear", "Self-assessment", "Curiosity Gap"]
+      formula: "Here's a sign that you're [doing something wrong]"
+
+    - id: "AH_IG_005"
+      hook: "The world belongs to optimists. Because if you're going to do anything big, you have to believe it can happen."
+      tipo: "Statement Hook (Philosophy)"
+      triggers: ["Inspiration", "Belief"]
+      formula: "The world belongs to [type of person]. Because [reason]."
+
+    - id: "AH_IG_006"
+      hook: "I learned from this tactic from Eminem that he used in rap but actually makes sales way more effective."
+      tipo: "Statement Hook (Unexpected Source)"
+      triggers: ["Celebrity", "Curiosity Gap", "Cross-domain"]
+      formula: "I learned [tactic] from [unexpected source] that [application]"
+
+    - id: "AH_IG_007"
+      hook: "I was talking to a world champion and I texted him out of the blue because I woke up just thinking about him and I said 'Hey man I think you should know that I think you should win this next championship and cut it.'"
+      tipo: "Narrative Hook"
+      triggers: ["Story", "Authority by Association", "Curiosity Gap"]
+      formula: "I was talking to [impressive person] and [unusual action]"
+
+    - id: "AH_IG_008"
+      hook: "If you have no money, you just start by selling your time, because you have time."
+      tipo: "Conditional Hook (Practical)"
+      triggers: ["Practical Wisdom", "Starting Point"]
+      formula: "If you have no [resource], you start by [alternative]"
+
+    - id: "AH_IG_009"
+      hook: "You don't know anything, and you're not going to learn it by watching another podcast."
+      tipo: "Statement Hook (Harsh Truth)"
+      triggers: ["Pattern Interrupt", "Harsh Truth"]
+      formula: "You don't [positive belief], and you're not going to by [common action]"
+
+    - id: "AH_IG_010"
+      hook: "A cheat code I know at 34 that I wish I knew at 24. Anything worth doing takes exceptionally longer than you want it to."
+      tipo: "Statement Hook (Wisdom)"
+      triggers: ["Wisdom", "Regret", "Patience"]
+      formula: "A cheat code at [current age] I wish I knew at [younger age]"
+      numeros: ["34", "24"]
+
+    - id: "AH_IG_011"
+      hook: "Poor people stay poor because they're afraid of other poor people judging them for trying to get rich."
+      tipo: "Statement Hook (Insight)"
+      triggers: ["Insight", "Social Dynamics", "Fear"]
+      formula: "[Group] stays [state] because they're afraid of [social consequence]"
+
+    - id: "AH_IG_012"
+      hook: "I was talking to these college kids. They were all like 'Yeah, I really want to start a business!' and 6 months later..."
+      tipo: "Narrative Hook (Open Loop)"
+      triggers: ["Story", "Curiosity Gap", "Relatability"]
+      formula: "I was talking to [group] who said [common claim] and [time] later..."
+      numeros: ["6 months"]
+
+    - id: "AH_IG_013"
+      hook: "3 hacks to make life suck less"
+      tipo: "List Hook (Negative Frame)"
+      triggers: ["Practical", "Negative Frame", "Specificity"]
+      formula: "[Number] hacks to make [pain] less"
+      numeros: ["3"]
+
+    - id: "AH_IG_014"
+      hook: "I work all the time. I have no hobbies. Besides working out if you consider that a hobby."
+      tipo: "Statement Hook (Authentic)"
+      triggers: ["Authenticity", "Contradiction to Lifestyle Content"]
+      formula: "I [anti-lifestyle statement]. I have no [expected thing]."
+
+    - id: "AH_IG_015"
+      hook: "The most miserable place in business is $1-3 million. It's the swamp."
+      tipo: "Statement Hook (Insight)"
+      triggers: ["Insight", "Metaphor", "Problem Recognition"]
+      formula: "The most [emotion] place in [domain] is [specific range]. It's [metaphor]."
+      numeros: ["$1-3 million"]
+
+    - id: "AH_IG_016"
+      hook: "If I were a single guy and I wasn't married to a woman who loves nice things, I would have a blacked-out Dodge Caravan."
+      tipo: "Conditional Hook (Humor)"
+      triggers: ["Authenticity", "Humor", "Anti-status"]
+      formula: "If I were [situation], I would [unexpected choice]"
+
+    - id: "AH_IG_017"
+      hook: "I just cracked one day and I was like 'F&ck happiness.'"
+      tipo: "Narrative Hook (Vulnerability)"
+      triggers: ["Vulnerability", "Pattern Interrupt", "Curiosity Gap"]
+      formula: "I just [breaking point] and was like [controversial statement]"
+
+    - id: "AH_IG_018"
+      hook: "What are we going to do about Sarah? We've put a lot of time into Sarah. I think she's trying. It's been three quarters in a row. Get f*cking rid of Sarah, we know she sucks."
+      tipo: "Narrative Hook (Dialogue)"
+      triggers: ["Story", "Conflict", "Business Reality"]
+      formula: "[Common business dialogue] + [harsh conclusion]"
+      numeros: ["three quarters"]
+
+    - id: "AH_IG_019"
+      hook: "My first nine businesses didn't really amount to anything. Nine."
+      tipo: "Statement Hook (Vulnerability)"
+      triggers: ["Vulnerability", "Specificity", "Hope"]
+      formula: "My first [large number] [attempts] didn't [succeed]. [Number repeat for emphasis]."
+      numeros: ["9"]
+
+    - id: "AH_IG_020"
+      hook: "He was like the only thing you can do is win so big that all of them constantly compare themselves to you and then you forget they exist"
+      tipo: "Narrative Hook (Quote)"
+      triggers: ["Wisdom", "Competition", "Aspiration"]
+      formula: "He said the only thing you can do is [extreme action] so that [consequence]"
+
+    - id: "AH_IG_021"
+      hook: "If you're working all the time and your business isn't growing, you're working on the wrong sh*t."
+      tipo: "Conditional Hook (Diagnosis)"
+      triggers: ["Problem Diagnosis", "Pattern Interrupt"]
+      formula: "If you're [action] and [no result], you're [diagnosis]"
+
+    - id: "AH_IG_022"
+      hook: "When I was in a fraternity, I found out that like clockwork, every single pledge class revolts."
+      tipo: "Narrative Hook (Pattern)"
+      triggers: ["Story", "Pattern", "Curiosity Gap"]
+      formula: "When I was [context], I found out that [universal pattern]"
+
+    - id: "AH_IG_023"
+      hook: "People want you to lose because it helps them justify the risks that they chose not to take."
+      tipo: "Statement Hook (Insight)"
+      triggers: ["Insight", "Social Dynamics", "Motivation"]
+      formula: "People want you to [fail] because it [validates their choice]"
+
+    - id: "AH_IG_024"
+      hook: "When I was 18 years old, I started working for a fur coat dealer. One day I was in the back and this old lady comes in and she was piss angry."
+      tipo: "Narrative Hook (Origin)"
+      triggers: ["Story", "Specificity", "Curiosity Gap"]
+      formula: "When I was [age], I [context]. One day [inciting incident]."
+      numeros: ["18"]
+
+    - id: "AH_IG_025"
+      hook: "America was built on the backs of men who smoked cigarettes drove without seatbelts and ate bacon. If you missed your biohacking routine this morning, you're going to be okay."
+      tipo: "Statement Hook (Perspective)"
+      triggers: ["Perspective", "Humor", "Anti-perfectionism"]
+      formula: "[Historical perspective] + If you [missed perfect routine], you're okay."
+
+    - id: "AH_IG_026"
+      hook: "List all the things you aren't willing to give up for the dreams that you have and that's what the person who will beat you is willing to give up."
+      tipo: "Command Hook (Challenge)"
+      triggers: ["Challenge", "Self-assessment", "Competition"]
+      formula: "List [your limitations] and that's what [your competitor is willing to do]"
+
+    - id: "AH_IG_027"
+      hook: "If you can be in a bad mood for no reason you might as well be in a good mood for no reason."
+      tipo: "Conditional Hook (Insight)"
+      triggers: ["Insight", "Perspective Shift"]
+      formula: "If you can [negative thing] for no reason, you might as well [positive thing] for no reason"
+
+    - id: "AH_IG_028"
+      hook: "If you were trying to get in shape, you don't win at getting in shape. The point is staying in shape for the rest of your life."
+      tipo: "Conditional Hook (Reframe)"
+      triggers: ["Reframe", "Long-term Thinking"]
+      formula: "If you're trying to [goal], you don't win at [goal]. The point is [sustained version]."
+
+    - id: "AH_IG_029"
+      hook: "I did a f*ck load of shit I hate and I did it for a very long period of time."
+      tipo: "Statement Hook (Harsh Truth)"
+      triggers: ["Authenticity", "Work Ethic", "Reality Check"]
+      formula: "I did [unpleasant thing] for [long time]"
+
+    - id: "AH_IG_030"
+      hook: "$6 dollars for 100 grams of protein that tastes delicious with zero prep."
+      tipo: "Statement Hook (Value)"
+      triggers: ["Specificity", "Value", "Convenience"]
+      formula: "[$X] for [specific benefit] with [convenience bonus]"
+      numeros: ["$6", "100 grams"]
+
+    - id: "AH_IG_031"
+      hook: "There was a guy in my fraternity he had a terrible reputation for paying people."
+      tipo: "Narrative Hook (Character)"
+      triggers: ["Story", "Character", "Curiosity Gap"]
+      formula: "There was [person] who had [characteristic] for [behavior]"
+
+    - id: "AH_IG_032"
+      hook: "The more expensive it is, the easier it is to sell because you're dealing with better people."
+      tipo: "Statement Hook (Counterintuitive)"
+      triggers: ["Counterintuitive", "Business Insight"]
+      formula: "The more [unexpected variable], the [easier/better] because [reason]"
+
+    - id: "AH_IG_033"
+      hook: "Entrepreneurship f&cking sucks most of the time."
+      tipo: "Statement Hook (Raw Truth)"
+      triggers: ["Authenticity", "Pattern Interrupt", "Reality Check"]
+      formula: "[Popular aspiration] sucks most of the time."
+
+  instagram_leila:
+    - id: "AH_IGL_001"
+      hook: "The most successful people I've met in life are willing to experience a wider range of emotions than those who are not"
+      tipo: "Statement Hook (Insight)"
+      triggers: ["Insight", "Emotional Intelligence"]
+      formula: "The most successful people [characteristic] vs those who [don't]"
+
+    - id: "AH_IGL_002"
+      hook: "If you act depressed you will feel more depressed."
+      tipo: "Conditional Hook (Warning)"
+      triggers: ["Psychology", "Warning", "Self-awareness"]
+      formula: "If you act [emotion], you will feel more [emotion]"
+
+    - id: "AH_IGL_003"
+      hook: "The sixth time I was arrested, they took me back to my parents' house."
+      tipo: "Narrative Hook (Shock)"
+      triggers: ["Shock", "Vulnerability", "Curiosity Gap"]
+      formula: "The [ordinal number] time I [shocking event], [consequence]"
+      numeros: ["6"]
+
+    - id: "AH_IGL_004"
+      hook: "F&ck it, every single person in marketing and sales, I want you to write 4 ads."
+      tipo: "Command Hook (Challenge)"
+      triggers: ["Challenge", "Specificity", "Energy"]
+      formula: "F&ck it, every [person in role], I want you to [specific action]"
+      numeros: ["4"]
+
+    - id: "AH_IGL_005"
+      hook: "The best leaders are almost chameleons."
+      tipo: "Statement Hook (Insight)"
+      triggers: ["Insight", "Leadership", "Metaphor"]
+      formula: "The best [role] are almost [metaphor]"
+
+    - id: "AH_IGL_006"
+      hook: "You fight. You f&ck. You forgive."
+      tipo: "Statement Hook (Rhythm)"
+      triggers: ["Rhythm", "Relationship", "Raw Truth"]
+      formula: "You [action]. You [action]. You [action]."
+
+    - id: "AH_IGL_007"
+      hook: "If you're trying to figure out this year, how am I going to make more money? Gun to the head, if I had to make $2,000,000 this year, what would I do?"
+      tipo: "Conditional Hook (Thought Experiment)"
+      triggers: ["Thought Experiment", "Urgency", "Specificity"]
+      formula: "If you're trying to [goal], gun to the head, if I had to [specific version]..."
+      numeros: ["$2,000,000"]
+
+    - id: "AH_IGL_008"
+      hook: "We are so good now at communicating."
+      tipo: "Statement Hook (Contradiction Setup)"
+      triggers: ["Irony Setup", "Curiosity Gap"]
+      formula: "We are so good now at [thing we're actually bad at]"
+
+    - id: "AH_IGL_009"
+      hook: "Imagine if you used your spare time to build a life you love rather than escape from your current one."
+      tipo: "Conditional Hook (Reframe)"
+      triggers: ["Reframe", "Aspiration", "Challenge"]
+      formula: "Imagine if you used [resource] to [positive] rather than [negative]"
+
+  email:
+    book_launch:
+      - id: "AH_EM_001"
+        hook: "The final top ten leaderboard (for affiliates only)"
+        tipo: "Statement Hook (Exclusivity)"
+        triggers: ["Exclusivity", "Competition", "FOMO"]
+        formula: "The [final/ultimate] [ranking] (for [exclusive group] only)"
+
+      - id: "AH_EM_002"
+        hook: "SHHHHH It's a SURPRISE!!"
+        tipo: "Exclamation Hook"
+        triggers: ["Secrecy", "Excitement", "Curiosity Gap"]
+        formula: "[Secrecy word] It's a [type of thing]!!"
+
+      - id: "AH_EM_003"
+        hook: "Unlocked: New ads before they go live (for Affiliates only)"
+        tipo: "Statement Hook (Early Access)"
+        triggers: ["Exclusivity", "Early Access", "Value"]
+        formula: "Unlocked: [value] before [public access] (for [group] only)"
+
+      - id: "AH_EM_004"
+        hook: "Your first goodie (for affiliates only)"
+        tipo: "Statement Hook (Gift)"
+        triggers: ["Gift", "Exclusivity", "Curiosity Gap"]
+        formula: "Your first [gift word] (for [group] only)"
+
+      - id: "AH_EM_005"
+        hook: "Btw... (I have a favor to ask)"
+        tipo: "Statement Hook (Personal)"
+        triggers: ["Personal", "Reciprocity Setup", "Curiosity Gap"]
+        formula: "Btw... (I have [request])"
+
+      - id: "AH_EM_006"
+        hook: "I've got a new book"
+        tipo: "Statement Hook (Announcement)"
+        triggers: ["Direct", "Announcement"]
+        formula: "I've got [new thing]"
+
+      - id: "AH_EM_007"
+        hook: "Valuable Video You May Enjoy"
+        tipo: "Statement Hook (Value)"
+        triggers: ["Value", "Soft Sell"]
+        formula: "Valuable [content type] You May Enjoy"
+
+      - id: "AH_EM_008"
+        hook: "Hop on"
+        tipo: "Command Hook (Short)"
+        triggers: ["Urgency", "Action", "Informal"]
+        formula: "[Short action phrase]"
+
+      - id: "AH_EM_009"
+        hook: "Revealed: My Whisper-Tease-Shout Method"
+        tipo: "Statement Hook (Method Reveal)"
+        triggers: ["Curiosity Gap", "Proprietary Method"]
+        formula: "Revealed: My [Unique Method Name]"
+
+      - id: "AH_EM_010"
+        hook: "1 week out (warning inside)"
+        tipo: "Statement Hook (Countdown)"
+        triggers: ["Urgency", "Countdown", "Warning"]
+        formula: "[Time] out (warning inside)"
+        numeros: ["1 week"]
+
+    scaling_workshop:
+      - id: "AH_EM_011"
+        hook: "I want to give you this from the ACQ vault..."
+        tipo: "Statement Hook (Exclusive Content)"
+        triggers: ["Exclusivity", "Value", "Gift"]
+        formula: "I want to give you this from [exclusive source]..."
+
+      - id: "AH_EM_012"
+        hook: "Business Scaling Playlist (free gift)"
+        tipo: "Statement Hook (Gift)"
+        triggers: ["Value", "Gift", "Specificity"]
+        formula: "[Valuable thing] (free gift)"
+
+      - id: "AH_EM_013"
+        hook: "Only open this if you have a business and want to scale"
+        tipo: "Command Hook (Qualifier)"
+        triggers: ["Exclusivity", "Self-selection", "Curiosity Gap"]
+        formula: "Only open this if you [qualifier]"
+
+      - id: "AH_EM_014"
+        hook: "Your new testimonial SOP (grab with a click)"
+        tipo: "Statement Hook (Resource)"
+        triggers: ["Value", "Ease", "Specificity"]
+        formula: "Your new [valuable asset] (grab with a click)"
+
+      - id: "AH_EM_015"
+        hook: "Here's a winning ad you can model"
+        tipo: "Statement Hook (Resource)"
+        triggers: ["Value", "Model", "Actionable"]
+        formula: "Here's [proven asset] you can [action]"
+
+      - id: "AH_EM_016"
+        hook: "Because you (thing you just did)"
+        tipo: "Statement Hook (Personalized)"
+        triggers: ["Personalization", "Reciprocity"]
+        formula: "Because you [their recent action]"
+
+      - id: "AH_EM_017"
+        hook: "We made a boo boo"
+        tipo: "Statement Hook (Apology)"
+        triggers: ["Curiosity Gap", "Honesty", "Disarm"]
+        formula: "We made [casual mistake admission]"
+
+      - id: "AH_EM_018"
+        hook: "Thank you (here's a private invite)"
+        tipo: "Statement Hook (Gratitude + Exclusive)"
+        triggers: ["Gratitude", "Exclusivity", "Reciprocity"]
+        formula: "Thank you (here's [exclusive offer])"
+
+  twitter_outliers:
+    - id: "AH_TW_001"
+      hook: "Winners define themselves by what they made happen. Victims define themselves by what's happened to them. Your call."
+      tipo: "Statement Hook (Dichotomy)"
+      triggers: ["Identity", "Choice", "Challenge"]
+      formula: "[Winners] define by [action]. [Victims] define by [passivity]. Your call."
+
+    - id: "AH_TW_002"
+      hook: "Everyone wants the view from the top, but no one wants the climb."
+      tipo: "Statement Hook (Insight)"
+      triggers: ["Reality Check", "Work Ethic"]
+      formula: "Everyone wants [result], but no one wants [process]"
+
+    - id: "AH_TW_003"
+      hook: "Losers become winners by trying again."
+      tipo: "Statement Hook (Simple Truth)"
+      triggers: ["Hope", "Persistence"]
+      formula: "[Losers] become [winners] by [simple action]"
+
+    - id: "AH_TW_004"
+      hook: "At first, you avoid hard fights. Then, you get used to hard fights. Finally, you start looking for hard fights. Warriors need wars."
+      tipo: "Statement Hook (Progression)"
+      triggers: ["Growth", "Identity", "Challenge"]
+      formula: "At first, [stage 1]. Then, [stage 2]. Finally, [stage 3]. [Identity statement]."
+
+    - id: "AH_TW_005"
+      hook: "You just have to be willing to look like an idiot while you figure it out. Because once you figure it out, everyone else looks like an idiot for doubting you."
+      tipo: "Statement Hook (Permission)"
+      triggers: ["Permission", "Vindication", "Growth"]
+      formula: "You have to be willing to [embarrassment] while [learning]. Because [vindication]."
+
+    - id: "AH_TW_006"
+      hook: "Either they make your life better or they don't get to be in it. No exceptions."
+      tipo: "Statement Hook (Boundary)"
+      triggers: ["Boundary", "Standards", "Clarity"]
+      formula: "Either they [positive] or they don't get to [be in your life]. No exceptions."
+
+    - id: "AH_TW_007"
+      hook: "You either grow into your potential or you keep living the same six months over and over again. The difference is how many hard conversations you're willing to have and how fast you have them once you realize you need to."
+      tipo: "Statement Hook (Choice)"
+      triggers: ["Growth", "Challenge", "Urgency"]
+      formula: "You either [grow] or [stagnate]. The difference is [specific behavior]."
+      numeros: ["six months"]
+
+    - id: "AH_TW_008"
+      hook: "Youth. Free time. Money. Pick two."
+      tipo: "Statement Hook (Trade-off)"
+      triggers: ["Reality", "Trade-offs", "Wisdom"]
+      formula: "[Desirable 1]. [Desirable 2]. [Desirable 3]. Pick [number]."
+      numeros: ["2"]
+
+    - id: "AH_TW_009"
+      hook: "The sooner you accept that everything is your fault, the sooner you can do something about it."
+      tipo: "Statement Hook (Extreme Ownership)"
+      triggers: ["Ownership", "Empowerment", "Tough Love"]
+      formula: "The sooner you accept [extreme ownership], the sooner you can [benefit]"
+
+    - id: "AH_TW_010"
+      hook: "Cheat codes at 34 I wish I knew at 24: Anything worth doing takes a lot longer than you think. And until you work for 1000 hours on one project, you don't begin to know how much work it takes to make something great. And, as a result, how few things can you really make?"
+      tipo: "Statement Hook (Wisdom)"
+      triggers: ["Wisdom", "Patience", "Focus"]
+      formula: "Cheat codes at [age] I wish I knew at [younger age]: [insight]"
+      numeros: ["34", "24", "1000 hours"]
+
+    - id: "AH_TW_011"
+      hook: "If you're poor, it makes sense to buy a suit and pretend you have money. If you're rich, it makes sense to hide your wealth and look like an everyday guy. 'When you're strong, appear weak. When you're weak, appear strong.' - Sun Tzu. There's 0 advantage to being accurately judged."
+      tipo: "Statement Hook (Strategy)"
+      triggers: ["Strategy", "Perception", "Wisdom"]
+      formula: "If [state A], [strategy A]. If [state B], [strategy B]. [Quote]. [Insight]."
+
+# =============================================================================
+# OGILVY 40 HOOKS
+# =============================================================================
+ogilvy_40_hooks:
+  metadata:
+    source: "40 Melhores Hooks de David Ogilvy - SwipeFile Completo"
+    analysis_structure: "Texto, Tipo, Triggers, Numeros, Formula, Resultado, Como Adaptar"
+
+  hooks:
+    - id: "OG_001"
+      texto: "At 60 miles an hour the loudest noise in this new Rolls-Royce comes from the electric clock"
+      tipo: "Statement/Proof"
+      triggers: ["Especificidade", "Sinal de Qualidade", "Curiosidade"]
+      numeros: "60 miles an hour"
+      formula: "[Numero especifico] + [Condicao] + [Prova extrema de qualidade]"
+      resultado: "Aumento de 50% nas vendas em 1958 com orcamento de apenas $50,000"
+      como_adaptar: "At full capacity, the only sound in our data center is the cooling system"
+      melhor_para: ["Produtos premium", "posicionamento de luxo", "superioridade tecnica"]
+
+    - id: "OG_002"
+      texto: "The man in the Hathaway shirt"
+      tipo: "Statement/Character"
+      triggers: ["Misterio", "Identidade", "Story Appeal"]
+      numeros: null
+      formula: "[O homem/mulher que] + [Caracteristica distintiva]"
+      resultado: "+160% vendas, estoque esgotado em 1 semana, orcamento $30,000"
+      como_adaptar: "The developer who ships on Friday"
+      melhor_para: ["Criacao de personagem de marca", "lifestyle branding"]
+
+    - id: "OG_003"
+      texto: "How to win friends and influence people"
+      tipo: "How-to/Promise"
+      triggers: ["Auto-aperfeicoamento", "Poder Social"]
+      numeros: null
+      formula: "[Como] + [Resultado desejado 1] + [e] + [Resultado desejado 2]"
+      resultado: "Titulo best-seller por decadas"
+      como_adaptar: "How to build products and keep users"
+      melhor_para: ["Conteudo educacional", "desenvolvimento pessoal"]
+
+    - id: "OG_004"
+      texto: "They laughed when I sat down at the piano but when I started to play!"
+      tipo: "Story/Transformation"
+      triggers: ["Underdog", "Vindicacao", "Reviravolta"]
+      numeros: null
+      formula: "[Eles riram quando] + [acao inicial] + [mas quando] + [reviravolta]"
+      resultado: "Um dos headlines mais copiados da historia"
+      como_adaptar: "They smirked when I opened my laptop, but when I showed the revenue dashboard..."
+      melhor_para: ["Produtos de transformacao", "educacao", "superacao"]
+
+    - id: "OG_005"
+      texto: "Only Dove is one-quarter moisturizing cream"
+      tipo: "Statement/Unique Claim"
+      triggers: ["Exclusividade", "Beneficio Tangivel"]
+      numeros: "one-quarter"
+      formula: "[Apenas X] + [e] + [Proporcao especifica] + [Ingrediente diferenciador]"
+      resultado: "Vendas de $2B para $4B em 3 anos"
+      como_adaptar: "Our AI uses 40% real human feedback in every decision"
+      melhor_para: ["Diferenciacao por ingrediente/componente"]
+
+    - id: "OG_006"
+      texto: "How to create advertising that sells"
+      tipo: "How-to/Direct"
+      triggers: ["Conhecimento Pratico", "ROI"]
+      numeros: null
+      formula: "[Como criar] + [X que] + [produz resultado mensuravel]"
+      resultado: "Livro referencia no mercado"
+      como_adaptar: "How to write code that actually ships"
+      melhor_para: ["B2B", "conteudo educacional", "consultoria"]
+
+    - id: "OG_007"
+      texto: "The headline is 80 percent of the advertisement"
+      tipo: "Statement/Statistic"
+      triggers: ["Autoridade", "Priorizacao"]
+      numeros: "80 percent"
+      formula: "[Elemento X] + [e] + [Percentual] + [do resultado total]"
+      resultado: "Citado em milhares de livros de marketing"
+      como_adaptar: "The first 3 seconds are 90% of your video's success"
+      melhor_para: ["Conteudo educacional", "estabelecer prioridades"]
+
+    - id: "OG_008"
+      texto: "Nobody ever reads anything"
+      tipo: "Statement/Contrarian"
+      triggers: ["Pattern Interrupt", "Verdade Incomoda"]
+      numeros: null
+      formula: "[Ninguem nunca] + [Acao esperada]"
+      resultado: "Forca o leitor a provar o contrario"
+      como_adaptar: "Nobody actually uses all their SaaS features"
+      melhor_para: ["Chamar atencao", "quebrar padroes"]
+
+    - id: "OG_009"
+      texto: "Do you make these mistakes in English?"
+      tipo: "Question/Self-Assessment"
+      triggers: ["Medo de Erro", "Auto-aperfeicoamento"]
+      numeros: null
+      formula: "[Voce comete] + [estes erros] + [em] + [Area]?"
+      resultado: "Um dos anuncios mais bem-sucedidos por correspondencia"
+      como_adaptar: "Do you make these mistakes in your code reviews?"
+      melhor_para: ["Conteudo educacional", "correcao de problemas"]
+
+    - id: "OG_010"
+      texto: "The two most powerful words you can use in a headline"
+      tipo: "Statement/Secret"
+      triggers: ["Curiosidade", "Poder", "Simplicidade"]
+      numeros: "two"
+      formula: "[Os X] + [mais poderosos] + [elemento] + [contexto de uso]"
+      resultado: "Alta taxa de cliques em conteudo"
+      como_adaptar: "The 3 metrics that actually matter to investors"
+      melhor_para: ["Conteudo viral", "listicles", "educacional"]
+
+    - id: "OG_011"
+      texto: "When you're only No. 2, you try harder"
+      tipo: "Statement/Position"
+      triggers: ["Underdog", "Esforco", "Honestidade"]
+      numeros: "No. 2"
+      formula: "[Quando voce e] + [posicao inferior] + [voce] + [vantagem compensatoria]"
+      resultado: "Avis passou de prejuizo para lucro"
+      como_adaptar: "Because we're bootstrapped, every customer actually matters"
+      melhor_para: ["Challenger brands", "diferenciacao por esforco"]
+
+    - id: "OG_012"
+      texto: "I don't know who you are. I don't know your work. I don't know your company's product"
+      tipo: "Statement/Challenge"
+      triggers: ["Confrontacao", "Reality Check"]
+      numeros: null
+      formula: "[Eu nao sei] + [Lista de desconhecimentos] + [Implicacao]"
+      resultado: "Anuncio B2B mais famoso"
+      como_adaptar: "I don't know your stack. I don't know your team size. I don't know your burn rate."
+      melhor_para: ["B2B", "vendas complexas", "awareness"]
+
+    - id: "OG_013"
+      texto: "If you're going to San Francisco"
+      tipo: "Conditional/Location"
+      triggers: ["Relevancia", "Timing", "Localizacao"]
+      numeros: null
+      formula: "[Se voce vai] + [para] + [Local especifico]"
+      resultado: "Conexao cultural instantanea"
+      como_adaptar: "If you're building with AI in 2025"
+      melhor_para: ["Marketing local", "eventos", "turismo"]
+
+    - id: "OG_014"
+      texto: "This morning I wrote a $1,000,000 check"
+      tipo: "Statement/Achievement"
+      triggers: ["Big Numbers", "Historia Pessoal", "Proof"]
+      numeros: "$1,000,000"
+      formula: "[Momento especifico] + [Eu] + [Acao impressionante com numero grande]"
+      resultado: "Alta memorabilidade"
+      como_adaptar: "Yesterday we processed 10 million transactions"
+      melhor_para: ["Testimonials", "case studies", "authority building"]
+
+    - id: "OG_015"
+      texto: "Why some people almost always make money in the stock market"
+      tipo: "Question/Secret Pattern"
+      triggers: ["Curiosidade", "Padrao de Sucesso", "Exclusividade"]
+      numeros: null
+      formula: "[Por que algumas pessoas] + [quase sempre] + [conseguem resultado desejado]"
+      resultado: "Template classico de vendas"
+      como_adaptar: "Why some startups always close their funding rounds"
+      melhor_para: ["Investimentos", "educacao financeira", "segredos"]
+
+    - id: "OG_016"
+      texto: "The secret of making people like you"
+      tipo: "Statement/Secret"
+      triggers: ["Aprovacao Social", "Conhecimento Oculto"]
+      numeros: null
+      formula: "[O segredo de] + [fazer] + [resultado social desejado]"
+      resultado: "Evergreen em conteudo social"
+      como_adaptar: "The secret to getting replies from VCs"
+      melhor_para: ["Desenvolvimento pessoal", "networking"]
+
+    - id: "OG_017"
+      texto: "Before it's too late!"
+      tipo: "Warning/Urgency"
+      triggers: ["Escassez", "Medo de Perda", "Urgencia"]
+      numeros: null
+      formula: "[Antes que] + [consequencia negativa irreversivel]"
+      resultado: "Conversao imediata alta"
+      como_adaptar: "Before the API changes break your app"
+      melhor_para: ["Ofertas limitadas", "lancamentos"]
+
+    - id: "OG_018"
+      texto: "What everybody ought to know about this stock and bond business"
+      tipo: "Statement/Universal Knowledge"
+      triggers: ["FOMO", "Conhecimento Essencial"]
+      numeros: null
+      formula: "[O que todos deveriam saber sobre] + [area complexa mas importante]"
+      resultado: "Posiciona como conhecimento fundamental"
+      como_adaptar: "What everybody ought to know about their data privacy"
+      melhor_para: ["Educacao financeira", "conscientizacao"]
+
+    - id: "OG_019"
+      texto: "How a new discovery made a plain girl beautiful"
+      tipo: "Story/Transformation"
+      triggers: ["Descoberta", "Transformacao", "Before/After"]
+      numeros: null
+      formula: "[Como uma nova descoberta] + [causou transformacao dramatica]"
+      resultado: "Classico de vendas por correspondencia"
+      como_adaptar: "How a simple framework made average developers 10x engineers"
+      melhor_para: ["Produtos de beleza", "transformacao", "inovacao"]
+
+    - id: "OG_020"
+      texto: "To men who want to quit work someday"
+      tipo: "Statement/Target Audience"
+      triggers: ["Sonho", "Audiencia Especifica", "Aspiracao"]
+      numeros: null
+      formula: "[Para pessoas que] + [querem] + [resultado aspiracional]"
+      resultado: "Segmentacao precisa aumenta conversao"
+      como_adaptar: "To founders who want to sell their company someday"
+      melhor_para: ["Investimentos", "aposentadoria", "liberdade financeira"]
+
+    - id: "OG_021"
+      texto: "The most expensive car in the world"
+      tipo: "Statement/Superlative"
+      triggers: ["Status", "Exclusividade", "Extremo"]
+      numeros: null
+      formula: "[O mais] + [adjetivo extremo] + [categoria] + [do mundo]"
+      resultado: "Posicionamento premium instantaneo"
+      como_adaptar: "The most overengineered keyboard ever built"
+      melhor_para: ["Luxo", "premium", "posicionamento"]
+
+    - id: "OG_022"
+      texto: "How to get a better job"
+      tipo: "How-to/Direct Promise"
+      triggers: ["Avanco na Carreira", "Pratico"]
+      numeros: null
+      formula: "[Como conseguir] + [melhoria direta e desejada]"
+      resultado: "Direto ao ponto, alta relevancia"
+      como_adaptar: "How to get into Y Combinator"
+      melhor_para: ["Carreira", "desenvolvimento profissional"]
+
+    - id: "OG_023"
+      texto: "Can you solve this problem?"
+      tipo: "Question/Challenge"
+      triggers: ["Teste de Competencia", "Engajamento", "Desafio"]
+      numeros: null
+      formula: "[Voce consegue] + [resolver/fazer] + [este desafio]?"
+      resultado: "Alto engajamento, viralidade"
+      como_adaptar: "Can you spot the bug in this code?"
+      melhor_para: ["Conteudo interativo", "puzzles", "demonstracoes"]
+
+    - id: "OG_024"
+      texto: "You can laugh at money worries if you follow this simple plan"
+      tipo: "Conditional/Promise"
+      triggers: ["Liberdade Financeira", "Simplicidade"]
+      numeros: null
+      formula: "[Voce pode] + [resultado emocional positivo] + [se seguir] + [plano simples]"
+      resultado: "Promessa emocional forte"
+      como_adaptar: "You can ignore algorithm changes if you build real community"
+      melhor_para: ["Planejamento financeiro", "investimentos"]
+
+    - id: "OG_025"
+      texto: "Announcing a new kind of car for people who thought they'd seen everything"
+      tipo: "Announcement/Innovation"
+      triggers: ["Novidade", "Audiencia Sofisticada"]
+      numeros: null
+      formula: "[Anunciando] + [nova categoria] + [para pessoas experientes/ceticas]"
+      resultado: "Supera ceticismo do mercado"
+      como_adaptar: "Introducing AI for developers who hate AI tools"
+      melhor_para: ["Lancamentos", "inovacoes", "disrupcao"]
+
+    - id: "OG_026"
+      texto: "It took me 15 years to discover these trading secrets"
+      tipo: "Statement/Time Investment"
+      triggers: ["Conhecimento Dificil", "Atalhos"]
+      numeros: "15 years"
+      formula: "[Levou] + [X tempo longo] + [para descobrir] + [segredos valiosos]"
+      resultado: "Valoriza o conhecimento compartilhado"
+      como_adaptar: "It took me 10 startups to learn these fundraising truths"
+      melhor_para: ["Cursos", "mentorias", "conhecimento especializado"]
+
+    - id: "OG_027"
+      texto: "Don't be vague. Ask for Haig"
+      tipo: "Command/Rhyme"
+      triggers: ["Clareza", "Memorabilidade", "Acao"]
+      numeros: null
+      formula: "[Nao seja X] + [Faca Y] + [Rima opcional]"
+      resultado: "Alta memorabilidade por decadas"
+      como_adaptar: "Don't debug. Use our log."
+      melhor_para: ["Branding", "slogans", "call-to-action"]
+
+    - id: "OG_028"
+      texto: "If you are a careful driver you can save money on car insurance"
+      tipo: "Conditional/Benefit"
+      triggers: ["Auto-selecao", "Recompensa"]
+      numeros: null
+      formula: "[Se voce e] + [qualidade desejavel] + [voce pode] + [beneficio]"
+      resultado: "Qualifica leads automaticamente"
+      como_adaptar: "If you ship weekly, you can use our CI/CD free"
+      melhor_para: ["Seguros", "servicos", "segmentacao"]
+
+    - id: "OG_029"
+      texto: "Does she or doesn't she?"
+      tipo: "Question/Mystery"
+      triggers: ["Curiosidade", "Intriga Social", "Ambiguidade"]
+      numeros: null
+      formula: "[Ela/Ele faz ou nao faz]? + [Ambiguidade intencional]"
+      resultado: "Campanha cultural iconica"
+      como_adaptar: "Do they code or do they no-code?"
+      melhor_para: ["Produtos de beleza", "misterio", "buzz"]
+
+    - id: "OG_030"
+      texto: "The cure for the common breakfast"
+      tipo: "Statement/Wordplay"
+      triggers: ["Pattern Interrupt", "Referencia Familiar"]
+      numeros: null
+      formula: "[A cura para] + [twist em expressao conhecida]"
+      resultado: "Memoravel por subverter cliche"
+      como_adaptar: "The cure for the common meeting"
+      melhor_para: ["Produtos cotidianos", "reposicionamento"]
+
+    - id: "OG_031"
+      texto: "How to make money with simple ideas"
+      tipo: "How-to/Paradox"
+      triggers: ["Simplicidade", "Ganho Financeiro"]
+      numeros: null
+      formula: "[Como fazer dinheiro com] + [paradoxo simples/complexo]"
+      resultado: "Apelo universal"
+      como_adaptar: "How to raise millions with a simple deck"
+      melhor_para: ["Empreendedorismo", "side hustles"]
+
+    - id: "OG_032"
+      texto: "When doctors feel rotten, this is what they do"
+      tipo: "Statement/Authority"
+      triggers: ["Comportamento de Expert", "Saude"]
+      numeros: null
+      formula: "[Quando especialistas] + [situacao problema] + [o que eles fazem]"
+      resultado: "Credibilidade por associacao"
+      como_adaptar: "When top developers burn out, this is what they build"
+      melhor_para: ["Saude", "produtos profissionais"]
+
+    - id: "OG_033"
+      texto: "The lazy man's way to riches"
+      tipo: "Statement/Paradox"
+      triggers: ["Facilidade", "Riqueza", "Paradoxo"]
+      numeros: null
+      formula: "[O jeito do] + [caracteristica negativa] + [para] + [resultado desejado]"
+      resultado: "Best-seller por decadas"
+      como_adaptar: "The introvert's way to networking"
+      melhor_para: ["Sistemas", "automacao", "passive income"]
+
+    - id: "OG_034"
+      texto: "Suddenly everyone will want your recipe"
+      tipo: "Statement/Social Proof Future"
+      triggers: ["Popularidade", "Transformacao Social"]
+      numeros: null
+      formula: "[De repente todos vao] + [querer] + [seu X]"
+      resultado: "Cria desejo por antecipacao"
+      como_adaptar: "Suddenly everyone will want your Notion template"
+      melhor_para: ["Skills", "conhecimento", "social proof"]
+
+    - id: "OG_035"
+      texto: "Research shows that 9 out of 10 women prefer"
+      tipo: "Statement/Statistics"
+      triggers: ["Prova Social", "Autoridade", "Estatistica"]
+      numeros: "9 out of 10"
+      formula: "[Pesquisa mostra que] + [X de Y] + [grupo] + [preferencia/comportamento]"
+      resultado: "Credibilidade cientifica"
+      como_adaptar: "Data shows that 8 out of 10 unicorns use our stack"
+      melhor_para: ["Produtos de consumo", "preferencias"]
+
+    - id: "OG_036"
+      texto: "You don't have to be rich to retire on a guaranteed income for life"
+      tipo: "Statement/Myth Buster"
+      triggers: ["Acessibilidade", "Seguranca"]
+      numeros: null
+      formula: "[Voce nao precisa ser] + [barreira comum] + [para conseguir] + [resultado desejado]"
+      resultado: "Remove objecoes principais"
+      como_adaptar: "You don't need a CS degree to work at FAANG"
+      melhor_para: ["Servicos financeiros", "democratizacao"]
+
+    - id: "OG_037"
+      texto: "Is the life of a child worth $1 to you?"
+      tipo: "Question/Moral Challenge"
+      triggers: ["Culpa", "Investimento Minimo", "Moral"]
+      numeros: "$1"
+      formula: "[Vale a pena] + [algo valioso] + [por apenas] + [custo minimo]?"
+      resultado: "Caridade, alta conversao"
+      como_adaptar: "Is your data worth $5/month to protect?"
+      melhor_para: ["Causas sociais", "caridade", "responsabilidade"]
+
+    - id: "OG_038"
+      texto: "The more you tell, the more you sell"
+      tipo: "Statement/Principle"
+      triggers: ["Contra-intuitivo", "Autoridade"]
+      numeros: null
+      formula: "[Quanto mais] + [acao] + [mais] + [resultado]"
+      resultado: "Principio validado de copy longa"
+      como_adaptar: "The more you document, the more you scale"
+      melhor_para: ["Vendas complexas", "educacao de mercado"]
+
+    - id: "OG_039"
+      texto: "On the average, five times as many people read the headline"
+      tipo: "Statement/Statistic"
+      triggers: ["Importancia", "Proporcao"]
+      numeros: "five times"
+      formula: "[Em media] + [X vezes mais pessoas] + [acao] + [comparacao]"
+      resultado: "Fundamental no copywriting"
+      como_adaptar: "On average, 10x more people watch the first 3 seconds"
+      melhor_para: ["Educacao em marketing", "priorizacao"]
+
+    - id: "OG_040"
+      texto: "Good products can be sold by honest advertising"
+      tipo: "Statement/Philosophy"
+      triggers: ["Integridade", "Qualidade"]
+      numeros: null
+      formula: "[Bons X] + [podem ser Y] + [por metodo honesto]"
+      resultado: "Filosofia duradoura de marca"
+      como_adaptar: "Great products grow through authentic communities"
+      melhor_para: ["Brand building", "posicionamento etico"]
+
+  ai_usage_instructions:
+    como_selecionar:
+      - "Analise o estagio de consciencia do publico"
+      - "Identifique o objetivo (curiosidade, autoridade, urgencia, historia)"
+      - "Considere o tipo de produto (luxo, mass market, B2B, transformacao)"
+      - "Valide com resultados historicos similares"
+
+    matriz_decisao:
+      awareness:
+        use: ["OG_008", "OG_023", "OG_029"]
+        avoid: ["OG_017", "OG_037"]
+      consideracao:
+        use: ["OG_001", "OG_005", "OG_032"]
+        avoid: ["OG_024", "OG_033"]
+      conversao:
+        use: ["OG_017", "OG_024", "OG_037"]
+        avoid: ["OG_008", "OG_029"]
+      retencao:
+        use: ["OG_040", "OG_011", "OG_028"]
+        avoid: ["OG_017", "OG_025"]
+
+# =============================================================================
+# REMARKETING HOOKS
+# =============================================================================
+remarketing_hooks:
+  metadata:
+    source: "Hooks RMKT.md"
+    note: "Hooks especificos para remarketing/retargeting campaigns"
+
+  ecommerce_retargeting:
+    - id: "RT_001"
+      hook: "Quick reminder about what you get"
+      tipo: "Statement Hook (Reminder)"
+      triggers: ["FOMO", "Especificidade"]
+      numeros: ["12", "1,000+"]
+      formula: "[Quick reminder about what you get with X]"
+
+    - id: "RT_002"
+      hook: "The Implementation System is still there in your cart"
+      tipo: "Statement Hook (Cart Abandonment)"
+      triggers: ["FOMO", "Urgencia implicita"]
+      numeros: ["1,026+"]
+      formula: "[The X is still there in your cart]"
+
+    - id: "RT_003"
+      hook: "Just so you remember what you were looking at"
+      tipo: "Statement Hook (Memory Jog)"
+      triggers: ["Curiosity Gap", "Reminder"]
+      numeros: ["1,000+", "4"]
+      formula: "[Just so you remember what you were looking at]"
+
+    - id: "RT_004"
+      hook: "Worth remembering what the Implementation System includes"
+      tipo: "Statement Hook (Value Reminder)"
+      triggers: ["FOMO", "Especificidade"]
+      numeros: ["$31M"]
+      formula: "[Worth remembering what X includes]"
+
+    - id: "RT_005"
+      hook: "In case you forgot what makes this different"
+      tipo: "Statement Hook (Differentiation)"
+      triggers: ["Curiosity Gap", "Unicidade"]
+      numeros: ["12"]
+      formula: "[In case you forgot what makes this different]"
+
+    - id: "RT_006"
+      hook: "The real value isn't just the 12 playbooks"
+      tipo: "Contradiction Hook"
+      triggers: ["Curiosity Gap", "Revelacao"]
+      numeros: ["12"]
+      formula: "[The real value isn't just X - it's Y]"
+
+    - id: "RT_007"
+      hook: "What you get:"
+      tipo: "Statement Hook (Direct List)"
+      triggers: ["Clareza", "Especificidade"]
+      numeros: ["4", "1,000+"]
+      formula: "[What you get: + list]"
+
+    - id: "RT_008"
+      hook: "Just clarifying what you were looking at"
+      tipo: "Statement Hook (Clarification)"
+      triggers: ["Especificidade", "Social Proof"]
+      numeros: ["12", "$35,000"]
+      formula: "[Just clarifying what you were looking at]"
+
+    - id: "RT_009"
+      hook: "Your benefits with the Implementation System"
+      tipo: "Statement Hook (Benefit Focus)"
+      triggers: ["Identidade", "Solucao"]
+      numeros: ["1,000+", "24/7"]
+      formula: "[Your benefits with X]"
+
+    - id: "RT_010"
+      hook: "Simple reminder:"
+      tipo: "Statement Hook (Metaphor)"
+      triggers: ["Simplicidade", "Clareza"]
+      numeros: ["12"]
+      formula: "[Simple reminder: + metaphor structure]"
+
+  money_models_remarketing:
+    - id: "MM_001"
+      hook: "This Saturday, I'm giving away 4 amazing free bonuses"
+      tipo: "Statement Hook (Bonus Announcement)"
+      triggers: ["FOMO", "Especificidade"]
+      numeros: ["4"]
+      formula: "[This Saturday, I'm giving away X bonuses]"
+
+    - id: "MM_002"
+      hook: "Today is the day."
+      tipo: "Statement Hook (Event Arrival)"
+      triggers: ["Urgencia", "FOMO"]
+      numeros: null
+      formula: "[Today is the day.]"
+
+    - id: "MM_003"
+      hook: "Final hours to join"
+      tipo: "Statement Hook (Deadline)"
+      triggers: ["Urgencia extrema", "FOMO"]
+      numeros: null
+      formula: "[Final hours to X]"
+
+    - id: "MM_004"
+      hook: "This Saturday, I'm announcing something"
+      tipo: "Statement Hook (Mystery Announcement)"
+      triggers: ["Curiosity Gap", "FOMO"]
+      numeros: null
+      formula: "[This Saturday, I'm announcing something that will X]"
+
+    - id: "MM_005"
+      hook: "It's launch day for $100M Money Models!"
+      tipo: "Statement Hook (Celebration)"
+      triggers: ["Entusiasmo", "Urgencia"]
+      numeros: null
+      formula: "[It's launch day for X!]"
+
+    - id: "MM_006"
+      hook: "The 4 free bonuses I'm giving away"
+      tipo: "Statement Hook (Limited Bonus)"
+      triggers: ["FOMO", "Especificidade"]
+      numeros: ["4"]
+      formula: "[The X bonuses I'm giving away... are only available during Y]"
+
+    - id: "MM_007"
+      hook: "What I'm offering during today's"
+      tipo: "Statement Hook (Exclusive Offer)"
+      triggers: ["FOMO", "Exclusividade"]
+      numeros: null
+      formula: "[What I'm offering during today's X has never been available before]"
+
+    - id: "MM_008"
+      hook: "After months of preparation, today is the big reveal"
+      tipo: "Story Hook (Buildup)"
+      triggers: ["Curiosity Gap", "Antecipacao"]
+      numeros: null
+      formula: "[After months of X, today is Y]"
+
+    - id: "MM_009"
+      hook: "You're about to witness something"
+      tipo: "Statement Hook (Historic Event)"
+      triggers: ["FOMO", "Grandiosidade"]
+      numeros: null
+      formula: "[You're about to witness something that's never been done before]"
+
+    - id: "MM_010"
+      hook: "This is your final call."
+      tipo: "Command Hook (Ultimatum)"
+      triggers: ["Urgencia maxima", "FOMO"]
+      numeros: ["4"]
+      formula: "[This is your final call.]"
+
+    - id: "MM_011"
+      hook: "Last chance to become a VIP"
+      tipo: "Statement Hook (Status Deadline)"
+      triggers: ["FOMO", "Status"]
+      numeros: null
+      formula: "[Last chance to become X before Y]"
+
+    - id: "MM_012"
+      hook: "The record breaking $100M Money Models launch"
+      tipo: "Statement Hook (Magnitude)"
+      triggers: ["Social Proof", "FOMO"]
+      numeros: null
+      formula: "[The record breaking X is coming]"
+
+    - id: "MM_013"
+      hook: "In just a few days, everything changes"
+      tipo: "Statement Hook (Transformation Promise)"
+      triggers: ["Curiosity Gap", "Transformacao"]
+      numeros: null
+      formula: "[In just a few days, everything changes]"
+
+    - id: "MM_014"
+      hook: "VIP access to the $100M Money Models launch ends soon"
+      tipo: "Statement Hook (Access Scarcity)"
+      triggers: ["FOMO", "Exclusividade"]
+      numeros: null
+      formula: "[VIP access to X ends soon]"
+
+  skool_trial:
+    - id: "SK_001"
+      hook: "Get the entire $100M Money Models System completely free"
+      tipo: "Statement Hook (Complete Offer)"
+      triggers: ["FOMO", "Value Stack"]
+      numeros: ["90", "$9"]
+      formula: "[Get the entire X completely free]"
+
+    - id: "SK_002"
+      hook: "90 days free on Skool is enough time"
+      tipo: "Statement Hook (Time Sufficiency)"
+      triggers: ["Especificidade", "Possibilidade"]
+      numeros: ["90", "$9"]
+      formula: "[X days is enough time to Y]"
+
+    - id: "SK_003"
+      hook: "You've seen the money models - now learn how"
+      tipo: "Statement Hook (Next Step)"
+      triggers: ["Progressao logica"]
+      numeros: ["90", "$9"]
+      formula: "[You've seen X - now learn how to Y]"
+
+    - id: "SK_004"
+      hook: "$69,955 worth of money model systems, completely free"
+      tipo: "Number Hook (Value Stack)"
+      triggers: ["Especificidade", "Contraste de valor"]
+      numeros: ["$69,955", "$15,999", "$5,999", "$6,499", "$41,458", "90", "$9"]
+      formula: "[$X worth of Y, completely free]"
+
+    - id: "SK_005"
+      hook: "If you're an up-and-coming entrepreneur"
+      tipo: "Statement Hook (Identity)"
+      triggers: ["Identidade", "Empatia"]
+      numeros: ["90", "$9"]
+      formula: "[If you're X, this is your Y]"
+
+    - id: "SK_006"
+      hook: "25% of monetized groups make a sale"
+      tipo: "Number Hook (Statistics)"
+      triggers: ["Social Proof", "Especificidade"]
+      numeros: ["25%", "39%", "90", "$9"]
+      formula: "[X% of Y achieve Z in timeframe]"
+
+    - id: "SK_007"
+      hook: "Skool was built specifically to make money models work"
+      tipo: "Statement Hook (Purpose-Built)"
+      triggers: ["Alinhamento perfeito"]
+      numeros: ["90", "$9"]
+      formula: "[X was built specifically to make Y work]"
+
+    - id: "SK_008"
+      hook: "39% of Skool users eventually make sales"
+      tipo: "Number Hook (Success Rate)"
+      triggers: ["Social Proof", "Encorajamento"]
+      numeros: ["39%", "90", "14", "$9", "$99"]
+      formula: "[X% of users eventually succeed - but only if Y]"
+
+    - id: "SK_009"
+      hook: "Get both the platform AND the training free"
+      tipo: "Statement Hook (Double Value)"
+      triggers: ["Value Stack", "FOMO"]
+      numeros: ["90", "$9"]
+      formula: "[Get both X AND Y free]"
+
+    - id: "SK_010"
+      hook: "Stop trying to figure it out alone"
+      tipo: "Command Hook (Pain Point)"
+      triggers: ["Identidade", "Solucao"]
+      numeros: ["90", "$250M+", "$9"]
+      formula: "[Stop trying to X alone]"
+
+    - id: "SK_011"
+      hook: "You have the money models - now turn them into actual money"
+      tipo: "Statement Hook (Implementation)"
+      triggers: ["Proximo passo logico"]
+      numeros: ["90", "$9"]
+      formula: "[You have X - now turn them into Y]"
+
+    - id: "SK_012"
+      hook: "Skool isn't just better than other platforms"
+      tipo: "Contradiction Hook (Comparison)"
+      triggers: ["Contraste", "Especificidade"]
+      numeros: ["10x", "10x", "90", "$9", "$99+"]
+      formula: "[X isn't just better - it's Y better AND Z cheaper]"
+
+    - id: "SK_013"
+      hook: "This 90-day free trial is only available for 7 days"
+      tipo: "Statement Hook (Time Limit)"
+      triggers: ["Urgencia", "FOMO"]
+      numeros: ["90", "7", "14", "$99", "$9"]
+      formula: "[This X-day trial is only available for Y days]"
+
+    - id: "SK_014"
+      hook: "The price was $99/month. Now it's $9/month"
+      tipo: "Statement Hook (Price Drop)"
+      triggers: ["Contraste de valor", "FOMO"]
+      numeros: ["$99", "$9", "90"]
+      formula: "[The price was X. Now it's Y for life]"
+
+  remarketing_formulas:
+    soft_reminder:
+      estrutura: "[Soft opener: Quick/Just/Simple] reminder [about what you get/what's included]"
+      exemplos: ["Quick reminder about what you get", "Simple reminder:"]
+      uso: "Cart abandonment sem ser agressivo"
+
+    still_available:
+      estrutura: "[Product] is still [there/available] [location/status]"
+      exemplos: ["The Implementation System is still there in your cart"]
+      uso: "Indicar permanencia da oportunidade"
+
+    value_clarification:
+      estrutura: "The real value isn't just [obvious thing] - it's [deeper value]"
+      exemplos: ["The real value isn't just the 12 playbooks - it's that every solution was tested"]
+      uso: "Reframe de valor para quem ja viu mas nao converteu"
+
+    countdown_progression:
+      estrutura: "Sequencia temporal: 'Few days' -> 'This Saturday' -> 'Today' -> 'Final hours' -> 'Last chance'"
+      uso: "Campanhas de remarketing com deadline"
+
+    success_statistics:
+      estrutura: "[X%] of [users] [achieve result] [timeframe condition]"
+      exemplos: ["25% of monetized groups make a sale in their first month"]
+      uso: "Social proof numerica para superar objecoes"
+
+    price_transformation:
+      estrutura: "The price was [high]. Now it's [low] [duration]"
+      exemplos: ["The price was $99/month. Now it's $9/month for life"]
+      uso: "Criar contraste de valor imediato"
+
+  remarketing_insights:
+    intensity_levels:
+      suave: "Cart abandonment: 'reminders' e 'clarifications'"
+      medio: "Interesse demonstrado: estatisticas e comparacoes"
+      intenso: "Deadline proximo: 'final', 'last chance', 'never again'"
+
+    golden_rules:
+      - "Nunca criar novo desejo - apenas clarificar o existente"
+      - "Sempre incluir numeros especificos para reforcar valor"
+      - "Progressao temporal clara em campanhas com deadline"
+
+    words_never_used:
+      - "Buy now"
+      - "Don't miss out"
+      - "Hurry"
+      - "Act fast"
+      - "Qualquer linguagem de venda agressiva"
+
+    personalization_by_stage:
+      visitou_nao_adicionou: "Foco em clarificar valor"
+      adicionou_carrinho: "Foco em remover friccao/duvida"
+      engajou_conteudo: "Foco em momento/oportunidade unica"
+
+# =============================================================================
+# EVENTO CONVITE HOOKS (Zoom Events)
+# =============================================================================
+evento_convite_hooks:
+  metadata:
+    source: "Hooks Convite para Evento - Zoom.md"
+    note: "Hooks para convites de eventos online/webinars"
+
+  hooks:
+    - id: "EV_001"
+      hook: "The rumors are true... Big companies DO have an unfair advantage"
+      tipo: "Statement Hook (Confirmation + Twist)"
+      triggers: ["Curiosity Gap", "Contradiction"]
+      formula: "[The rumors are true... X DO have Y]"
+
+    - id: "EV_002"
+      hook: "Quick question: What's your email?"
+      tipo: "Question Hook"
+      triggers: ["Curiosity Gap", "Pattern Interrupt"]
+      formula: "[Quick question: + unexpected ask]"
+
+    - id: "EV_003"
+      hook: "You don't need cheaper leads."
+      tipo: "Contradiction Hook"
+      triggers: ["Contradiction"]
+      formula: "[You don't need X. You need Y.]"
+
+    - id: "EV_004"
+      hook: "Is it possible to 3x your customer value in 90 days?"
+      tipo: "Question Hook"
+      triggers: ["Specificity", "Curiosity"]
+      numeros: ["3x", "90 days"]
+      formula: "[Is it possible to + specific result + specific timeframe?]"
+
+    - id: "EV_005"
+      hook: "I went from losing $20 on every customer to making $240 profit"
+      tipo: "Story Hook (Transformation)"
+      triggers: ["Social Proof", "Specificity"]
+      numeros: ["$20", "$240"]
+      formula: "[I went from negative X to positive Y]"
+
+    - id: "EV_006"
+      hook: "If you're 25 to 55 and own a business"
+      tipo: "Statement Hook (Identity)"
+      triggers: ["Identity"]
+      numeros: ["25 to 55"]
+      formula: "[If you're + demographic + situation]"
+
+    - id: "EV_007"
+      hook: "If I woke up with a struggling business tomorrow"
+      tipo: "Story Hook (Hypothetical)"
+      triggers: ["Curiosity Gap"]
+      formula: "[If I + hypothetical scenario + what I would do]"
+
+    - id: "EV_008"
+      hook: "One of my portfolio companies got a 7.5x increase"
+      tipo: "Statement Hook (Result)"
+      triggers: ["Social Proof", "Specificity"]
+      numeros: ["7.5x"]
+      formula: "[Subject + got + specific result]"
+
+    - id: "EV_009"
+      hook: "Most businesses work like this:"
+      tipo: "Statement Hook (Comparison setup)"
+      triggers: ["Curiosity Gap"]
+      formula: "[Most X work like this: vs Smart X work like this:]"
+
+    - id: "EV_010"
+      hook: "There are two types of business owners:"
+      tipo: "Statement Hook (Dichotomy)"
+      triggers: ["Identity", "Curiosity"]
+      numeros: ["two"]
+      formula: "[There are two types of X:]"
+
+  top_formulas:
+    rumors_hook:
+      estrutura: "The rumors are true... [unexpected truth about X]"
+      exemplos:
+        - "The rumors are true... Big companies DO have an unfair advantage"
+        - "The rumors are true... There IS a million-dollar secret"
+      uso_ideal: "Quando quer confirmar uma suspeita do mercado mas com um twist inesperado"
+
+    contradiction_hook:
+      estrutura: "You don't need [what everyone thinks]. You need [real solution]."
+      exemplos:
+        - "You don't need cheaper leads. You need a better money model."
+      uso_ideal: "Para quebrar crencas limitantes do mercado"
+
+    transformation_story:
+      estrutura: "I went from [bad situation with specific number] to [good situation with specific number]"
+      exemplos:
+        - "I went from losing $20 on every customer to making $240 profit"
+      uso_ideal: "Para demonstrar transformacao possivel com numeros especificos"
+
+    two_types_dichotomy:
+      estrutura: "There are two types of [people]: Type 1: [behavior] Type 2: [better behavior]"
+      exemplos:
+        - "There are two types of business owners:"
+        - "In every market, there are two types of businesses:"
+      uso_ideal: "Para posicionar o leitor e criar identificacao"
+
+    hypothetical_scenario:
+      estrutura: "If I [constraint/situation], here's exactly what I would do"
+      exemplos:
+        - "If I woke up with a struggling business tomorrow"
+        - "If I only had 90 days in a brand new town"
+      uso_ideal: "Para demonstrar competencia atraves de cenarios especificos"
+
+# =============================================================================
+# FRAMEWORKS
+# =============================================================================
+frameworks:
+  seventy_twenty_ten_rule:
+    name: "70-20-10 Innovation Rule"
+    source: "Google (Larry Page & Sergey Brin)"
+    description: "Resource allocation strategy for maximum returns"
+    breakdown:
+      seventy_percent_core:
+        description: "Hooks already proven in your content or others"
+        action: "More of what works"
+        result: "Stabilizes advertising, guarantees baseline performance"
+        steps:
+          - "Create spreadsheet with tabs for each platform"
+          - "Columns: name, hook, views, link"
+          - "Review best hooks before making content"
+
+      twenty_percent_emerging:
+        description: "Winner Adjacent - promising but less proven"
+        action: "Model concepts from other niches"
+        steps:
+          - "Subscribe to software showing outliers by platform"
+          - "Search platforms for topics you discuss"
+          - "Paste into slide deck with screenshot and repackaging ideas"
+
+      ten_percent_big_ideas:
+        description: "Totally new risky experiments"
+        action: "Try craziest ideas without fear of failure"
+        result: "Source of breakthrough innovations"
+
+  hook_category_distribution:
+    source: "Analysis of Hormozi 121 Best Hooks"
+    breakdown:
+      statements: "35%"
+      conditionals: "20%"
+      questions: "15%"
+      commands: "10%"
+      narratives: "10%"
+      lists: "5%"
+      labels: "3%"
+      exclamations: "2%"
+
+  verbal_vs_nonverbal:
+    verbal_hooks:
+      types:
+        - name: "Labels"
+          example: "Local business owners, I have a gift for you"
+          description: "Words your avatar identifies with"
+
+        - name: "Questions"
+          subtypes:
+            yes_questions: "Would you pay $1,000 to have the business of your dreams?"
+            open_questions: "Which would you rather be?"
+
+        - name: "Conditionals"
+          example: "If you're working all the time and your business isn't growing..."
+          description: "Scenarios/conditions leading to result"
+
+        - name: "Commands"
+          example: "Read this if you're tired of being broke."
+          description: "Direct commands telling audience to do something"
+
+        - name: "Statements"
+          examples:
+            - "The smartest thing you can do today..."
+            - "How to get ahead of 99% of people."
+
+        - name: "Lists/Steps"
+          example: "28 ways to stay poor"
+
+        - name: "Narratives"
+          example: "One day I was in the back and this old lady comes in..."
+          description: "Stories and anecdotes"
+
+        - name: "Exclamations"
+          example: "Ahhhhh... This is the blueprint to becoming a millionaire"
+          description: "Expresses strong emotion"
+
+    nonverbal_hooks:
+      description: "Noises or visuals that grab attention"
+      examples:
+        - "Dropped tray of dishes - signals embarrassing disaster"
+        - "Clink of knife against champagne - signals important news"
+        - "Catching a banana unexpectedly"
+      principle: "Both get everyone's attention, just for different reasons"
+      best_practice: "Use verbal and nonverbal hooks together when platform allows"
+
+  dean_graziosi_story:
+    context: "Story that forever changed how Hormozi viewed hooks"
+    original_failing_hook: "Tonight on Larry King, I'm here with my guest Dean Graziosi he's a multi New York Times best seller, a multi-millionaire, and tonight he's gonna show you how you can have that success too and talk about his book."
+    winning_hook: "Have you ever in your adult life looked at yourself in the mirror and thought 'I should be further ahead by now?' If you have, you're not alone. And tonight, my guest Dean Graziosi is going to help you see how you can live to your full potential."
+    key_lesson: "It needed to make THEM feel important, not me."
+    what_changed: "Only the opening sentences - book name, cover, pages, offer, price, website all stayed the same"
+    result: "Went from complete failure to selling millions of books"
+    principle: "I spend as much thinking about the first sentence as everything else combined."
+
+# =============================================================================
+# CHECKLISTS
+# =============================================================================
+checklists:
+  first_time_through:
+    - "Look at top-performing ads or content of other people"
+    - "Isolate the hooks"
+    - "Write down your favorite 50"
+    - "Use all of them in ads and content"
+
+  every_time_after:
+    - "Look at top 10% performers (top 5)"
+    - "Make 70% of next batch using those top 5 hooks"
+    - "Make 20% doing permutations (visuals and words)"
+    - "Make 10% completely different hooks (model first time through)"
+
+  good_hooks_contain:
+    - "Some way to catch their attention (call out)"
+    - "Some implication of value if they consume it"
+
+  variety_creation:
+    conditions:
+      template: "If you're a [avatar], this video will [benefit]"
+      example: "If you're a chiropractor, this video will get you more leads."
+
+    labels:
+      template: "[Avatar] I have a gift for you"
+      example: "Chiropractors I have a gift for you."
+
+    questions:
+      template: "Would you rather [pain] or [solution]?"
+      example: "Would you rather struggle to get patients for the rest of your life or fix it in 6 weeks?"
+
+    commands:
+      template: "Watch this if you want to [result]"
+      example: "Watch this if you want to get more patients."
+
+    statements:
+      template: "The top 1% of [avatar] follow these rules..."
+      example: "The top 1% of chiropractor clinics follow these rules..."
+
+    lists_or_steps:
+      template: "[Number] ways [avatar] [result] without [objection]"
+      example: "11 ways Chiropractors get more patients without paid ads"
+
+    stories:
+      template: "All of a sudden, [dramatic event]..."
+      example: "All of a sudden, my phone starts ringing off the hook..."
+
+  pre_publication_checklist:
+    - "Hook para scroll em <0.5s?"
+    - "Avatar se identifica imediatamente?"
+    - "Numero especifico presente?"
+    - "Promessa clara?"
+    - "Curiosidade criada?"
+    - "Visual chamativo?"
+    - "Audio limpo (se video)?"
+    - "Diferente do mercado?"
+    - "Testado com 5 pessoas?"
+    - "Eu clicaria nisso?"
+
+  daily_hooks_checklist:
+    - "Revisar top 5 hooks antes de criar conteudo"
+    - "Criar minimo 3 variacoes para cada peca"
+    - "Documentar TODOS os hooks usados"
+    - "Tracking de performance configurado"
+    - "Split test ativo em pelo menos 1 canal"
+
+  weekly_optimization_checklist:
+    - "Rankear todos os hooks da semana"
+    - "Identificar top 10% e bottom 10%"
+    - "Atualizar banco de 'Core Winners'"
+    - "Pesquisar 5 novos hooks de concorrentes"
+    - "Planejar mix 70-20-10 para proxima semana"
+
+# =============================================================================
+# HOOK TESTING GUIDELINES
+# =============================================================================
+hook_testing:
+  by_content_type:
+    ads:
+      hooks_per_content: 10
+      note: "Record 10 hooks for every 1 piece of ad content"
+
+    short_content:
+      approach: "Every winning tweet on every other platform reused as a short"
+      expansion: "Finish short by expanding on the hook"
+
+    long_content:
+      hooks_per_content: "3-4"
+      review: "Team looks at in post-production to pick best"
+
+    emails:
+      approach: "Run active split tests on every campaign"
+      documentation: "Document winners in separate file"
+
+  performance_benchmarks:
+    ctr:
+      ruim: "< 0.5%"
+      medio: "0.5-2%"
+      bom: "2-5%"
+      excelente: "> 5%"
+
+    video_metrics:
+      hook_rate: ">35% (Views 3s / Impressions)"
+      thumb_stop_ratio: ">2% (Clicks / Impressions)"
+      continuation_rate: ">70% (Views 15s / Views 3s)"
+      save_rate: ">1% (Saves / Reach)"
+
+  ten_commandments:
+    - "Especifico > Generico"
+    - "Numero > Sem numero"
+    - "Negativo > Positivo (3x mais engagement)"
+    - "Pergunta > Afirmacao (em ads)"
+    - "Curto > Longo (max 7 palavras)"
+    - "Visual > Texto (video sempre)"
+    - "Problema > Solucao (agita primeiro)"
+    - "Novo > Conhecido (novidade vicia)"
+    - "Urgente > Eterno (FOMO vende)"
+    - "Simples > Complexo (5a serie)"
+
+# =============================================================================
+# AGENT USAGE INSTRUCTIONS
+# =============================================================================
+agent_usage:
+  hormozi_hooks:
+    instructions:
+      - "Use 70% proven hooks from this swipefile"
+      - "Adapt 20% from adjacent niches or formats"
+      - "Experiment with 10% completely new concepts"
+      - "Always test 10 hooks per ad content piece"
+      - "Track and document all performance data"
+      - "Eliminate bottom 10%, double down on top 10%"
+
+    selection_criteria:
+      cold_audience: ["Questions", "Exclamations", "Pattern Interrupts"]
+      warm_audience: ["Conditionals", "Stories", "Social Proof"]
+      hot_audience: ["Commands", "Direct Statements", "Offers"]
+
+    adaptation_rules:
+      - "Keep psychological structure intact"
+      - "Update cultural references for audience"
+      - "Preserve primary mental trigger"
+      - "Test minimum 3 variations"
+      - "Measure against original benchmark"
+
+  hormozi_ads:
+    instructions:
+      - "Start with proven hooks from ads section"
+      - "Test 'The rumors are true...' format first (highest frequency in campaigns)"
+      - "Always include specific numbers for credibility"
+      - "Create identity dichotomies ('Two types of...', 'Smart vs Dumb')"
+      - "Never use jargon in first 15 words"
+
+    high_frequency_patterns:
+      - "'The rumors are true...' (6x in single launch)"
+      - "'If you're/If I' conditional (8x)"
+      - "'Two types of' dichotomy (4x)"
+      - "Direct comparisons X vs Y (5x)"
+      - "Specific numbers in hook (60% of all hooks)"
+
+  hormozi_copy:
+    instructions:
+      - "Hook determines content, not reverse"
+      - "Spend 80% of effort on first few seconds"
+      - "Make THEM feel important, not you"
+      - "Use cocktail party effect - call out specifically"
+      - "Combine verbal and nonverbal hooks when possible"
+
+    key_formulas:
+      transformation: "I went from [negative X] to [positive Y]"
+      dichotomy: "There are two types of [X]: [Type 1] vs [Type 2]"
+      contradiction: "You don't need [common belief]. You need [real solution]."
+      authority_stack: "[Credentials list] + [compressed promise]"
+      hypothetical: "If I [constraint/situation], here's exactly what I'd do"
+      time_investment: "It took me [X years] to learn this, but I'll teach you in [Y time]"
+
+  remarketing_copy:
+    instructions:
+      - "Never create new desire - clarify existing interest"
+      - "Use soft language for cart abandonment ('reminder', 'clarifying')"
+      - "Progress urgency gradually for launches"
+      - "Always include specific numbers to reinforce value"
+      - "Never use aggressive sales language"
+
+    intensity_progression:
+      level_1_soft: "'Quick reminder', 'Just clarifying', 'Worth remembering'"
+      level_2_medium: "Statistics, comparisons, success rates"
+      level_3_intense: "'Final hours', 'Last chance', 'This is your final call'"
+
+# =============================================================================
+# QUOTES AND MANTRAS
+# =============================================================================
+quotes:
+  david_ogilvy:
+    - "After you've written your headline, you've spent eighty cents of your advertising dollar."
+
+  dean_graziosi:
+    - "You gotta nail the hook or nothing else matters."
+    - "I spend as much thinking about the first sentence as everything else combined."
+    - "Since then, I've spent as much thinking about the first sentence as everything else combined."
+
+  alex_hormozi:
+    - "The hook dictates the content, and not the other way around."
+    - "Let the data do the teaching."
+    - "If you have ten hours to advertise, focus your first eight hours on the hooks."
+    - "No matter how bad your content is, some will be in the top 10%."
+
+mantras:
+  operational:
+    - "Test 10x more"
+    - "Data over opinions"
+    - "70-20-10 always"
+    - "Hook first, content second"
+    - "Make them important"
+    - "Document everything"
+    - "Top 10% replicate, Bottom 10% eliminate"
+
+  powerful_questions:
+    - "What hook would make ME click?"
+    - "Is this about them or about me?"
+    - "What's my top 10% saying?"
+    - "Have I tested 10 variations yet?"
+    - "What would Dean change?"

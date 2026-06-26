@@ -1,0 +1,204 @@
+# =============================================================================
+# ML-SOP YAML Template (Native YAML, no Markdown wrapper)
+# =============================================================================
+# Template: ml-sop-yaml-template.yaml | SOP Factory | Synkra AIOX
+# Used by: sop-ml-architect (*create, *create-from-human, *create-from-extract)
+# Schema: data/sop-ml-schema.yaml v1.0.0
+#
+# Usage:
+#   1. Copy this file as {process-name}-sop-v{version}.sop.yaml
+#   2. Replace all {{placeholders}} with actual values
+#   3. Validate against sop-ml-schema.yaml
+#   4. Run sop-ml-validation-checklist.md
+# =============================================================================
+
+sop:
+  # --- Identity ---------------------------------------------------------------
+  id: "{{sop_id}}"                            # Format: SOP-{DOMAIN}-{SEQ}-R{REV}
+  version: "{{version}}"                       # Semantic version: 1.0.0
+  title: "{{sop_title}}"
+  purpose: "{{purpose_statement}}"
+
+  # --- Classification ---------------------------------------------------------
+  classification:
+    domain: "{{domain}}"                       # operations | engineering | compliance | support
+    category: "{{category}}"                   # deployment | onboarding | audit | maintenance
+    risk_level: "{{risk_level}}"               # low | medium | high | critical
+    compliance_tags:
+      - "{{standard_1}}"                       # ISO-9001 | FDA-21CFR11 | SOC2 | etc.
+  status: "DRAFT"                              # DRAFT | ACTIVE | DEPRECATED | RETIRED
+  effective_date: "{{YYYY-MM-DD}}"
+  review_date: "{{YYYY-MM-DD}}"
+
+  # --- Trigger ----------------------------------------------------------------
+  trigger:
+    type: "{{trigger_type}}"                   # manual | scheduled | event | condition
+    description: "{{trigger_description}}"
+    event: "{{event_name}}"                    # If type=event
+    schedule: "{{cron_expression}}"            # If type=scheduled
+    source: "{{trigger_source}}"               # System or actor
+    conditions:
+      - field: "{{condition_field}}"
+        operator: "{{operator}}"               # eq | ne | gt | lt | gte | lte | contains | exists
+        value: "{{expected_value}}"
+
+  # --- Context ----------------------------------------------------------------
+  context:
+    tools:
+      - id: "{{tool_id}}"
+        name: "{{tool_name}}"
+        type: "{{tool_type}}"                  # mcp | cli | api | ui | agent | manual
+        version: "{{min_version}}"
+        required: true
+
+    permissions:
+      - resource: "{{resource}}"
+        action: "{{permission}}"               # read | write | execute | admin
+        scope: "{{scope}}"
+        justification: "{{why_needed}}"
+
+    environment:
+      - key: "{{ENV_VAR}}"
+        description: "{{var_description}}"
+        required: true
+        sensitive: false                       # true = never log value
+
+    input:
+      - name: "{{input_name}}"
+        type: "{{input_type}}"                 # string | number | boolean | object | array | file
+        required: true
+        description: "{{input_description}}"
+        validation: "{{regex_or_rule}}"
+
+  # --- State Machine ----------------------------------------------------------
+  # See: state-machine-template.yaml for detailed state design
+  state_machine:
+    initial_state: "INIT"
+    terminal_states: ["SUCCESS", "FAILURE", "ESCALATE"]
+    error_states: ["ERROR_TRANSIENT", "ERROR_PERMANENT"]
+    states:
+      - id: "INIT"
+        name: "Initialize"
+        type: "initial"
+        description: "{{init_description}}"
+        on_enter: []
+        on_exit: []
+        transitions:
+          - target: "{{next_state}}"
+            guard: "{{condition}}"
+            action: "{{transition_action}}"
+
+      # Add states following state-machine-template.yaml pattern
+
+  # --- Steps ------------------------------------------------------------------
+  steps:
+    - id: "S001"
+      name: "{{step_name}}"
+      action: "{{verb_noun}}"                  # validate_input | fetch_data | generate_report
+      description: "{{step_description}}"
+      performer: "{{role_or_agent}}"
+      critical: false
+      estimated_duration: "{{PTxM}}"           # ISO 8601 duration
+
+      tool:
+        id: "{{tool_ref}}"                     # References context.tools[].id
+        command: "{{command_or_endpoint}}"
+        timeout: "{{PTxM}}"
+
+      input:
+        - name: "{{param_name}}"
+          type: "{{param_type}}"
+          source: "{{source}}"                 # literal | env | previous_step | user_input | system
+          value: "{{value_or_ref}}"
+          required: true
+
+      output:
+        - name: "{{output_name}}"
+          type: "{{output_type}}"
+          store_as: "{{variable_name}}"        # Unique across SOP
+
+      validation:
+        type: "{{val_type}}"                   # assertion | schema | regex | custom
+        rules:
+          - field: "{{field}}"
+            operator: "{{op}}"                 # eq | ne | gt | lt | contains | matches | exists
+            expected: "{{expected}}"
+            message: "{{failure_message}}"
+
+      on_success: "S002"                       # Step ID or "END"
+      on_failure: "{{error_handler_id}}"
+
+      decision_point: null                     # null or see decision-tree-template.yaml
+
+    # Add more steps following same schema...
+
+  # --- Error Handling ---------------------------------------------------------
+  error_handling:
+    handlers:
+      - id: "{{handler_id}}"
+        name: "{{handler_name}}"
+        trigger_on:
+          - error_type: "{{error_type}}"       # timeout | validation | permission | system | custom
+        severity: "{{severity}}"               # critical | high | medium | low
+        actions:
+          - type: "{{action_type}}"            # retry | rollback | notify | escalate | skip | abort
+            config:
+              max_retries: 3
+              retry_delay: "PT30S"
+              backoff: "exponential"            # linear | exponential | fixed
+
+    fallback:
+      action: "abort"
+      notify: ["{{fallback_recipient}}"]
+      log_level: "error"
+
+    global_timeout: "{{PT2H}}"                 # Max total execution time
+
+  # --- Quality Gate -----------------------------------------------------------
+  quality_gate:
+    enabled: true
+    criteria:
+      - name: "{{criteria_name}}"
+        type: "{{criteria_type}}"              # percentage | count | boolean | threshold
+        target: "{{target_value}}"
+        actual: null                           # Populated at runtime
+        weight: 0.5                            # 0.0-1.0, all weights must sum to 1.0
+    pass_threshold: 0.8                        # Weighted score threshold
+    on_fail: "block"                           # block | warn | notify
+
+  # --- Outputs ----------------------------------------------------------------
+  outputs:
+    artifacts:
+      - name: "{{artifact_name}}"
+        type: "{{artifact_type}}"              # file | record | report | notification
+        format: "{{format}}"                   # pdf | json | csv | md | html | yaml
+        destination: "{{path_or_url}}"
+        retention: "{{P1Y}}"                   # ISO 8601 duration
+
+    notifications:
+      on_complete:
+        - channel: "{{channel}}"               # email | slack | webhook
+          recipients: ["{{recipient}}"]
+      on_failure:
+        - channel: "{{channel}}"
+          recipients: ["{{recipient}}"]
+
+  # --- Metadata ---------------------------------------------------------------
+  metadata:
+    created_by: "sop-ml-architect"
+    created_at: "{{ISO-8601-datetime}}"
+    updated_by: "{{updater}}"
+    updated_at: "{{ISO-8601-datetime}}"
+    owner: "{{owner_role}}"
+    department: "{{department}}"
+    tags: ["{{tag1}}", "{{tag2}}"]
+    review_cycle: "P90D"                       # ISO 8601 duration
+    regulatory_refs:
+      - standard: "{{standard}}"
+        clause: "{{clause}}"
+    related_sops: ["{{related_sop_id}}"]
+    change_log:
+      - version: "{{version}}"
+        date: "{{YYYY-MM-DD}}"
+        author: "{{author}}"
+        summary: "{{change_summary}}"

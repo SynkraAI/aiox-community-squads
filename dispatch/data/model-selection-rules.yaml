@@ -1,0 +1,266 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# MODEL SELECTION RULES — When Haiku vs Sonnet vs Opus
+# Source: PRD Section 3.7 + Section 10.4
+# Pricing: 2026 (Haiku $1/$5, Sonnet $3/$15, Opus $5/$25 per MTok)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+rules:
+  worker:
+    when:
+      - "Output is 100% predictable (mkdir, mv, template fill)"
+      - "Task type: CREATE folder, MOVE file, DELETE, RENAME"
+      - "Can be implemented as Python/Bash script"
+      - "No LLM reasoning needed"
+    cost: "$0.00"
+    timeout: 30
+    note: "CODE > LLM — always prefer script if possible"
+
+  haiku:
+    when:
+      - "Task has explicit template to fill"
+      - "Task is well-defined with clear acceptance criteria"
+      - "Task type: CREATE file, VALIDATE, INDEX"
+      - "Task enrichment level: MINIMAL or STANDARD"
+      - "Code generation < 100 lines"
+      - "MCP operations (AC, BH, ClickUp)"
+    cost: "~$0.007/task (2K in + 1K out)"
+    timeout: 120
+    constraints:
+      - "Instructions in ENGLISH"
+      - "Template required for outputs > 50 lines"
+      - "'DO NOT ask questions. Execute immediately.' present"
+      - "1 task = 1 deliverable"
+      - "No code-switching (EN+PT mixed)"
+      - "max_turns: 15"
+    note: "MCP tasks must run foreground (MCP unavailable in background)"
+
+  sonnet:
+    when:
+      - "Task requires judgment or evaluation"
+      - "Task type: EVALUATE, AUDIT, ANALYZE"
+      - "Task enrichment level: FULL"
+      - "Creative writing > 500 words"
+      - "Story decomposition (interpret requirements)"
+      - "Feedback loop evaluation (L2 layer)"
+    cost: "~$0.025/task (3K in + 1K out)"
+    timeout: 300
+    constraints:
+      - "max_turns: 20"
+
+  opus:
+    when:
+      - "Task is architectural or strategic"
+      - "Task requires cross-system reasoning"
+      - "Task has ambiguous requirements"
+    cost: "~$0.055/task (5K in + 1K out)"
+    timeout: 600
+    note: "SHOULD BE RARE in dispatch. If a task needs Opus, consider if it should be dispatched at all."
+
+  hybrid:
+    when:
+      - "Output is client-facing (emails, newsletters, sales pages)"
+      - "High financial impact (>$1000 consequences)"
+      - "Requires domain expertise validation"
+    executor: "Agent generates → Human reviews → Agent finalizes"
+    cost: "Agent cost + human review time"
+    timeout: "N/A (human-dependent)"
+    example: "Generate email sequence → user reviews tone → finalize"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ORCHESTRATOR MODEL (State Machine)
+# ═══════════════════════════════════════════════════════════════════════════════
+# The orchestrator is NOT a reasoner — it's a state machine that follows
+# next_action instructions from script outputs. Haiku is sufficient.
+# "Haiku + well-crafted scripts > Opus alone"
+
+orchestrator:
+  default: haiku
+  rationale: |
+    The orchestrator does 3 things:
+    1. Call scripts (Bash tool) and parse JSON output
+    2. Create subagent Task calls from manifests
+    3. Report results to user
+    None of these require reasoning. All require instruction-following.
+    Haiku is the best instruction-follower at the lowest cost.
+
+  escalation:
+    to_sonnet:
+      when: "Script returns complexity=complex in error output"
+      example: "Novel failure mode not in error-decision-templates.yaml"
+      cost: "$3/$15 per MTok (10x Haiku)"
+
+    to_opus:
+      when: "NEVER for orchestration"
+      rationale: "If orchestration needs Opus, the scripts are broken — fix scripts instead"
+
+  prompt: "data/orchestrator-prompt.md"
+  error_templates: "data/error-decision-templates.yaml"
+
+  cost_comparison:
+    opus_orchestration: "$15/$75 per MTok input/output"
+    haiku_orchestration: "$1/$5 per MTok input/output"
+    savings: "15x on input, 15x on output"
+    at_50k_context: "Opus ~$1.50/dispatch vs Haiku ~$0.10/dispatch"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DECISION TREE (Quick Reference)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+decision_tree:
+  q1_deterministic:
+    yes: "worker (script) → go to worker_refinement"
+    no: "→ q2"
+
+  # EXTENDED Worker refinement (ported from squad-creator executor-decision-tree)
+  worker_refinement:
+    q2a:
+      question: "Does a library/tool already exist for this? (requests, pandas, yaml, jq, git)"
+      if_yes: "WORKER — use existing library"
+      if_no: "→ q2b"
+    q2b:
+      question: "Will this task be executed 3+ times OR weekly?"
+      if_yes: "WORKER — worth codifying as script"
+      if_no: "AGENT (Haiku) — one-off, LLM faster than coding"
+
+  q2_template_based:
+    yes: "haiku"
+    no: "→ q3"
+  q3_judgment_needed:
+    yes: "sonnet"
+    no: "haiku (default)"
+  q4_architectural:
+    yes: "DO NOT dispatch — redirect to /architect"
+    no: "→ resolved above"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PROMPT CACHING STRATEGY
+# ═══════════════════════════════════════════════════════════════════════════════
+
+prompt_caching:
+  strategy: "STATIC prefix (KB) + DYNAMIC suffix (task)"
+  static_prefix:
+    - "system_prompt (~200 tokens)"
+    - "kb_context (~1500 tokens)"
+    - "rules (~300 tokens)"
+  dynamic_suffix:
+    - "task_description (~200 tokens)"
+    - "acceptance_criteria (~100 tokens)"
+    - "output_path (~50 tokens)"
+  savings:
+    same_domain_wave_6: "75% on input tokens"
+    mixed_domain_wave: "40% on input tokens"
+  cache_pricing:
+    haiku_read: "$0.10/MTok (vs $1.00 uncached)"
+    sonnet_read: "$0.30/MTok (vs $3.00 uncached)"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# RATE LIMIT BUDGET (Tier 2 minimum)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+rate_limits:
+  minimum_tier: 2
+  tier_2:
+    rpm: 1000
+    haiku_itpm: 450000
+    haiku_otpm: 90000
+    sonnet_itpm: 450000
+    sonnet_otpm: 90000
+  per_wave_budget:
+    max_tasks: 7
+    haiku_input_per_task: 5000
+    haiku_output_per_task: 2000
+    wave_input_total: 35000
+    wave_output_total: 14000
+  note: "Rate limits per MODEL CLASS — Haiku and Sonnet have SEPARATE limits"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FEEDBACK LOOP (Self-Correction)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+feedback_loop:
+  round_1: "Haiku executes → output quality ~5-6/10"
+  round_2: "Sonnet evaluates → writes _feedback.md → Haiku corrects → ~9.25/10"
+  max_rounds: 2
+  note: "Diminishing returns after 2 rounds. If still failing → escalate to user."
+
+# ═══════════════════════════════════════════════════════════════
+# MODEL FALLBACK (Auto-Escalation)
+# ═══════════════════════════════════════════════════════════════
+# Ported from squad-creator model-routing.yaml
+# Triggers: task failure, quality below threshold, timeout
+
+fallback:
+  haiku:
+    on_failure: sonnet
+    on_quality_below: 0.70
+    on_timeout: sonnet
+    max_retries_before_escalation: 2
+
+  sonnet:
+    on_failure: opus
+    on_quality_below: 0.60
+    on_timeout: opus
+    max_retries_before_escalation: 1
+
+  opus:
+    on_failure: human
+    on_quality_below: null  # No auto-escalation from Opus
+    on_timeout: human
+    max_retries_before_escalation: 1
+
+  escalation_rules:
+    - "Retry SAME model first (max_retries_before_escalation times)"
+    - "Then escalate to next tier"
+    - "Log escalation in event_log (model_escalation event)"
+    - "Track escalation frequency per task type for routing optimization"
+
+  circuit_breaker:
+    consecutive_escalations: 3
+    action: "HALT wave, alert dispatch-chief"
+    reason: "Systematic quality issue — likely prompt problem, not model problem"
+
+# ═══════════════════════════════════════════════════════════════
+# VALIDATION TRACKING
+# ═══════════════════════════════════════════════════════════════
+# Track model performance per task type to optimize routing over time
+
+validation_tracking:
+  enabled: true
+  storage: "_temp/dispatch/metrics/model-performance.jsonl"
+
+  fields_per_execution:
+    - task_type        # e.g., "create-index", "fill-template"
+    - model_assigned   # e.g., "haiku"
+    - model_used       # e.g., "sonnet" (if escalated)
+    - quality_score    # 0.0-1.0 (from post-execution gate)
+    - fallback_triggered  # true/false
+    - execution_time_ms   # wall clock time
+    - tokens_in           # input tokens consumed
+    - tokens_out          # output tokens generated
+    - cost_usd            # actual cost
+
+  aggregation:
+    frequency: "per-run"  # Aggregate at end of each dispatch run
+    report_in: "execution-report"  # Include in Phase 6 report
+
+  optimization_signals:
+    - signal: "haiku_quality_avg < 0.70 for task_type X"
+      action: "Recommend upgrading task_type X to sonnet in model-selection-rules"
+    - signal: "sonnet_quality_avg > 0.95 for task_type Y"
+      action: "Recommend downgrading task_type Y to haiku (cost savings)"
+    - signal: "fallback_rate > 20% for task_type Z"
+      action: "Investigate prompt quality for task_type Z"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MIGRATION TRIGGERS (Agent→Worker Conversion)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+migration_triggers:
+  agent_to_worker:
+    condition: "Task executed 50+ times with >97% consistency"
+    action: "Create deterministic script, remove from LLM routing"
+    example: "INDEX.md generation → became generate_index.py"
+  worker_to_agent:
+    condition: "Worker script fails on edge cases requiring judgment"
+    action: "Route to Agent with worker output as input (hybrid)"
+    example: "route-tasks.py can't handle ambiguous domain → Sonnet reviews"

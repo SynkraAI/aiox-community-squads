@@ -1,0 +1,148 @@
+id: wf-brand-activation-system
+name: Brand Activation System Workflow
+description: Implementação de marca em design, cultura e go-to-market
+version: 1.0.0
+squad: brand
+created: "2026-02-18"
+type: legacy
+config:
+  mode: sequential
+  checkpoint_required: true
+inputs:
+  required:
+    - name: brand_name
+      type: string
+    - name: positioning_report
+      type: string
+    - name: business_stage
+      type: enum
+      options:
+        - startup
+        - growth
+        - enterprise
+        - smb
+workspace_contract:
+  required_preflight:
+    - bash squads/brand/scripts/bootstrap-brand-workspace.sh {{brand_name}}
+    - bash squads/brand/scripts/validate-brand-essentials.sh
+    - node workspace/scripts/resolve-squad-workspace-readiness.cjs --squad=brand --business={{brand_name}} --context-type=brand
+  context_task: load-workspace-context
+  canonical_template_namespace: brand
+  canonical_output_policy: template-first
+phases:
+  - id: workspace_context
+    name: Workspace preflight and context load
+    executor: brand-chief
+    tasks:
+      - task: load-workspace-context.md
+        inputs:
+          - brand_name
+  - id: identity_system
+    name: Identity design system
+    executor: wheeler-brand-design
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/identity-system-plan.md
+  - id: culture_alignment
+    name: Culture-brand alignment
+    executor: yohn-brand-culture
+    inputs_from_previous:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/identity-system-plan.md
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/culture-alignment-plan.md
+  - id: dtc_startup_playbook
+    name: Startup/DTC playbook
+    executor: heyward-dtc-brand
+    inputs_from_previous:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/culture-alignment-plan.md
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/dtc-playbook.md
+  - id: smb_b2b_playbook
+    name: SMB/B2B sticky branding
+    executor: miller-sticky-brand
+    tasks:
+      - task: brand-activation.md
+        inputs:
+          - brand_name
+          - positioning_report
+          - business_stage
+    inputs_from_previous:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/dtc-playbook.md
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/activation-30-60-90.md
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/activation-system-report.md
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo-concept.yaml
+outputs:
+  base_path: workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/
+  artifacts:
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/identity-system-plan.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/culture-alignment-plan.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/dtc-playbook.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/activation-30-60-90.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/activation-system-report.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo-concept.yaml
+final_output:
+  format: markdown
+  includes:
+    - identity_system
+    - culture_alignment
+    - channel_playbook
+    - activation_plan
+workflow:
+  id: wf-brand-activation-system
+  name: Brand Activation System Workflow
+  version: 1.0.0
+  description: Implementação de marca em design, cultura e go-to-market
+  type: legacy
+  sequence:
+    - step: workspace-context
+      id: workspace-context
+      phase: 1
+      phase_name: Workspace preflight and context load
+      agent: brand-chief
+      action: execute_workspace-preflight-and-context-load
+      next: identity-system
+    - step: identity-system
+      id: identity-system
+      phase: 2
+      phase_name: Identity design system
+      agent: wheeler-brand-design
+      action: execute_identity-design-system
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/identity-system-plan.md
+      next: culture-alignment
+    - step: culture-alignment
+      id: culture-alignment
+      phase: 3
+      phase_name: Culture-brand alignment
+      agent: yohn-brand-culture
+      action: execute_culture-brand-alignment
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/culture-alignment-plan.md
+      next: dtc-startup-playbook
+    - step: dtc-startup-playbook
+      id: dtc-startup-playbook
+      phase: 4
+      phase_name: Startup/DTC playbook
+      agent: heyward-dtc-brand
+      action: execute_startup-dtc-playbook
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/dtc-playbook.md
+      next: smb-b2b-playbook
+    - step: smb-b2b-playbook
+      id: smb-b2b-playbook
+      phase: 5
+      phase_name: SMB/B2B sticky branding
+      agent: miller-sticky-brand
+      action: execute_smb-b2b-sticky-branding
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/activation-30-60-90.md
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/activation/activation-system-report.md
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo-concept.yaml
+    - workflow_end:
+        id: complete
+        action: workflow_complete
+  handoff_prompts:
+    brand-chief_to_wheeler-brand-design: Handoff context from brand-chief to wheeler-brand-design. Preserve outputs, risks, and open decisions.
+    wheeler-brand-design_to_yohn-brand-culture: Handoff context from wheeler-brand-design to yohn-brand-culture. Preserve outputs, risks, and open decisions.
+    yohn-brand-culture_to_heyward-dtc-brand: Handoff context from yohn-brand-culture to heyward-dtc-brand. Preserve outputs, risks, and open decisions.
+    heyward-dtc-brand_to_miller-sticky-brand: Handoff context from heyward-dtc-brand to miller-sticky-brand. Preserve outputs, risks, and open decisions.

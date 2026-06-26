@@ -1,0 +1,302 @@
+# Context DNA Framework
+# ===========================================================================
+# Extract project context -> cache -> distribute to agents -> select profile
+# SSoT: This file defines the DNA extraction meta-pattern.
+#
+# Any squad can instantiate this framework by filling the squad_template
+# section with its own dimensions, agent mappings, and profile rules.
+# ===========================================================================
+
+meta:
+  name: "Context DNA"
+  version: "1.0.0"
+  description: "Extract project DNA once, feed all agents with project-specific context"
+  origin: "Extracted from project-dna-extraction.md + apex-lead STEP 0"
+  reusability: "HIGH — every squad should know its project before acting"
+  key_innovation: "Per-agent context injection — each agent gets ONLY what it needs"
+
+# ---------------------------------------------------------------------------
+# Why DNA matters
+# ---------------------------------------------------------------------------
+problem_solved:
+  without_dna:
+    - "Agents suggest patterns that conflict with existing conventions"
+    - "Hardcoded values when design tokens exist"
+    - "Wrong naming conventions in generated code"
+    - "Recommendations for tools/libs not in the project"
+    - "Agents ask questions the codebase already answers"
+  with_dna:
+    - "Every agent knows the project's stack, patterns, and conventions"
+    - "Suggestions align with existing codebase reality"
+    - "Zero conflicts with project decisions already made"
+    - "Profile selection activates only relevant agents"
+    - "Cache eliminates redundant re-scanning across sessions"
+
+# ---------------------------------------------------------------------------
+# The 4-phase DNA lifecycle
+# ---------------------------------------------------------------------------
+lifecycle:
+
+  # Phase 1: EXTRACT
+  # Scan project files to discover dimensions via static analysis.
+  # No runtime needed — read configs, scan file patterns, parse AST-light.
+  extract:
+    purpose: "Scan project files to discover all relevant dimensions"
+    method: "Static analysis only — read configs, scan file/folder patterns"
+    time_limit: "5 seconds max (hard timeout)"
+    failure_mode: "Graceful — on error or timeout, skip and proceed without DNA"
+
+    # Dimensions are squad-specific. Each squad defines what to extract.
+    # See squad_template.dimensions for the fill-in format.
+    dimensions: []
+
+    # Sources are the files scanned for extraction.
+    # See squad_template.sources for the fill-in format.
+    sources: []
+
+    # Execution steps (generic pattern):
+    # 1. For each dimension, locate its source file(s)
+    # 2. Parse/scan for the detection patterns defined
+    # 3. Record detected value (or "not-detected" if absent)
+    # 4. Merge all dimensions into a single DNA object
+
+  # Phase 2: CACHE
+  # Persist DNA to avoid re-extraction every session.
+  cache:
+    purpose: "Persist extracted DNA to avoid redundant re-scanning"
+    location: ".aios/{squad-id}-context/project-dna.yaml"
+    format: "YAML — human-readable, diffable, editable for overrides"
+    ttl: "Until source files change (modification-time based)"
+
+    invalidation:
+      # Triggers are squad-specific file patterns.
+      triggers: []
+      # Manual full re-extraction command.
+      manual: "*{squad-id}-scan --deep"
+
+    freshness_check:
+      method: "Compare mtime of each source file vs cache file mtime"
+      on_stale: "Re-extract silently (no user output)"
+      on_fresh: "Load from cache silently"
+
+    # Cache file header (auto-generated, do NOT edit manually):
+    # ---
+    # generated_at: "{ISO timestamp}"
+    # trigger: "{first-activation | manual-scan | cache-invalidation}"
+    # squad: "{squad-id}"
+    # project: "{from package.json or project config}"
+    # ---
+
+  # Phase 3: DISTRIBUTE
+  # Inject relevant DNA sections into each agent's context.
+  # Key insight: agents do NOT get the full DNA — only their slice.
+  distribute:
+    purpose: "Inject relevant DNA sections into each agent's context"
+    method: "Per-agent context filtering — each agent gets ONLY dimensions it needs"
+    injection_point: "Before agent processes any user request"
+    injector: "Orchestrator (squad lead) handles injection on routing"
+
+    fallback:
+      on_missing_dna: "Agents use their default heuristics — never crash"
+      on_partial_dna: "Inject what exists, skip missing dimensions"
+      output_to_user: "NONE — fallback is silent"
+
+    # Distribution format per agent:
+    format:
+      agent_context:
+        "{agent-id}":
+          "{dimension}": "{detected value}"
+
+  # Phase 4: PROFILE SELECT
+  # Choose which agents to activate based on detected stack.
+  profile_select:
+    purpose: "Activate only agents relevant to the detected project stack"
+    method: "IF/THEN rules evaluated against extracted stack dimensions"
+    evaluation_order: "Most specific profile first, fall through to default"
+
+    # Profiles are squad-specific.
+    # See squad_template.profiles for the fill-in format.
+    profiles: []
+    default: "minimal"
+
+    # Profile selection feeds agent routing for the entire session.
+    # Requests for inactive agents get a warning + upgrade suggestion.
+
+# ---------------------------------------------------------------------------
+# Activation hook — how DNA extraction is triggered
+# ---------------------------------------------------------------------------
+activation_hook:
+  placement: "STEP 0 in orchestrator activation — before greeting, before routing"
+  behavior: "Silent, invisible to user — zero output during extraction"
+  timeout: "5 seconds (same as extract.time_limit)"
+
+  # Activation sequence:
+  # 1. Check cache freshness
+  # 2. If fresh → load from cache
+  # 3. If stale/missing → run extraction
+  # 4. If extraction fails → proceed without DNA (graceful degradation)
+  # 5. Loaded DNA feeds all subsequent agent routing and task execution
+
+  failure_handling:
+    on_error: "Proceed without DNA — agents use default heuristics"
+    on_timeout: "Proceed without DNA — agents use defaults"
+    output_to_user: "NONE — completely invisible in all cases"
+
+# ---------------------------------------------------------------------------
+# Stack validation gate (recommended, not required)
+# ---------------------------------------------------------------------------
+stack_validation:
+  purpose: "Verify project uses a stack the squad actually supports"
+  check: "Required frameworks/libraries present in package.json or equivalent"
+  when: "After extraction, before profile selection"
+
+  on_supported:
+    action: "Continue normally — select profile"
+
+  on_unsupported:
+    action: "WARN user with clear message, do NOT crash"
+    message: "'{squad-id}' supports {supported_stacks}. Detected: {detected_stack}."
+    behavior: "Continue with degraded functionality — minimal profile"
+
+  on_empty_project:
+    action: "Detect greenfield — skip validation, use defaults"
+    message: "Greenfield project detected — using default conventions."
+
+# ---------------------------------------------------------------------------
+# Template for other squads
+# ---------------------------------------------------------------------------
+# Fill these sections to create DNA extraction for your squad.
+# Each squad defines its own dimensions, agent mappings, and profiles.
+squad_template:
+
+  # What to extract — define each dimension the squad cares about.
+  dimensions:
+    - name: "{dimension name}"
+      description: "{what this dimension captures}"
+      source: "{file or glob pattern to scan}"
+      detect: "{what to look for in the file}"
+      values: "{possible detected values or 'free-form'}"
+      required: "{true | false — is this dimension critical?}"
+
+  # Which files to scan — all source files for extraction.
+  sources:
+    - path: "{file path or glob}"
+      provides: ["{dimension1}", "{dimension2}"]
+
+  # Which agents get what — per-agent context filtering.
+  agent_mapping:
+    "{agent-id}":
+      receives: ["{dimension1}", "{dimension2}"]
+      # Only these dimensions are injected into this agent's context.
+      # Agents never see dimensions outside their mapping.
+
+  # Profile rules — which agents activate for which stack.
+  profiles:
+    - name: "{profile name}"
+      condition: "{IF expression on extracted dimensions}"
+      agents: ["{agent1}", "{agent2}"]
+      description: "{when this profile applies}"
+
+  # Cache invalidation — which file changes trigger re-extraction.
+  invalidation_triggers:
+    - "{file glob pattern}"
+
+# ---------------------------------------------------------------------------
+# Cross-squad reference examples
+# ---------------------------------------------------------------------------
+# These show how different squads instantiate the DNA framework.
+# Each squad extracts different dimensions for different purposes.
+
+cross_squad:
+
+  apex:
+    squad_id: "apex"
+    description: "Frontend intelligence — 14 agents, visual + code analysis"
+    dimensions:
+      stack: "Framework, UI lib, styling, animation, state, testing, icons, 3D"
+      design_language: "Color palette, spacing, typography, radius, shadows, dark mode"
+      conventions: "File org, naming, export style, import style, props pattern"
+      routing: "Router type, structure, auth pattern, API pattern"
+      quality: "ESLint config, TS strict mode, test framework, CI setup"
+    agents: 14
+    profiles:
+      full: "Monorepo cross-platform (Next.js + RN + Spatial) — all 14 agents"
+      web-next: "Next.js App Router — 10 agents"
+      web-spa: "React + Vite SPA — 8 agents"
+      minimal: "Quick fixes, single components — 4 agents"
+    invalidation:
+      - "package.json"
+      - "tailwind.config.*"
+      - "globals.css"
+      - "index.css"
+      - "app/globals.css"
+    cache_path: ".aios/apex-context/project-dna.yaml"
+    agent_context_examples:
+      css-eng:
+        styling_lib: "{tailwind | css-modules | styled-components}"
+        design_tokens: "{css-vars | tailwind-config | theme-object}"
+        dark_mode: "{data-theme | class | media-query}"
+      react-eng:
+        react_version: "{19 | 18}"
+        rsc_enabled: "{true | false}"
+        state_management: "{zustand | jotai | context}"
+      motion-eng:
+        animation_lib: "{framer-motion | react-spring | css-only}"
+        reduced_motion: "{implemented | missing}"
+      a11y-eng:
+        aria_usage: "{extensive | basic | missing}"
+        focus_management: "{implemented | partial | missing}"
+      perf-eng:
+        bundler: "{vite | webpack | turbopack}"
+        lazy_loading: "{implemented | partial | missing}"
+        image_optimization: "{next-image | manual | none}"
+
+  n8n_forge:
+    squad_id: "n8n-forge"
+    description: "Workflow automation intelligence — 5 agents"
+    dimensions:
+      n8n_version: "Major version of n8n instance"
+      integrations: "Connected services (Google, Slack, Stripe, etc.)"
+      workflow_count: "Number of workflows in instance"
+      node_types: "Custom nodes, community nodes, core nodes used"
+      credentials: "Configured credential types and count"
+    agents: 5
+    profiles:
+      full: "Full n8n instance with complex workflows — 5 agents"
+      minimal: "Simple workflows, few integrations — 3 agents"
+    invalidation:
+      - "n8n config files"
+      - "workflow export JSONs"
+    cache_path: ".aios/n8n-forge-context/project-dna.yaml"
+
+  squad_creator:
+    squad_id: "squad-creator"
+    description: "Squad creation and mind cloning — 3 agents (pro) or base"
+    dimensions:
+      target_ide: "Which IDE/agent platform the squad targets"
+      team_size: "Number of humans in the team"
+      existing_squads: "Already installed squads in the project"
+      project_complexity: "Simple, standard, complex (from file count + deps)"
+    agents: "3 (pro) or base"
+    profiles:
+      pro: "Full squad creation with mind cloning — 3 pro agents"
+      base: "Standard squad creation — base agents only"
+    invalidation:
+      - "squads/*/agents/*.md"
+      - "core-config.yaml"
+    cache_path: ".aios/squad-creator-context/project-dna.yaml"
+
+# ---------------------------------------------------------------------------
+# Implementation checklist
+# ---------------------------------------------------------------------------
+# When implementing DNA for a new squad:
+#
+# 1. Define dimensions — what does your squad need to know about the project?
+# 2. Map sources — which files contain that information?
+# 3. Map agents — which agent needs which dimension?
+# 4. Define profiles — which agents activate for which detected stack?
+# 5. Set invalidation triggers — when should the cache refresh?
+# 6. Create extraction task — follow project-dna-extraction.md as template
+# 7. Add STEP 0 hook — add cache check to orchestrator activation
+# 8. Test graceful degradation — verify squad works WITHOUT DNA
+# 9. Test cache invalidation — modify a source file, verify re-extraction

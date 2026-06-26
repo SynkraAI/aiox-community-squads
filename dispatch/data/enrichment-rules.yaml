@@ -1,0 +1,200 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# ENRICHMENT RULES — Context injection levels for subagent prompts
+# Source: REUSED from dispatcher.md (L857-886) + dispatch-ralph.md enrichment
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ENRICHMENT LEVELS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+levels:
+  MINIMAL:
+    tokens: 500
+    includes:
+      - "Basic task instruction"
+      - "Output path"
+      - "Acceptance criteria"
+    excludes:
+      - "KB context"
+      - "Business context"
+      - "Style guides"
+    use_for:
+      task_types: [move, delete, validate, rename, index, gitkeep, mkdir]
+      domains: [organization]
+    example: |
+      ## TASK
+      Create INDEX.md for folder {path}.
+      List all files in markdown table.
+      Output: {output_path}
+      ## ACCEPTANCE
+      - File exists at {output_path}
+      - Contains markdown table with all files
+
+  STANDARD:
+    tokens: 1500
+    includes:
+      - "Everything in MINIMAL"
+      - "KB summary (relevant sections only)"
+      - "MCP references (if applicable)"
+      - "Output format specification"
+    excludes:
+      - "Full KB"
+      - "Business context"
+      - "Style guides (unless domain requires)"
+    use_for:
+      task_types: [create, code, mcp_operation]
+      domains: [automation_ac, automation_bh, youtube, development, data_engineering, design]
+    kb_extraction:
+      target_sections: ["## principles", "## examples", "## anti-patterns", "## quick reference"]
+      max_chars_per_file: 4500
+
+  FULL:
+    tokens: 3000
+    includes:
+      - "Everything in STANDARD"
+      - "Complete KB context"
+      - "Business context (if triggers present)"
+      - "ICP data"
+      - "Style guide"
+      - "Anti-patterns"
+    excludes: []
+    use_for:
+      task_types: [creative_writing, copy, newsletter, email]
+      domains: [marketing_copy, squad_creation]
+    business_context:
+      condition: "Load IF AND ONLY IF business triggers present"
+      max_tokens: 2000
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DETERMINATION ALGORITHM
+# Source: REUSED from dispatcher.md determine_enrichment_level() (L857-886)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+algorithm:
+  priority_order:
+    - rule: "IF task.type IN [move, delete, validate, rename] → MINIMAL"
+      priority: 1
+    - rule: "IF task.domain == ORGANIZATION or task.type IN [index, gitkeep] → MINIMAL"
+      priority: 2
+    - rule: "IF task.domain == MARKETING_COPY → FULL"
+      priority: 3
+    - rule: "IF task.domain IN [AUTOMATION_AC, AUTOMATION_BH, YOUTUBE] → STANDARD"
+      priority: 4
+    - rule: "DEFAULT → STANDARD"
+      priority: 5
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PROMPT STRUCTURE (for prompt caching optimization)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+prompt_structure:
+  note: "Order matters for prompt caching — STATIC first, DYNAMIC last"
+  sections:
+    - name: "HEADER"
+      type: STATIC
+      content: "Task executor rules (DO NOT ask, execute immediately, etc.)"
+      tokens: 200
+    - name: "KNOWLEDGE CONTEXT"
+      type: STATIC
+      content: "Domain KB (from domain-registry.yaml kb_files)"
+      tokens: "500-3000 (based on enrichment level)"
+    - name: "BUSINESS CONTEXT"
+      type: STATIC
+      content: "Campaign context (if triggers present)"
+      tokens: "0-2000"
+      condition: "FULL enrichment + business triggers"
+    - name: "TASK DESCRIPTION"
+      type: DYNAMIC
+      content: "Specific task instructions"
+      tokens: 200
+    - name: "ACCEPTANCE CRITERIA"
+      type: DYNAMIC
+      content: "Verifiable criteria for this task"
+      tokens: 100
+    - name: "OUTPUT PATH"
+      type: DYNAMIC
+      content: "Where to save output"
+      tokens: 50
+    - name: "CLOSING INSTRUCTION"
+      type: STATIC
+      content: "Return only STATUS + OUTPUT_PATH + METRICS summary"
+      tokens: 100
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# QUANTITY PATTERNS (for task decomposition)
+# Source: REUSED from dispatch-ralph.md QUANTITY_PATTERNS (L479-487)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+quantity_patterns:
+  - pattern: '(\d+)\s+newsletters?'
+    type: newsletter
+    category: file
+  - pattern: '(\d+)\s+emails?'
+    type: email
+    category: file
+  - pattern: '(\d+)\s+tags?\s*(?:AC|activecampaign)?'
+    type: tag_ac
+    category: resource
+  - pattern: '(\d+)\s+tags?\s*(?:BH|beehiiv)?'
+    type: tag_bh
+    category: resource
+  - pattern: '(\d+)\s+(?:listas?|lists?)'
+    type: list
+    category: resource
+  - pattern: '(\d+)\s+(?:automações?|automations?)'
+    type: automation
+    category: resource
+  - pattern: '(\d+)\s+(?:segmentos?|segments?)'
+    type: segment
+    category: resource
+  - pattern: '(\d+)\s+(?:components?|componentes?)'
+    type: component
+    category: file
+  - pattern: '(\d+)\s+(?:agents?|agentes?)'
+    type: agent
+    category: file
+  - pattern: '(\d+)\s+(?:tasks?|tarefas?)'
+    type: task
+    category: file
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ACCEPTANCE CRITERIA BY TYPE
+# Source: REUSED from dispatch-ralph.md ACCEPTANCE_BY_TYPE (L655-679)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+acceptance_by_type:
+  newsletter:
+    - "File exists at Output/Newsletters/"
+    - "Contains sections: Título, Lead, Corpo, CTA"
+    - "Tom Light Copy applied"
+  email:
+    - "File exists at Output/Emails/"
+    - "Contains: subject line, preheader, body, CTA"
+    - "No placeholders [XXX]"
+  tag_ac:
+    - "Tag created in ActiveCampaign (verify via list_tags)"
+    - "Name follows pattern: {Category}-{Name}-{Date}"
+  tag_bh:
+    - "Tag created in Beehiiv (verify via list_subscription_tags)"
+    - "Name follows defined pattern"
+  automation:
+    - "Automation created and active"
+    - "Trigger correctly configured"
+    - "Actions properly linked"
+  index:
+    - "File 00_INDEX.md exists in directory"
+    - "Contains list of all files"
+    - "Format: markdown table"
+  component:
+    - "Component file exists at declared path"
+    - "Passes linting"
+    - "Has proper exports"
+  agent:
+    - "Agent file exists at squads/{squad}/agents/"
+    - "Lines >= 300"
+    - "Contains voice_dna section"
+    - "Contains output_examples >= 3"
+  generic:
+    - "Task executed without errors"
+    - "Output exists at expected destination"
+    - "No placeholder text in output"

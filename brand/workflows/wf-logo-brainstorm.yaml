@@ -1,0 +1,297 @@
+id: wf-logo-brainstorm
+name: Logo Brainstorm Workflow
+description: "Brainstorm estratégico + geração visual de logo: intake → direções → prompts → geração → curação → refinamento → entrega"
+version: 1.0.0
+squad: brand
+created: "2026-02-28"
+type: legacy
+config:
+  mode: sequential
+  checkpoint_required: true
+  max_curation_loops: 3
+  cross_squad:
+    - squad: aiox-design
+      agent: nano-banana-generator
+      tasks:
+        - image-generate
+        - image-batch
+        - prompt-refine
+inputs:
+  required:
+    - name: brand_name
+      type: string
+    - name: industry
+      type: string
+    - name: brand_context
+      type: string
+  optional:
+    - name: archetype
+      type: string
+      description: Arquétipo já definido (pula consulta ao archetype-consultant)
+    - name: brandbook_path
+      type: string
+      description: Path do brandbook.yaml existente
+    - name: logo_type_preference
+      type: enum
+      options:
+        - wordmark
+        - lettermark
+        - icon
+        - combination
+        - emblem
+        - abstract
+        - any
+      default: any
+    - name: color_preferences
+      type: string
+    - name: references
+      type: list
+      description: URLs ou paths de referências visuais
+workspace_contract:
+  required_preflight:
+    - bash squads/brand/scripts/bootstrap-brand-workspace.sh {{brand_name}}
+    - bash squads/brand/scripts/validate-brand-essentials.sh
+    - node workspace/scripts/resolve-squad-workspace-readiness.cjs --squad=brand --business={{brand_name}} --context-type=brand
+  context_task: load-workspace-context
+  canonical_output_root: workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/
+  canonical_artifacts:
+    - logo-concept.yaml
+prerequisites:
+  environment:
+    - variable: GEMINI_API_KEY
+      location: .env
+      required_for: phases 4 and 6 (image generation) — primary provider
+      priority: primary
+    - variable: OPENROUTER_API_KEY
+      location: .env
+      required_for: phases 4 and 6 (image generation) — fallback provider
+      priority: fallback
+      note: At least one of GEMINI_API_KEY or OPENROUTER_API_KEY must be set
+phases:
+  - id: workspace_context
+    name: Workspace preflight and context load
+    executor: brand-chief
+    tasks:
+      - task: load-workspace-context.md
+        inputs:
+          - brand_name
+  - id: intake
+    name: Logo Brief Collection
+    executor: wheeler-brand-design
+    elicit: true
+    tasks:
+      - task: logo-intake.md
+        inputs:
+          - brand_name
+          - industry
+          - brand_context
+          - archetype
+          - brandbook_path
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/logo-brief.md
+  - id: strategic_direction
+    name: Strategic Concept Directions
+    executor: wheeler-brand-design
+    co_executor: archetype-consultant
+    tasks:
+      - task: logo-strategic-direction.md
+        inputs:
+          - logo_brief
+          - brand_name
+          - archetype
+    resources:
+      - squads/brand/data/logo-style-library.yaml
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/logo-concepts.md
+  - id: prompt_engineering
+    name: SCDS Prompt Engineering
+    executor: wheeler-brand-design
+    tasks:
+      - task: logo-prompt-engineering.md
+        inputs:
+          - logo_concepts
+          - logo_brief
+          - brand_name
+    resources:
+      - squads/brand/data/logo-scds-templates.yaml
+      - squads/brand/data/logo-style-library.yaml
+      - squads/design/data/gemini-logo-guidelines.yaml
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/logo-prompt-brief.yaml
+  - id: generation
+    name: AI Logo Generation
+    executor: nano-banana-generator
+    cross_squad: aiox-design
+    tasks:
+      - task: logo-generate.md
+        inputs:
+          - prompt_brief
+          - output_dir
+          - guidelines
+    design_tasks_used:
+      - image-generate.md
+      - image-batch.md
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/generations/
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/generation-log.yaml
+  - id: curation
+    name: Logo Curation & Feedback
+    executor: wheeler-brand-design
+    elicit: true
+    loop:
+      max_iterations: 3
+      max_pivots: 1
+      on_iterate: prompt_engineering
+      on_pivot: strategic_direction
+      on_approve: refinement
+    tasks:
+      - task: logo-curate.md
+        inputs:
+          - generations_dir
+          - generation_log
+          - logo_concepts
+          - brand_name
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/curation-report.md
+  - id: refinement
+    name: Logo Refinement
+    executor: nano-banana-generator
+    cross_squad: aiox-design
+    tasks:
+      - task: logo-refine.md
+        inputs:
+          - selected_direction
+          - selected_images
+          - refinement_notes
+          - brand_name
+          - prompt_brief
+    design_tasks_used:
+      - prompt-refine.md
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/refinements/
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/refinement-log.yaml
+  - id: deliverable
+    name: Final Deliverable Package
+    executor: wheeler-brand-design
+    elicit: true
+    tasks:
+      - task: logo-deliverable.md
+        inputs:
+          - refinements_dir
+          - refinement_log
+          - recommended_top_3
+          - logo_brief
+          - logo_concepts
+          - curation_report
+          - brand_name
+    outputs:
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/logo-spec.md
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/logo-brainstorm-report.md
+      - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo-concept.yaml
+outputs:
+  base_path: workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/
+  artifacts:
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/logo-brief.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/logo-concepts.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/logo-prompt-brief.yaml
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/generations/
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/generation-log.yaml
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/curation-report.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/refinements/
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/refinement-log.yaml
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/logo-spec.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/logo-brainstorm-report.md
+    - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo-concept.yaml
+final_output:
+  format: markdown
+  includes:
+    - logo_spec
+    - brainstorm_report
+    - logo_concept_yaml
+workflow:
+  id: wf-logo-brainstorm
+  name: Logo Brainstorm Workflow
+  version: 1.0.0
+  description: "Brainstorm estratégico + geração visual de logo: intake → direções → prompts → geração → curação → refinamento → entrega"
+  type: legacy
+  sequence:
+    - step: workspace-context
+      id: workspace-context
+      phase: 1
+      phase_name: Workspace preflight and context load
+      agent: brand-chief
+      action: execute_workspace-preflight-and-context-load
+      next: intake
+    - step: intake
+      id: intake
+      phase: 2
+      phase_name: Logo Brief Collection
+      agent: wheeler-brand-design
+      action: execute_logo-brief-collection
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/logo-brief.md
+      next: strategic-direction
+    - step: strategic-direction
+      id: strategic-direction
+      phase: 3
+      phase_name: Strategic Concept Directions
+      agent: wheeler-brand-design
+      action: execute_strategic-concept-directions
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/logo-concepts.md
+      next: prompt-engineering
+    - step: prompt-engineering
+      id: prompt-engineering
+      phase: 4
+      phase_name: SCDS Prompt Engineering
+      agent: wheeler-brand-design
+      action: execute_scds-prompt-engineering
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/logo-prompt-brief.yaml
+      next: generation
+    - step: generation
+      id: generation
+      phase: 5
+      phase_name: AI Logo Generation
+      agent: nano-banana-generator
+      action: execute_ai-logo-generation
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/generations/
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/generation-log.yaml
+      next: curation
+    - step: curation
+      id: curation
+      phase: 6
+      phase_name: Logo Curation & Feedback
+      agent: wheeler-brand-design
+      action: execute_logo-curation-feedback
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/curation-report.md
+      next: refinement
+    - step: refinement
+      id: refinement
+      phase: 7
+      phase_name: Logo Refinement
+      agent: nano-banana-generator
+      action: execute_logo-refinement
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/refinements/
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/refinement-log.yaml
+      next: deliverable
+    - step: deliverable
+      id: deliverable
+      phase: 8
+      phase_name: Final Deliverable Package
+      agent: wheeler-brand-design
+      action: execute_final-deliverable-package
+      outputs:
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/logo-spec.md
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo/logo-brainstorm-report.md
+        - workspace/businesses/{{brand_name}}/L2-tactical/brand/logo-concept.yaml
+    - workflow_end:
+        id: complete
+        action: workflow_complete
+  handoff_prompts:
+    brand-chief_to_wheeler-brand-design: Handoff context from brand-chief to wheeler-brand-design. Preserve outputs, risks, and open decisions.
+    wheeler-brand-design_to_nano-banana-generator: Handoff context from wheeler-brand-design to nano-banana-generator. Preserve outputs, risks, and open decisions.
+    nano-banana-generator_to_wheeler-brand-design: Handoff context from nano-banana-generator to wheeler-brand-design. Preserve outputs, risks, and open decisions.

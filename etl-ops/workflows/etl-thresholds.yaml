@@ -1,0 +1,15 @@
+workflow_thresholds:
+  process:
+    checkpoint_coverage:
+      threshold: 1.0
+    fidelity_threshold:
+      threshold: 0.9
+    local_quality_gate:
+      threshold: 1.0
+  multimodal:
+    scene_detection_success:
+      threshold: 0.85
+    keyframe_index_valid:
+      threshold: 1.0
+    diarization_confidence:
+      threshold: 0.8

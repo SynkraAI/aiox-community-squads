@@ -1,0 +1,13 @@
+services:
+  etl-service:
+    kind: local-service
+    service_ref: "services/etl/"
+    owner: etl-ops
+  etl-output-store:
+    kind: filesystem
+    service_ref: "outputs/etl/"
+    owner: etl-ops
+  workspace-etl-store:
+    kind: filesystem
+    service_ref: "workspace/businesses/{slug}/etl/"
+    owner: hub-framework

@@ -1,0 +1,667 @@
+# ==============================================================================
+# APEX SQUAD — Design Presets Catalog (Big Tech Giants Extension)
+# data/design-presets-bigtech.yaml
+# ==============================================================================
+# Purpose:  Big Tech design presets extending the main catalog. Each preset
+#           defines a complete design language — colors, typography, spacing,
+#           motion, effects, and component patterns inspired by the world's
+#           most influential tech companies.
+#
+# Usage:    *apex-transform --style {preset_id}
+#           *apex-inspire --category {category}
+#
+# Owner:    apex-lead + design-sys-eng
+# Version:  1.0.0
+# ==============================================================================
+
+version: "1.0.0"
+total_presets: 6
+
+# ==============================================================================
+# 15. BIG TECH GIANTS
+# ==============================================================================
+bigtech_giants:
+
+  - id: microsoft-fluent
+    name: "Microsoft Fluent"
+    category: bigtech
+    contrast_validated: true
+    composable: [material-3, dark-elegant]
+    description: >
+      Microsoft Fluent Design System 2. Mica material that samples the desktop
+      wallpaper for a tinted translucent surface, Acrylic in-app blur layers,
+      depth tokens for elevation hierarchy, generous rounded corners, and subtle
+      gradients. A system designed for productivity software that feels alive
+      and contextually aware of its environment.
+    reference: ["fluent2.microsoft.design", "microsoft.com"]
+    tokens:
+      colors:
+        light:
+          background: "#FFFFFF"
+          surface: "#F3F3F3"
+          surface-elevated: "#FAFAFA"
+          primary: "#0078D4"
+          secondary: "#005A9E"
+          accent: "#0078D4"
+          text-primary: "#242424"
+          text-secondary: "#616161"
+          text-tertiary: "#9E9E9E"
+          border: "#E1E1E1"
+          separator: "#EDEDED"
+          destructive: "#D13438"
+          success: "#107C10"
+          warning: "#FFB900"
+        dark:
+          background: "#202020"
+          surface: "#2D2D2D"
+          surface-elevated: "#383838"
+          primary: "#60CDFF"
+          secondary: "#98ECFF"
+          accent: "#60CDFF"
+          text-primary: "#FFFFFF"
+          text-secondary: "#D6D6D6"
+          text-tertiary: "#9E9E9E"
+          border: "#404040"
+          separator: "#333333"
+          destructive: "#FF6B6F"
+          success: "#6CCB5F"
+          warning: "#FCE100"
+      typography:
+        font_family: "'Segoe UI Variable', 'Inter', 'Helvetica Neue', sans-serif"
+        font_mono: "'Cascadia Code', 'Consolas', 'JetBrains Mono', monospace"
+        scale: [10, 12, 14, 16, 20, 24, 28, 34, 40, 48, 60]
+        weights: [300, 400, 500, 600, 700]
+        base_size: 14
+        line_height: 1.45
+        letter_spacing: "0em"
+        title_tracking: "-0.01em"
+        heading_style: "clean sans-serif, sentence case, tight leading on display sizes"
+      spacing:
+        base: 4
+        scale: [4, 8, 12, 16, 20, 24, 32, 48]
+      radius:
+        sm: 4
+        md: 8
+        lg: 12
+        xl: 16
+        full: 9999
+      shadows:
+        elevation2: "0 1px 2px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12)"
+        elevation4: "0 2px 4px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12)"
+        elevation8: "0 4px 8px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12)"
+        elevation16: "0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12)"
+        elevation64: "0 32px 64px rgba(0,0,0,0.24), 0 0 8px rgba(0,0,0,0.12)"
+      motion:
+        spring_default: { stiffness: 300, damping: 22, mass: 1 }
+        spring_gentle: { stiffness: 150, damping: 20, mass: 1 }
+        spring_entrance: { stiffness: 200, damping: 18, mass: 1 }
+        duration_fast: "200ms"
+        duration_normal: "350ms"
+        duration_slow: "500ms"
+        easing: "cubic-bezier(0.33, 0, 0.67, 1)"
+        reduced_motion: "crossfade 0.2s ease"
+      effects:
+        mica: "background tinted with blurred desktop wallpaper sample, opacity 0.8"
+        acrylic: "backdrop-filter: blur(30px) saturate(1.25); background: rgba(255,255,255,0.7)"
+        smoke: "background: rgba(0,0,0,0.4); backdrop-filter: blur(40px)"
+        reveal_highlight: "radial-gradient at pointer, white 5% opacity on hover"
+        border_subtle: "1px solid rgba(0,0,0,0.06)"
+    component_patterns:
+      card: "surface background, rounded-lg (8px), elevation4 shadow, 16px padding, subtle border"
+      button_primary: "solid brand blue, rounded-md (4px), 32px height, reveal highlight on hover"
+      button_secondary: "transparent, subtle border, rounded-md, hover surface tint"
+      input: "surface background, rounded-md, 1px border, 32px height, focus ring brand blue 2px"
+      modal: "surface-elevated, rounded-lg, elevation64 shadow, Smoke overlay, 24px padding"
+      nav: "NavigationView sidebar, acrylic background, rounded selection indicator, 36px item height"
+      info_bar: "rounded-md, colored left border (4px), icon + message + action, dismissible"
+      teaching_tip: "pointed tooltip, rounded-lg, elevation8, tail triangle, action buttons"
+      tab_view: "pill indicator sliding, rounded-full active tab, subtle background on hover"
+    css_variables_prefix: "--fluent"
+    tailwind_extend:
+      colors:
+        fluent-blue: "#0078D4"
+        fluent-cyan: "#60CDFF"
+        fluent-surface: "#F3F3F3"
+        fluent-text: "#242424"
+
+  - id: meta-horizon
+    name: "Meta Horizon"
+    category: bigtech
+    contrast_validated: true
+    composable: [marketing-creative]
+    description: >
+      Meta/Instagram design language. Vibrant gradients inspired by Instagram's
+      identity, social-centric patterns optimized for engagement, mobile-first
+      layouts with compact spacing, and a system that prioritizes content and
+      human connection over chrome. Every surface is designed for scrolling,
+      tapping, and sharing.
+    reference: ["design.facebook.com", "instagram.com"]
+    tokens:
+      colors:
+        light:
+          background: "#FFFFFF"
+          surface: "#F0F2F5"
+          surface-elevated: "#FFFFFF"
+          primary: "#0866FF"
+          secondary: "#65676B"
+          accent: "#E73667"
+          text-primary: "#1C1E21"
+          text-secondary: "#65676B"
+          text-tertiary: "#8A8D91"
+          border: "#CED0D4"
+          separator: "#E4E6EB"
+          destructive: "#FA383E"
+          success: "#31A24C"
+          warning: "#F7B928"
+          gradient-instagram: "linear-gradient(45deg, #833AB4, #FD1D1D, #F77737)"
+        dark:
+          background: "#18191A"
+          surface: "#242526"
+          surface-elevated: "#3A3B3C"
+          primary: "#2D88FF"
+          secondary: "#B0B3B8"
+          accent: "#E73667"
+          text-primary: "#E4E6EB"
+          text-secondary: "#B0B3B8"
+          text-tertiary: "#6B6D71"
+          border: "#3E4042"
+          separator: "#3E4042"
+          destructive: "#FA383E"
+          success: "#31A24C"
+          warning: "#F7B928"
+          gradient-instagram: "linear-gradient(45deg, #833AB4, #FD1D1D, #F77737)"
+      typography:
+        font_family: "system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif"
+        font_mono: "'SFMono-Regular', 'Menlo', 'Consolas', monospace"
+        scale: [12, 13, 15, 17, 20, 24, 28, 32, 40]
+        weights: [400, 500, 600, 700]
+        base_size: 15
+        line_height: 1.35
+        letter_spacing: "0em"
+        title_tracking: "-0.01em"
+        heading_style: "system sans, bold, compact line-height, mobile-optimized sizes"
+      spacing:
+        base: 4
+        scale: [4, 8, 12, 16, 24, 32, 44]
+      radius:
+        sm: 6
+        md: 8
+        lg: 12
+        xl: 18
+        full: 9999
+        circle: "50%"
+      shadows:
+        sm: "0 1px 2px rgba(0,0,0,0.10)"
+        md: "0 2px 12px rgba(0,0,0,0.12)"
+        lg: "0 8px 24px rgba(0,0,0,0.15)"
+        elevated: "0 12px 28px rgba(0,0,0,0.20)"
+      motion:
+        spring_default: { stiffness: 400, damping: 28, mass: 1 }
+        spring_quick: { stiffness: 500, damping: 30, mass: 0.8 }
+        spring_bounce: { stiffness: 350, damping: 15, mass: 1 }
+        press_scale: 0.96
+        duration_instant: "100ms"
+        duration_fast: "200ms"
+        reduced_motion: "crossfade 0.15s ease"
+      effects:
+        gradient_story: "linear-gradient(45deg, #833AB4, #FD1D1D, #F77737) as border ring"
+        hover_elevation: "translateY(-1px) with shadow-md transition"
+        avatar_ring: "3px gradient border on active story avatars"
+        surface_tint: "rgba(0,0,0,0.03) on hover"
+    component_patterns:
+      card: "white surface, border-based separation, rounded-lg, 16px padding, hover shadow-md"
+      button_primary: "solid blue, rounded-full (pill), bold text, press scale 0.96"
+      button_secondary: "surface background, rounded-full, bold text, hover tint"
+      input: "surface background, rounded-full, 36px height, no visible border, focus ring blue"
+      modal: "white surface, rounded-xl, elevated shadow, 20px padding, sticky header"
+      nav: "bottom tab bar (mobile), icon + label, active blue tint, badge notification dot"
+      story_circle: "64px avatar, gradient ring border (instagram colors), 2px gap, rounded-full"
+      reaction_bar: "horizontal emoji row, hover expand with count, rounded-full container"
+      floating_action: "rounded-full, primary blue, elevation shadow, fixed bottom-right"
+      comment_input: "avatar + rounded-full input + send button, inline attachments"
+      notification_badge: "red circle, white bold count, absolute positioned top-right"
+    css_variables_prefix: "--meta"
+    tailwind_extend:
+      colors:
+        meta-blue: "#0866FF"
+        meta-surface: "#F0F2F5"
+        meta-text: "#1C1E21"
+        meta-pink: "#E73667"
+
+  - id: netflix-immersive
+    name: "Netflix Immersive"
+    category: bigtech
+    contrast_validated: true
+    composable: [dark-elegant, oled-black]
+    description: >
+      Netflix cinematic experience. Dark immersive surfaces that disappear behind
+      content, hero imagery with dramatic gradient overlays, bold typography that
+      commands attention, and a browsing experience designed for binge-worthy
+      content discovery. The UI exists only to serve the content — every pixel
+      of chrome is minimized in favor of full-bleed imagery and seamless flow.
+    reference: ["netflix.com"]
+    tokens:
+      colors:
+        light:
+          background: "#FFFFFF"
+          surface: "#F5F5F5"
+          surface-elevated: "#FFFFFF"
+          primary: "#E50914"
+          secondary: "#808080"
+          accent: "#E50914"
+          text-primary: "#141414"
+          text-secondary: "#4D4D4D"
+          text-tertiary: "#808080"
+          border: "#E5E5E5"
+          separator: "#D9D9D9"
+          destructive: "#E50914"
+          success: "#46D369"
+          warning: "#E87C03"
+        dark:
+          background: "#000000"
+          surface: "#141414"
+          surface-elevated: "#181818"
+          primary: "#E50914"
+          secondary: "#808080"
+          accent: "#E50914"
+          text-primary: "#FFFFFF"
+          text-secondary: "#B3B3B3"
+          text-tertiary: "#808080"
+          border: "#333333"
+          separator: "#262626"
+          card-hover: "#262626"
+          destructive: "#E50914"
+          success: "#46D369"
+          warning: "#E87C03"
+      typography:
+        font_family: "'Netflix Sans', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"
+        font_mono: "'SF Mono', 'Menlo', monospace"
+        scale: [12, 14, 16, 18, 24, 32, 48, 64, 96]
+        weights: [400, 500, 700, 900]
+        base_size: 16
+        line_height: 1.4
+        letter_spacing: "0em"
+        title_tracking: "-0.02em"
+        heading_style: "bold sans-serif, tight tracking, dramatic scale jumps, hero titles 48-96px"
+      spacing:
+        base: 4
+        scale: [4, 8, 16, 24, 32, 48, 64]
+      radius:
+        sm: 4
+        md: 6
+        lg: 8
+        xl: 0
+        full: 9999
+      shadows:
+        sm: "0 1px 4px rgba(0,0,0,0.30)"
+        md: "0 4px 16px rgba(0,0,0,0.40)"
+        lg: "0 8px 32px rgba(0,0,0,0.50)"
+        hero_gradient: "linear-gradient(to top, #141414 0%, transparent 50%)"
+        card_glow: "0 0 20px rgba(255,255,255,0.08)"
+        elevated: "0 16px 48px rgba(0,0,0,0.60)"
+      motion:
+        spring_default: { stiffness: 260, damping: 20, mass: 1 }
+        spring_hover: { stiffness: 300, damping: 22, mass: 0.8 }
+        spring_entrance: { stiffness: 180, damping: 18, mass: 1.2 }
+        hover_scale: 1.3
+        card_z_lift: "translateY(-16px)"
+        crossfade_duration: "800ms"
+        row_scroll: "scroll-behavior: smooth"
+        reduced_motion: "crossfade 0.3s ease"
+      effects:
+        hero_gradient: "linear-gradient(to top, #141414 0%, rgba(20,20,20,0.7) 30%, transparent 100%)"
+        ken_burns: "slow zoom 110% over 20s on hero stills, ease-in-out"
+        vignette: "radial-gradient(ellipse, transparent 60%, rgba(0,0,0,0.8) 100%)"
+        backdrop_blur: "backdrop-filter: blur(20px); background: rgba(20,20,20,0.85)"
+        card_hover_info: "opacity 0 → 1 on hover, slide-up 8px, 200ms delay"
+    component_patterns:
+      card: "content thumbnail, no border, rounded-sm, hover scale 1.3x + z-lift + info reveal"
+      button_primary: "solid red (#E50914), rounded-sm, bold white text, hover darken"
+      button_secondary: "transparent, white border, rounded-sm, hover white fill with dark text"
+      input: "dark surface, rounded-sm, 1px border #333, white text, focus ring red"
+      modal: "dark surface 85% opacity, backdrop blur, centered, max-width 850px, rounded-md"
+      nav: "transparent → solid black on scroll, fixed top, logo left, profile right, gradient fade"
+      billboard_hero: "full-width, gradient bottom overlay, title + synopsis + CTA buttons, auto-play video"
+      horizontal_row: "title + arrow nav, overflow-x scroll, gap 4px, peek next item"
+      hover_card: "scale 1.3x, elevated z-index, info panel slides up (title, match %, tags)"
+      top_10_badge: "large number overlay, italic serif font, positioned left of thumbnail"
+      progress_bar: "red bar on thumbnail bottom, height 3px, no border-radius"
+      maturity_badge: "bordered square, white text, small caps, semi-transparent background"
+    css_variables_prefix: "--nfx"
+    tailwind_extend:
+      colors:
+        nfx-red: "#E50914"
+        nfx-black: "#141414"
+        nfx-dark: "#181818"
+        nfx-gray: "#808080"
+
+  - id: airbnb-belong
+    name: "Airbnb Belong"
+    category: bigtech
+    contrast_validated: true
+    composable: [health-wellness, resort-boutique]
+    description: >
+      Airbnb design language. Warm, trustworthy, and deeply human — built around
+      photography-centric layouts that make places feel real, illustration-rich
+      storytelling, and rounded-friendly shapes that convey belonging and community.
+      Large friendly typography invites exploration, and generous spacing gives
+      content room to breathe. Every design decision optimizes for trust and
+      emotional connection.
+    reference: ["airbnb.design", "airbnb.com"]
+    tokens:
+      colors:
+        light:
+          background: "#FFFFFF"
+          surface: "#F7F7F7"
+          surface-elevated: "#FFFFFF"
+          primary: "#FF385C"
+          secondary: "#717171"
+          accent: "#FF385C"
+          text-primary: "#222222"
+          text-secondary: "#717171"
+          text-tertiary: "#B0B0B0"
+          border: "#DDDDDD"
+          separator: "#EBEBEB"
+          destructive: "#C13515"
+          success: "#008A05"
+          warning: "#E07912"
+          star-gold: "#FFC107"
+        dark:
+          background: "#1A1A1A"
+          surface: "#2B2B2B"
+          surface-elevated: "#363636"
+          primary: "#FF385C"
+          secondary: "#B0B0B0"
+          accent: "#FF385C"
+          text-primary: "#F7F7F7"
+          text-secondary: "#B0B0B0"
+          text-tertiary: "#717171"
+          border: "#484848"
+          separator: "#3B3B3B"
+          destructive: "#FF5A5F"
+          success: "#008A05"
+          warning: "#E07912"
+          star-gold: "#FFC107"
+      typography:
+        font_family: "'Cereal', 'Circular', 'Nunito', 'Helvetica Neue', sans-serif"
+        font_mono: "'SF Mono', 'Menlo', monospace"
+        scale: [12, 14, 16, 18, 22, 26, 32, 46, 64]
+        weights: [300, 400, 500, 600, 800]
+        base_size: 16
+        line_height: 1.5
+        letter_spacing: "0em"
+        title_tracking: "-0.01em"
+        heading_style: "friendly sans-serif, bold 800, large display sizes 32-64px, sentence case"
+      spacing:
+        base: 8
+        scale: [8, 16, 24, 32, 48, 64, 80, 120]
+      radius:
+        sm: 8
+        md: 12
+        lg: 16
+        xl: 24
+        full: 9999
+      shadows:
+        sm: "0 1px 2px rgba(0,0,0,0.08), 0 1px 1px rgba(0,0,0,0.06)"
+        md: "0 2px 8px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)"
+        lg: "0 6px 20px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.10)"
+        elevated: "0 12px 32px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.08)"
+        focus: "0 0 0 2px #222222"
+      motion:
+        spring_default: { stiffness: 200, damping: 18, mass: 1 }
+        spring_gentle: { stiffness: 120, damping: 16, mass: 1.2 }
+        spring_bounce: { stiffness: 250, damping: 12, mass: 1 }
+        hover_lift: "translateY(-2px)"
+        page_transition: "slide-left 300ms ease-out"
+        search_morph: "height + border-radius morph, 400ms spring"
+        reduced_motion: "crossfade 0.25s ease"
+      effects:
+        image_overlay: "linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.4) 100%)"
+        gradient_illustration: "gradient map overlay on illustrations, brand pink tint"
+        parallax_hero: "subtle parallax on hero photos, intensity 0.05"
+        border_separator: "1px solid #EBEBEB for section dividers"
+        focus_ring: "0 0 0 2px #222222 offset 2px"
+    component_patterns:
+      card: "photo top (aspect 3:2, rounded-xl), padding 16px, title + rating + price, heart button top-right"
+      button_primary: "solid pink (#FF385C), rounded-lg, bold text, hover darken, 48px height"
+      button_secondary: "transparent, dark border, rounded-lg, bold text, hover surface tint"
+      input: "white background, rounded-lg, 1px border #DDDDDD, 48px height, focus ring dark 2px"
+      modal: "white surface, rounded-xl, elevated shadow, 24px padding, close X top-right, sticky header"
+      nav: "white surface, sticky top, centered logo, search bar center, profile right, border-bottom"
+      search_pill: "expandable pill search bar, rounded-full, morph animation, vertical dividers, categories"
+      star_rating: "inline star icon + score, gold accent, compact"
+      map_pin: "pink circle pin with price, white text, hover scale + shadow"
+      avatar_verified: "circular photo, verified badge checkmark, green tick overlay"
+      price_tag: "bold price + '/night' suffix, secondary original price strikethrough"
+      category_pills: "horizontal scroll, rounded-full chips, icon + label, active underline"
+      heart_button: "outlined heart, hover fill pink, absolute top-right on photo cards"
+    css_variables_prefix: "--bnb"
+    tailwind_extend:
+      colors:
+        bnb-pink: "#FF385C"
+        bnb-dark: "#222222"
+        bnb-gray: "#717171"
+        bnb-gold: "#FFC107"
+
+  - id: uber-move
+    name: "Uber Move"
+    category: bigtech
+    contrast_validated: true
+    composable: [auto-electric, minimalist]
+    description: >
+      Uber design. Ultra-clean functional minimalism dominated by black and white,
+      precision typography with tight tracking, and an anti-decorative philosophy
+      where every element serves a purpose. No gradients, no shadows for decoration
+      — separation comes from background contrast alone. Movement and efficiency
+      are encoded in the DNA: fast transitions, bottom sheets, and map-integrated
+      interfaces that prioritize getting from A to B.
+    reference: ["uber.com", "brand.uber.com"]
+    tokens:
+      colors:
+        light:
+          background: "#FFFFFF"
+          surface: "#F6F6F6"
+          surface-elevated: "#FFFFFF"
+          primary: "#000000"
+          secondary: "#6B6B6B"
+          accent: "#06C167"
+          text-primary: "#0C0B0A"
+          text-secondary: "#6B6B6B"
+          text-tertiary: "#A3A3A3"
+          border: "#EEEEEE"
+          separator: "#E2E2E2"
+          destructive: "#E5484D"
+          success: "#06C167"
+          warning: "#FFB224"
+        dark:
+          background: "#000000"
+          surface: "#141414"
+          surface-elevated: "#1F1F1F"
+          primary: "#FFFFFF"
+          secondary: "#A3A3A3"
+          accent: "#06C167"
+          text-primary: "#E8E8E8"
+          text-secondary: "#A3A3A3"
+          text-tertiary: "#6B6B6B"
+          border: "#333333"
+          separator: "#2A2A2A"
+          destructive: "#E5484D"
+          success: "#06C167"
+          warning: "#FFB224"
+      typography:
+        font_family: "'Uber Move', 'Inter', 'Helvetica Neue', sans-serif"
+        font_mono: "'Uber Move Mono', 'JetBrains Mono', 'Menlo', monospace"
+        scale: [12, 14, 16, 18, 24, 32, 44, 56, 72]
+        weights: [400, 500, 700]
+        base_size: 16
+        line_height: 1.4
+        letter_spacing: "-0.01em"
+        title_tracking: "-0.03em"
+        heading_style: "bold sans-serif, tight tracking, clinical precision, large display 44-72px"
+      spacing:
+        base: 4
+        scale: [4, 8, 16, 24, 32, 48, 64]
+      radius:
+        sm: 0
+        md: 8
+        lg: 12
+        xl: 16
+        full: 9999
+      shadows:
+        sm: "none"
+        md: "0 2px 8px rgba(0,0,0,0.08)"
+        lg: "0 4px 16px rgba(0,0,0,0.12)"
+        sheet: "0 -4px 24px rgba(0,0,0,0.15)"
+        elevated: "0 8px 32px rgba(0,0,0,0.18)"
+      motion:
+        spring_default: { stiffness: 500, damping: 30, mass: 1 }
+        spring_sheet: { stiffness: 400, damping: 28, mass: 1 }
+        spring_snap: { stiffness: 600, damping: 35, mass: 0.8 }
+        slide_up: "translateY(100%) → translateY(0), spring sheet"
+        duration_fast: "150ms"
+        duration_normal: "250ms"
+        reduced_motion: "crossfade 0.15s ease"
+        transition_style: "functional only, no decorative motion, fast and precise"
+      effects:
+        anti_decorative: "no gradients, no glows, no textures — pure function"
+        map_texture: "map integration as primary visual texture, fills background"
+        contrast_separation: "separation through background color difference, not shadows"
+        border_high_contrast: "1px solid #000000 (light) / 1px solid #FFFFFF (dark)"
+    component_patterns:
+      card: "white surface, no shadow at rest, border separation, 16px padding, tight spacing"
+      button_primary: "solid black, rounded-full (pill), bold text, 48px height, hover opacity 0.9"
+      button_secondary: "transparent, black border, rounded-full, bold text, hover fill gray"
+      input: "surface background, rounded-md, 1px border, 48px height, bold placeholder, focus ring black"
+      modal: "white surface, rounded-t-xl (bottom sheet), sheet shadow, slide-up spring entrance"
+      nav: "transparent, black logo, minimal links, no separator, utility-first"
+      bottom_sheet: "slide-up panel, rounded-t-xl, drag handle top, spring snap to detents"
+      destination_input: "pickup dot (black) + dropoff square (black), vertical line connecting, stacked inputs"
+      ride_option: "horizontal card, icon left, name + ETA center, price right, selected border"
+      surge_badge: "lightning icon + multiplier, colored background, rounded-sm"
+      driver_card: "photo circle + name + rating + vehicle, horizontal layout, border-top separator"
+      eta_display: "large bold minutes + 'min' suffix, monospace numerals"
+      map_pin: "black circle pin, pulse animation ring, center of map"
+    css_variables_prefix: "--uber"
+    tailwind_extend:
+      colors:
+        uber-black: "#000000"
+        uber-green: "#06C167"
+        uber-gray: "#6B6B6B"
+        uber-surface: "#F6F6F6"
+
+  - id: openai-frontier
+    name: "OpenAI Frontier"
+    category: bigtech
+    contrast_validated: true
+    composable: [minimalist, swiss-grid]
+    stability_note: >
+      Core identity (brand green #10A37F, Söhne font, conversation-centric UX)
+      is stable. Component patterns (sidebar, chat bubbles, model selector) are
+      iterated frequently — expect quarterly drift on dark mode backgrounds and
+      navigation patterns. Tokens capture the stable foundation; component_patterns
+      may need refresh if adopting this preset after 2026-Q1.
+    description: >
+      OpenAI/ChatGPT aesthetic. Academic elegance meets frontier technology —
+      a minimal interface designed for conversation-centric interaction with
+      subtle green accents that echo intelligence and growth. Clean typography
+      with generous line-height optimized for reading long-form AI-generated
+      content, monospace code blocks with syntax highlighting, and a sidebar
+      navigation pattern that keeps conversation history accessible. The design
+      whispers sophistication while staying invisible to the content.
+    reference: ["openai.com", "chatgpt.com"]
+    tokens:
+      colors:
+        light:
+          background: "#FFFFFF"
+          surface: "#F7F7F8"
+          surface-elevated: "#FFFFFF"
+          primary: "#10A37F"
+          secondary: "#6E6E80"
+          accent: "#10A37F"
+          text-primary: "#2D2D2D"
+          text-secondary: "#6E6E80"
+          text-tertiary: "#9B9BA4"
+          border: "#E5E5E5"
+          separator: "#ECECEC"
+          code-bg: "#F7F7F8"
+          destructive: "#EF4444"
+          success: "#10A37F"
+          warning: "#F59E0B"
+        dark:
+          background: "#212121"
+          surface: "#2F2F2F"
+          surface-elevated: "#3A3A3A"
+          sidebar: "#171717"
+          primary: "#10A37F"
+          secondary: "#8E8EA0"
+          accent: "#10A37F"
+          text-primary: "#ECECEC"
+          text-secondary: "#8E8EA0"
+          text-tertiary: "#6B6B7B"
+          border: "#444654"
+          separator: "#3C3C4A"
+          code-bg: "#1E1E2E"
+          destructive: "#EF4444"
+          success: "#10A37F"
+          warning: "#F59E0B"
+      typography:
+        font_family: "'Söhne', 'Inter', 'Helvetica Neue', sans-serif"
+        font_mono: "'Söhne Mono', 'JetBrains Mono', 'Menlo', monospace"
+        scale: [12, 14, 16, 18, 22, 28, 36, 48]
+        weights: [400, 500, 600]
+        base_size: 16
+        line_height: 1.75
+        letter_spacing: "0em"
+        title_tracking: "-0.01em"
+        heading_style: "clean academic sans-serif, medium weight, generous line-height, sentence case"
+      spacing:
+        base: 4
+        scale: [4, 8, 16, 24, 32, 48, 64]
+      radius:
+        sm: 6
+        md: 12
+        lg: 16
+        xl: 24
+        full: 9999
+      shadows:
+        sm: "0 1px 3px rgba(0,0,0,0.06)"
+        md: "0 2px 8px rgba(0,0,0,0.08)"
+        lg: "0 4px 16px rgba(0,0,0,0.12)"
+        elevated: "0 8px 32px rgba(0,0,0,0.16)"
+        sidebar: "1px 0 0 rgba(0,0,0,0.08)"
+      motion:
+        spring_default: { stiffness: 200, damping: 20, mass: 1 }
+        spring_gentle: { stiffness: 120, damping: 18, mass: 1.2 }
+        spring_typing: { stiffness: 100, damping: 15, mass: 1 }
+        typing_speed: "30ms per token"
+        fade_in: "opacity 0→1, 200ms ease-out"
+        scroll_smooth: "scroll-behavior: smooth"
+        reduced_motion: "crossfade 0.2s ease"
+      effects:
+        typing_indicator: "3 bouncing dots, staggered 150ms, gray circles"
+        streaming_text: "token-by-token text reveal, cursor blink at end"
+        code_highlight: "syntax highlighting with theme-aware colors, rounded-md block"
+        copy_hover_reveal: "copy button opacity 0→1 on code block hover, top-right"
+        sidebar_transition: "width 0→260px, spring gentle, content fade"
+    component_patterns:
+      card: "surface background, rounded-xl, border not shadow, 16px padding, clean typography"
+      button_primary: "solid green (#10A37F), rounded-full (pill), medium weight, 40px height"
+      button_secondary: "transparent, border, rounded-full, hover surface tint"
+      input: "surface background, rounded-xl, 48px height, no visible border, focus subtle shadow, send icon right"
+      modal: "surface-elevated, rounded-xl, elevated shadow, centered, 24px padding, close X"
+      nav: "sidebar, dark background (#171717), conversation list, new chat button top, user profile bottom"
+      chat_bubble_user: "right-aligned, surface-elevated background, rounded-2xl, 16px padding, max-width 70%"
+      chat_bubble_ai: "left-aligned, no background (transparent), full-width, avatar icon left"
+      thinking_indicator: "3 dots bouncing, gray, inline with chat flow, 'thinking...' label"
+      model_selector: "dropdown, rounded-lg, current model displayed, chevron down, hover surface tint"
+      code_block: "dark background, rounded-md, language badge top-left, copy button top-right, syntax colored"
+      prompt_input: "bottom-fixed, rounded-xl, auto-grow textarea, send button right, attachment left"
+      capability_card: "grid layout, icon + title + description, rounded-xl, border, hover surface tint"
+      conversation_item: "sidebar list item, truncated title, date subtitle, hover background, active indicator"
+    css_variables_prefix: "--oai"
+    tailwind_extend:
+      colors:
+        oai-green: "#10A37F"
+        oai-dark: "#212121"
+        oai-sidebar: "#171717"
+        oai-text: "#2D2D2D"

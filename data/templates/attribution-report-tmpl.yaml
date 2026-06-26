@@ -1,0 +1,94 @@
+# Attribution Report Template
+# Clone: @avinash-kaushik (Tier 2)
+# Output format for marketing attribution analysis
+
+metadata:
+  template_id: attribution-report-tmpl
+  version: "1.0"
+  clone: avinash-kaushik
+  tier: 2
+  report_period:
+    start: "{{start_date}}"
+    end: "{{end_date}}"
+
+# Attribution Models (Avinash Kaushik specialty)
+attribution_models:
+  first_touch:
+    description: "100% credit to first interaction"
+    results:
+      - source: "{{source}}"
+        conversions: 0
+        revenue: 0
+        pct_total: 0.0
+
+  last_touch:
+    description: "100% credit to last interaction"
+    results:
+      - source: "{{source}}"
+        conversions: 0
+        revenue: 0
+        pct_total: 0.0
+
+  linear:
+    description: "Equal credit to all touchpoints"
+    results:
+      - source: "{{source}}"
+        conversions: 0
+        revenue: 0
+        pct_total: 0.0
+
+  position_based:
+    description: "40% first, 40% last, 20% middle"
+    results:
+      - source: "{{source}}"
+        conversions: 0
+        revenue: 0
+        pct_total: 0.0
+
+# CLV-Weighted Attribution (Peter Fader contribution)
+clv_attribution:
+  description: "Attribution weighted by customer CLV, not just conversion"
+  results:
+    - source: "{{source}}"
+      customers: 0
+      total_clv: 0
+      avg_clv: 0
+      clv_share: 0.0  # % of total CLV from this source
+
+# Channel Performance
+channel_summary:
+  - channel: "Organic Search"
+    spend: 0
+    conversions: 0
+    revenue: 0
+    cac: 0  # Customer Acquisition Cost
+    roas: 0.0  # Return on Ad Spend
+    clv_to_cac_ratio: 0.0
+
+  - channel: "Paid Social"
+    spend: 0
+    conversions: 0
+    revenue: 0
+    cac: 0
+    roas: 0.0
+    clv_to_cac_ratio: 0.0
+
+  - channel: "Referral"
+    spend: 0  # Usually low
+    conversions: 0
+    revenue: 0
+    cac: 0
+    roas: 0.0  # Usually very high
+    clv_to_cac_ratio: 0.0
+
+# So What Framework (Avinash Kaushik signature)
+so_what:
+  what_happened: "{{summary_of_data}}"
+  why_it_matters: "{{business_impact}}"
+  now_what: "{{recommended_actions}}"
+
+recommendations:
+  - priority: "HIGH"
+    action: "{{specific_action}}"
+    expected_impact: "{{quantified_impact}}"
+    owner: "{{team}}"

@@ -1,0 +1,1225 @@
+# ============================================================
+# SOP Machine-Readable Definition
+# SOP-SLIDES-001: Criacao de Deck de Slides AIOX
+# Template: sop-ml-tmpl.md | SOP Factory | Synkra AIOX
+# ============================================================
+
+sop:
+  # --- Identity -----------------------------------------------------------
+  id: "SOP-SLIDES-001"
+  version: "1.2.0"
+  title: "Criacao de Deck de Slides AIOX"
+  purpose: "Garantir criacao consistente, acessivel e padronizada de decks de slides no Design System AIOX"
+
+  # --- Classification -----------------------------------------------------
+  classification:
+    domain: "design-system"
+    category: "slide-creation"
+    risk_level: "medium"
+    compliance_tags:
+      - "WCAG-2.2-AA"
+      - "AIOX-DS-v2.1"
+  status: "DRAFT"
+  effective_date: "2026-03-16"
+  review_date: "2026-09-16"
+
+  # --- Trigger ------------------------------------------------------------
+  trigger:
+    type: "manual"
+    description: "Briefing recebido para criacao de novo deck de slides"
+    event: "slide_deck.creation_requested"
+    schedule: null
+    source: "designer_or_author"
+    conditions:
+      - field: "briefing.tema"
+        operator: "exists"
+        value: true
+      - field: "briefing.duracao_estimada"
+        operator: "exists"
+        value: true
+      - field: "briefing.conteudo_fonte"
+        operator: "exists"
+        value: true
+
+  # --- Context ------------------------------------------------------------
+  context:
+    tools:
+      - id: "nodejs"
+        name: "Node.js"
+        type: "cli"
+        version: ">=18.0.0"
+        required: true
+      - id: "react"
+        name: "React"
+        type: "cli"
+        version: ">=18.0.0"
+        required: true
+      - id: "typescript"
+        name: "TypeScript"
+        type: "cli"
+        version: ">=5.0.0"
+        required: true
+      - id: "framer-motion"
+        name: "Framer Motion"
+        type: "cli"
+        version: ">=10.0.0"
+        required: true
+      - id: "wcag-checker"
+        name: "WCAG Contrast Checker"
+        type: "ui"
+        version: "any"
+        required: true
+      - id: "peat"
+        name: "Photosensitive Epilepsy Analysis Tool"
+        type: "ui"
+        version: "any"
+        required: false
+
+    permissions:
+      - resource: "project-repository"
+        action: "write"
+        scope: "slides-page.tsx and related components"
+        justification: "Implementacao de slides requer escrita no repositorio"
+      - resource: "design-tokens"
+        action: "read"
+        scope: "CSS variables and token files"
+        justification: "Tokens sao a fonte unica de verdade para valores de design"
+
+    environment:
+      - key: "DESIGN_TOKENS_LOADED"
+        description: "CSS variables de design tokens disponiveis no projeto"
+        required: true
+        sensitive: false
+      - key: "FONTS_LOADED"
+        description: "Geist Sans e Geist Mono importadas e funcionais"
+        required: true
+        sensitive: false
+
+    input:
+      - name: "briefing"
+        type: "object"
+        required: true
+        description: "Briefing contendo tema, publico-alvo, duracao estimada e conteudo-fonte"
+        validation: "briefing.tema && briefing.duracao_estimada && briefing.conteudo_fonte"
+      - name: "modo"
+        type: "string"
+        required: false
+        description: "Modo de apresentacao: palco, live ou async. Derivado do briefing se nao fornecido"
+        default: null
+
+  # --- Design Tokens (v2.1 corrigidos) ------------------------------------
+  constants:
+    colors:
+      bb_dark: "#050505"
+      bb_lime: "#D1FF00"
+      bb_cream: "#FFFDD0"
+      bb_dim_min_aa: "#777777"
+      bb_dim_min_aaa: "#999999"
+      bb_surface: "theme-defined"  # Cards, paineis internos
+    contrast_ratios:
+      cream_on_dark: 19.62
+      lime_on_dark: 17.48
+      dark_on_lime: 17.48
+      dim_777_on_dark: 4.55
+      dim_999_on_dark: 7.15
+    typography:
+      slide_title_xl: "clamp(48px, 6.8vw, 130px)"
+      slide_title_lg: "clamp(40px, 3.3vw, 64px)"
+      slide_title_md: "clamp(32px, 2.5vw, 48px)"
+      slide_body: "clamp(24px, 1.9vw, 36px)"
+      slide_caption: "clamp(16px, 1.5vw, 28px)"
+      slide_label: "clamp(13px, 0.7vw, 14px)"  # v2.1: piso elevado de 11px para 13px
+      absolute_floor: "13px"  # Nenhum texto menor que 13px em qualquer viewport
+      palco_label_min_effective: "16px"  # Labels em Palco devem renderizar >= 16px
+    spacing:
+      xs: "clamp(4px, 0.4vw, 8px)"
+      sm: "clamp(8px, 0.8vw, 16px)"
+      md: "clamp(16px, 1.7vw, 32px)"
+      lg: "clamp(32px, 3.3vw, 64px)"
+      xl: "clamp(64px, 5vw, 96px)"
+    margins:
+      x: "clamp(48px, 7.3vw, 200px)"
+      top: "clamp(40px, 5vw, 136px)"
+      bottom: "clamp(24px, 2.1vw, 40px)"
+    mode_constraints:
+      palco:
+        max_words_per_slide: 15
+        min_font_body: "2.2vw"
+        speaker_notes_required: true
+        min_whitespace_pct: 50
+        animations_allowed: true
+        safe_zone: "standard_margins"
+      live:
+        max_words_per_slide: 15
+        min_font_body: "2.2vw"
+        speaker_notes_required: true
+        min_whitespace_pct: 45
+        animations_allowed: true
+        animation_delay_reduction: 0.3
+        safe_right_pct: 20
+        safe_bottom_pct: 15
+        safe_zone: "avoid_20pct_bottom_right_camera_and_right_chat"
+      async:
+        max_words_per_slide: 30
+        min_font_body: "1.6vw"
+        speaker_notes_required: false
+        min_whitespace_pct: 40
+        animations_allowed: false
+        safe_zone: "standard_margins"
+
+  # --- Slide Type Taxonomy -------------------------------------------------
+  slide_types:
+  # --- Background Rules (apply to all types) ------------------------------
+  background_rules:
+    grid_pattern_max_opacity: 0.03
+    radial_glow_max_opacity: 0.06
+    image_bg_max_opacity: 0.15
+    image_bg_overlay: "bb_dark"
+    subtraction_test: "Remove background. If slide works equally, background is decorative (acceptable). If slide loses info, promote to primary visual element."
+
+  # --- Layout Responsiveness -----------------------------------------------
+  layout_responsiveness:
+    - original_16_9: "split_50_50_horizontal"
+      in_9_16: "stack_vertical_50_50"
+      in_1_1: "stack_vertical_60_40"
+    - original_16_9: "split_60_40_horizontal"
+      in_9_16: "stack_vertical_image_top"
+      in_1_1: "image_top_50_text_bottom"
+    - original_16_9: "grid_1x3_horizontal"
+      in_9_16: "stack_vertical_3x1"
+      in_1_1: "grid_1x3_smaller_items"
+    - original_16_9: "full_center"
+      in_9_16: "full_center"
+      in_1_1: "full_center"
+    - original_16_9: "left_aligned"
+      in_9_16: "left_aligned"
+      in_1_1: "left_aligned_margin_reduced"
+  layout_rule: "Slide type defines INTENTION. Layout adapts FORM to viewport without changing information hierarchy."
+
+  # --- Slide Type Taxonomy -------------------------------------------------
+  slide_types:
+    - id: "TITLE"
+      name: "Slide de Abertura"
+      props:
+        title: { token: "slide_title_xl", weight: 900, max_words: 5 }
+        subtitle: { token: "slide_title_md", weight: 500, max_words: 10 }
+        speaker: { token: "slide_caption", weight: 500 }
+        date: { token: "slide_label", font: "mono" }
+      decoratives: ["CornerMarks", "MetaBar"]  # CornerMarks: max 2 per deck section
+      layout: ["full_center", "left_aligned_with_visual"]
+      position: "first"
+      estimated_screen_time_s: [10, 15]
+
+    - id: "SECTION_BREAK"
+      name: "Divisor de Secao"
+      props:
+        number: { element: "WatermarkNumber", opacity: 0.04 }
+        title: { token: "slide_title_lg", weight: 900, max_words: 3 }
+      backgrounds: ["bb_dark", "bb_lime"]
+      layout: ["full_center"]
+      footer: false
+      expected_duration_s: [3, 5]
+      estimated_screen_time_s: [3, 5]
+
+    - id: "STATEMENT"
+      name: "Frase de Impacto"
+      props:
+        text: { token: ["slide_title_xl", "slide_title_lg"], weight: 900 }
+        attribution: { token: "slide_caption", weight: 500, optional: true }
+      max_words_total: 10
+      max_highlights: 2
+      background: "bb_dark"
+      layout: ["full_center"]
+      min_whitespace_pct: 60
+      estimated_screen_time_s: [5, 10]
+      quote_note: "Citations with attribution may need visual distinction (quotes, different weight). Consider QUOTE type if pattern recurs in 3+ decks."
+
+    - id: "CONTENT"
+      name: "Conteudo Padrao"
+      props:
+        sectionTag: { element: "SectionTag" }
+        title: { token: "slide_title_lg", weight: 900 }
+        items: { token: "slide_body", count: [3, 4], format: "keywords_not_sentences" }
+      footer: "PageFooter"
+      layout: ["left_aligned"]
+      min_whitespace_pct: 50
+      estimated_screen_time_s: [20, 40]
+
+    - id: "COMPARISON"
+      name: "Lado a Lado"
+      props:
+        left: { title: true, items: [2, 3] }
+        right: { title: true, items: [2, 3] }
+      split: ["50_50", "60_40"]
+      differentiation: "color_plus_form_never_color_alone"
+      layout_16_9: "split_horizontal"
+      layout_9_16: "stack_vertical"
+      estimated_screen_time_s: [20, 40]
+
+    - id: "METRIC"
+      name: "Numeros de Impacto"
+      props:
+        metrics: { count: [1, 3], value_token: "slide_title_xl", value_font: "mono", value_weight: 900, label_token: "slide_caption" }
+      animation: { preset: "scaleIn", stagger: 0.15 }
+      layout: ["grid_1x1", "grid_1x2", "grid_1x3"]
+      estimated_screen_time_s: [10, 20]
+
+    - id: "DATA_VIZ"
+      name: "Grafico ou Visualizacao"
+      props:
+        title: { token: "slide_title_md", weight: 700, rule: "conclusion_not_description" }
+        chart: { min_area_pct: 60 }
+        source: { token: "slide_label", font: "mono", position: "bottom_corner" }
+      legibility_rule: "data_legible_at_3m_palco_mode"
+      constraints:
+        max_series: 3
+        differentiation: "color_plus_pattern"
+        label_sizes:
+          bar_point_values: { token: "slide_caption", font: "mono", weight: 700 }
+          axis_labels: { token: "slide_label", font: "mono", weight: 500 }
+          legend: { token: "slide_label", font: "sans", weight: 500 }
+          chart_title: { token: "slide_title_md", font: "sans", weight: 700 }
+          source: { token: "slide_label", font: "mono", weight: 400 }
+        allowed_charts:
+          - { type: "bar_vertical", max_elements: 6 }
+          - { type: "bar_horizontal", max_elements: 8 }
+          - { type: "line", max_points: 12, max_lines: 2 }
+          - { type: "donut", max_slices: 4 }
+          - { type: "big_number_sparkline", max_numbers: 1 }
+          - { type: "table_simple", max_cols: 4, max_rows: 5 }
+        prohibited_charts: ["scatter", "heatmap", "treemap", "sankey"]
+      estimated_screen_time_s: [30, 60]
+
+    - id: "IMAGE"
+      name: "Imagem Dominante"
+      props:
+        image: { min_area_pct: 60, min_resolution_px: 1920, max_file_kb: 500, preferred_format: "webp" }
+        caption: { token: "slide_caption", max_words: 8 }
+      layout: ["full_bleed", "split_60_40", "centered_with_padding"]
+      overlay: { color: "bb_dark", opacity: [0.6, 0.8], when: "text_over_image" }
+      screenshot_rule: "always_use_TechFrame_max2_or_1px_border"
+      light_bg_rule: "must_have_border_frame_or_rounded_corners"
+      dark_bg_rule: "can_go_full_bleed"
+      lazy_loading: "per_visible_slide_when_many_images"
+      media_types:
+        video: { format: "mp4", mode: "palco_only", max_duration_s: 30, autoplay: true, sound: false }
+        gif_lottie: { max_loop_s: 5, never_main_content_alone: true }
+        illustration_icon: { format: "svg_preferred", colors: "tokens_only" }
+      anti_patterns: ["stock_generic", "no_context_screenshot", "pixelated", "watermark", "decorative_unrelated"]
+      estimated_screen_time_s: [5, 15]
+
+    - id: "BUILD"
+      name: "Progressivo"
+      props:
+        steps: { count: [2, 5] }
+        active_opacity: 1.0
+        future_opacity: 0.15
+      layout: ["horizontal_timeline", "vertical_progressive"]
+      async_override: "all_steps_visible"
+      estimated_screen_time_s_per_step: [15, 30]
+
+    - id: "CODE"
+      name: "Codigo ou Terminal"
+      props:
+        code: { font: "mono", min_token: "slide_body" }
+        language: { token: "slide_label", position: "top" }
+        highlight_lines: { color: "bb_lime", opacity: 0.15, as: "background" }
+      max_visible_lines: 12
+      overflow_action: "split_into_2_slides"
+      rule: "never_screenshot_always_rendered_text"
+      estimated_screen_time_s: [30, 60]
+
+    - id: "CLOSING"
+      name: "Slide Final"
+      props:
+        message: { token: "slide_title_lg", weight: 900, max_words: 5 }
+        contact: { token: "slide_caption" }
+      decoratives: ["CornerMarks"]
+      layout: ["full_center"]
+      rule: "text_cta_only_no_clickable_buttons"
+      position: "last"
+      estimated_screen_time_s: [10, 20]
+
+  # --- Animate Rules --------------------------------------------------------
+  animate_when:
+    - "sequential_temporal_steps_timeline"
+    - "reveal_impact_data_big_number"
+    - "build_progressive"
+    - "charts_with_comparative_data"
+  do_not_animate:
+    - "content_that_makes_sense_all_together"
+    - "decorative_elements_backgrounds_grids"
+    - "slide_title_must_be_immediate"
+    - "anything_in_async_mode"
+  heuristic: "If removing the animation does not change comprehension, do not animate."
+
+  # --- Format Guide (Section 14) -------------------------------------------
+  format_guide:
+    ted_keynote:
+      mode: "palco"
+      slides: [40, 90]
+      slides_per_min: [2, 3]
+      text: "minimal (0-1 sentence)"
+      bullets: "NEVER"
+      background: "dark"
+      self_explanatory: false
+      dominant_types: ["STATEMENT", "IMAGE", "METRIC", "SECTION_BREAK"]
+      rare_types: ["CONTENT", "CODE", "DATA_VIZ"]
+      narrative: "hook → tension → resolution → CTA"
+      rule: "slide supports narrator — if works alone, steals attention"
+    pitch_deck:
+      mode: ["palco", "async"]
+      slides: [10, 15]
+      text: "moderate"
+      data: "essential"
+      min_font: "30pt"
+      bullets: "rare"
+      versions: 2
+      structures: ["sequoia", "yc"]
+      fatal_anti_pattern: "We have no competition"
+      dominant_types: ["TITLE", "CONTENT", "METRIC", "DATA_VIZ", "COMPARISON", "CLOSING"]
+    sales_deck:
+      mode: ["palco", "async"]
+      slides: { smb: [8, 12], mid: [12, 18], enterprise: [18, 25] }
+      framework: "SCR: Situation → Complication → Resolution"
+      personalization: "per ICP, minimum opening slide"
+      leave_behind: "must work as autonomous seller"
+      dominant_types: ["TITLE", "CONTENT", "COMPARISON", "METRIC", "DATA_VIZ", "IMAGE", "CLOSING"]
+    technical:
+      mode: "palco"
+      slides_per_min: [1, 2]
+      code_legitimate: true
+      code_min_font: "20pt"
+      backup_slides: [5, 10]
+      test: "step back 2m, can you read?"
+      dominant_types: ["CONTENT", "BUILD", "CODE", "DATA_VIZ", "COMPARISON", "IMAGE"]
+      anti_pattern: "copy academic paper to slides"
+    zoom_virtual:
+      mode: "live"
+      visual_movements_per_min: 2
+      interaction_interval_min: [3, 5]
+      slide_is_main_focus: true
+      breathing: "section breaks + recaps per section"
+      dominant_types: "all — STATEMENT and SECTION_BREAK gain importance"
+    carousel_stories:
+      mode: "async"
+      ratio: ["9:16", "1:1"]
+      slides: [5, 10]
+      bullets: "NEVER"
+      max_words: 15
+      first_slide: "visual hook"
+      last_slide: "CTA: Save, Share, Link"
+      font: "extra-large"
+      dominant_types: ["STATEMENT", "CONTENT", "METRIC", "CLOSING"]
+    comparison_table:
+      - { format: "TED", slides: "40-90", text: "minimal", bullets: "never", self_explanatory: "never" }
+      - { format: "Pitch", slides: "10-15", text: "moderate", bullets: "rare", self_explanatory: "yes" }
+      - { format: "Sales", slides: "8-25", text: "moderate", bullets: "allowed", self_explanatory: "yes" }
+      - { format: "Technical", slides: "20-40", text: "moderate+", bullets: "allowed", self_explanatory: "partial" }
+      - { format: "Zoom", slides: "variable", text: "reduced", bullets: "cautious", self_explanatory: "depends" }
+      - { format: "Carousel", slides: "5-10", text: "minimal", bullets: "never", self_explanatory: "always" }
+
+  # --- Procedure Steps ----------------------------------------------------
+  steps:
+    - id: "S001"
+      name: "Receber briefing e definir modo"
+      action: "define_presentation_mode"
+      description: "Receber briefing com tema, publico-alvo, duracao estimada e conteudo-fonte. Determinar modo de apresentacao baseado no contexto."
+      performer: "dev_frontend"
+      critical: true
+      estimated_duration: "PT15M"
+      tool:
+        id: "manual"
+        command: null
+        timeout: null
+      input:
+        - name: "briefing"
+          type: "object"
+          source: "user_input"
+          value: null
+          required: true
+      output:
+        - name: "mode"
+          type: "string"
+          store_as: "presentation_mode"
+        - name: "mode_constraints"
+          type: "object"
+          store_as: "active_constraints"
+      validation:
+        type: "assertion"
+        rules:
+          - field: "presentation_mode"
+            operator: "contains"
+            expected: ["palco", "live", "async"]
+            message: "Modo deve ser palco, live ou async"
+      on_success: "S002"
+      on_failure: "ERR_BRIEFING"
+      decision_point:
+        question: "Qual o contexto de exibicao?"
+        evaluate: "briefing.contexto"
+        branches:
+          - condition: "contexto in ['conferencia', 'keynote', 'workshop']"
+            label: "Palco"
+            goto: "S002"
+          - condition: "contexto in ['youtube', 'twitch', 'screenshare']"
+            label: "Live"
+            goto: "S002"
+          - condition: "contexto in ['pos-evento', 'curso', 'onboarding']"
+            label: "Async"
+            goto: "S002"
+          - condition: "default"
+            label: "Modo indefinido — solicitar ao autor"
+            goto: "ERR_BRIEFING"
+
+    - id: "S002"
+      name: "Selecionar aspect ratio"
+      action: "select_aspect_ratio"
+      description: "Selecionar aspect ratio baseado no canal de exibicao. Configurar container do slide."
+      performer: "dev_frontend"
+      critical: true
+      estimated_duration: "PT5M"
+      tool:
+        id: "manual"
+        command: null
+        timeout: null
+      input:
+        - name: "presentation_mode"
+          type: "string"
+          source: "previous_step"
+          value: "S001.presentation_mode"
+          required: true
+      output:
+        - name: "aspect_ratio"
+          type: "string"
+          store_as: "selected_ratio"
+        - name: "reference_resolution"
+          type: "string"
+          store_as: "ref_resolution"
+      validation:
+        type: "assertion"
+        rules:
+          - field: "selected_ratio"
+            operator: "contains"
+            expected: ["16:9", "16:10", "9:16", "1:1"]
+            message: "Ratio deve ser 16:9, 16:10, 9:16 ou 1:1"
+      on_success: "S003"
+      on_failure: "ERR_CONFIG"
+      decision_point:
+        question: "Qual o canal de exibicao?"
+        evaluate: "briefing.canal"
+        branches:
+          - condition: "canal in ['projetor', 'monitor', 'stream']"
+            label: "16:9 (1920x1080)"
+            goto: "S003"
+          - condition: "canal in ['macbook', 'projetor_mac']"
+            label: "16:10 (1920x1200)"
+            goto: "S003"
+          - condition: "canal in ['stories', 'reels', 'vertical']"
+            label: "9:16 (1080x1920)"
+            goto: "S003"
+          - condition: "canal in ['instagram', 'carrossel', 'quadrado']"
+            label: "1:1 (1080x1080)"
+            goto: "S003"
+          - condition: "default"
+            label: "Usar 16:9 como padrao"
+            goto: "S003"
+
+    - id: "S003"
+      name: "Planejar sequencia de slides"
+      action: "plan_slide_sequence"
+      description: "Estimar quantidade de slides, definir estrutura narrativa e atribuir tipo a cada slide."
+      performer: "dev_frontend"
+      critical: true
+      estimated_duration: "PT30M"
+      tool:
+        id: "manual"
+        command: null
+        timeout: null
+      input:
+        - name: "briefing"
+          type: "object"
+          source: "user_input"
+          value: null
+          required: true
+        - name: "active_constraints"
+          type: "object"
+          source: "previous_step"
+          value: "S001.active_constraints"
+          required: true
+      output:
+        - name: "slide_sequence"
+          type: "array"
+          store_as: "planned_sequence"
+      validation:
+        type: "custom"
+        rules:
+          - field: "planned_sequence[0].type"
+            operator: "eq"
+            expected: "TITLE"
+            message: "Primeiro slide deve ser TITLE"
+          - field: "planned_sequence[-1].type"
+            operator: "eq"
+            expected: "CLOSING"
+            message: "Ultimo slide deve ser CLOSING"
+          - field: "max_consecutive_same_type"
+            operator: "lte"
+            expected: 3
+            message: "Nunca mais de 3 slides consecutivos do mesmo tipo"
+          - field: "max_duration_per_slide_s"
+            operator: "lte"
+            expected: 120
+            message: "Nenhum slide deve ficar mais de 2 minutos na tela"
+      on_success: "S004"
+      on_failure: "ERR_SEQUENCE"
+      decision_point: null
+
+    - id: "S004"
+      name: "Configurar ambiente e tokens"
+      action: "verify_environment_tokens"
+      description: "Verificar que todos os design tokens estao carregados, fontes funcionais e componentes base disponiveis."
+      performer: "dev_frontend"
+      critical: true
+      estimated_duration: "PT10M"
+      tool:
+        id: "cli"
+        command: "npm run dev"
+        timeout: "PT2M"
+      input:
+        - name: "presentation_mode"
+          type: "string"
+          source: "previous_step"
+          value: "S001.presentation_mode"
+          required: true
+      output:
+        - name: "env_status"
+          type: "object"
+          store_as: "environment_ready"
+      validation:
+        type: "assertion"
+        rules:
+          - field: "tokens_loaded"
+            operator: "eq"
+            expected: true
+            message: "Design tokens devem estar carregados"
+          - field: "fonts_loaded"
+            operator: "eq"
+            expected: true
+            message: "Geist Sans e Geist Mono devem estar funcionais"
+          - field: "components_available"
+            operator: "eq"
+            expected: true
+            message: "SlideLayout e componentes decorativos devem estar disponiveis"
+          - field: "bb_dim_value"
+            operator: "gte"
+            expected: "#777777"
+            message: "--bb-dim deve ser >= #777777 para compliance WCAG AA"
+      on_success: "S005"
+      on_failure: "ERR_ENV"
+      decision_point:
+        question: "O modo e Live?"
+        evaluate: "presentation_mode == 'live'"
+        branches:
+          - condition: "true"
+            label: "Aplicar safe zones adicionais (right: 20%, bottom: 15%)"
+            goto: "S005"
+          - condition: "false"
+            label: "Margens padrao"
+            goto: "S005"
+
+    - id: "S005"
+      name: "Criar slides individuais"
+      action: "implement_slides"
+      description: "Para cada slide na sequencia planejada, implementar em TSX seguindo as regras do tipo correspondente."
+      performer: "dev_frontend"
+      critical: true
+      estimated_duration: "PT2H"
+      tool:
+        id: "typescript"
+        command: null
+        timeout: null
+      input:
+        - name: "planned_sequence"
+          type: "array"
+          source: "previous_step"
+          value: "S003.planned_sequence"
+          required: true
+        - name: "active_constraints"
+          type: "object"
+          source: "previous_step"
+          value: "S001.active_constraints"
+          required: true
+      output:
+        - name: "implemented_slides"
+          type: "array"
+          store_as: "slides_code"
+      validation:
+        type: "custom"
+        rules:
+          - field: "each_slide.has_font_inline_style"
+            operator: "eq"
+            expected: true
+            message: "Todo elemento com fonte custom deve ter style={FONT_SANS} ou style={FONT_MONO}"
+          - field: "each_slide.hardcoded_px_count"
+            operator: "eq"
+            expected: 0
+            message: "Zero valores em px hardcoded — sempre via token ou clamp()"
+          - field: "each_slide.matches_type_constraints"
+            operator: "eq"
+            expected: true
+            message: "Cada slide deve seguir as restricoes do seu tipo"
+      on_success: "S006"
+      on_failure: "ERR_IMPLEMENTATION"
+      decision_point:
+        question: "Qual tipo de slide?"
+        evaluate: "current_slide.type"
+        branches:
+          - condition: "type == 'TITLE'"
+            label: "Sub-procedimento 6.5.1"
+            goto: "S005"
+          - condition: "type == 'SECTION_BREAK'"
+            label: "Sub-procedimento 6.5.2"
+            goto: "S005"
+          - condition: "type == 'STATEMENT'"
+            label: "Sub-procedimento 6.5.3"
+            goto: "S005"
+          - condition: "type == 'CONTENT'"
+            label: "Sub-procedimento 6.5.4"
+            goto: "S005"
+          - condition: "type == 'COMPARISON'"
+            label: "Sub-procedimento 6.5.5"
+            goto: "S005"
+          - condition: "type == 'METRIC'"
+            label: "Sub-procedimento 6.5.6"
+            goto: "S005"
+          - condition: "type == 'DATA_VIZ'"
+            label: "Sub-procedimento 6.5.7"
+            goto: "S005"
+          - condition: "type == 'IMAGE'"
+            label: "Sub-procedimento 6.5.8"
+            goto: "S005"
+          - condition: "type == 'BUILD'"
+            label: "Sub-procedimento 6.5.9"
+            goto: "S005"
+          - condition: "type == 'CODE'"
+            label: "Sub-procedimento 6.5.10"
+            goto: "S005"
+          - condition: "type == 'CLOSING'"
+            label: "Sub-procedimento 6.5.11"
+            goto: "S005"
+          - condition: "default"
+            label: "Tipo desconhecido — decompor em tipos existentes"
+            goto: "ERR_UNKNOWN_TYPE"
+
+    - id: "S006"
+      name: "Implementar animacoes"
+      action: "implement_animations"
+      description: "Adicionar animacoes Framer Motion respeitando restricoes do modo. Pular se modo Async."
+      performer: "dev_frontend"
+      critical: false
+      estimated_duration: "PT30M"
+      tool:
+        id: "framer-motion"
+        command: null
+        timeout: null
+      input:
+        - name: "slides_code"
+          type: "array"
+          source: "previous_step"
+          value: "S005.slides_code"
+          required: true
+        - name: "presentation_mode"
+          type: "string"
+          source: "previous_step"
+          value: "S001.presentation_mode"
+          required: true
+      output:
+        - name: "animated_slides"
+          type: "array"
+          store_as: "slides_with_animations"
+      validation:
+        type: "assertion"
+        rules:
+          - field: "each_slide.animation_types_count"
+            operator: "lte"
+            expected: 3
+            message: "Maximo 3 tipos de animacao por slide"
+          - field: "each_slide.total_delay_s"
+            operator: "lte"
+            expected: 1.5
+            message: "Delay total nunca maior que 1.5s"
+      on_success: "S007"
+      on_failure: "ERR_ANIMATION"
+      decision_point:
+        question: "O modo e Async?"
+        evaluate: "presentation_mode == 'async'"
+        branches:
+          - condition: "true"
+            label: "PULAR — animacoes nao se aplicam a export estatico"
+            goto: "S007"
+          - condition: "false"
+            label: "Implementar animacoes"
+            goto: "S007"
+
+    - id: "S007"
+      name: "Validar acessibilidade"
+      action: "validate_accessibility"
+      description: "Verificar contraste WCAG, daltonismo, estrutura semantica e motion preferences."
+      performer: "dev_frontend"
+      critical: true
+      estimated_duration: "PT20M"
+      tool:
+        id: "wcag-checker"
+        command: null
+        timeout: null
+      input:
+        - name: "slides_with_animations"
+          type: "array"
+          source: "previous_step"
+          value: "S006.slides_with_animations"
+          required: true
+      output:
+        - name: "accessibility_report"
+          type: "object"
+          store_as: "a11y_report"
+      validation:
+        type: "custom"
+        rules:
+          - field: "contrast_body_ratio"
+            operator: "gte"
+            expected: 4.5
+            message: "Contraste para corpo >= 4.5:1 (WCAG AA)"
+          - field: "contrast_title_ratio"
+            operator: "gte"
+            expected: 3.0
+            message: "Contraste para titulos >= 3:1 (WCAG AA texto grande)"
+          - field: "color_only_differentiation"
+            operator: "eq"
+            expected: false
+            message: "Nenhuma informacao diferenciada apenas por cor"
+          - field: "unique_slide_titles"
+            operator: "eq"
+            expected: true
+            message: "Titulos de slide devem ser unicos para screen readers (v2.1)"
+          - field: "prefers_reduced_motion_implemented"
+            operator: "eq"
+            expected: true
+            message: "Media query prefers-reduced-motion deve estar implementada"
+          - field: "flash_per_second"
+            operator: "lte"
+            expected: 3
+            message: "Flash <= 3 por segundo (WCAG 2.3.1, nao < 3)"
+          - field: "use_reduced_motion_hook"
+            operator: "eq"
+            expected: true
+            message: "useReducedMotion hook from framer-motion deve estar implementado"
+          - field: "css_scroll_behavior_auto"
+            operator: "eq"
+            expected: true
+            message: "scroll-behavior: auto incluso na media query prefers-reduced-motion"
+          - field: "dom_reading_order_matches_visual"
+            operator: "eq"
+            expected: true
+            message: "Ordem de leitura do DOM = ordem visual (verificar com Accessibility Inspector)"
+      on_success: "S008"
+      on_failure: "ERR_A11Y"
+      decision_point: null
+
+    - id: "S008"
+      name: "Executar checklist pre-slide"
+      action: "run_per_slide_checklist"
+      description: "Para cada slide, executar checklist completo incluindo killer items."
+      performer: "dev_frontend"
+      critical: true
+      estimated_duration: "PT20M"
+      tool:
+        id: "manual"
+        command: null
+        timeout: null
+      input:
+        - name: "a11y_report"
+          type: "object"
+          source: "previous_step"
+          value: "S007.a11y_report"
+          required: true
+        - name: "slides_with_animations"
+          type: "array"
+          source: "previous_step"
+          value: "S006.slides_with_animations"
+          required: true
+      output:
+        - name: "checklist_results"
+          type: "array"
+          store_as: "per_slide_checklist"
+      validation:
+        type: "custom"
+        rules:
+          - field: "killer_items_passed"
+            operator: "eq"
+            expected: true
+            message: "Todos os killer items devem passar: contraste WCAG, zero px hardcoded, max palavras, zero paragrafos, zero screenshots de codigo"
+          - field: "all_items_checked"
+            operator: "eq"
+            expected: true
+            message: "Todos os items do checklist devem ser verificados"
+      on_success: "S009"
+      on_failure: "ERR_CHECKLIST"
+      decision_point: null
+
+    - id: "S009"
+      name: "Executar checklist de sequencia"
+      action: "run_sequence_checklist"
+      description: "Validar deck completo como unidade coerente."
+      performer: "dev_frontend"
+      critical: true
+      estimated_duration: "PT10M"
+      tool:
+        id: "manual"
+        command: null
+        timeout: null
+      input:
+        - name: "per_slide_checklist"
+          type: "array"
+          source: "previous_step"
+          value: "S008.per_slide_checklist"
+          required: true
+      output:
+        - name: "sequence_valid"
+          type: "boolean"
+          store_as: "deck_validated"
+      validation:
+        type: "assertion"
+        rules:
+          - field: "first_slide_is_title"
+            operator: "eq"
+            expected: true
+            message: "Primeiro slide deve ser TITLE"
+          - field: "last_slide_is_closing"
+            operator: "eq"
+            expected: true
+            message: "Ultimo slide deve ser CLOSING"
+          - field: "max_consecutive_same_type"
+            operator: "lte"
+            expected: 3
+            message: "Nunca mais de 3 slides consecutivos do mesmo tipo"
+          - field: "has_section_breaks"
+            operator: "eq"
+            expected: true
+            message: "Section breaks obrigatorios entre blocos tematicos"
+          - field: "max_slide_duration_s"
+            operator: "lte"
+            expected: 120
+            message: "Nenhum slide fica > 2 minutos na tela"
+          - field: "whitespace_visual_test"
+            operator: "eq"
+            expected: true
+            message: "Cada slide deve ter area vazia >= 25% apontavel de uma vez"
+          - field: "rhythm_reset_present"
+            operator: "eq"
+            expected: true
+            message: "Sequencias longas devem ter mudancas de ritmo (SECTION-BREAK, IMAGE, STATEMENT)"
+      on_success: "S010"
+      on_failure: "ERR_SEQUENCE"
+      decision_point: null
+
+    - id: "S010"
+      name: "Review e entrega"
+      action: "review_and_deliver"
+      description: "Executar lint/typecheck, visualizar deck, testar responsividade, submeter para aprovacao."
+      performer: "dev_frontend"
+      critical: true
+      estimated_duration: "PT30M"
+      tool:
+        id: "cli"
+        command: "npm run lint && npm run typecheck"
+        timeout: "PT5M"
+      input:
+        - name: "deck_validated"
+          type: "boolean"
+          source: "previous_step"
+          value: "S009.deck_validated"
+          required: true
+      output:
+        - name: "delivery_status"
+          type: "string"
+          store_as: "final_status"
+      validation:
+        type: "assertion"
+        rules:
+          - field: "lint_errors"
+            operator: "eq"
+            expected: 0
+            message: "Zero erros de lint"
+          - field: "typecheck_errors"
+            operator: "eq"
+            expected: 0
+            message: "Zero erros de typecheck"
+          - field: "tech_lead_approved"
+            operator: "eq"
+            expected: true
+            message: "Tech Lead deve aprovar o deck"
+      on_success: "END"
+      on_failure: "ERR_REVIEW"
+      decision_point:
+        question: "Tech Lead aprovou?"
+        evaluate: "review.verdict"
+        branches:
+          - condition: "verdict == 'approved'"
+            label: "Deck aprovado — fim"
+            goto: "END"
+          - condition: "verdict == 'corrections_needed'"
+            label: "Correcoes necessarias — voltar ao passo indicado"
+            goto: "S005"
+          - condition: "default"
+            label: "Aguardar review"
+            goto: "S010"
+
+  # --- Error Handling -----------------------------------------------------
+  error_handling:
+    handlers:
+      - id: "ERR_BRIEFING"
+        name: "Briefing incompleto ou modo indefinido"
+        trigger_on:
+          - error_type: "validation"
+        severity: "high"
+        actions:
+          - type: "notify"
+            config:
+              channel: "direct"
+              recipients: ["designer_or_author"]
+              template: "Briefing incompleto. Campos obrigatorios: tema, duracao_estimada, conteudo_fonte."
+          - type: "retry"
+            config:
+              max_retries: 2
+              retry_delay: "PT0S"
+              backoff: "fixed"
+
+      - id: "ERR_CONFIG"
+        name: "Aspect ratio invalido"
+        trigger_on:
+          - error_type: "validation"
+        severity: "medium"
+        actions:
+          - type: "retry"
+            config:
+              max_retries: 1
+              retry_delay: "PT0S"
+              backoff: "fixed"
+
+      - id: "ERR_SEQUENCE"
+        name: "Sequencia de slides invalida"
+        trigger_on:
+          - error_type: "validation"
+        severity: "high"
+        actions:
+          - type: "notify"
+            config:
+              channel: "direct"
+              recipients: ["dev_frontend"]
+              template: "Sequencia invalida. Verificar: TITLE primeiro, CLOSING ultimo, max 3 consecutivos, max 2min/slide."
+          - type: "retry"
+            config:
+              max_retries: 2
+              retry_delay: "PT0S"
+              backoff: "fixed"
+
+      - id: "ERR_ENV"
+        name: "Ambiente nao configurado"
+        trigger_on:
+          - error_type: "system"
+        severity: "critical"
+        actions:
+          - type: "notify"
+            config:
+              channel: "direct"
+              recipients: ["tech_lead"]
+              template: "Ambiente de desenvolvimento nao esta pronto. Verificar tokens, fontes e componentes."
+          - type: "escalate"
+            config:
+              escalate_to: "tech_lead"
+              deadline: "PT1H"
+              include_context: true
+
+      - id: "ERR_IMPLEMENTATION"
+        name: "Erro na implementacao do slide"
+        trigger_on:
+          - error_type: "validation"
+          - error_type: "system"
+        severity: "high"
+        actions:
+          - type: "retry"
+            config:
+              max_retries: 3
+              retry_delay: "PT0S"
+              backoff: "fixed"
+          - type: "escalate"
+            config:
+              escalate_to: "tech_lead"
+              deadline: "PT2H"
+              include_context: true
+
+      - id: "ERR_UNKNOWN_TYPE"
+        name: "Tipo de slide desconhecido"
+        trigger_on:
+          - error_type: "custom"
+        severity: "medium"
+        actions:
+          - type: "notify"
+            config:
+              channel: "direct"
+              recipients: ["dev_frontend"]
+              template: "Tipo nao reconhecido. Decompor em 2+ slides de tipos existentes antes de criar tipo novo."
+
+      - id: "ERR_ANIMATION"
+        name: "Animacao violando restricoes"
+        trigger_on:
+          - error_type: "validation"
+        severity: "medium"
+        actions:
+          - type: "retry"
+            config:
+              max_retries: 2
+              retry_delay: "PT0S"
+              backoff: "fixed"
+
+      - id: "ERR_A11Y"
+        name: "Falha de acessibilidade"
+        trigger_on:
+          - error_type: "validation"
+        severity: "critical"
+        actions:
+          - type: "notify"
+            config:
+              channel: "direct"
+              recipients: ["dev_frontend"]
+              template: "Falha WCAG detectada. Contraste, daltonismo ou estrutura semantica nao compliance."
+          - type: "retry"
+            config:
+              max_retries: 3
+              retry_delay: "PT0S"
+              backoff: "fixed"
+
+      - id: "ERR_CHECKLIST"
+        name: "Killer item falhou no checklist"
+        trigger_on:
+          - error_type: "validation"
+        severity: "critical"
+        actions:
+          - type: "notify"
+            config:
+              channel: "direct"
+              recipients: ["dev_frontend"]
+              template: "Killer item falhou. Slide BLOQUEADO ate correcao. Verificar: contraste, px hardcoded, max palavras, paragrafos, screenshots de codigo."
+          - type: "retry"
+            config:
+              max_retries: 5
+              retry_delay: "PT0S"
+              backoff: "fixed"
+
+      - id: "ERR_REVIEW"
+        name: "Falha na review final"
+        trigger_on:
+          - error_type: "validation"
+        severity: "high"
+        actions:
+          - type: "notify"
+            config:
+              channel: "direct"
+              recipients: ["dev_frontend"]
+              template: "Review reprovou. Corrigir e resubmeter."
+          - type: "retry"
+            config:
+              max_retries: 3
+              retry_delay: "PT0S"
+              backoff: "fixed"
+
+    fallback:
+      action: "abort"
+      notify: ["tech_lead"]
+      log_level: "error"
+
+    global_timeout: "PT8H"
+
+  # --- Quality Gate -------------------------------------------------------
+  quality_gate:
+    enabled: true
+    criteria:
+      - name: "Todos os slides passaram checklist individual"
+        type: "boolean"
+        target: true
+        actual: null
+        weight: 0.3
+      - name: "Sequencia validada (estrutura, ritmo, tipos)"
+        type: "boolean"
+        target: true
+        actual: null
+        weight: 0.2
+      - name: "Acessibilidade WCAG 2.2 AA compliance"
+        type: "boolean"
+        target: true
+        actual: null
+        weight: 0.25
+      - name: "Zero erros lint + typecheck"
+        type: "boolean"
+        target: true
+        actual: null
+        weight: 0.15
+      - name: "Tech Lead aprovacao"
+        type: "boolean"
+        target: true
+        actual: null
+        weight: 0.1
+    pass_threshold: 1.0
+    on_fail: "block"
+
+  # --- Outputs ------------------------------------------------------------
+  outputs:
+    artifacts:
+      - name: "Deck de slides implementado"
+        type: "file"
+        format: "tsx"
+        destination: "slides-page.tsx"
+        retention: "P999Y"
+      - name: "Checklist de validacao preenchido"
+        type: "record"
+        format: "md"
+        destination: "docs/validation/"
+        retention: "P2Y"
+    notifications:
+      on_complete:
+        - channel: "direct"
+          recipients: ["tech_lead", "designer"]
+          template: "Deck de slides SOP-SLIDES-001 concluido e aprovado."
+      on_failure:
+        - channel: "direct"
+          recipients: ["tech_lead"]
+          template: "Deck de slides SOP-SLIDES-001 falhou na validacao. Ver error log."
+
+  # --- Metadata -----------------------------------------------------------
+  metadata:
+    created_by: "Gerber (SOP Creator Agent)"
+    created_at: "2026-03-16T00:00:00Z"
+    updated_by: "Gerber (SOP Creator Agent)"
+    updated_at: "2026-03-16T00:00:00Z"
+    owner: "design-system-team"
+    department: "design-system"
+    tags: ["slides", "design-system", "accessibility", "framer-motion", "react"]
+    review_cycle: "P180D"
+    regulatory_refs:
+      - standard: "WCAG 2.2"
+        clause: "1.4.3, 1.4.6, 2.3.1"
+      - standard: "AIOX Design System"
+        clause: "Slide Design Manual v2.1"
+    related_sops: []
+    change_log:
+      - version: "1.2.0"
+        date: "2026-03-16"
+        author: "Gerber (SOP Creator Agent)"
+        summary: "Auditoria v2.1 final: svh (nao dvh), Secao 14 Format Guide (TED/Pitch/Sales/Tecnico/Zoom/Carousel), cross-ref formato→modo, PEAT 2017 limitations, fontes novas."
+      - version: "1.1.0"
+        date: "2026-03-16"
+        author: "Gerber (SOP Creator Agent)"
+        summary: "Auditoria 100% cobertura v2.1. 24 gaps corrigidos: safe zone Live, bb-surface, piso 13px, limites decorativos, teste subtracao, nota QUOTE, layouts IMAGE, video/GIF, tratamento imagens, lazy loading, anti-patterns, 3m legibilidade, label sizes, useReducedMotion hook, scroll-behavior, teste whitespace 25%, responsividade layout, export checklist, titulo acessivel, anti-patterns v2.1, rhythm reset, duracao por tipo, graficos na lista animar."
+      - version: "1.0.0"
+        date: "2026-03-16"
+        author: "Gerber (SOP Creator Agent)"
+        summary: "Versao inicial. Incorpora correcoes v2.1: ratios reais, bb-dim >= #777777, label >= 13px, dvh, flash <= 3/s, titulos unicos, prefers-reduced-motion."

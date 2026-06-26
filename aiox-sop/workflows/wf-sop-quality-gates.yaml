@@ -1,0 +1,473 @@
+# Managed by materialize-map.py
+# Source: outputs/sinkra-squad/aiox-sop/map/20260329-190639-claude-opus/quality_gates.yaml
+# Category: governance
+
+metadata:
+  phase: 6
+  process_slug: aiox-sop
+  process_name: 'Creates, extracts, analyzes, grades and converts SOPs using the world''s
+    best process documentation methodologies. Dual-output: human-readable and AI/ML-consumable
+    formats.'
+  generated_at: '2026-03-30T00:20:00-03:00'
+  agent: quality-gatekeeper
+  checkpoint: META_AXIOMAS
+  version: 2.0.0
+  methodology: 'SINKRA Quality Gates — Preventive + Reactive + Axiomatic. Mandamento
+    5 enforced: every gate has numeric threshold. Designed for production operation.'
+  total_gates: 12
+  gate_types_summary:
+    preventive: 5
+    reactive: 6
+    axiomatic: 1
+  coverage:
+    critical_transitions_total: 14
+    critical_transitions_gated: 12
+    coverage_percent: 85.7
+    ungated_transitions_with_justification:
+    - transition: T5.4 to T5.5
+      risk: LOW
+      justification: Deterministic metadata injection. Gating adds latency without
+        risk reduction.
+    - transition: T6.5 to T6.6
+      risk: LOW
+      justification: T6.6 audit trail runs unconditionally. Blocking audit of failures
+        is worse than auditing a failed deploy.
+quality_gates:
+- gate_id: QG-1.1
+  name: Completude de Submissao
+  position: T1.2 to T1.3
+  type: preventive
+  executor: Worker (Intake Validator — Node.js Supabase Edge Function)
+  accountable_human: Documentation Coordinator
+  threshold: completeness_score >= 70
+  threshold_numeric: 70
+  threshold_unit: score 0-100
+  criteria:
+  - 'Campos obrigatorios presentes: process_name, owner_name, scope, target_audience'
+  - Documento em formato suportado (PDF/DOCX/TXT/MD)
+  - Payload JSON estruturalmente valido
+  - Webhook HTTP 200 recebido em < 5s
+  on_pass: Avancar para T1.3 (catalogacao e geracao de ID unico)
+  on_fail: 'Devolver para SOP Owner (T1.1) com missing_fields_list. Loop: LOOP-INTAKE-COMPLETENESS.'
+  escalation_path: Documentation Coordinator via slack-ops apos 24h sem resubmissao
+  veto_power: false
+  mandamentos_enforced:
+  - 2
+  - 5
+  - 8
+  sla_minutes: 2
+  logging:
+    target: Supabase sop_validation_log
+    fields:
+    - completeness_score
+    - missing_fields[]
+    - validated_at
+    - pass_fail
+- gate_id: QG-1.2
+  name: Idempotencia de Catalogacao
+  position: T1.3 pre-execution
+  type: preventive
+  executor: Worker (ID Cataloger — Supabase Edge Function)
+  accountable_human: Documentation Coordinator
+  threshold: duplicate_detected == false
+  threshold_numeric: 0
+  threshold_unit: duplicate count (0 = pass)
+  criteria:
+  - Content hash inexistente em sop_catalog table
+  - Nenhum registro identico nos ultimos 24h
+  on_pass: Gerar SOP-YYYYMMDD-NNN e prosseguir para T2.1
+  on_fail: Retornar ID existente (idempotencia by design). Nenhuma escalacao.
+  escalation_path: Nenhuma — idempotencia e feature
+  veto_power: false
+  mandamentos_enforced:
+  - 3
+  - 8
+  sla_minutes: 1
+  logging:
+    target: Supabase sop_catalog
+    fields:
+    - duplicate_attempt
+    - original_sop_id
+    - content_hash
+- gate_id: QG-2.1
+  name: Validacao de Schema Extraido
+  position: T2.3 to T2.4
+  type: reactive
+  executor: Worker (Schema Validator — jsonschema library)
+  accountable_human: Extraction Lead
+  threshold: schema_valid == true (0 validation errors)
+  threshold_numeric: 0
+  threshold_unit: validation error count (0 = pass)
+  criteria:
+  - Output JSON do T2.2 Agent passa validacao formal contra SINKRA JSON Schema
+  - Todos campos obrigatorios mapeados ou explicitamente null
+  - Nenhum campo com tipo incompativel
+  on_pass: Prosseguir para T2.4 (confidence scoring)
+  on_fail: 'Self-healing: retry T2.2 com errors injetados no prompt. Max 2 retries
+    (LOOP-SCHEMA-RETRY). Se >= 2 escalate Extraction Lead.'
+  escalation_path: Extraction Lead via slack-qa
+  veto_power: false
+  mandamentos_enforced:
+  - 4
+  - 5
+  - 8
+  sla_minutes: 1
+  self_healing:
+    enabled: true
+    mechanism: Inject validation errors into Agent prompt
+    max_retries: 2
+    bounded_by: LOOP-SCHEMA-RETRY
+  logging:
+    target: Supabase sop_extraction_log
+    fields:
+    - validation_result
+    - errors[]
+    - retry_count
+    - schema_version
+- gate_id: QG-2.2
+  name: Confianca de Extracao
+  position: T2.4 to T3.x parallel grading
+  type: preventive
+  executor: Worker (Confidence Scorer — Node.js script)
+  accountable_human: Extraction Lead
+  threshold: confidence_score >= 70
+  threshold_numeric: 70
+  threshold_unit: score 0-100
+  criteria:
+  - Confidence score calculado via formula deterministica
+  - Score em range 0-100
+  - Routing decision logada
+  on_pass: 'Prosseguir para parallel grading: T3.1 Clone, T3.2 Worker, T3.3 Clone'
+  on_fail: Flag SOP para revisao manual do Extraction Lead. Pipeline pausado para
+    este SOP.
+  escalation_path: Extraction Lead via slack-qa
+  veto_power: false
+  mandamentos_enforced:
+  - 5
+  - 6
+  sla_minutes: 1
+  logging:
+    target: Supabase sop_extraction_log
+    fields:
+    - confidence_score
+    - extracted_fields_count
+    - routing_decision
+- gate_id: QG-3.1
+  name: Clone Output Validation (Clareza + Aderencia)
+  position: T3.1 and T3.3 post-execution
+  type: reactive
+  executor: Human (Quality Analyst — validates outliers and VETOs)
+  accountable_human: Quality Analyst
+  threshold: scores IN [0,5] AND outlier_flag triggers Human review
+  threshold_numeric: 0.85
+  threshold_unit: inter-rater reliability target
+  criteria:
+  - Clone clarity score (T3.1) em range 0-5 com justificativa
+  - Clone adherence score (T3.3) em range 0-5 com checklist dos 10 Mandamentos
+  - Outliers (score < 2.0 ou == 5.0) flagged para Human
+  - VETO decisions validadas por Quality Analyst antes de bloquear
+  on_pass: Scores aceitos. Prosseguir para T3.4 e T3.5.
+  on_fail: Quality Analyst revisa e corrige manualmente. Override documentado (Mandamento
+    7).
+  escalation_path: Quality Analyst -> Process Owner se VETO confirmado
+  veto_power: false
+  mandamentos_enforced:
+  - 1
+  - 4
+  - 7
+  sla_minutes: 5
+  logging:
+    target: Supabase sop_clone_audit
+    fields:
+    - clone_id
+    - clarity_score
+    - adherence_score
+    - human_override
+    - override_reason
+- gate_id: QG-3.2
+  name: Classificacao de Tier e Roteamento
+  position: T3.5 output (Quality Analysis Report)
+  type: reactive
+  executor: Worker (Report Compiler — Handlebars)
+  accountable_human: Quality Analyst
+  threshold: composite_quality_score >= 3.0 for pipeline. Tier D = manual escalation.
+  threshold_numeric: 3.0
+  threshold_unit: composite score 0-5 (A>=4.5, B>=4.0, C>=3.0, D<3.0)
+  criteria:
+  - Clarity score integrado
+  - Completeness score normalizado 0-5
+  - SINKRA adherence integrado
+  - Composite = weighted average
+  - Tier calculado e logado
+  on_pass_tier_a: Route direto para wf_format_conversion. Skip T6.4 Human sign-off.
+  on_pass_tier_bc: Route para wf_rework_feedback. SOP Owner corrige. Re-enter de T2.1.
+  on_fail_tier_d: Pipeline PAUSADO. Quality Analyst escalado. SOP pode ser rejeitado.
+  escalation_path: Quality Analyst via slack-qa + email-coordinator
+  veto_power: true
+  mandamentos_enforced:
+  - 2
+  - 5
+  - 9
+  sla_minutes: 2
+  logging:
+    target: Supabase sop_quality_log
+    fields:
+    - tier
+    - clarity_score
+    - completeness_score
+    - adherence_score
+    - composite_score
+    - routing_decision
+- gate_id: QG-4.1
+  name: Completude de Artefatos ML
+  position: After T4 parallel group (T4.1-T4.4)
+  type: preventive
+  executor: Worker (manifest checker — Node.js script)
+  accountable_human: AI Engineer
+  threshold: ml_artifacts_count == 4 AND all_schemas_valid == true
+  threshold_numeric: 4
+  threshold_unit: artifact count (must be 4)
+  criteria:
+  - JSON-LD @context presente e schema valido
+  - Vector embeddings dimension == 1536
+  - GraphML XML valido com dependency nodes
+  - Token sequences token_count > 0
+  on_pass: Combinar com T5 outputs para T6.1 coherence check.
+  on_fail: Retry task individual (max 2x). Se persistir escalate AI Engineer.
+  escalation_path: AI Engineer via slack-devops
+  veto_power: false
+  mandamentos_enforced:
+  - 2
+  - 3
+  - 5
+  - 8
+  sla_minutes: 5
+  logging:
+    target: Supabase sop_ml_artifacts_log
+    fields:
+    - artifacts_present[]
+    - schemas_valid[]
+    - failures[]
+- gate_id: QG-5.1
+  name: Completude de Documentacao Human-Readable
+  position: After T5.1-T5.3 parallel group, before T5.4
+  type: preventive
+  executor: Worker (doc completeness validator)
+  accountable_human: Tech Writer Lead
+  threshold: all_3_docs_generated AND min_word_counts_met
+  threshold_numeric: 3
+  threshold_unit: document count (Summary>=200w, Guide>=500w, TechRef>=1000w)
+  criteria:
+  - Executive Summary word_count >= 200
+  - Operational Guide word_count >= 500
+  - Technical Reference word_count >= 1000
+  - Markdown valido, nenhum placeholder
+  on_pass: Prosseguir para T5.4 (rendering PDF/HTML/Notion)
+  on_fail: Retry T5.x individual (max 2x). Se persistir escalate Tech Writer Lead.
+  escalation_path: Tech Writer Lead via slack-devops
+  veto_power: false
+  mandamentos_enforced:
+  - 2
+  - 4
+  - 5
+  - 8
+  sla_minutes: 5
+  logging:
+    target: Supabase sop_doc_log
+    fields:
+    - docs_generated[]
+    - word_counts{}
+    - placeholders_found[]
+- gate_id: QG-6.1
+  name: Coerencia Cross-Artifact
+  position: T6.1 (after all ML + Docs artifacts)
+  type: reactive
+  executor: Worker (Coherence Validator — Node.js script)
+  accountable_human: Deployment Lead
+  threshold: discrepancies == 0 AND manifest_complete
+  threshold_numeric: 0
+  threshold_unit: discrepancy count (0 = pass)
+  criteria:
+  - JSON-LD referencia mesmos task IDs que workflow_definition
+  - GraphML nodes == dependency_graph nodes
+  - Docs referenciam mesmas fases consistentemente
+  - SOP ID consistente entre todos artefatos
+  - 'Manifest completo: 4 ML + 3 docs + renderings'
+  on_pass: Prosseguir para T6.3 (feedback incorporation check)
+  on_fail: HALT pipeline. Alert Deployment Lead com discrepancy_report. Manual fix
+    obrigatorio.
+  escalation_path: Deployment Lead via slack-deployment. Pipeline PARADO.
+  veto_power: true
+  mandamentos_enforced:
+  - 3
+  - 5
+  - 9
+  sla_minutes: 5
+  logging:
+    target: Supabase sop_coherence_log
+    fields:
+    - check_result
+    - discrepancies[]
+    - manifest_status
+- gate_id: QG-6.2
+  name: Incorporacao de Feedback
+  position: T6.3 to T6.4/T6.5
+  type: reactive
+  executor: Worker (Feedback Validator — Node.js checklist)
+  accountable_human: Quality Analyst
+  threshold: unaddressed_critical_recommendations == 0
+  threshold_numeric: 0
+  threshold_unit: unaddressed critical recs (0 for auto-approve path)
+  criteria:
+  - 'Cada recomendacao do T3.4 tem status: incorporated/rejected/documented'
+  - Rejected recs tem justificativa formal (Mandamento 7)
+  - 'CRITICAL/HIGH recs: 100% incorporated ou justified rejection'
+  on_pass_tier_a_no_critical: Auto-approve. Skip T6.4. Route direto para T6.5 (publish).
+  on_pass_tier_bc_or_critical: Route para T6.4 (Human sign-off obrigatorio).
+  on_fail: Escalate Deployment Lead. Pipeline pausado.
+  escalation_path: Deployment Lead via slack-deployment
+  veto_power: false
+  mandamentos_enforced:
+  - 2
+  - 5
+  - 7
+  sla_minutes: 3
+  logging:
+    target: Supabase sop_feedback_log
+    fields:
+    - recs_total
+    - recs_incorporated
+    - recs_rejected
+    - critical_unaddressed
+- gate_id: QG-6.3
+  name: Sign-off Formal do SOP Owner
+  position: 'T6.4 (conditional: Tier B/C or unaddressed critical > 0)'
+  type: reactive
+  executor: Human (SOP Owner — Accountable imutavel)
+  accountable_human: SOP Owner
+  threshold: approval_decision == approve within 3 business days
+  threshold_numeric: 3
+  threshold_unit: business days SLA
+  criteria:
+  - SOP Owner revisou artefatos finais + Quality Report
+  - Validation reports sem problemas abertos
+  - Decisao formal registrada via ClickUp com timestamp
+  on_pass: Prosseguir para T6.5 (publish)
+  on_fail_rejected: Route para wf_rework_feedback. Max 1 rejection loop (LOOP-OWNER-REJECTION).
+  on_sla_breach:
+    day_1: Auto-reminder via ClickUp/email
+    day_2: Escalate to manager via slack-deployment
+    day_3: Auto-approve com SLA_AUTO_APPROVED flag + manager countersign
+  escalation_path: Manager via slack-deployment apos Day 2
+  veto_power: true
+  mandamentos_enforced:
+  - 1
+  - 2
+  - 7
+  sla_business_days: 2
+  sla_calendar_days: 3
+  logging:
+    target: Supabase sop_approval_log
+    fields:
+    - decision
+    - reviewer
+    - timestamp
+    - notes
+    - auto_approved_flag
+- gate_id: QG-META
+  name: META_AXIOMAS — Validacao Axiomatica do Processo
+  position: Processo completo — Phase 6 checkpoint + revisao periodica
+  type: axiomatic
+  executor: Clone (quality-gatekeeper scoring) + Human (Process Owner validation)
+  accountable_human: Process Owner / SINKRA Chief
+  threshold: compliance_score >= 80/100 AND truthfulness >= 7.0 AND all_dimensions_pass
+    AND mandamentos_all_pass
+  threshold_numeric: 80
+  threshold_unit: compliance score 0-100
+  criteria:
+  - Verdade >= 7.0 (VETO — peso 2x)
+  - Coerencia >= 6.0 (peso 2x)
+  - Alinhamento Estrategico >= 6.0
+  - Excelencia Operacional >= 6.0
+  - Inovacao >= 5.0
+  - Gestao de Riscos >= 6.0
+  - Otimizacao de Recursos >= 6.0
+  - Valor para Stakeholders >= 6.0
+  - Sustentabilidade >= 6.0
+  - Adaptabilidade >= 5.0
+  - '10 Mandamentos: todos PASS'
+  on_pass: 'Processo APPROVED. Phase 7 desbloqueada. Proximo review: 90 dias.'
+  on_fail_veto: VETO ABSOLUTO. Redesign obrigatorio.
+  on_fail_review: Correcao especifica por dimensao. Re-submeter Phase 6.
+  escalation_path: Process Owner -> C-Level se VETO
+  veto_power: true
+  mandamentos_enforced:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  frequency: Phase 6 (inicial) + quarterly (90d) ou apos mudanca significativa
+  logging:
+    target: Supabase sop_meta_axiomas_log
+    fields:
+    - dimension_scores{}
+    - overall_score
+    - compliance_score
+    - verdict
+    - reviewer
+    - review_date
+mandamentos_compliance_audit:
+  evaluated_at: '2026-03-30T00:20:00-03:00'
+  agent: quality-gatekeeper
+  results:
+  - mandamento: 1
+    status: PASS
+    evidence: 27 tasks com exatamente 1 executor_type cada. Human accountable definido
+      via escalation_path.
+  - mandamento: 2
+    status: PASS
+    evidence: 27 tasks com pre_conditions e post_conditions/acceptance_criteria verificaveis.
+  - mandamento: 3
+    status: PASS
+    evidence: 17 Workers com logging target Supabase. T6.6 audit trail imutavel. Alert
+      channels em todos gates.
+  - mandamento: 4
+    status: PASS
+    evidence: T2.2 Agent -> T2.3 schema validation. T3.4 Agent -> schema output. T5.1-T5.3
+      -> word count validation. T4.3 -> GraphML XML.
+  - mandamento: 5
+    status: PASS
+    evidence: 12 quality gates com threshold_numeric. Zero gates subjetivos.
+  - mandamento: 6
+    status: PARTIAL_PASS
+    evidence: 'KPI targets definidos (15 SOPs/sem, 7d turnaround, $100/SOP, 60% automation).
+      as_is_doc.md existe. Gap: baseline values nao referenciados estruturalmente.'
+    corrective_action: Adicionar baseline_kpis{} ao workflow_definition.json.
+  - mandamento: 7
+    status: PASS
+    evidence: T6.2 eliminacao documentada. Rework decisions logados. QG-6.2 verifica
+      rejected recs com justificativa.
+  - mandamento: 8
+    status: PASS
+    evidence: '17 Workers com error_handling completo: strategy, max_retries, fallback,
+      alert_channel.'
+  - mandamento: 9
+    status: PASS
+    evidence: 5 cross_workflow_dependencies com trigger events. QG-3.2 e QG-6.3 formalizam
+      transicoes.
+  - mandamento: 10
+    status: PASS
+    evidence: workflow_definition version 2.0.0. Metadata.version em todos artifacts.
+  summary:
+    total: 10
+    pass: 9
+    partial_pass: 1
+    fail: 0
+    hard_blocks: 0
+    corrective_actions_required: 1

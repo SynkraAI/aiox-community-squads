@@ -1,0 +1,57 @@
+{
+  "date": "2026-03-18",
+  "squad": "aiox-sop",
+  "status": "pass",
+  "changed_surfaces": [
+    "workflow.agent",
+    "workflow.executor",
+    "task.execution_type",
+    "support_material_output_contract"
+  ],
+  "commands": [
+    {
+      "command": "node squads/aiox-sop/scripts/resolve-environment-contract.cjs --format=json",
+      "status": "pass",
+      "result": {
+        "access_tier": "pro",
+        "runtime_mode": "portable_docs_mode",
+        "source_of_truth": "docs_projection",
+        "projection_state": "present",
+        "projection_freshness": "current"
+      }
+    },
+    {
+      "command": "python3 squads/aiox-sop/scripts/convert-sop-format-worker.py squads/aiox-sop/examples/sample-human-sop.md yaml --output /tmp/aiox-sop-sample.yaml --json",
+      "status": "pass",
+      "result": {
+        "source_format": "human-md",
+        "target_format": "yaml",
+        "steps_mapped": 5,
+        "definitions_mapped": 0
+      }
+    },
+    {
+      "command": "python3 squads/aiox-sop/scripts/convert-sop-format-worker.py squads/aiox-sop/examples/sample-ml-sop.yaml human-md --output /tmp/aiox-sop-sample.md --json",
+      "status": "pass",
+      "result": {
+        "source_format": "yaml",
+        "target_format": "human-md",
+        "steps_mapped": 3,
+        "definitions_mapped": 0
+      }
+    },
+    {
+      "command": "node infrastructure/scripts/squads/validate_workflow_contracts.cjs --squads aiox-sop --strict --fail-on-warnings --json",
+      "status": "pass",
+      "result": {
+        "files_checked": 3,
+        "errors": 0,
+        "warnings": 0
+      }
+    }
+  ],
+  "notes": [
+    "No standalone extraction workflow runner exists in the repository, so strict workflow contract validation was used as the runtime-safe smoke surface for changed workflow ownership/executor fields.",
+    "All representative commands used explicit squad-local inputs; no placeholder-only smoke input was used."
+  ]
+}

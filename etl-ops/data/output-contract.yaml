@@ -1,0 +1,85 @@
+version: 1
+contract:
+  required:
+    - run_id
+    - status
+    - mode
+    - source_profile
+    - desired_output
+    - artifacts
+    - metrics
+    - checkpoints
+    - warnings
+    - errors
+
+run_id:
+  format: "etl-{timestamp}-{random4}"
+  example: "etl-20260216-a3f1"
+  generation: |
+    Use ETLService.getTraceId() when available.
+    Otherwise: "etl-" + YYYYMMDD + "-" + 4 random hex chars.
+    Must be unique per execution.
+
+status_values:
+  - success
+  - vetoed
+  - failed
+
+artifacts:
+  default_output_dir: "outputs/etl/{run_id}/"
+  canonical_output_dir: "workspace/businesses/{constraints.business_slug}/etl/runs/{run_id}/"
+  custom_output_dir: "docs/etl/{constraints.business_slug|global}/"
+  output_route_rules:
+    - when: "constraints.workspace_mode == canonical"
+      require: "constraints.business_slug"
+      route: "canonical_output_dir"
+    - when: "constraints.workspace_mode == auto and constraints.business_slug exists"
+      route: "canonical_output_dir"
+    - when: "constraints.workspace_mode == auto and constraints.business_slug missing"
+      route: "default_output_dir"
+    - when: "constraints.workspace_mode == legacy"
+      route: "default_output_dir"
+  note: |
+    When persist_output=true, artifacts are saved to default_output_dir.
+    If workspace mode resolves to canonical and business_slug exists, use canonical_output_dir.
+    When persist_output=false, artifacts are returned inline (no files written),
+    but still include a deterministic pseudo-path (example: inline://raw or inline://chunks)
+    to satisfy artifact item_shape.required=[kind,path].
+    youtube_channel profile uses its own output dir: outputs/youtube/{channel-slug}/
+  item_shape:
+    type: object
+    required: [kind, path]
+    fields:
+      kind:
+        allowed: [raw, clean, filtered, chunks, metadata, report, transcript, keyframes, manifest, book_context, chapter_summary, rolling_context, final_summary]
+      path: "absolute or project-relative path"
+      format:
+        allowed: [txt, md, json, jsonl, csv, jpg, png, yaml]
+      size_bytes: "integer >= 0"
+
+metrics:
+  required:
+    - duration_ms
+    - chars_in
+    - chars_out
+    - words_in
+    - words_out
+    - chunks
+    - fidelity_ratio
+  notes:
+    fidelity_ratio: "chars_out / chars_in when applicable"
+    chunks: "0 when desired_output is not chunks/rag"
+
+checkpoints:
+  item_shape:
+    type: object
+    required: [phase, passed, timestamp]
+    fields:
+      phase:
+        allowed: [diagnose, validate, extract, structure, context_pack, transform, deliver]
+      passed: "boolean"
+      timestamp: "ISO-8601 datetime"
+      details: "short operational note"
+
+warnings: "array of non-blocking warnings"
+errors: "array of blocking or terminal errors"

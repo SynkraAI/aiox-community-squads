@@ -1,0 +1,112 @@
+# Learning Outcomes Template
+# Clone: @wes-kao (Tier 1)
+# Output format for course/cohort learning metrics
+
+metadata:
+  template_id: learning-outcomes-tmpl
+  version: "1.0"
+  clone: wes-kao
+  tier: 1
+  cohort_id: "{{cohort_id}}"
+  course_name: "{{course_name}}"
+
+# Completion Funnel (The 3% → 96% problem)
+completion_funnel:
+  enrolled: 100
+  started: 0  # Watched first video/opened first lesson
+  engaged: 0  # Completed at least 25%
+  halfway: 0  # Completed 50%
+  nearly_done: 0  # Completed 75%
+  completed: 0  # 100%
+  certified: 0  # If certification exists
+
+  completion_rate: 0.0  # completed/enrolled
+  start_rate: 0.0  # started/enrolled
+  dropout_rate: 0.0  # (started - completed)/started
+
+# Drop-off Analysis
+drop_off_points:
+  - lesson: "{{lesson_name}}"
+    position: 3  # 3rd lesson
+    drop_off_pct: 0.45  # 45% drop here
+    avg_time_spent: 0
+    possible_causes:
+      - "Content too difficult"
+      - "Assignment unclear"
+      - "Technical issues"
+
+# Course Mechanics Canvas (Wes Kao 12 Levers)
+course_mechanics:
+  cohort_based:
+    enabled: true  # vs self-paced
+    cohort_size: 30
+    duration_weeks: 4
+
+  live_sessions:
+    enabled: true
+    frequency: "weekly"
+    attendance_rate: 0.0
+    engagement_score: 0
+
+  assignments:
+    total: 0
+    completion_rate: 0.0
+    avg_score: 0
+    submission_on_time_pct: 0.0
+
+  peer_interaction:
+    enabled: true
+    type: "small_groups"  # pairs|small_groups|full_cohort
+    participation_rate: 0.0
+
+  accountability:
+    type: "public_commitment"  # none|private|public_commitment
+    effectiveness_score: 0
+
+  instructor_presence:
+    office_hours: true
+    feedback_turnaround_hours: 48
+    q_and_a_response_rate: 0.0
+
+# State Change Assessment (Wes Kao signature)
+state_change:
+  before:
+    knowledge_level: "{{beginner|intermediate|advanced}}"
+    skill_level: "{{description}}"
+    confidence: 0  # 1-10
+
+  after:
+    knowledge_level: "{{beginner|intermediate|advanced}}"
+    skill_level: "{{description}}"
+    confidence: 0  # 1-10
+
+  delta:
+    knowledge_gain: "+{{level}}"
+    skill_gain: "{{description}}"
+    confidence_gain: "+{{points}}"
+
+# Learning Outcomes
+outcomes:
+  nps_score: 0  # -100 to +100
+  satisfaction_score: 0  # 1-5
+  would_recommend_pct: 0.0
+  outcome_achievement_rate: 0.0  # % who achieved stated goal
+
+  testimonials:
+    - quote: "{{quote}}"
+      student: "{{name}}"
+      outcome: "{{specific_result}}"
+
+# CBC vs MOOC Comparison
+benchmark:
+  industry_avg_completion: 0.06  # 6% for MOOCs
+  our_completion: 0.0
+  multiplier: "{{X}}x industry"
+  target_completion: 0.80  # 80% target
+
+# Recommendations
+recommendations:
+  - lever: "{{course_mechanic}}"
+    current_state: "{{description}}"
+    recommended_change: "{{action}}"
+    expected_impact: "+{{X}}% completion"

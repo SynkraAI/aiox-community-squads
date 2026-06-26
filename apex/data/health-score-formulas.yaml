@@ -1,0 +1,230 @@
+# ═══════════════════════════════════════════════════════════════
+# Health Score Formulas — Apex Squad
+# ═══════════════════════════════════════════════════════════════
+# SSoT for all discovery tool scoring formulas.
+# Each formula is explicit, documented, and reproducible.
+# Same codebase + same formula = same score. Always.
+#
+# References: data/scan-score-suggest-framework.yaml (scoring ranges)
+# Owner: apex-lead (Emil)
+# Version: 1.0.0
+# ═══════════════════════════════════════════════════════════════
+
+version: "1.0.0"
+
+# Global scoring rules
+scoring_rules:
+  range: [0, 100]
+  classifications:
+    solid: { min: 80, max: 100 }
+    emerging: { min: 50, max: 79 }
+    adhoc: { min: 0, max: 49 }
+  severity_penalties:
+    HIGH: -10
+    MEDIUM: -5
+    LOW: -2
+  rounding: "half-up"
+  clamping: "always [0, 100]"
+
+# Per-discovery formulas
+formulas:
+
+  discover-components:
+    dimensions:
+      - name: "test_coverage"
+        weight: 0.30
+        formula: "(components_with_tests / total_components) * 100"
+        note: "Components that have a .test or .spec file"
+      - name: "orphan_ratio"
+        weight: 0.25
+        formula: "((total_components - orphan_count) / total_components) * 100"
+        note: "Components exported but never imported elsewhere"
+      - name: "complexity"
+        weight: 0.25
+        formula: "((total_components - god_components) / total_components) * 100"
+        note: "God component = >200 LOC + >5 hooks"
+      - name: "structure"
+        weight: 0.20
+        formula: "((total_components - missing_error_boundary) / total_components) * 100"
+        note: "Components with Error Boundary wrapping"
+    final: "sum(dimension * weight) - severity_penalties"
+
+  discover-design:
+    dimensions:
+      - name: "token_coverage"
+        weight: 0.35
+        formula: "(values_using_tokens / total_style_values) * 100"
+        note: "CSS values that reference tokens vs hardcoded hex/px"
+      - name: "violations"
+        weight: 0.30
+        formula: "max(0, 100 - (hardcoded_count * 3))"
+        note: "Each hardcoded value costs 3 points"
+      - name: "near_duplicates"
+        weight: 0.15
+        formula: "max(0, 100 - (duplicate_pairs * 5))"
+        note: "Colors within 5% HSL distance"
+      - name: "consistency"
+        weight: 0.20
+        formula: "(consistent_spacing_values / total_spacing_values) * 100"
+        note: "Spacing values that follow the scale (4px multiples)"
+    final: "sum(dimension * weight) - severity_penalties"
+
+  discover-routes:
+    dimensions:
+      - name: "completeness"
+        weight: 0.30
+        formula: "(routes_with_components / total_routes) * 100"
+      - name: "reachability"
+        weight: 0.30
+        formula: "((total_routes - orphan_routes - dead_routes) / total_routes) * 100"
+      - name: "seo"
+        weight: 0.25
+        formula: "(pages_with_meta / total_pages) * 100"
+        note: "Pages with title + meta description + og:image"
+      - name: "layouts"
+        weight: 0.15
+        formula: "(pages_with_layout / total_pages) * 100"
+    final: "sum(dimension * weight) - severity_penalties"
+
+  discover-dependencies:
+    dimensions:
+      - name: "security"
+        weight: 0.35
+        formula: "max(0, 100 - (critical_vulns * 20) - (high_vulns * 10) - (medium_vulns * 3))"
+      - name: "freshness"
+        weight: 0.25
+        formula: "max(0, 100 - (major_behind * 15) - (minor_behind * 3))"
+      - name: "efficiency"
+        weight: 0.20
+        formula: "max(0, 100 - (heavy_deps * 10))"
+        note: "Packages >100KB gzipped with lighter alternatives"
+      - name: "hygiene"
+        weight: 0.20
+        formula: "max(0, 100 - (unused_deps * 5) - (duplicate_versions * 8))"
+    final: "sum(dimension * weight) - severity_penalties"
+
+  discover-motion:
+    dimensions:
+      - name: "veto_compliance"
+        weight: 0.35
+        formula: "((total_animations - veto_violations) / total_animations) * 100"
+        note: "QG-AX-005 reduced-motion + QG-AX-006 CSS->spring"
+      - name: "completeness"
+        weight: 0.25
+        formula: "((total_animations - missing_exit) / total_animations) * 100"
+      - name: "gpu_efficiency"
+        weight: 0.25
+        formula: "((total_animations - non_gpu) / total_animations) * 100"
+        note: "Animating transform/opacity (GPU) vs width/height (CPU)"
+      - name: "library_consistency"
+        weight: 0.15
+        formula: "max(0, 100 - (animation_libs_count - 1) * 15)"
+        note: "Penalty for using multiple animation libraries"
+    final: "sum(dimension * weight) - severity_penalties"
+
+  discover-a11y:
+    dimensions:
+      - name: "critical"
+        weight: 0.40
+        formula: "max(0, 100 - (keyboard_traps * 25) - (missing_focus_mgmt * 15))"
+      - name: "high"
+        weight: 0.30
+        formula: "max(0, 100 - (missing_alt * 10) - (missing_labels * 10) - (contrast_fails * 8))"
+      - name: "structural"
+        weight: 0.20
+        formula: "max(0, 100 - (heading_gaps * 5) - (aria_misuse * 8))"
+      - name: "coverage"
+        weight: 0.10
+        formula: "(components_with_a11y_props / interactive_components) * 100"
+    final: "sum(dimension * weight) - severity_penalties"
+
+  discover-performance:
+    dimensions:
+      - name: "loading"
+        weight: 0.30
+        formula: "max(0, 100 - (eager_heavy_imports * 10) - (missing_code_split * 8))"
+      - name: "assets"
+        weight: 0.25
+        formula: "max(0, 100 - (unoptimized_images * 8) - (missing_dimensions * 5))"
+      - name: "runtime"
+        weight: 0.25
+        formula: "max(0, 100 - (rerender_risks * 5) - (inline_objects * 3))"
+      - name: "third_party"
+        weight: 0.20
+        formula: "max(0, 100 - (blocking_scripts * 15) - (heavy_3p * 8))"
+    final: "sum(dimension * weight) - severity_penalties"
+
+  discover-state:
+    dimensions:
+      - name: "architecture"
+        weight: 0.35
+        formula: "max(0, 100 - (provider_depth * 10) - (context_sprawl * 8))"
+        note: "context_sprawl = providers > 5"
+      - name: "efficiency"
+        weight: 0.35
+        formula: "max(0, 100 - (missing_memo * 5) - (context_without_slice * 10))"
+      - name: "simplicity"
+        weight: 0.30
+        formula: "max(0, 100 - (prop_drilling_chains * 8) - (unused_state * 5))"
+    final: "sum(dimension * weight) - severity_penalties"
+
+  discover-types:
+    dimensions:
+      - name: "strictness"
+        weight: 0.40
+        formula: "max(0, 100 - (any_count * 3) - (ts_nocheck * 20))"
+      - name: "safety"
+        weight: 0.35
+        formula: "max(0, 100 - (unsafe_casts * 5) - (type_assertions * 3))"
+      - name: "coverage"
+        weight: 0.25
+        formula: "(typed_exports / total_exports) * 100"
+    final: "sum(dimension * weight) - severity_penalties"
+
+  discover-forms:
+    dimensions:
+      - name: "validation"
+        weight: 0.35
+        formula: "(forms_with_validation / total_forms) * 100"
+      - name: "protection"
+        weight: 0.30
+        formula: "((total_forms - double_submit_risks) / total_forms) * 100"
+      - name: "accessibility"
+        weight: 0.35
+        formula: "max(0, 100 - (missing_labels * 10) - (missing_error_announce * 8) - (missing_focus_on_error * 5))"
+    final: "sum(dimension * weight) - severity_penalties"
+
+  discover-security:
+    dimensions:
+      - name: "injection"
+        weight: 0.40
+        formula: "max(0, 100 - (dangerously_set * 20) - (eval_usage * 25) - (unescaped_input * 15))"
+      - name: "secrets"
+        weight: 0.35
+        formula: "max(0, 100 - (exposed_api_keys * 30) - (tokens_in_source * 25))"
+      - name: "storage"
+        weight: 0.25
+        formula: "max(0, 100 - (sensitive_in_localstorage * 15) - (unencrypted_cookies * 10))"
+    final: "sum(dimension * weight) - severity_penalties"
+
+# ─── AGGREGATION ─────────────────────────────────────────────
+# Used by *apex-full and *apex-audit for Unified Health Score.
+# Same weights as in scan-score-suggest-framework.yaml.
+
+aggregation:
+  formula: "sum(discovery_score * weight) for all discoveries"
+  weights:
+    discover-components: 0.12
+    discover-design: 0.08
+    discover-routes: 0.08
+    discover-dependencies: 0.10
+    discover-motion: 0.06
+    discover-a11y: 0.15
+    discover-performance: 0.12
+    discover-state: 0.08
+    discover-types: 0.08
+    discover-forms: 0.06
+    discover-security: 0.07
+    # Sum: 1.00
+  unified_score: "Integer 0-100"
+  classification: "Solid | Emerging | Ad-hoc"

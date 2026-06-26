@@ -1,0 +1,24 @@
+{
+  "squad": "aiox-sop",
+  "access_tier": "pro",
+  "runtime_mode": "portable_docs_mode",
+  "source_of_truth": "docs_projection",
+  "reason": "Pro pack detected; enterprise not proven. explicit business/product/app context missing, remaining in portable_docs_mode.",
+  "evidence_paths": [
+    "squads/squad-creator-pro/config.yaml",
+    "squads/c-level",
+    "workspace/_system/config.yaml",
+    "workspace/businesses",
+    "workspace/domains",
+    "workspace/_templates",
+    "docs/squad/aiox-sop/operational-projection.yaml"
+  ],
+  "pro_mode": true,
+  "pro_version": "3.1.0",
+  "enterprise_proven": false,
+  "enterprise_marker_path": "workspace/license/enterprise-runtime.capability.yaml",
+  "projection_path": "docs/squad/aiox-sop/operational-projection.yaml",
+  "projection_state": "present",
+  "projection_freshness": "current",
+  "projection_updated_at": "2026-03-10"
+}

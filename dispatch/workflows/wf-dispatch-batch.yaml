@@ -1,0 +1,712 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# WF-DISPATCH-BATCH: Batch Dispatch for Multiple Story Files
+# ═══════════════════════════════════════════════════════════════════════════════
+# Purpose: Accepts a directory of story files, prioritizes by dependencies,
+#          dispatches each sequentially via wf-dispatch-main as sub-workflow.
+# Trigger: *dispatch-batch {story_directory}
+# Key: Stories execute SEQUENTIALLY (dependencies), waves within each PARALLEL.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+workflow:
+  id: wf-dispatch-batch
+  name: "Batch Dispatch (Multiple Stories)"
+  version: "1.0.0"
+  description: |
+    Batch dispatch for processing multiple story files in a single command.
+    Accepts a directory of .md story files, builds an inter-story dependency
+    graph, topologically sorts for execution order, and dispatches each
+    story sequentially via wf-dispatch-main.yaml as a sub-workflow.
+
+    Key characteristics:
+    - Stories execute SEQUENTIALLY (respecting inter-story dependencies)
+    - Within each story: waves execute in PARALLEL (via wf-dispatch-main)
+    - State persisted per-story: can resume from any story in the batch
+    - Shared state: outputs from story A are available to story B
+    - Aggregate reporting across all stories in batch
+
+  input:
+    type: directory_path
+    format: "Path to folder containing .md story files"
+    parameter: story_directory
+    examples:
+      - "plan/stories/"
+      - "plan/stories/sprint-12/"
+      - "plan/epics/epic-launch-q1/"
+
+  output:
+    batch_report: "_temp/dispatch/runs/{batch_id}/batch-report.md"
+    per_story_reports: "_temp/dispatch/runs/{batch_id}/{story_slug}/report.md"
+    aggregate_cost: "_temp/dispatch/runs/{batch_id}/batch-cost-report.md"
+    batch_state: "_temp/dispatch/runs/{batch_id}/batch-state.json"
+    events: "_temp/dispatch/runs/{batch_id}/events.jsonl"
+
+  triggers:
+    commands:
+      - "*dispatch-batch"
+    agents:
+      - dispatch-chief
+
+  estimated_duration: "Variable (sum of individual story dispatches + overhead)"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# WORKFLOW RULES
+# ═══════════════════════════════════════════════════════════════════════════════
+
+rules:
+  fail_fast: false  # Do NOT halt batch on first story failure — offer options
+  circuit_breaker: 3  # consecutive story failures → HALT batch
+  max_fix_iterations: 2
+  state_persistence: true
+  checkpoint_policy: always_active
+  allow_manual_override: true  # Allow skipping failed stories
+
+  execution_model:
+    inter_story: sequential  # Stories execute one at a time
+    intra_story: parallel    # Waves within each story execute in parallel
+    reason: |
+      Sequential inter-story execution ensures:
+      1. Outputs from story A are available when story B starts
+      2. Shared state is consistent (no race conditions)
+      3. Cost control (can halt after any story)
+      4. Resumability (can restart from any story)
+
+  shared_state: true
+  shared_state_rules:
+    - "Outputs from completed stories are available to subsequent stories"
+    - "Shared state is read-only for subsequent stories (no mutation)"
+    - "Each story gets its own run_id nested under batch_id"
+    - "Aggregate metrics accumulated across all stories"
+
+  state_management:
+    persist_after: "every_story"
+    batch_state_file: "_temp/dispatch/runs/{batch_id}/batch-state.json"
+    per_story_state: "_temp/dispatch/runs/{batch_id}/{story_slug}/state.json"
+    resumable: true
+    resume_command: "*resume --batch {batch_id}"
+
+  failure_handling:
+    story_failure_options:
+      - id: 1
+        action: "skip"
+        description: "Skip failed story, continue with next (if no downstream dependency)"
+      - id: 2
+        action: "retry"
+        description: "Retry failed story from beginning"
+      - id: 3
+        action: "halt"
+        description: "Halt entire batch, preserve state for manual review"
+      - id: 4
+        action: "other"
+        description: "User specifies alternative action"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 0: DISCOVERY
+# ═══════════════════════════════════════════════════════════════════════════════
+# Agent: dispatch-chief
+# Purpose: Discover all story files, parse dependencies, build inter-story graph
+# Duration: 30-60 seconds
+# ═══════════════════════════════════════════════════════════════════════════════
+
+phases:
+  - id: PHASE-0
+    name: "Discovery"
+    agent: dispatch-chief
+    executor: inline
+    duration: "30-60 seconds"
+    description: |
+      Discover all .md story files in the provided directory, parse each
+      for inter-story dependencies, and build a dependency graph.
+      Inter-story dependencies occur when one story's output is another
+      story's input (e.g., story A produces a sales page, story B
+      references that sales page in an email sequence).
+
+    pre_actions:
+      - action: "Validate directory exists"
+        check: "directory {story_directory} exists and contains .md files"
+        on_fail: "HALT — directory not found or empty"
+      - action: "Generate batch_id"
+        format: "batch-{YYYYMMDD}-{HHMMSS}"
+      - action: "Log batch start"
+        script: "python scripts/log-task-start.py --run-id {batch_id} --phase 0 --type batch"
+
+    tasks:
+      - id: "T-0.1"
+        name: "Glob Story Files"
+        description: |
+          Scan {story_directory} for all *.md files.
+          Exclude:
+          - README.md
+          - INDEX.md
+          - Files starting with underscore (_*)
+          - Files in subdirectories named _archive/ or _temp/
+        executor: worker
+        script_equivalent: |
+          glob("{story_directory}/**/*.md")
+          filter(exclude_patterns)
+        output:
+          format: "list"
+          fields:
+            - story_files: "List of absolute paths to .md story files"
+            - count: "integer"
+
+      - id: "T-0.2"
+        name: "Parse Story Headers"
+        description: |
+          For each discovered story file, parse:
+          - Story ID (from filename or YAML frontmatter)
+          - Title
+          - Status (Draft, Approved, InProgress, etc.)
+          - Dependencies (references to other stories or their outputs)
+          - Acceptance criteria count
+          - Estimated task count (from deliverables mentioned)
+
+          Dependency detection:
+          - Explicit: YAML frontmatter field `depends_on: [story-id-1, story-id-2]`
+          - Implicit: References to output files from other stories
+            (e.g., "uses sales-page.md from story-create-sales-page")
+          - Output mapping: Each story's expected outputs mapped for
+            downstream dependency resolution
+        executor: inline  # dispatch-chief can parse headers without subagent
+        input:
+          story_files: "{T-0.1.output.story_files}"
+        output:
+          format: "story_metadata_list"
+          per_story:
+            - story_id: "string"
+            - file_path: "string"
+            - title: "string"
+            - status: "string"
+            - depends_on: "list of story_ids"
+            - expected_outputs: "list of file paths"
+            - acceptance_criteria_count: "integer"
+            - estimated_tasks: "integer"
+
+      - id: "T-0.3"
+        name: "Build Dependency Graph"
+        description: |
+          Construct inter-story dependency graph from parsed metadata.
+          Validate:
+          - No circular dependencies between stories
+          - All referenced dependencies exist in the batch
+          - Stories with status=Draft are flagged (may not be ready)
+
+          If a story depends on a story NOT in the batch:
+          - Check if dependency output already exists on disk
+          - If YES: mark as "external_dependency_satisfied"
+          - If NO: WARN and offer options (skip story, halt, proceed anyway)
+        executor: worker
+        script_equivalent: |
+          build_adjacency_list(stories)
+          check_cycles(adjacency_list)
+          validate_dependencies(adjacency_list, available_outputs)
+        input:
+          story_metadata: "{T-0.2.output}"
+        output:
+          format: "dependency_graph"
+          fields:
+            - adjacency_list: "dict of story_id → [dependent_story_ids]"
+            - root_stories: "Stories with no dependencies (start here)"
+            - leaf_stories: "Stories with no dependents (end here)"
+            - has_cycles: "boolean"
+            - external_deps: "list of {story_id, missing_dependency, status}"
+            - total_stories: "integer"
+
+    checkpoint:
+      name: "Discovery Gate"
+      condition: |
+        All stories discovered AND dependency graph valid (no cycles) AND
+        all internal dependencies resolvable
+      on_pass: "Proceed to Phase 1 (Prioritization)"
+      on_fail:
+        conditions:
+          - condition: "No .md files found"
+            action: "HALT — directory empty or wrong path"
+          - condition: "Circular dependencies detected"
+            action: |
+              HALT — circular dependency between stories.
+              Stories involved: {cycle_stories}
+              Options:
+              1. Remove dependency from one story
+              2. Merge dependent stories into one
+              3. Cancel batch
+              4. Other
+          - condition: "External dependencies unsatisfied"
+            action: |
+              External dependencies not met:
+              {missing_deps}
+              Options:
+              1. Skip stories with unmet dependencies
+              2. Run missing dependency stories first
+              3. Proceed anyway (risky)
+              4. Other
+
+    post_actions:
+      - action: "Persist discovery state"
+        script: "python scripts/save-dispatch-state.py --run-id {batch_id} --phase 0 --status {result}"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 1: PRIORITIZATION
+# ═══════════════════════════════════════════════════════════════════════════════
+# Agent: wave-planner (subagent, Sonnet)
+# Purpose: Topological sort of stories, group independent ones into batches,
+#          estimate total cost and time
+# Duration: 30-60 seconds
+# ═══════════════════════════════════════════════════════════════════════════════
+
+  - id: PHASE-1
+    name: "Prioritization"
+    agent: wave-planner
+    executor: subagent
+    model: sonnet
+    duration: "30-60 seconds"
+    description: |
+      Topological sort of inter-story dependencies to determine execution
+      order. Group independent stories into batches for potential
+      optimization. Estimate total cost and time for the full batch.
+
+    pre_actions:
+      - action: "Load model pricing"
+        file: "data/model-selection-rules.yaml"
+        section: "pricing"
+      - action: "Load timeout rules"
+        file: "data/timeout-rules.yaml"
+
+    tasks:
+      - id: "T-1.1"
+        name: "Topological Sort of Stories"
+        description: |
+          Apply Kahn's algorithm to the inter-story dependency graph.
+          Produce an ordered execution list:
+          - Level 0: Stories with no dependencies (can all run first)
+          - Level 1: Stories depending only on Level 0 outputs
+          - Level 2: Stories depending on Level 0 or Level 1 outputs
+          - ...and so on
+
+          Within each level, stories are INDEPENDENT of each other.
+          They COULD run in parallel, but batch workflow runs them
+          sequentially for cost control and state consistency.
+
+          WSJF (Weighted Shortest Job First) for tie-breaking within levels:
+          - Stories that block the MOST downstream stories → first
+          - Stories with fewer estimated tasks (faster) → first when equal blocking
+        executor: script_preferred
+        script: "python scripts/wave-optimizer.py --input {dependency_graph} --mode stories"
+        input:
+          dependency_graph: "{PHASE-0.output.dependency_graph}"
+        output:
+          format: "execution_order"
+          fields:
+            - ordered_stories: "List of {story_id, level, execution_index, depends_on}"
+            - levels: "Dict of level_num → [story_ids]"
+            - independent_groups: "List of story groups that could run in parallel"
+            - critical_chain: "Longest dependency path through stories"
+
+      - id: "T-1.2"
+        name: "Estimate Total Batch Cost and Duration"
+        description: |
+          For each story in the batch, estimate:
+          - Number of tasks (from deliverables count)
+          - Model mix (Haiku vs Sonnet based on task types)
+          - Token budget per story
+          - Duration per story
+
+          Aggregate:
+          - Total tasks across all stories
+          - Total estimated cost (sum of per-story estimates)
+          - Total estimated duration (sum of sequential story durations)
+          - Cost breakdown by model type
+        input:
+          ordered_stories: "{T-1.1.output.ordered_stories}"
+          story_metadata: "{PHASE-0.output.story_metadata}"
+          pricing: "data/model-selection-rules.yaml"
+        output:
+          format: "batch_estimate"
+          fields:
+            - total_stories: "integer"
+            - total_tasks_estimated: "integer"
+            - total_cost_estimated_usd: "float"
+            - total_duration_estimated_min: "float"
+            - per_story_estimate: "list of {story_id, tasks, cost, duration}"
+            - model_breakdown: "{haiku_tasks, sonnet_tasks, worker_tasks}"
+
+      - id: "T-1.3"
+        name: "Present Batch Plan"
+        description: |
+          Present the batch execution plan to user for confirmation:
+          - Execution order with dependency reasons
+          - Per-story estimates (tasks, cost, duration)
+          - Total batch estimates
+          - Critical chain (which stories determine total duration)
+          - Any warnings (Draft stories, external deps, large batches)
+
+          For batches with > 10 stories or estimated cost > $1.00,
+          REQUIRE explicit user confirmation before proceeding.
+        input:
+          execution_order: "{T-1.1.output}"
+          batch_estimate: "{T-1.2.output}"
+        output:
+          format: "batch_plan_presentation"
+          requires_confirmation: "if total_stories > 10 OR total_cost > 1.00"
+
+    checkpoint:
+      name: "Prioritization Gate"
+      condition: "Story execution order defined AND estimates calculated AND user confirmed (if required)"
+      on_pass: "Proceed to Phase 2 (Sequential Dispatch)"
+      on_fail: "Re-prioritize or cancel batch"
+
+    post_actions:
+      - action: "Persist prioritization state"
+        script: "python scripts/save-dispatch-state.py --run-id {batch_id} --phase 1 --status {result}"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 2: SEQUENTIAL DISPATCH
+# ═══════════════════════════════════════════════════════════════════════════════
+# Agent: dispatch-chief
+# Purpose: Execute each story via wf-dispatch-main as sub-workflow, in order
+# Duration: Variable (sum of all story dispatches)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+  - id: PHASE-2
+    name: "Sequential Dispatch"
+    agent: dispatch-chief
+    executor: sub_workflow_coordinator
+    duration: "Variable"
+    description: |
+      For each story in dependency order, execute wf-dispatch-main.yaml
+      as a sub-workflow. Wait for completion before starting the next
+      story. Verify that each story's outputs are available for
+      downstream stories that depend on them.
+
+    pre_actions:
+      - action: "Load batch execution order"
+        source: "{PHASE-1.output.ordered_stories}"
+
+    tasks:
+      - id: "T-2.1"
+        name: "Story Dispatch Loop"
+        description: |
+          For each story in ordered_stories (sequential):
+
+          STEP 1 — PRE-STORY VALIDATION
+            - Verify all dependencies satisfied:
+              a. Check depends_on stories are completed (status: DONE)
+              b. Check dependency output files exist on disk
+              c. If any missing: HALT with options (skip, retry dep, halt batch)
+            - Generate sub-run_id: {batch_id}/{story_slug}
+
+          STEP 2 — DISPATCH STORY
+            - Execute wf-dispatch-main.yaml as sub-workflow
+            - Pass story file path as input
+            - Pass shared state (outputs from completed stories)
+            - Wait for sub-workflow completion
+
+          STEP 3 — POST-STORY VERIFICATION
+            - Verify story outputs exist (needed by downstream stories)
+            - Record story metrics: tasks, cost, duration, health score
+            - Update batch state with story completion
+            - Log story completion in batch events.jsonl
+
+          STEP 4 — FAILURE HANDLING (if story dispatch fails)
+            - Record failure reason
+            - Determine impact on downstream stories
+            - Present options to user:
+              1. Skip this story, continue with next
+                 (only if no downstream stories depend on it)
+              2. Retry this story from beginning
+              3. Halt entire batch, preserve state
+              4. Other
+
+          STEP 5 — PROGRESS UPDATE
+            - Show batch progress: "Story {N}/{total} complete"
+            - Show running cost total
+            - Show estimated remaining time
+
+        input:
+          ordered_stories: "{PHASE-1.output.ordered_stories}"
+          batch_estimate: "{PHASE-1.output.batch_estimate}"
+        output:
+          per_story:
+            - story_id: "string"
+            - status: "DONE | FAILED | SKIPPED"
+            - run_id: "string"
+            - tasks_completed: "integer"
+            - tasks_failed: "integer"
+            - cost_actual_usd: "float"
+            - duration_actual_sec: "float"
+            - health_score: "X/12"
+            - output_files: "list of paths"
+            - failure_reason: "string | null"
+
+    sub_workflow:
+      workflow: "wf-dispatch-main.yaml"
+      invocation: |
+        For each story:
+          wf-dispatch-main(
+            input=story.file_path,
+            run_id="{batch_id}/{story_slug}",
+            shared_state={completed_story_outputs},
+            parent_batch=batch_id
+          )
+      constraints:
+        - "One story at a time (sequential)"
+        - "Wait for full completion before next"
+        - "Shared state is read-only for downstream stories"
+        - "Each story gets its own state.json under batch directory"
+
+    checkpoint:
+      name: "Batch Dispatch Gate"
+      condition: "All stories dispatched (completed, skipped, or failed with user decision)"
+      on_pass: "Proceed to Phase 3 (Batch Reporting)"
+      on_fail:
+        conditions:
+          - condition: "Circuit breaker (3 consecutive story failures)"
+            action: |
+              HALT — 3 consecutive stories failed.
+              Last 3 failures:
+              {failure_details}
+
+              Options:
+              1. Resume from next story (skip failed ones)
+              2. Retry last failed story
+              3. Cancel remaining batch
+              4. Other
+          - condition: "Total cost exceeded 5x batch estimate"
+            action: |
+              HALT — Cost exceeded 5x estimate.
+              Estimated: ${batch_estimate}
+              Actual so far: ${actual_cost}
+              Stories remaining: {remaining_count}
+
+              Options:
+              1. Continue (acknowledge higher cost)
+              2. Cancel remaining stories
+              3. Review cost breakdown before deciding
+              4. Other
+
+    post_actions:
+      - action: "Persist batch dispatch state"
+        script: "python scripts/save-dispatch-state.py --run-id {batch_id} --phase 2 --status {result}"
+      - action: "Track aggregate costs"
+        script: "python scripts/cost-tracker.py --run-id {batch_id} --mode batch"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 3: BATCH REPORTING
+# ═══════════════════════════════════════════════════════════════════════════════
+# Agent: dispatch-chief
+# Purpose: Generate aggregate batch report with per-story summaries
+# Duration: 30-60 seconds
+# ═══════════════════════════════════════════════════════════════════════════════
+
+  - id: PHASE-3
+    name: "Batch Reporting"
+    agent: dispatch-chief
+    executor: inline
+    duration: "30-60 seconds"
+    description: |
+      Generate aggregate batch report covering all dispatched stories.
+      Per-story summary plus total batch metrics. Cross-story dependency
+      verification to confirm all inter-story outputs are consistent.
+
+    tasks:
+      - id: "T-3.1"
+        name: "Per-Story Summary"
+        description: |
+          For each story in the batch, compile:
+          - Story ID and title
+          - Status: DONE | FAILED | SKIPPED
+          - Tasks completed / total
+          - Cost (estimated vs actual)
+          - Duration (estimated vs actual)
+          - Health score (X/12)
+          - Output files created
+          - Failure reason (if applicable)
+
+          Format as table for quick scan.
+        input:
+          story_results: "{PHASE-2.output}"
+        output:
+          format: "per_story_summary_table"
+
+      - id: "T-3.2"
+        name: "Aggregate Batch Metrics"
+        description: |
+          Calculate batch-level aggregates:
+          - Total stories: {completed} / {total} ({skipped} skipped, {failed} failed)
+          - Total tasks: {completed_tasks} / {total_tasks}
+          - Total cost: ${actual} (estimated: ${estimated}, delta: {percent}%)
+          - Total duration: {minutes}min (estimated: {est_minutes}min)
+          - Average health score: {avg}/12
+          - Cost per deliverable: ${cost_per_file}
+          - Model distribution: {haiku_pct}% Haiku, {sonnet_pct}% Sonnet, {worker_pct}% Worker
+        input:
+          story_results: "{PHASE-2.output}"
+          batch_estimate: "{PHASE-1.output.batch_estimate}"
+        output:
+          format: "batch_metrics"
+
+      - id: "T-3.3"
+        name: "Cross-Story Dependency Verification"
+        description: |
+          Verify that all inter-story dependencies were satisfied:
+          - For each dependency edge (story A → story B):
+            a. Story A completed successfully? YES/NO
+            b. Story A's expected outputs exist on disk? YES/NO
+            c. Story B received those outputs? YES/NO
+          - Flag any broken chains (story A failed but story B ran anyway)
+          - Flag any orphaned outputs (files created but no story consumed them)
+        input:
+          dependency_graph: "{PHASE-0.output.dependency_graph}"
+          story_results: "{PHASE-2.output}"
+        output:
+          format: "dependency_verification"
+          fields:
+            - all_dependencies_satisfied: "boolean"
+            - broken_chains: "list of {source_story, target_story, missing_output}"
+            - orphaned_outputs: "list of file paths"
+
+      - id: "T-3.4"
+        name: "Generate Batch Report"
+        template: "templates/execution-report-tmpl.md"
+        description: |
+          Assemble final batch report combining:
+          1. Batch overview (stories, tasks, cost, duration)
+          2. Per-story summary table
+          3. Aggregate metrics
+          4. Cross-story dependency verification results
+          5. All files created across all stories (with full paths)
+          6. Batch health assessment
+          7. Lessons learned (patterns from failures, if any)
+          8. Next steps (numbered options)
+
+          Next steps should include:
+          1. Review outputs in {output_directories}
+          2. Run failed stories individually (*dispatch {story_file})
+          3. Publish outputs via appropriate automation agents
+          4. Other
+        output:
+          path: "_temp/dispatch/runs/{batch_id}/batch-report.md"
+
+      - id: "T-3.5"
+        name: "Generate Batch Cost Report"
+        template: "templates/cost-report-tmpl.md"
+        description: |
+          Detailed cost breakdown for the entire batch:
+          - Per-story cost (estimated vs actual)
+          - Per-model cost (Haiku, Sonnet, Worker)
+          - Cost per deliverable type (email, newsletter, automation, etc.)
+          - Token usage breakdown (input, output, cache hits)
+          - Cost efficiency: actual / estimated ratio
+          - Comparison to individual dispatch (would batch have been cheaper?)
+        output:
+          path: "_temp/dispatch/runs/{batch_id}/batch-cost-report.md"
+
+      - id: "T-3.6"
+        name: "Compute Batch Health Score"
+        script: "python scripts/dispatch-health-score.py --run-id {batch_id} --mode batch"
+        description: |
+          Batch-level health assessment:
+          1. All stories had acceptance criteria?
+          2. Dependency graph was acyclic?
+          3. Execution order followed topological sort?
+          4. No story executed before its dependencies completed?
+          5. All inter-story outputs verified?
+          6. Circuit breaker never triggered?
+          7. Total cost within 3x estimate?
+          8. All per-story health scores >= 8/12?
+          9. State persisted per-story (batch resumable)?
+          10. Batch report generated?
+
+          Score: X/10 (batch health uses 10-point scale)
+        output:
+          format: "batch_health_score"
+          fields:
+            - score: "X/10"
+            - items: "list of {item, status, note}"
+            - assessment: "Exemplary | Good | Needs Improvement | Poor"
+
+    checkpoint:
+      name: "Batch Reporting Complete"
+      condition: "Batch report generated AND cost report generated AND health score computed"
+      on_pass: "Workflow complete"
+      on_fail: "Generate partial report with available data"
+
+    post_actions:
+      - action: "Final batch state persistence"
+        script: "python scripts/save-dispatch-state.py --run-id {batch_id} --phase 3 --status complete"
+      - action: "Log batch completion"
+        script: "python scripts/log-task-start.py --run-id {batch_id} --phase 3 --type batch_completion"
+      - action: "Present final results"
+        display: |
+          BATCH DISPATCH COMPLETE
+
+          Batch: {batch_id}
+          Stories: {completed}/{total} ({skipped} skipped, {failed} failed)
+          Tasks: {total_tasks_completed}
+          Cost: ${total_actual} (est: ${total_estimated})
+          Duration: {total_duration_min}min
+          Health: {batch_health}/10
+
+          Reports:
+          - Batch report: _temp/dispatch/runs/{batch_id}/batch-report.md
+          - Cost report: _temp/dispatch/runs/{batch_id}/batch-cost-report.md
+          - Per-story reports: _temp/dispatch/runs/{batch_id}/{story_slug}/report.md
+
+          Next steps:
+          1. Review batch report
+          2. Re-run failed stories individually
+          3. Publish completed outputs
+          4. Other
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# RESUME LOGIC
+# ═══════════════════════════════════════════════════════════════════════════════
+
+resume:
+  command: "*resume --batch {batch_id}"
+  description: |
+    Resume an interrupted batch dispatch from the last completed story.
+  behavior:
+    - action: "Load batch state from _temp/dispatch/runs/{batch_id}/batch-state.json"
+    - action: "Identify last completed story (status: DONE)"
+    - action: "Identify next story to execute"
+    - action: "Verify shared state (outputs from completed stories still exist)"
+    - action: "Present resume plan to user"
+    - action: "Continue from Phase 2 (Sequential Dispatch) at the identified story"
+  state_file: "_temp/dispatch/runs/{batch_id}/batch-state.json"
+  per_story_state: "_temp/dispatch/runs/{batch_id}/{story_slug}/state.json"
+  recovery_rules:
+    - "If completed story outputs were deleted: re-dispatch that story first"
+    - "If batch state is corrupted: offer to start fresh or recover from per-story states"
+    - "If dependency graph changed (stories added/removed): re-run Phase 0-1"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# METADATA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+metadata:
+  version: "1.0.0"
+  created: "2026-02-10"
+  squad: dispatch
+  total_phases: 4  # Phase 0, 1, 2, 3
+  key_characteristic: "Inter-story dependency management with sequential execution"
+  agents_used:
+    - dispatch-chief  # Phase 0 (discovery), Phase 2 (coordination), Phase 3 (reporting)
+    - wave-planner    # Phase 1 (prioritization via topological sort)
+  sub_workflow:
+    - wf-dispatch-main.yaml  # Invoked per-story in Phase 2
+  scripts_used:
+    - scripts/wave-optimizer.py       # Phase 1 (story-level topological sort)
+    - scripts/cost-tracker.py         # Phase 2, 3 (aggregate cost tracking)
+    - scripts/dispatch-health-score.py  # Phase 3 (batch health)
+    - scripts/save-dispatch-state.py  # All phases
+    - scripts/log-task-start.py       # Phase 0, 3
+  templates_used:
+    - templates/execution-report-tmpl.md  # Phase 3 (batch report)
+    - templates/cost-report-tmpl.md       # Phase 3 (batch cost report)
+  data_files_used:
+    - data/model-selection-rules.yaml  # Phase 1 (cost estimation)
+    - data/timeout-rules.yaml          # Phase 1 (duration estimation)
+  state_files:
+    - "_temp/dispatch/runs/{batch_id}/batch-state.json"
+    - "_temp/dispatch/runs/{batch_id}/{story_slug}/state.json"
+    - "_temp/dispatch/runs/{batch_id}/events.jsonl"
