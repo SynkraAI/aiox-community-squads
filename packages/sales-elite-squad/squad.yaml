@@ -1,0 +1,79 @@
+name: sales-elite-squad
+version: 1.0.0
+description: >-
+  Squad comercial completa: inteligencia de mercado, prospeccao (SDR), fechamento (Closer),
+  gestao de pipeline e customer success, com leitura de perfil comportamental e PNL etica
+  aplicada a comunicacao persuasiva
+author: Luis Gama
+license: MIT
+slashPrefix: sales
+aiox:
+  minVersion: 2.1.0
+  type: squad
+components:
+  tasks:
+    - define-icp.md
+    - map-market-and-competitors.md
+    - build-prospect-list.md
+    - identify-buying-triggers.md
+    - score-lead-fit.md
+    - analyze-pricing-and-positioning.md
+    - build-outreach-cadence.md
+    - write-cold-outreach.md
+    - profile-behavioral-style.md
+    - qualify-lead-bant.md
+    - handle-prospecting-objections.md
+    - book-meeting.md
+    - plan-discovery-meeting.md
+    - run-needs-discovery.md
+    - build-value-and-roi-case.md
+    - handle-sales-objections.md
+    - negotiate-and-close.md
+    - recover-lost-opportunity.md
+    - analyze-pipeline-health.md
+    - calculate-commercial-metrics.md
+    - build-sales-forecast.md
+    - audit-funnel-conversion.md
+    - coach-sales-rep.md
+    - run-pipeline-review-gate.md
+    - plan-onboarding.md
+    - monitor-customer-health.md
+    - identify-expansion-opportunity.md
+    - plan-renewal.md
+    - request-referral.md
+    - run-churn-risk-gate.md
+  agents:
+    - commercial-intelligence.md
+    - sdr.md
+    - closer.md
+    - sales-manager.md
+    - customer-success.md
+  workflows: []
+  checklists: []
+  templates:
+    - opportunity-diagnostic.md
+  tools: []
+  scripts: []
+config:
+  extends: extend
+  coding-standards: config/coding-standards.md
+  tech-stack: config/tech-stack.md
+  source-tree: config/source-tree.md
+dependencies:
+  node: []
+  python: []
+  squads: []
+tags:
+  - comercial
+  - vendas
+  - sdr
+  - closer
+  - customer-success
+  - pipeline
+  - pnl-etica
+  - comportamento-humano
+blueprint:
+  source:
+    - docs/squads/sales-elite-squad-brief.md
+  created_at: "2026-08-05T00:00:00Z"
+  confidence: 0.86

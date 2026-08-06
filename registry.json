@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "squads": {
+    "official": [],
+    "community": [
+      {
+        "name": "sales-elite-squad",
+        "version": "1.0.0",
+        "description": "Squad comercial completa: inteligencia de mercado, prospeccao (SDR), fechamento (Closer), gestao de pipeline e customer success, com leitura de perfil comportamental e PNL etica aplicada a comunicacao persuasiva",
+        "author": "Luis Gama"
+      }
+    ]
+  }
+}
